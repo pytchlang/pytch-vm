@@ -13,3 +13,11 @@ h1 {
     margin: 0ex 2em 1ex;
     padding: 0.5ex 0em;
 }
+
+#editor {
+    border: 1px solid lightgray;
+    margin: 0;
+    width: 680px;
+    height: 400px;
+    font-size: 16px;
+}
