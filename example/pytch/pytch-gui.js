@@ -131,4 +131,17 @@ $(document).ready(function() {
             keyboard: browser_keyboard,
         },
     });
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // Connect browser events to Pytch handlers
+
+    $("#green-flag").click(() => {
+        Sk.pytch.current_live_project.on_green_flag_clicked();
+    });
+
+    $("#red-stop").click(() => {
+        Sk.pytch.current_live_project.on_red_stop_clicked();
+    });
 });
