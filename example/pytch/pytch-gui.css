@@ -26,3 +26,20 @@ h1 {
     border: 1px solid lightgray;
     background: white;
 }
+
+#green-flag, #red-stop {
+    height: 32px;
+    width: 48px;
+    float: left;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+#green-flag {
+    background-color: green;
+}
+
+#red-stop {
+    background-color: red;
+    margin-left: 1em;
+}
