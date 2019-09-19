@@ -60,6 +60,18 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Provide 'asynchronous load image' interface
+
+    const async_load_image = (url =>
+        new Promise((resolve, reject) => {
+            let img = new Image();
+            img.onload = (() => resolve(img));
+            img.src = url;
+        }));
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Connect Skulpt to our various interfaces
 
     Sk.configure({
