@@ -8,4 +8,16 @@ $(document).ready(function() {
 
     let ace_editor = ace.edit("editor");
 
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // Skulpt interaction
+
+    let builtinRead = (fname => {
+        if (Sk.builtinFiles === undefined
+                || Sk.builtinFiles["files"][fname] === undefined)
+            throw Error(`File not found: '${fname}'`);
+
+        return Sk.builtinFiles["files"][fname];
+    });
 });
