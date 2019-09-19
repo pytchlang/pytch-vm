@@ -75,6 +75,7 @@ h1 {
 #pytch-canvas {
     border: 1px solid lightgray;
     background: white;
+    margin-bottom: 8ex;
 }
 
 #green-flag, #red-stop {
