@@ -266,8 +266,12 @@ $(document).ready(function() {
 
         const build = async () => {
             let code_text = ace_editor.getValue();
-            await Sk.misceval.asyncToPromise(
-                () => Sk.importMainWithBody("<stdin>", false, code_text, true));
+            try {
+                await Sk.misceval.asyncToPromise(
+                    () => Sk.importMainWithBody("<stdin>", false, code_text, true));
+            } catch (err) {
+                report_uncaught_exception(err);
+            }
             stage_canvas.dom_elt.focus();
             enable();
         };
