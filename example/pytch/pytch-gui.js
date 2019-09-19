@@ -191,4 +191,7 @@ $(document).ready(function() {
         Sk.pytch.current_live_project.on_red_stop_clicked();
         stage_canvas.dom_elt.focus();
     });
+
+    stage_canvas.dom_elt.onkeydown = browser_keyboard.on_key_down;
+    stage_canvas.dom_elt.onkeyup = browser_keyboard.on_key_up;
 });
