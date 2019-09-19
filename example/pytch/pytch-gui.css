@@ -22,6 +22,22 @@ h1 {
     font-size: 16px;
 }
 
+#editor-menubar {
+    padding-top: 0.5ex; padding-bottom: 0.5ex;
+    margin-bottom: 1.5ex;
+    background-color: #66a;
+}
+
+#build-button {
+    padding: 0.75ex 1.25em;
+    margin-left: 2.5em;
+    background-color: lightgreen;
+    color: black;
+    font-size: 16px;
+    cursor: pointer;
+    user-select: none;
+}
+
 #pytch-canvas {
     border: 1px solid lightgray;
     background: white;
