@@ -263,6 +263,9 @@ $(document).ready(function() {
 
         const immediate_feedback = () => {
             disable();
+            stdout_info_pane.reset();
+            stderr_info_pane.reset();
+            make_tab_current("stdout");
             hide_code_changed_indicator();
         };
 
