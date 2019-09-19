@@ -145,3 +145,7 @@ h1 {
 #info-panels-container div.tab-content.current {
     display: inherit;
 }
+
+#info-panels-container div.tab-content span.info {
+    font-style: italic;
+}
