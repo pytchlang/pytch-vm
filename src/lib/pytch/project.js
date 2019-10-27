@@ -5,6 +5,8 @@ var $builtinmodule = function (name) {
     //
     // Constants, convenience utilities
 
+    const FRAMES_PER_SECOND = 60;
+
     const s_dunder_name = Sk.builtin.str("__name__");
     const s_im_func = Sk.builtin.str("im_func");
     const s_pytch_handler_for = Sk.builtin.str("_pytch_handler_for");
@@ -236,6 +238,11 @@ var $builtinmodule = function (name) {
                     this.skulpt_susp = susp;
 
                     let js_n_seconds = susp.data.subtype_data;
+                    let raw_n_frames = Math.ceil(js_n_seconds * FRAMES_PER_SECOND);
+                    let n_frames = (raw_n_frames < 1 ? 1 : raw_n_frames);
+
+                    this.state = Thread.State.AWAITING_PASSAGE_OF_TIME;
+                    this.sleeping_on = n_frames;
 
                     return [];
                 }
