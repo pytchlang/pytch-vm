@@ -78,6 +78,10 @@ var $builtinmodule = function (name) {
         constructor() {
             this.handlers = [];
         }
+
+        push(handler) {
+            this.handlers.push(handler);
+        }
     }
 
 
