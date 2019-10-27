@@ -1,3 +1,4 @@
+import pytch
 from pytch import (
     Project,
     Sprite,
@@ -11,6 +12,8 @@ class FlagClickCounter(Sprite):
 
     @when_green_flag_clicked
     def note_click(self):
+        self.n_clicks += 1
+        pytch.yield_until_next_frame()
         self.n_clicks += 1
 
 
