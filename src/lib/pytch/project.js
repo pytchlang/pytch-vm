@@ -29,6 +29,20 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Appearance: A Sprite has Costumes; a Stage has Backdrops.  Refer to one
+    // of either of these things as an "Appearance".
+
+    class Appearance {
+        constructor(image, centre_x, centre_y) {
+            this.image = image;
+            this.centre_x = centre_x;
+            this.centre_y = centre_y;
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // PytchActor: An actor (Sprite or Stage) within the Project.  It holds (a
     // reference to) the Python-level class (which should be derived from
     // pytch.Sprite or pytch.Stage), together with a list of its live instances.
