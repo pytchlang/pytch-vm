@@ -244,6 +244,9 @@ var $builtinmodule = function (name) {
         }
     }
 
+    // A useful 'do nothing' instance.
+    EventHandlerGroup.empty = new EventHandlerGroup();
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
