@@ -77,7 +77,12 @@ Sk.python3 = {
 // global 'Sk' object.
 //
 (() => {
+    let bad_async_load_image = url => {
+        throw Error("please set async_load_image");
+    };
+
     Sk.default_pytch_environment = {
+        async_load_image: bad_async_load_image,
     };
 })();
 
