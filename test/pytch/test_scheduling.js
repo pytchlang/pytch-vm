@@ -18,6 +18,10 @@ describe("scheduling", () => {
 
         project.one_frame();
         assert.strictEqual(instance_0.js_attr("n_clicks"), 2);
+
+        // And now the thread-group should have finished, and so there
+        // should be no live thread-groups in the project.
+        assert.strictEqual(project.thread_groups.length, 0);
     });
 
     it("can schedule threads on broadcast", () => {
