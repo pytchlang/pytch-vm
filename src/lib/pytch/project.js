@@ -160,6 +160,10 @@ var $builtinmodule = function (name) {
             case Thread.State.AWAITING_THREAD_GROUP_COMPLETION:
                 return (! this.sleeping_on.has_live_threads());
 
+            case Thread.State.AWAITING_PASSAGE_OF_TIME:
+                this.sleeping_on -= 1;
+                return (this.sleeping_on == 0);
+
             default:
                 // This on purpose includes "RUNNING"; we should never ask
                 // if an already-RUNNING thread is ready to wake up.
