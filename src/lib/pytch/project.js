@@ -64,6 +64,11 @@ var $builtinmodule = function (name) {
         $loc.__init__ = new Sk.builtin.func(self => {
             self.js_project = new Project();
         });
+
+        $loc.register_sprite_class = new Sk.builtin.func(
+            (self, sprite_cls) => {
+                self.js_project.register_sprite_class(sprite_cls);
+            });
     };
 
     mod.Project = Sk.misceval.buildClass(mod, project_cls, "Project", []);
