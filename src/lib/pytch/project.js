@@ -102,6 +102,12 @@ var $builtinmodule = function (name) {
         create_threads_for_green_flag() {
             return this.event_handlers.green_flag.create_threads(this.parent_project);
         }
+
+        create_threads_for_broadcast(js_message) {
+            let event_handler_group = (this.event_handlers.message[js_message]
+                                       || EventHandlerGroup.empty);
+            return event_handler_group.create_threads(this.parent_project);
+        }
     }
 
     class PytchSprite extends PytchActor {
@@ -159,6 +165,18 @@ var $builtinmodule = function (name) {
                     // continue running on the next frame.
                     this.skulpt_susp = susp;
                     return [];
+                }
+
+                case "broadcast": {
+                    // The thread remains running, as in "next-frame".
+                    this.skulpt_susp = susp;
+
+                    let js_message = susp.data.subtype_data;
+                    let new_thread_group
+                        = (this.parent_project
+                           .thread_group_for_broadcast_receivers(js_message));
+
+                    return [new_thread_group];
                 }
 
                 default:
@@ -238,6 +256,9 @@ var $builtinmodule = function (name) {
         }
     }
 
+    // A useful 'do nothing' instance.
+    EventHandlerGroup.empty = new EventHandlerGroup();
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
@@ -274,6 +295,12 @@ var $builtinmodule = function (name) {
             let threads = map_concat(a => a.create_threads_for_green_flag(), this.actors);
             let thread_group = new ThreadGroup(threads);
             this.thread_groups.push(thread_group);
+        }
+
+        thread_group_for_broadcast_receivers(js_message) {
+            let threads = map_concat(a => a.create_threads_for_broadcast(js_message),
+                                     this.actors);
+            return new ThreadGroup(threads);
         }
 
         one_frame() {
