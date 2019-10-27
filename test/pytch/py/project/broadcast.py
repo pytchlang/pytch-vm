@@ -8,9 +8,14 @@ from pytch import (
 
 
 class Sender(Sprite):
+    def __init__(self):
+        self.n_steps = 0
+
     @when_green_flag_clicked
     def send_message(self):
+        self.n_steps += 1
         pytch.broadcast('something-happened')
+        self.n_steps += 1
 
 
 class Receiver(Sprite):
