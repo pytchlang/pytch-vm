@@ -130,12 +130,13 @@ var $builtinmodule = function (name) {
     // prepares to run the given Python callable with the single given argument.
 
     class Thread {
-        constructor(py_callable, py_arg) {
+        constructor(py_callable, py_arg, parent_project) {
             // Fake a skulpt-suspension-like object so we can treat it the
             // same as any other suspension in the scheduler.
             this.skulpt_susp = {
                 resume: () => Sk.misceval.callsimOrSuspend(py_callable, py_arg)
             };
+            this.parent_project = parent_project;
         }
 
         one_frame() {
@@ -198,9 +199,9 @@ var $builtinmodule = function (name) {
             this.py_func = py_func;
         }
 
-        create_threads() {
+        create_threads(parent_project) {
             return this.pytch_actor.instances.map(
-                i => new Thread(this.py_func, i.py_object));
+                i => new Thread(this.py_func, i.py_object, parent_project));
         }
     }
 
