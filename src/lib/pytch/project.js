@@ -70,6 +70,19 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // EventHandlerGroup: A collection of EventHandlers all dealing with the same
+    // event and all belonging to the same Actor.  A given Actor can have multiple
+    // methods all decorated "@when_green_flag_clicked", for example.
+
+    class EventHandlerGroup {
+        constructor() {
+            this.handlers = [];
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Javascript-level "Project" class
 
     class Project {
