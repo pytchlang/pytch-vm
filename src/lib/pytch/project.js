@@ -126,6 +126,19 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // ThreadGroup: A collection of threads, all of which started in
+    // response to the same event, such as green-flag or a message
+    // being broadcast.
+
+    class ThreadGroup {
+        constructor(threads) {
+            this.threads = threads;
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // EventHandler: A description of something which should happen in response
     // to some event, for example a green flag click, or the receipt of a
     // broadcast message.  Holds (a reference to) the PytchActor which will
