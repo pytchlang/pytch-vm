@@ -12,5 +12,10 @@ var $builtinmodule = function (name) {
         return new_pytch_suspension("next-frame", null);
     });
 
+    mod.broadcast = new Sk.builtin.func(py_message => {
+        let js_message = Sk.ffi.remapToJs(py_message);
+        return new_pytch_suspension("broadcast", js_message);
+    });
+
     return mod;
 };
