@@ -145,6 +145,7 @@ var $builtinmodule = function (name) {
             if (! susp_or_retval.$isSuspension) {
                 // Python-land code ran to completion; thread is finished.
                 // TODO: Tidy up.
+                return [];
             } else {
                 // Python-land code invoked a syscall.
 
@@ -157,7 +158,7 @@ var $builtinmodule = function (name) {
                     // The thread remains running; update suspension so we
                     // continue running on the next frame.
                     this.skulpt_susp = susp;
-                    break;
+                    return [];
                 }
 
                 default:
