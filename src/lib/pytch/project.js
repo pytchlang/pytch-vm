@@ -180,6 +180,10 @@ var $builtinmodule = function (name) {
             this.threads = threads;
         }
 
+        has_live_threads() {
+            return (this.threads.length > 0);
+        }
+
         one_frame() {
             let new_thread_groups = map_concat(t => t.one_frame(), this.threads);
             return new_thread_groups;
