@@ -26,4 +26,27 @@ describe("pytch.project module", () => {
         let instance_0 = actor_0.instances[0];
         assert.strictEqual(instance_0.js_attr("n_clicks"), 0);
     });
+
+    describe("can look up Actors by name", () => {
+        const project = () => (
+            (import_local_file("py/project/bad_registrations.py")
+             .$d
+             .project
+             .js_project));
+
+        it("can find unique Actor", () => {
+            let banana = project().actor_by_class_name("Banana");
+            assert.strictEqual(js_getattr(banana.py_cls, "colour"), "yellow");
+        });
+
+        it("rejects an unknown Actor", () => {
+            assert.throws(() => project().actor_by_class_name("Spaceship"),
+                          /no PytchActors with name "Spaceship"/);
+        });
+
+        it("rejects a duplicate Actor", () => {
+            assert.throws(() => project().actor_by_class_name("Alien"),
+                          /duplicate PytchActors with name "Alien"/);
+        });
+    });
 });
