@@ -150,6 +150,11 @@ var $builtinmodule = function (name) {
             this.pytch_actor = pytch_actor;
             this.py_func = py_func;
         }
+
+        create_threads() {
+            return this.pytch_actor.instances.map(
+                i => new Thread(this.py_func, i.py_object));
+        }
     }
 
 
