@@ -19,4 +19,19 @@ describe("scheduling", () => {
         project.one_frame();
         assert.strictEqual(instance_0.js_attr("n_clicks"), 2);
     });
+
+    it("can schedule threads on broadcast", () => {
+        let import_result = import_local_file("py/project/broadcast.py");
+        let project = import_result.$d.project.js_project;
+
+        let receiver = project.instance_0_by_class_name("Receiver");
+
+        project.on_green_flag_clicked();
+
+        project.one_frame();
+        assert.strictEqual(receiver.js_attr("n_events"), 0);
+
+        project.one_frame();
+        assert.strictEqual(receiver.js_attr("n_events"), 1);
+    });
 });
