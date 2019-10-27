@@ -14,4 +14,10 @@ describe("pytch.project module", () => {
         let import_result = import_local_file("py/project/create_Project.py");
         assert.ok(import_result.$d.project);
     });
+
+    it("can register a Sprite class", () => {
+        let import_result = import_local_file("py/project/single_sprite.py");
+        let project = import_result.$d.project.js_project;
+        assert.strictEqual(project.actors.length, 1);
+    });
 });
