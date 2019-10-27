@@ -197,6 +197,12 @@ var $builtinmodule = function (name) {
         // completion or its next Pytch syscall.
         RUNNING: "running",
 
+        // AWAITING_THREAD_GROUP_COMPLETION: The thread will not run again until
+        // all the threads in the relevant thread-group have run to completion.
+        // A reference to the 'relevant thread group' is stored in the Thread
+        // instance's "sleeping_on" property.
+        AWAITING_THREAD_GROUP_COMPLETION: "awaiting-thread-group-completion",
+
         // ZOMBIE: The thread has terminated but has not yet been cleared from
         // the list of live threads.
         ZOMBIE: "zombie",
