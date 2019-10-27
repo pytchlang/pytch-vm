@@ -193,6 +193,7 @@ var $builtinmodule = function (name) {
     class Project {
         constructor() {
             this.actors = [];
+            this.thread_groups = [];
         }
 
         actor_by_class_name(cls_name) {
