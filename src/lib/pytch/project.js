@@ -146,6 +146,10 @@ var $builtinmodule = function (name) {
             this.state = Thread.State.RUNNING;
         }
 
+        is_running() {
+            return this.state == Thread.State.RUNNING;
+        }
+
         is_zombie() {
             return this.state == Thread.State.ZOMBIE;
         }
