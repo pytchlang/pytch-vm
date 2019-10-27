@@ -131,7 +131,22 @@ var $builtinmodule = function (name) {
 
         one_frame() {
             let susp_or_retval = this.skulpt_susp.resume();
-            // TODO: Deal with syscalls.
+
+            if (! susp_or_retval.$isSuspension) {
+                // Python-land code ran to completion; thread is finished.
+                // TODO: Tidy up.
+            } else {
+                // Python-land code invoked a syscall.
+
+                let susp = susp_or_retval;
+                if (susp.data.type !== "Pytch")
+                    throw Error("cannot handle non-Pytch suspensions");
+
+                switch (susp.data.subtype) {
+                default:
+                    throw Error(`unknown Pytch syscall "${susp.data.subtype}"`);
+                }
+            }
         }
     }
 
