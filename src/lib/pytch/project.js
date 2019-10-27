@@ -89,6 +89,10 @@ var $builtinmodule = function (name) {
                     this.register_handlers_of_method(im_func);
             }
         }
+
+        create_threads_for_green_flag() {
+            return this.event_handlers.green_flag.create_threads();
+        }
     }
 
     class PytchSprite extends PytchActor {
