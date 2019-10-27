@@ -73,6 +73,14 @@ Sk.python3 = {
     silent_octal_literal: false
 };
 
+// Create the default Pytch environment and assign it into the
+// global 'Sk' object.
+//
+(() => {
+    Sk.default_pytch_environment = {
+    };
+})();
+
 Sk.configure = function (options) {
     "use strict";
     Sk.output = options["output"] || Sk.output;
@@ -145,6 +153,10 @@ Sk.configure = function (options) {
 
     Sk.killableFor = options["killableFor"] || false;
     Sk.asserts.assert(typeof Sk.killableFor === "boolean");
+
+    Sk.pytch = Object.assign({},
+                             Sk.default_pytch_environment,
+                             (options["pytch"] || {}));
 
     Sk.signals = typeof options["signals"] !== undefined ? options["signals"] : null;
     if (Sk.signals === true) {
