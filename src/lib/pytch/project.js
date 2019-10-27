@@ -151,7 +151,8 @@ var $builtinmodule = function (name) {
 
             if (! susp_or_retval.$isSuspension) {
                 // Python-land code ran to completion; thread is finished.
-                // TODO: Tidy up.
+                this.skulpt_susp = null;
+                this.state = Thread.State.ZOMBIE;
                 return [];
             } else {
                 // Python-land code invoked a syscall.
@@ -215,8 +216,12 @@ var $builtinmodule = function (name) {
 
         one_frame() {
             let new_thread_groups = map_concat(t => t.one_frame(), this.threads);
+
+            // TODO: Cull zombies.
+
             if (this.has_live_threads())
                 new_thread_groups.push(this);
+
             return new_thread_groups;
         }
     }
