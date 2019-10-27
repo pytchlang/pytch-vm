@@ -10,10 +10,13 @@ before(() => {
     // Inject 'Sk' object into global namespace.
     reqskulpt(false);
 
-    // Connect read/write to filesystem and stdout.
+    // Connect read/write to filesystem and stdout; configure Pytch environment.
     Sk.configure({
         read: (fname => fs.readFileSync(fname, { encoding: "utf8" })),
         output: (args) => { process.stdout.write(args); },
+        pytch: {
+            async_load_image: (url => Promise.resolve(new MockImage(url))),
+        },
     });
 
 
