@@ -105,4 +105,37 @@ describe("scheduling", () => {
         project.one_frame();
         assert.ok(actors.has_steps_and_events(2, 2));
     });
+
+    it("can pause for a number of seconds", () => {
+        let import_result
+            = import_local_file("py/project/wait_seconds.py");
+        let project = import_result.$d.project.js_project;
+
+        let alien = project.instance_0_by_class_name("Alien");
+
+        let assert_n_steps = (exp_n_steps => {
+            assert.strictEqual(alien.js_attr("n_steps"), exp_n_steps);
+        });
+
+        assert_n_steps(0);
+
+        project.on_green_flag_clicked();
+        assert_n_steps(0);
+
+        project.one_frame();
+        assert_n_steps(1);
+
+        // The thread is now waiting.  For the next 14 one_frame()
+        // calls it should not be runnable and so nothing should
+        // change.
+        for (let i = 0; i != 14; ++i) {
+            project.one_frame();
+            assert_n_steps(1);
+        }
+
+        // But now it runs again, to completion.
+        project.one_frame();
+        assert_n_steps(2);
+        assert.strictEqual(project.thread_groups.length, 0);
+    });
 });

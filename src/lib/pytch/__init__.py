@@ -18,4 +18,5 @@ from .syscalls import (
     yield_until_next_frame,
     broadcast,
     broadcast_and_wait,
+    wait_seconds,
 )

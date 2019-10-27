@@ -5,6 +5,8 @@ var $builtinmodule = function (name) {
     //
     // Constants, convenience utilities
 
+    const FRAMES_PER_SECOND = 60;
+
     const s_dunder_name = Sk.builtin.str("__name__");
     const s_im_func = Sk.builtin.str("im_func");
     const s_pytch_handler_for = Sk.builtin.str("_pytch_handler_for");
@@ -160,6 +162,10 @@ var $builtinmodule = function (name) {
             case Thread.State.AWAITING_THREAD_GROUP_COMPLETION:
                 return (! this.sleeping_on.has_live_threads());
 
+            case Thread.State.AWAITING_PASSAGE_OF_TIME:
+                this.sleeping_on -= 1;
+                return (this.sleeping_on == 0);
+
             default:
                 // This on purpose includes "RUNNING"; we should never ask
                 // if an already-RUNNING thread is ready to wake up.
@@ -227,6 +233,20 @@ var $builtinmodule = function (name) {
                     return [new_thread_group];
                 }
 
+                case "wait-seconds": {
+                    // When it resumes, this thread will pick up here.
+                    this.skulpt_susp = susp;
+
+                    let js_n_seconds = susp.data.subtype_data;
+                    let raw_n_frames = Math.ceil(js_n_seconds * FRAMES_PER_SECOND);
+                    let n_frames = (raw_n_frames < 1 ? 1 : raw_n_frames);
+
+                    this.state = Thread.State.AWAITING_PASSAGE_OF_TIME;
+                    this.sleeping_on = n_frames;
+
+                    return [];
+                }
+
                 default:
                     throw Error(`unknown Pytch syscall "${susp.data.subtype}"`);
                 }
@@ -244,6 +264,13 @@ var $builtinmodule = function (name) {
         // A reference to the 'relevant thread group' is stored in the Thread
         // instance's "sleeping_on" property.
         AWAITING_THREAD_GROUP_COMPLETION: "awaiting-thread-group-completion",
+
+        // AWAITING_PASSAGE_OF_TIME: The thread will pause execution for the
+        // number of frames stored in the "sleeping_on" property.  If this
+        // number of frames is 1, the thread will resume at the next one_frame()
+        // call.  If it's 2, the thread will remain non-runnable for the next
+        // one_frame() call, and resume the one after that.  And so on.
+        AWAITING_PASSAGE_OF_TIME: "awaiting-passage-of-time",
 
         // ZOMBIE: The thread has terminated but has not yet been cleared from
         // the list of live threads.
