@@ -42,6 +42,8 @@ var $builtinmodule = function (name) {
 
             this.event_handlers = {
             };
+
+            this.register_event_handlers();
         }
 
         register_handler(event_descr, handler_py_func) {
