@@ -50,7 +50,10 @@ var $builtinmodule = function (name) {
             let [event_type, event_data] = event_descr;
             let handler = new EventHandler(this, handler_py_func);
 
-            // TODO: Add 'handler' to correct event-handler-group.
+            switch (event_type) {
+            default:
+                throw Error(`unknown event-type "${event_type}"`);
+            }
         }
 
         register_handlers_of_method(im_func) {
