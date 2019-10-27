@@ -6,10 +6,20 @@ var $builtinmodule = function (name) {
     // Constants, convenience utilities
 
     const s_dunder_name = Sk.builtin.str("__name__");
+    const s_im_func = Sk.builtin.str("im_func");
+    const s_pytch_handler_for = Sk.builtin.str("_pytch_handler_for");
 
     const name_of_py_class
           = (py_cls =>
              Sk.ffi.remapToJs(Sk.builtin.getattr(py_cls, s_dunder_name)));
+
+    const js_hasattr = (py_obj, py_attr_name) => (
+        (Sk.builtin.hasattr(py_obj, py_attr_name) === Sk.builtin.bool.true$));
+
+    const try_py_getattr = (py_obj, py_attr_name) => (
+        (js_hasattr(py_obj, py_attr_name)
+         ? [true, Sk.builtin.getattr(py_obj, py_attr_name)]
+         : [false, null]));
 
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -29,6 +39,44 @@ var $builtinmodule = function (name) {
             let instance_0 = new PytchActorInstance(this, py_instance);
             py_instance.$pytchActorInstance = instance_0;
             this.instances = [instance_0];
+
+            this.event_handlers = {
+            };
+
+            this.register_event_handlers();
+        }
+
+        register_handler(event_descr, handler_py_func) {
+            let [event_type, event_data] = event_descr;
+            let handler = new EventHandler(this, handler_py_func);
+
+            // TODO: Add 'handler' to correct event-handler-group.
+        }
+
+        register_handlers_of_method(im_func) {
+            let [has_events_handled, py_events_handled]
+                = try_py_getattr(im_func, s_pytch_handler_for);
+
+            if (! has_events_handled)
+                return;
+
+            let js_events_handled = Sk.ffi.remapToJs(py_events_handled);
+            for (let js_event of js_events_handled) {
+                this.register_handler(js_event, im_func);
+            }
+        }
+
+        register_event_handlers() {
+            let js_dir = Sk.ffi.remapToJs(Sk.builtin.dir(this.py_cls));
+
+            for (let js_attr_name of js_dir) {
+                let py_attr_name = Sk.builtin.str(js_attr_name);
+                let attr_val = Sk.builtin.getattr(this.py_cls, py_attr_name);
+
+                let [has_im_func, im_func] = try_py_getattr(attr_val, s_im_func);
+                if (has_im_func)
+                    this.register_handlers_of_method(im_func);
+            }
         }
     }
 
@@ -48,6 +96,43 @@ var $builtinmodule = function (name) {
 
         js_attr(js_attr_name) {
             return js_getattr(this.py_object, Sk.builtin.str(js_attr_name));
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // EventHandler: A description of something which should happen in response
+    // to some event, for example a green flag click, or the receipt of a
+    // broadcast message.  Holds (a reference to) the PytchActor which will
+    // respond to this event, and the function (instancemethod) within the
+    // actor's class which will be called if the event happens.
+
+    class EventHandler {
+        constructor(pytch_actor, py_func) {
+            this.pytch_actor = pytch_actor;
+            this.py_func = py_func;
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // EventHandlerGroup: A collection of EventHandlers all dealing with the same
+    // event and all belonging to the same Actor.  A given Actor can have multiple
+    // methods all decorated "@when_green_flag_clicked", for example.
+
+    class EventHandlerGroup {
+        constructor() {
+            this.handlers = [];
+        }
+
+        push(handler) {
+            this.handlers.push(handler);
+        }
+
+        get n_handlers() {
+            return this.handlers.length;
         }
     }
 
