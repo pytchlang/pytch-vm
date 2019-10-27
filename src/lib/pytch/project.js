@@ -143,6 +143,7 @@ var $builtinmodule = function (name) {
                 resume: () => Sk.misceval.callsimOrSuspend(py_callable, py_arg)
             };
             this.parent_project = parent_project;
+            this.state = Thread.State.RUNNING;
         }
 
         one_frame() {
