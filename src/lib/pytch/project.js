@@ -41,6 +41,7 @@ var $builtinmodule = function (name) {
             this.instances = [instance_0];
 
             this.event_handlers = {
+                green_flag: new EventHandlerGroup(),
             };
 
             this.register_event_handlers();
@@ -51,6 +52,10 @@ var $builtinmodule = function (name) {
             let handler = new EventHandler(this, handler_py_func);
 
             switch (event_type) {
+            case "green-flag":
+                this.event_handlers.green_flag.push(handler);
+                break;
+
             default:
                 throw Error(`unknown event-type "${event_type}"`);
             }
