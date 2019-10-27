@@ -6,6 +6,7 @@ var $builtinmodule = function (name) {
     // Constants, convenience utilities
 
     const s_dunder_name = Sk.builtin.str("__name__");
+    const s_pytch_handler_for = Sk.builtin.str("_pytch_handler_for");
 
     const name_of_py_class
           = (py_cls =>
@@ -47,6 +48,19 @@ var $builtinmodule = function (name) {
             let handler = new EventHandler(this, handler_py_func);
 
             // TODO: Add 'handler' to correct event-handler-group.
+        }
+
+        register_handlers_of_method(im_func) {
+            let [has_events_handled, py_events_handled]
+                = try_py_getattr(im_func, s_pytch_handler_for);
+
+            if (! has_events_handled)
+                return;
+
+            let js_events_handled = Sk.ffi.remapToJs(py_events_handled);
+            for (let js_event of js_events_handled) {
+                this.register_handler(js_event, im_func);
+            }
         }
     }
 
