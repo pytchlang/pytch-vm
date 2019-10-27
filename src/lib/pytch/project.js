@@ -35,8 +35,9 @@ var $builtinmodule = function (name) {
     // the Stage-derived actor, there is always exactly one instance.
 
     class PytchActor {
-        constructor(py_cls) {
+        constructor(py_cls, parent_project) {
             this.py_cls = py_cls;
+            this.parent_project = parent_project;
 
             let py_instance = Sk.misceval.callsim(py_cls);
             let instance_0 = new PytchActorInstance(this, py_instance);
@@ -257,7 +258,7 @@ var $builtinmodule = function (name) {
         }
 
         register_sprite_class(py_sprite_cls) {
-            this.actors.push(new PytchSprite(py_sprite_cls));
+            this.actors.push(new PytchSprite(py_sprite_cls, this));
         }
 
         on_green_flag_clicked() {
