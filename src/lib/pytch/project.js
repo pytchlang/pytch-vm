@@ -145,6 +145,7 @@ var $builtinmodule = function (name) {
             if (! susp_or_retval.$isSuspension) {
                 // Python-land code ran to completion; thread is finished.
                 // TODO: Tidy up.
+                return [];
             } else {
                 // Python-land code invoked a syscall.
 
@@ -157,7 +158,7 @@ var $builtinmodule = function (name) {
                     // The thread remains running; update suspension so we
                     // continue running on the next frame.
                     this.skulpt_susp = susp;
-                    break;
+                    return [];
                 }
 
                 default:
@@ -179,8 +180,15 @@ var $builtinmodule = function (name) {
             this.threads = threads;
         }
 
+        has_live_threads() {
+            return (this.threads.length > 0);
+        }
+
         one_frame() {
-            this.threads.forEach(t => t.one_frame());
+            let new_thread_groups = map_concat(t => t.one_frame(), this.threads);
+            if (this.has_live_threads())
+                new_thread_groups.push(this);
+            return new_thread_groups;
         }
     }
 
@@ -269,7 +277,10 @@ var $builtinmodule = function (name) {
         }
 
         one_frame() {
-            this.thread_groups.forEach(tg => tg.one_frame());
+            let new_thread_groups = map_concat(tg => tg.one_frame(),
+                                               this.thread_groups);
+
+            this.thread_groups = new_thread_groups;
         }
     }
 
