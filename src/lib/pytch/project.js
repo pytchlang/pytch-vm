@@ -386,7 +386,7 @@ var $builtinmodule = function (name) {
             return this.actor_by_class_name(cls_name).instances[0];
         }
 
-        register_sprite_class(py_sprite_cls) {
+        async register_sprite_class(py_sprite_cls) {
             this.actors.push(new PytchSprite(py_sprite_cls, this));
         }
 
