@@ -376,6 +376,8 @@ var $builtinmodule = function (name) {
         }
 
         one_frame() {
+            this.thread_groups.forEach(tg => tg.maybe_wake_threads());
+
             let new_thread_groups = map_concat(tg => tg.one_frame(),
                                                this.thread_groups);
 
