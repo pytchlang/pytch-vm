@@ -161,6 +161,12 @@ var $builtinmodule = function (name) {
                     return [];
                 }
 
+                case "broadcast": {
+                    // The thread remains running, as in "next-frame".
+                    this.skulpt_susp = susp;
+                    return [];
+                }
+
                 default:
                     throw Error(`unknown Pytch syscall "${susp.data.subtype}"`);
                 }
