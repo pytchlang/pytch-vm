@@ -15,5 +15,8 @@ describe("scheduling", () => {
 
         project.one_frame();
         assert.strictEqual(instance_0.js_attr("n_clicks"), 1);
+
+        project.one_frame();
+        assert.strictEqual(instance_0.js_attr("n_clicks"), 2);
     });
 });
