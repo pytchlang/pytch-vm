@@ -11,6 +11,7 @@ from .actor import (
 
 from .hat_blocks import (
     when_green_flag_clicked,
+    when_I_receive,
 )
 
 from .syscalls import (
