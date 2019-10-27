@@ -35,8 +35,9 @@ var $builtinmodule = function (name) {
     // the Stage-derived actor, there is always exactly one instance.
 
     class PytchActor {
-        constructor(py_cls) {
+        constructor(py_cls, parent_project) {
             this.py_cls = py_cls;
+            this.parent_project = parent_project;
 
             let py_instance = Sk.misceval.callsim(py_cls);
             let instance_0 = new PytchActorInstance(this, py_instance);
@@ -99,7 +100,7 @@ var $builtinmodule = function (name) {
         }
 
         create_threads_for_green_flag() {
-            return this.event_handlers.green_flag.create_threads();
+            return this.event_handlers.green_flag.create_threads(this.parent_project);
         }
     }
 
@@ -129,12 +130,13 @@ var $builtinmodule = function (name) {
     // prepares to run the given Python callable with the single given argument.
 
     class Thread {
-        constructor(py_callable, py_arg) {
+        constructor(py_callable, py_arg, parent_project) {
             // Fake a skulpt-suspension-like object so we can treat it the
             // same as any other suspension in the scheduler.
             this.skulpt_susp = {
                 resume: () => Sk.misceval.callsimOrSuspend(py_callable, py_arg)
             };
+            this.parent_project = parent_project;
         }
 
         one_frame() {
@@ -197,9 +199,9 @@ var $builtinmodule = function (name) {
             this.py_func = py_func;
         }
 
-        create_threads() {
+        create_threads(parent_project) {
             return this.pytch_actor.instances.map(
-                i => new Thread(this.py_func, i.py_object));
+                i => new Thread(this.py_func, i.py_object, parent_project));
         }
     }
 
@@ -223,8 +225,8 @@ var $builtinmodule = function (name) {
             return this.handlers.length;
         }
 
-        create_threads() {
-            return map_concat(h => h.create_threads(), this.handlers);
+        create_threads(parent_project) {
+            return map_concat(h => h.create_threads(parent_project), this.handlers);
         }
     }
 
@@ -257,7 +259,7 @@ var $builtinmodule = function (name) {
         }
 
         register_sprite_class(py_sprite_cls) {
-            this.actors.push(new PytchSprite(py_sprite_cls));
+            this.actors.push(new PytchSprite(py_sprite_cls, this));
         }
 
         on_green_flag_clicked() {
