@@ -220,6 +220,12 @@ var $builtinmodule = function (name) {
         register_sprite_class(py_sprite_cls) {
             this.actors.push(new PytchSprite(py_sprite_cls));
         }
+
+        on_green_flag_clicked() {
+            let threads = map_concat(a => a.create_threads_for_green_flag(), this.actors);
+            let thread_group = new ThreadGroup(threads);
+            this.thread_groups.push(thread_group);
+        }
     }
 
 
