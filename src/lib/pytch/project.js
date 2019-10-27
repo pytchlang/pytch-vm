@@ -175,6 +175,9 @@ var $builtinmodule = function (name) {
         }
 
         one_frame() {
+            if (! this.is_running())
+                return [];
+
             let susp_or_retval = this.skulpt_susp.resume();
 
             if (! susp_or_retval.$isSuspension) {
