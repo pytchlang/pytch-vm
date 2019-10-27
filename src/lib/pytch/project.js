@@ -49,6 +49,10 @@ var $builtinmodule = function (name) {
         constructor() {
             this.actors = [];
         }
+
+        register_sprite_class(py_sprite_cls) {
+            this.actors.push(new PytchSprite(py_sprite_cls));
+        }
     }
 
 
