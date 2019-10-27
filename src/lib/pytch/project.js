@@ -128,6 +128,11 @@ var $builtinmodule = function (name) {
                 resume: () => Sk.misceval.callsimOrSuspend(py_callable, py_arg)
             };
         }
+
+        one_frame() {
+            let susp_or_retval = this.skulpt_susp.resume();
+            // TODO: Deal with syscalls.
+        }
     }
 
 
