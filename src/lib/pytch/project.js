@@ -221,7 +221,7 @@ var $builtinmodule = function (name) {
         one_frame() {
             let new_thread_groups = map_concat(t => t.one_frame(), this.threads);
 
-            // TODO: Cull zombies.
+            this.threads = this.threads.filter(t => (! t.is_zombie()));
 
             if (this.has_live_threads())
                 new_thread_groups.push(this);
