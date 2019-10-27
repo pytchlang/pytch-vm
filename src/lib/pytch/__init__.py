@@ -12,3 +12,7 @@ from .actor import (
 from .hat_blocks import (
     when_green_flag_clicked,
 )
+
+from .syscalls import (
+    yield_until_next_frame,
+)
