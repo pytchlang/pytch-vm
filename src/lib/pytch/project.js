@@ -128,6 +128,11 @@ var $builtinmodule = function (name) {
                 resume: () => Sk.misceval.callsimOrSuspend(py_callable, py_arg)
             };
         }
+
+        one_frame() {
+            let susp_or_retval = this.skulpt_susp.resume();
+            // TODO: Deal with syscalls.
+        }
     }
 
 
@@ -140,6 +145,10 @@ var $builtinmodule = function (name) {
     class ThreadGroup {
         constructor(threads) {
             this.threads = threads;
+        }
+
+        one_frame() {
+            this.threads.forEach(t => t.one_frame());
         }
     }
 
@@ -225,6 +234,10 @@ var $builtinmodule = function (name) {
             let threads = map_concat(a => a.create_threads_for_green_flag(), this.actors);
             let thread_group = new ThreadGroup(threads);
             this.thread_groups.push(thread_group);
+        }
+
+        one_frame() {
+            this.thread_groups.forEach(tg => tg.one_frame());
         }
     }
 
