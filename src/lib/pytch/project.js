@@ -144,13 +144,40 @@ var $builtinmodule = function (name) {
             };
             this.parent_project = parent_project;
             this.state = Thread.State.RUNNING;
+            this.sleeping_on = null;
+        }
+
+        is_running() {
+            return this.state == Thread.State.RUNNING;
         }
 
         is_zombie() {
             return this.state == Thread.State.ZOMBIE;
         }
 
+        should_wake() {
+            switch (this.state) {
+            case Thread.State.AWAITING_THREAD_GROUP_COMPLETION:
+                return (! this.sleeping_on.has_live_threads());
+
+            default:
+                // This on purpose includes "RUNNING"; we should never ask
+                // if an already-RUNNING thread is ready to wake up.
+                throw Error(`thread in bad state "${this.state}"`);
+            }
+        }
+
+        maybe_wake() {
+            if ((! this.is_running()) && this.should_wake()) {
+                this.state = Thread.State.RUNNING;
+                this.sleeping_on = null;
+            }
+        }
+
         one_frame() {
+            if (! this.is_running())
+                return [];
+
             let susp_or_retval = this.skulpt_susp.resume();
 
             if (! susp_or_retval.$isSuspension) {
@@ -185,6 +212,21 @@ var $builtinmodule = function (name) {
                     return [new_thread_group];
                 }
 
+                case "broadcast-and-wait": {
+                    // When it resumes, this thread will pick up here.
+                    this.skulpt_susp = susp;
+
+                    let js_message = susp.data.subtype_data;
+                    let new_thread_group
+                        = (this.parent_project
+                           .thread_group_for_broadcast_receivers(js_message));
+
+                    this.state = Thread.State.AWAITING_THREAD_GROUP_COMPLETION;
+                    this.sleeping_on = new_thread_group;
+
+                    return [new_thread_group];
+                }
+
                 default:
                     throw Error(`unknown Pytch syscall "${susp.data.subtype}"`);
                 }
@@ -196,6 +238,12 @@ var $builtinmodule = function (name) {
         // RUNNING: The thread will be given a chance to run until either
         // completion or its next Pytch syscall.
         RUNNING: "running",
+
+        // AWAITING_THREAD_GROUP_COMPLETION: The thread will not run again until
+        // all the threads in the relevant thread-group have run to completion.
+        // A reference to the 'relevant thread group' is stored in the Thread
+        // instance's "sleeping_on" property.
+        AWAITING_THREAD_GROUP_COMPLETION: "awaiting-thread-group-completion",
 
         // ZOMBIE: The thread has terminated but has not yet been cleared from
         // the list of live threads.
@@ -216,6 +264,10 @@ var $builtinmodule = function (name) {
 
         has_live_threads() {
             return (this.threads.length > 0);
+        }
+
+        maybe_wake_threads() {
+            this.threads.forEach(t => t.maybe_wake());
         }
 
         one_frame() {
@@ -324,6 +376,8 @@ var $builtinmodule = function (name) {
         }
 
         one_frame() {
+            this.thread_groups.forEach(tg => tg.maybe_wake_threads());
+
             let new_thread_groups = map_concat(tg => tg.one_frame(),
                                                this.thread_groups);
 
