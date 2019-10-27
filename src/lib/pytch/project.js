@@ -33,6 +33,13 @@ var $builtinmodule = function (name) {
             this.event_handlers = {
             };
         }
+
+        register_handler(event_descr, handler_py_func) {
+            let [event_type, event_data] = event_descr;
+            let handler = new EventHandler(this, handler_py_func);
+
+            // TODO: Add 'handler' to correct event-handler-group.
+        }
     }
 
     class PytchSprite extends PytchActor {
