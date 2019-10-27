@@ -31,6 +31,8 @@ describe("scheduling", () => {
         assert.strictEqual(receiver.js_attr("n_events"), 0);
 
         project.on_green_flag_clicked();
+        assert.strictEqual(sender.js_attr("n_steps"), 0);
+        assert.strictEqual(receiver.js_attr("n_events"), 0);
 
         project.one_frame();
         assert.strictEqual(sender.js_attr("n_steps"), 1);
