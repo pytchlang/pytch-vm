@@ -21,6 +21,9 @@ var $builtinmodule = function (name) {
          ? [true, Sk.builtin.getattr(py_obj, py_attr_name)]
          : [false, null]));
 
+    const map_concat
+          = (fun, xs) => Array.prototype.concat.apply([], xs.map(fun));
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
@@ -110,6 +113,35 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Thread: One particular thread of execution.  Creating a new Thread
+    // prepares to run the given Python callable with the single given argument.
+
+    class Thread {
+        constructor(py_callable, py_arg) {
+            // Fake a skulpt-suspension-like object so we can treat it the
+            // same as any other suspension in the scheduler.
+            this.skulpt_susp = {
+                resume: () => Sk.misceval.callsimOrSuspend(py_callable, py_arg)
+            };
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // ThreadGroup: A collection of threads, all of which started in
+    // response to the same event, such as green-flag or a message
+    // being broadcast.
+
+    class ThreadGroup {
+        constructor(threads) {
+            this.threads = threads;
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // EventHandler: A description of something which should happen in response
     // to some event, for example a green flag click, or the receipt of a
     // broadcast message.  Holds (a reference to) the PytchActor which will
@@ -120,6 +152,11 @@ var $builtinmodule = function (name) {
         constructor(pytch_actor, py_func) {
             this.pytch_actor = pytch_actor;
             this.py_func = py_func;
+        }
+
+        create_threads() {
+            return this.pytch_actor.instances.map(
+                i => new Thread(this.py_func, i.py_object));
         }
     }
 
@@ -142,6 +179,10 @@ var $builtinmodule = function (name) {
         get n_handlers() {
             return this.handlers.length;
         }
+
+        create_threads() {
+            return map_concat(h => h.create_threads(), this.handlers);
+        }
     }
 
 
@@ -152,6 +193,7 @@ var $builtinmodule = function (name) {
     class Project {
         constructor() {
             this.actors = [];
+            this.thread_groups = [];
         }
 
         actor_by_class_name(cls_name) {
