@@ -11,6 +11,9 @@ var $builtinmodule = function (name) {
           = (py_cls =>
              Sk.ffi.remapToJs(Sk.builtin.getattr(py_cls, s_dunder_name)));
 
+    const js_hasattr = (py_obj, py_attr_name) => (
+        (Sk.builtin.hasattr(py_obj, py_attr_name) === Sk.builtin.bool.true$));
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
