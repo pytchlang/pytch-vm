@@ -60,6 +60,13 @@ var $builtinmodule = function (name) {
                 this.event_handlers.green_flag.push(handler);
                 break;
 
+            case "message":
+                let msg_handlers = this.event_handlers.message;
+                if (! msg_handlers.hasOwnProperty(event_data))
+                    msg_handlers[event_data] = new EventHandlerGroup();
+                msg_handlers[event_data].push(handler);
+                break;
+
             default:
                 throw Error(`unknown event-type "${event_type}"`);
             }
