@@ -54,6 +54,9 @@ var $builtinmodule = function (name) {
             this.register_event_handlers();
         }
 
+        async async_init() {
+        }
+
         register_handler(event_descr, handler_py_func) {
             let [event_type, event_data] = event_descr;
             let handler = new EventHandler(this, handler_py_func);
@@ -115,6 +118,7 @@ var $builtinmodule = function (name) {
     class PytchSprite extends PytchActor {
         static async async_create(py_cls, parent_project) {
             let sprite = new PytchSprite(py_cls, parent_project);
+            await sprite.async_init();
             py_cls.$pytchActor = sprite;
             return sprite;
         }
