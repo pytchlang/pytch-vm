@@ -24,6 +24,9 @@ var $builtinmodule = function (name) {
          ? [true, Sk.builtin.getattr(py_obj, py_attr_name)]
          : [false, null]));
 
+    const js_getattr = (py_obj, py_attr_name) => (
+        Sk.ffi.remapToJs(Sk.builtin.getattr(py_obj, py_attr_name)));
+
     const map_concat
           = (fun, xs) => Array.prototype.concat.apply([], xs.map(fun));
 
