@@ -6,6 +6,7 @@ var $builtinmodule = function (name) {
     // Constants, convenience utilities
 
     const s_dunder_name = Sk.builtin.str("__name__");
+    const s_im_func = Sk.builtin.str("im_func");
     const s_pytch_handler_for = Sk.builtin.str("_pytch_handler_for");
 
     const name_of_py_class
@@ -60,6 +61,19 @@ var $builtinmodule = function (name) {
             let js_events_handled = Sk.ffi.remapToJs(py_events_handled);
             for (let js_event of js_events_handled) {
                 this.register_handler(js_event, im_func);
+            }
+        }
+
+        register_event_handlers() {
+            let js_dir = Sk.ffi.remapToJs(Sk.builtin.dir(this.py_cls));
+
+            for (let js_attr_name of js_dir) {
+                let py_attr_name = Sk.builtin.str(js_attr_name);
+                let attr_val = Sk.builtin.getattr(this.py_cls, py_attr_name);
+
+                let [has_im_func, im_func] = try_py_getattr(attr_val, s_im_func);
+                if (has_im_func)
+                    this.register_handlers_of_method(im_func);
             }
         }
     }
