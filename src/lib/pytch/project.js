@@ -54,6 +54,22 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // EventHandler: A description of something which should happen in response
+    // to some event, for example a green flag click, or the receipt of a
+    // broadcast message.  Holds (a reference to) the PytchActor which will
+    // respond to this event, and the function (instancemethod) within the
+    // actor's class which will be called if the event happens.
+
+    class EventHandler {
+        constructor(pytch_actor, py_func) {
+            this.pytch_actor = pytch_actor;
+            this.py_func = py_func;
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Javascript-level "Project" class
 
     class Project {
