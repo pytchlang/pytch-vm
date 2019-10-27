@@ -113,6 +113,10 @@ var $builtinmodule = function (name) {
     }
 
     class PytchSprite extends PytchActor {
+        static async async_create(py_cls, parent_project) {
+            let sprite = new PytchSprite(py_cls, parent_project);
+            return sprite;
+        }
     }
 
 
