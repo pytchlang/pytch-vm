@@ -8,5 +8,9 @@ var $builtinmodule = function (name) {
         return susp;
     };
 
+    mod.yield_until_next_frame = new Sk.builtin.func(() => {
+        return new_pytch_suspension("next-frame", null);
+    });
+
     return mod;
 };
