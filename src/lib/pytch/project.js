@@ -21,6 +21,9 @@ var $builtinmodule = function (name) {
         }
     }
 
+    class PytchSprite extends PytchActor {
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
