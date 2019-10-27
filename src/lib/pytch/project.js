@@ -142,6 +142,10 @@ var $builtinmodule = function (name) {
             py_cls.$pytchActor = sprite;
             return sprite;
         }
+
+        get appearances_attr_name() {
+            return s_Costumes;
+        }
     }
 
 
