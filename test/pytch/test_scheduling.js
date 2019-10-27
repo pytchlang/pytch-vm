@@ -24,6 +24,22 @@ describe("scheduling", () => {
         assert.strictEqual(project.thread_groups.length, 0);
     });
 
+    class BroadcastActors {
+        constructor(project) {
+            this.sender = project.instance_0_by_class_name("Sender");
+            this.receiver = project.instance_0_by_class_name("Receiver");
+        }
+
+        has_steps_and_events(exp_n_steps, exp_n_events) {
+            let sender_correct
+                = (this.sender.js_attr("n_steps") === exp_n_steps);
+            let receiver_correct
+                = (this.receiver.js_attr("n_events") === exp_n_events);
+
+            return (sender_correct && receiver_correct);
+        }
+    }
+
     it("can schedule threads on broadcast", () => {
         let import_result = import_local_file("py/project/broadcast.py");
         let project = import_result.$d.project.js_project;
