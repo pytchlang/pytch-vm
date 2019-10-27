@@ -170,7 +170,13 @@ var $builtinmodule = function (name) {
                 case "broadcast": {
                     // The thread remains running, as in "next-frame".
                     this.skulpt_susp = susp;
-                    return [];
+
+                    let js_message = susp.data.subtype_data;
+                    let new_thread_group
+                        = (this.parent_project
+                           .thread_group_for_broadcast_receivers(js_message));
+
+                    return [new_thread_group];
                 }
 
                 default:
