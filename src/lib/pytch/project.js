@@ -155,6 +155,18 @@ var $builtinmodule = function (name) {
             return this.state == Thread.State.ZOMBIE;
         }
 
+        should_wake() {
+            switch (this.state) {
+            case Thread.State.AWAITING_THREAD_GROUP_COMPLETION:
+                return (! this.sleeping_on.has_live_threads());
+
+            default:
+                // This on purpose includes "RUNNING"; we should never ask
+                // if an already-RUNNING thread is ready to wake up.
+                throw Error(`thread in bad state "${this.state}"`);
+            }
+        }
+
         one_frame() {
             let susp_or_retval = this.skulpt_susp.resume();
 
