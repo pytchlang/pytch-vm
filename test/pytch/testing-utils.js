@@ -23,7 +23,8 @@ before(() => {
 
     global.import_local_file = (fname => {
         let code_text = fs.readFileSync(fname, { encoding: "utf8" });
-        return Sk.importMainWithBody("<stdin>", false, code_text, true);
+        let do_import = Sk.importMainWithBody("<stdin>", false, code_text, true);
+        return Sk.misceval.asyncToPromise(() => do_import);
     });
 
     global.assert = require("assert");
