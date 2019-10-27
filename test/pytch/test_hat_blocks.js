@@ -23,4 +23,14 @@ describe("pytch.hat_blocks module", () => {
                           (type === evt_type && data === evt_data)));
         }
     }
+
+    it("registers green-flag", () => {
+        let import_result = import_local_file("py/project/single_sprite.py");
+
+        let py_FlagClickCounter = py_getattr(import_result, "FlagClickCounter");
+
+        let note_click_evts = new EventsHandledBy(py_FlagClickCounter, "note_click");
+        assert.strictEqual(note_click_evts.n_events, 1);
+        assert.ok(note_click_evts.includes("green-flag", null));
+    });
 });
