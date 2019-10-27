@@ -3,8 +3,8 @@ class Actor:
 
 
 class Sprite(Actor):
-    pass
+    Costumes = []
 
 
 class Stage(Actor):
-    pass
+    Backdrops = []
