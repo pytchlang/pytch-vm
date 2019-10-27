@@ -137,7 +137,15 @@ var $builtinmodule = function (name) {
                 // TODO: Tidy up.
             } else {
                 // Python-land code invoked a syscall.
-                // TODO: Deal with syscalls.
+
+                let susp = susp_or_retval;
+                if (susp.data.type !== "Pytch")
+                    throw Error("cannot handle non-Pytch suspensions");
+
+                switch (susp.data.subtype) {
+                default:
+                    throw Error(`unknown Pytch syscall "${susp.data.subtype}"`);
+                }
             }
         }
     }
