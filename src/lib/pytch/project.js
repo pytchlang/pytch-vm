@@ -396,7 +396,8 @@ var $builtinmodule = function (name) {
         }
 
         async register_sprite_class(py_sprite_cls) {
-            this.actors.push(new PytchSprite(py_sprite_cls, this));
+            let sprite = await PytchSprite.async_create(py_sprite_cls, this);
+            this.actors.push(sprite);
         }
 
         on_green_flag_clicked() {
