@@ -3,3 +3,8 @@
 from .project import (
     Project,
 )
+
+from .actor import (
+    Sprite,
+    Stage,
+)
