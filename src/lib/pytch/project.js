@@ -144,6 +144,7 @@ var $builtinmodule = function (name) {
             };
             this.parent_project = parent_project;
             this.state = Thread.State.RUNNING;
+            this.sleeping_on = null;
         }
 
         is_running() {
