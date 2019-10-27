@@ -27,4 +27,10 @@ before(() => {
     });
 
     global.assert = require("assert");
+
+    global.py_getattr = (py_obj, js_attr_name) =>
+        Sk.builtin.getattr(py_obj, Sk.builtin.str(js_attr_name));
+
+    global.js_getattr = (py_obj, js_attr_name) =>
+        Sk.ffi.remapToJs(py_getattr(py_obj, js_attr_name));
 });
