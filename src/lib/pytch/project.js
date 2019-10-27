@@ -291,6 +291,12 @@ var $builtinmodule = function (name) {
             this.thread_groups.push(thread_group);
         }
 
+        thread_group_for_broadcast_receivers(js_message) {
+            let threads = map_concat(a => a.create_threads_for_broadcast(js_message),
+                                     this.actors);
+            return new ThreadGroup(threads);
+        }
+
         one_frame() {
             let new_thread_groups = map_concat(tg => tg.one_frame(),
                                                this.thread_groups);
