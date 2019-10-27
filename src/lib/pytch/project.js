@@ -3,6 +3,17 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Constants, convenience utilities
+
+    const s_dunder_name = Sk.builtin.str("__name__");
+
+    const name_of_py_class
+          = (py_cls =>
+             Sk.ffi.remapToJs(Sk.builtin.getattr(py_cls, s_dunder_name)));
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // PytchActor: An actor (Sprite or Stage) within the Project.  It holds (a
     // reference to) the Python-level class (which should be derived from
     // pytch.Sprite or pytch.Stage), together with a list of its live instances.
