@@ -179,6 +179,10 @@ var $builtinmodule = function (name) {
         get n_handlers() {
             return this.handlers.length;
         }
+
+        create_threads() {
+            return map_concat(h => h.create_threads(), this.handlers);
+        }
     }
 
 
