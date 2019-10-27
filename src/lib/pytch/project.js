@@ -245,6 +245,13 @@ var $builtinmodule = function (name) {
         // instance's "sleeping_on" property.
         AWAITING_THREAD_GROUP_COMPLETION: "awaiting-thread-group-completion",
 
+        // AWAITING_PASSAGE_OF_TIME: The thread will pause execution for the
+        // number of frames stored in the "sleeping_on" property.  If this
+        // number of frames is 1, the thread will resume at the next one_frame()
+        // call.  If it's 2, the thread will remain non-runnable for the next
+        // one_frame() call, and resume the one after that.  And so on.
+        AWAITING_PASSAGE_OF_TIME: "awaiting-passage-of-time",
+
         // ZOMBIE: The thread has terminated but has not yet been cleared from
         // the list of live threads.
         ZOMBIE: "zombie",
