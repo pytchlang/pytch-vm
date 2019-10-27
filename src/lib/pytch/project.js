@@ -225,8 +225,8 @@ var $builtinmodule = function (name) {
             return this.handlers.length;
         }
 
-        create_threads() {
-            return map_concat(h => h.create_threads(), this.handlers);
+        create_threads(parent_project) {
+            return map_concat(h => h.create_threads(parent_project), this.handlers);
         }
     }
 
