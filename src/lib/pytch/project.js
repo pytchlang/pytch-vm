@@ -146,6 +146,10 @@ var $builtinmodule = function (name) {
             this.state = Thread.State.RUNNING;
         }
 
+        is_zombie() {
+            return this.state == Thread.State.ZOMBIE;
+        }
+
         one_frame() {
             let susp_or_retval = this.skulpt_susp.resume();
 
