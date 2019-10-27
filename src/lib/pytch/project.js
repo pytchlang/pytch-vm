@@ -143,6 +143,11 @@ var $builtinmodule = function (name) {
                 resume: () => Sk.misceval.callsimOrSuspend(py_callable, py_arg)
             };
             this.parent_project = parent_project;
+            this.state = Thread.State.RUNNING;
+        }
+
+        is_zombie() {
+            return this.state == Thread.State.ZOMBIE;
         }
 
         one_frame() {
@@ -150,7 +155,8 @@ var $builtinmodule = function (name) {
 
             if (! susp_or_retval.$isSuspension) {
                 // Python-land code ran to completion; thread is finished.
-                // TODO: Tidy up.
+                this.skulpt_susp = null;
+                this.state = Thread.State.ZOMBIE;
                 return [];
             } else {
                 // Python-land code invoked a syscall.
@@ -186,6 +192,16 @@ var $builtinmodule = function (name) {
         }
     }
 
+    Thread.State = {
+        // RUNNING: The thread will be given a chance to run until either
+        // completion or its next Pytch syscall.
+        RUNNING: "running",
+
+        // ZOMBIE: The thread has terminated but has not yet been cleared from
+        // the list of live threads.
+        ZOMBIE: "zombie",
+    };
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
@@ -204,8 +220,12 @@ var $builtinmodule = function (name) {
 
         one_frame() {
             let new_thread_groups = map_concat(t => t.one_frame(), this.threads);
+
+            this.threads = this.threads.filter(t => (! t.is_zombie()));
+
             if (this.has_live_threads())
                 new_thread_groups.push(this);
+
             return new_thread_groups;
         }
     }
