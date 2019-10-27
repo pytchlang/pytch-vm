@@ -181,7 +181,8 @@ var $builtinmodule = function (name) {
         }
 
         one_frame() {
-            this.threads.forEach(t => t.one_frame());
+            let new_thread_groups = map_concat(t => t.one_frame(), this.threads);
+            return new_thread_groups;
         }
     }
 
