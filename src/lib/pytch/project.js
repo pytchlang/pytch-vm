@@ -29,6 +29,9 @@ var $builtinmodule = function (name) {
             let instance_0 = new PytchActorInstance(this, py_instance);
             py_instance.$pytchActorInstance = instance_0;
             this.instances = [instance_0];
+
+            this.event_handlers = {
+            };
         }
     }
 
