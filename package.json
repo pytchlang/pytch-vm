@@ -60,6 +60,7 @@
     "js-beautify": "^1.10.0",
     "jsdoc": "~3.5.5",
     "micro-strptime": "^0.2.3",
+    "mocha": "^6.2.0",
     "open": "^6.3.0",
     "readline-sync": "^1.4.9",
     "setimmediate": "^1.0.5",
