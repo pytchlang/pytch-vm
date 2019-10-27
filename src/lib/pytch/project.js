@@ -54,6 +54,9 @@ var $builtinmodule = function (name) {
             this.register_event_handlers();
         }
 
+        async async_init() {
+        }
+
         register_handler(event_descr, handler_py_func) {
             let [event_type, event_data] = event_descr;
             let handler = new EventHandler(this, handler_py_func);
@@ -113,6 +116,12 @@ var $builtinmodule = function (name) {
     }
 
     class PytchSprite extends PytchActor {
+        static async async_create(py_cls, parent_project) {
+            let sprite = new PytchSprite(py_cls, parent_project);
+            await sprite.async_init();
+            py_cls.$pytchActor = sprite;
+            return sprite;
+        }
     }
 
 
@@ -386,8 +395,9 @@ var $builtinmodule = function (name) {
             return this.actor_by_class_name(cls_name).instances[0];
         }
 
-        register_sprite_class(py_sprite_cls) {
-            this.actors.push(new PytchSprite(py_sprite_cls, this));
+        async register_sprite_class(py_sprite_cls) {
+            let sprite = await PytchSprite.async_create(py_sprite_cls, this);
+            this.actors.push(sprite);
         }
 
         on_green_flag_clicked() {
@@ -423,9 +433,9 @@ var $builtinmodule = function (name) {
         });
 
         $loc.register_sprite_class = new Sk.builtin.func(
-            (self, sprite_cls) => {
-                self.js_project.register_sprite_class(sprite_cls);
-            });
+            (self, sprite_cls) => (
+                Sk.misceval.promiseToSuspension(
+                    self.js_project.register_sprite_class(sprite_cls))));
     };
 
     mod.Project = Sk.misceval.buildClass(mod, project_cls, "Project", []);

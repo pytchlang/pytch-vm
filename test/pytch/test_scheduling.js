@@ -5,8 +5,8 @@
 // Scheduling: launching, running, blocking, etc., threads
 
 describe("scheduling", () => {
-    it("can launch thread on green-flag", () => {
-        let import_result = import_local_file("py/project/single_sprite.py");
+    it("can launch thread on green-flag", async () => {
+        let import_result = await import_local_file("py/project/single_sprite.py");
         let project = import_result.$d.project.js_project;
         let instance_0 = project.actors[0].instances[0];
 
@@ -40,8 +40,8 @@ describe("scheduling", () => {
         }
     }
 
-    it("can schedule threads on broadcast", () => {
-        let import_result = import_local_file("py/project/broadcast.py");
+    it("can schedule threads on broadcast", async () => {
+        let import_result = await import_local_file("py/project/broadcast.py");
         let project = import_result.$d.project.js_project;
         let actors = new BroadcastActors(project);
 
@@ -67,9 +67,9 @@ describe("scheduling", () => {
         assert.ok(actors.has_steps_and_events(2, 1));
     });
 
-    it("can pause threads on broadcast/wait", () => {
+    it("can pause threads on broadcast/wait", async () => {
         let import_result
-            = import_local_file("py/project/broadcast_and_wait.py");
+            = await import_local_file("py/project/broadcast_and_wait.py");
         let project = import_result.$d.project.js_project;
         let actors = new BroadcastActors(project);
 
@@ -106,9 +106,9 @@ describe("scheduling", () => {
         assert.ok(actors.has_steps_and_events(2, 2));
     });
 
-    it("can pause for a number of seconds", () => {
+    it("can pause for a number of seconds", async () => {
         let import_result
-            = import_local_file("py/project/wait_seconds.py");
+            = await import_local_file("py/project/wait_seconds.py");
         let project = import_result.$d.project.js_project;
 
         let alien = project.instance_0_by_class_name("Alien");
