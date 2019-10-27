@@ -186,6 +186,16 @@ var $builtinmodule = function (name) {
         }
     }
 
+    Thread.State = {
+        // RUNNING: The thread will be given a chance to run until either
+        // completion or its next Pytch syscall.
+        RUNNING: "running",
+
+        // ZOMBIE: The thread has terminated but has not yet been cleared from
+        // the list of live threads.
+        ZOMBIE: "zombie",
+    };
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
