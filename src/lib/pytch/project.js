@@ -82,6 +82,10 @@ var $builtinmodule = function (name) {
         push(handler) {
             this.handlers.push(handler);
         }
+
+        get n_handlers() {
+            return this.handlers.length;
+        }
     }
 
 
