@@ -38,6 +38,11 @@ var $builtinmodule = function (name) {
             this.centre_x = centre_x;
             this.centre_y = centre_y;
         }
+
+        static async async_create(url, centre_x, centre_y) {
+            let image = await Sk.pytch.async_load_image(url);
+            return new Appearance(image, centre_x, centre_y);
+        }
     }
 
 
