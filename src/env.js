@@ -154,6 +154,10 @@ Sk.configure = function (options) {
     Sk.killableFor = options["killableFor"] || false;
     Sk.asserts.assert(typeof Sk.killableFor === "boolean");
 
+    Sk.pytch = Object.assign({},
+                             Sk.default_pytch_environment,
+                             (options["pytch"] || {}));
+
     Sk.signals = typeof options["signals"] !== undefined ? options["signals"] : null;
     if (Sk.signals === true) {
         Sk.signals = {
