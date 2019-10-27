@@ -235,6 +235,10 @@ var $builtinmodule = function (name) {
             let thread_group = new ThreadGroup(threads);
             this.thread_groups.push(thread_group);
         }
+
+        one_frame() {
+            this.thread_groups.forEach(tg => tg.one_frame());
+        }
     }
 
 
