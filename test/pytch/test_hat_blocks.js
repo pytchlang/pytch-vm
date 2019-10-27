@@ -24,8 +24,8 @@ describe("pytch.hat_blocks module", () => {
         }
     }
 
-    it("registers green-flag", () => {
-        let import_result = import_local_file("py/project/single_sprite.py");
+    it("registers green-flag", async () => {
+        let import_result = await import_local_file("py/project/single_sprite.py");
 
         let py_FlagClickCounter = py_getattr(import_result, "FlagClickCounter");
 
@@ -34,8 +34,8 @@ describe("pytch.hat_blocks module", () => {
         assert.ok(note_click_evts.includes("green-flag", null));
     });
 
-    it("registers when-I-receive", () => {
-        let import_result = import_local_file("py/project/single_sprite.py");
+    it("registers when-I-receive", async () => {
+        let import_result = await import_local_file("py/project/single_sprite.py");
 
         let py_FlagClickCounter = py_getattr(import_result, "FlagClickCounter");
 

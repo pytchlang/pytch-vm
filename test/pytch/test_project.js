@@ -5,18 +5,18 @@
 // Module 'pytch.project'
 
 describe("pytch.project module", () => {
-    it("can be imported", () => {
-        let import_result = import_local_file("py/project/just_import.py");
+    it("can be imported", async () => {
+        let import_result = await import_local_file("py/project/just_import.py");
         assert.ok(import_result.$d.pytch_project);
     });
 
-    it("can create a Project", () => {
-        let import_result = import_local_file("py/project/create_Project.py");
+    it("can create a Project", async () => {
+        let import_result = await import_local_file("py/project/create_Project.py");
         assert.ok(import_result.$d.project);
     });
 
-    it("can register a Sprite class", () => {
-        let import_result = import_local_file("py/project/single_sprite.py");
+    it("can register a Sprite class", async () => {
+        let import_result = await import_local_file("py/project/single_sprite.py");
         let project = import_result.$d.project.js_project;
         assert.strictEqual(project.actors.length, 1);
 
@@ -34,25 +34,28 @@ describe("pytch.project module", () => {
                            import_result.$d.FlagClickCounter.note_click);
     });
 
-    describe("can look up Actors by name", () => {
-        const project = () => (
-            (import_local_file("py/project/bad_registrations.py")
-             .$d
-             .project
-             .js_project));
+    describe("can look up Actors by name", async () => {
+        const async_project = async () => {
+            let import_result
+                = await import_local_file("py/project/bad_registrations.py");
+            return import_result.$d.project.js_project;
+        }
 
-        it("can find unique Actor", () => {
-            let banana = project().actor_by_class_name("Banana");
+        it("can find unique Actor", async () => {
+            let project = await async_project();
+            let banana = project.actor_by_class_name("Banana");
             assert.strictEqual(js_getattr(banana.py_cls, "colour"), "yellow");
         });
 
-        it("rejects an unknown Actor", () => {
-            assert.throws(() => project().actor_by_class_name("Spaceship"),
+        it("rejects an unknown Actor", async () => {
+            let project = await async_project();
+            assert.throws(() => project.actor_by_class_name("Spaceship"),
                           /no PytchActors with name "Spaceship"/);
         });
 
-        it("rejects a duplicate Actor", () => {
-            assert.throws(() => project().actor_by_class_name("Alien"),
+        it("rejects a duplicate Actor", async () => {
+            let project = await async_project();
+            assert.throws(() => project.actor_by_class_name("Alien"),
                           /duplicate PytchActors with name "Alien"/);
         });
     });
