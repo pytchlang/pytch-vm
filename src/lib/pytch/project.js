@@ -186,6 +186,8 @@ var $builtinmodule = function (name) {
 
         one_frame() {
             let new_thread_groups = map_concat(t => t.one_frame(), this.threads);
+            if (this.has_live_threads())
+                new_thread_groups.push(this);
             return new_thread_groups;
         }
     }
