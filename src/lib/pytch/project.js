@@ -102,6 +102,12 @@ var $builtinmodule = function (name) {
         create_threads_for_green_flag() {
             return this.event_handlers.green_flag.create_threads(this.parent_project);
         }
+
+        create_threads_for_broadcast(js_message) {
+            let event_handler_group = (this.event_handlers.message[js_message]
+                                       || EventHandlerGroup.empty);
+            return event_handler_group.create_threads(this.parent_project);
+        }
     }
 
     class PytchSprite extends PytchActor {
