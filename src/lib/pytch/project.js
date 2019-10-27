@@ -46,6 +46,9 @@ var $builtinmodule = function (name) {
     // Javascript-level "Project" class
 
     class Project {
+        constructor() {
+            this.actors = [];
+        }
     }
 
 
