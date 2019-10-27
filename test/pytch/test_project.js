@@ -25,6 +25,13 @@ describe("pytch.project module", () => {
 
         let instance_0 = actor_0.instances[0];
         assert.strictEqual(instance_0.js_attr("n_clicks"), 0);
+
+        assert.equal(actor_0.event_handlers.green_flag.n_handlers, 1);
+        let green_flag_handler = actor_0.event_handlers.green_flag.handlers[0];
+
+        assert.strictEqual(green_flag_handler.pytch_actor, actor_0);
+        assert.strictEqual(green_flag_handler.py_func,
+                           import_result.$d.FlagClickCounter.note_click);
     });
 
     describe("can look up Actors by name", () => {
