@@ -131,7 +131,14 @@ var $builtinmodule = function (name) {
 
         one_frame() {
             let susp_or_retval = this.skulpt_susp.resume();
-            // TODO: Deal with syscalls.
+
+            if (! susp_or_retval.$isSuspension) {
+                // Python-land code ran to completion; thread is finished.
+                // TODO: Tidy up.
+            } else {
+                // Python-land code invoked a syscall.
+                // TODO: Deal with syscalls.
+            }
         }
     }
 
