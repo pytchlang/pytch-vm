@@ -8,3 +8,7 @@ from .actor import (
     Sprite,
     Stage,
 )
+
+from .hat_blocks import (
+    when_green_flag_clicked,
+)
