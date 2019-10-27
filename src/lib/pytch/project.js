@@ -143,6 +143,13 @@ var $builtinmodule = function (name) {
                     throw Error("cannot handle non-Pytch suspensions");
 
                 switch (susp.data.subtype) {
+                case "next-frame": {
+                    // The thread remains running; update suspension so we
+                    // continue running on the next frame.
+                    this.skulpt_susp = susp;
+                    break;
+                }
+
                 default:
                     throw Error(`unknown Pytch syscall "${susp.data.subtype}"`);
                 }
