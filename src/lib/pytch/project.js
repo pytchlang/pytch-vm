@@ -110,6 +110,22 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Thread: One particular thread of execution.  Creating a new Thread
+    // prepares to run the given Python callable with the single given argument.
+
+    class Thread {
+        constructor(py_callable, py_arg) {
+            // Fake a skulpt-suspension-like object so we can treat it the
+            // same as any other suspension in the scheduler.
+            this.skulpt_susp = {
+                resume: () => Sk.misceval.callsimOrSuspend(py_callable, py_arg)
+            };
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // EventHandler: A description of something which should happen in response
     // to some event, for example a green flag click, or the receipt of a
     // broadcast message.  Holds (a reference to) the PytchActor which will
