@@ -231,6 +231,15 @@ var $builtinmodule = function (name) {
                     return [new_thread_group];
                 }
 
+                case "wait-seconds": {
+                    // When it resumes, this thread will pick up here.
+                    this.skulpt_susp = susp;
+
+                    let js_n_seconds = susp.data.subtype_data;
+
+                    return [];
+                }
+
                 default:
                     throw Error(`unknown Pytch syscall "${susp.data.subtype}"`);
                 }
