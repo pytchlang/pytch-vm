@@ -100,7 +100,7 @@ var $builtinmodule = function (name) {
         }
 
         create_threads_for_green_flag() {
-            return this.event_handlers.green_flag.create_threads();
+            return this.event_handlers.green_flag.create_threads(this.parent_project);
         }
     }
 
