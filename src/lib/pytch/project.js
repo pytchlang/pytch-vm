@@ -167,6 +167,13 @@ var $builtinmodule = function (name) {
             }
         }
 
+        maybe_wake() {
+            if ((! this.is_running()) && this.should_wake()) {
+                this.state = Thread.State.RUNNING;
+                this.sleeping_on = null;
+            }
+        }
+
         one_frame() {
             let susp_or_retval = this.skulpt_susp.resume();
 
