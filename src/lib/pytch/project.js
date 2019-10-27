@@ -146,6 +146,10 @@ var $builtinmodule = function (name) {
         constructor(threads) {
             this.threads = threads;
         }
+
+        one_frame() {
+            this.threads.forEach(t => t.one_frame());
+        }
     }
 
 
