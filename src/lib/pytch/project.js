@@ -14,6 +14,11 @@ var $builtinmodule = function (name) {
     const js_hasattr = (py_obj, py_attr_name) => (
         (Sk.builtin.hasattr(py_obj, py_attr_name) === Sk.builtin.bool.true$));
 
+    const try_py_getattr = (py_obj, py_attr_name) => (
+        (js_hasattr(py_obj, py_attr_name)
+         ? [true, Sk.builtin.getattr(py_obj, py_attr_name)]
+         : [false, null]));
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
