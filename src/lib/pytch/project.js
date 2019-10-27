@@ -3,6 +3,22 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // PytchActor: An actor (Sprite or Stage) within the Project.  It holds (a
+    // reference to) the Python-level class (which should be derived from
+    // pytch.Sprite or pytch.Stage), together with a list of its live instances.
+    // There is always at least one live instance for a Sprite-derived actor;
+    // other instances can be created as a result of clone() operations.  For
+    // the Stage-derived actor, there is always exactly one instance.
+
+    class PytchActor {
+        constructor(py_cls) {
+            this.py_cls = py_cls;
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Javascript-level "Project" class
 
     class Project {
