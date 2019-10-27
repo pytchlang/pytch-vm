@@ -92,6 +92,7 @@ var $builtinmodule = function (name) {
         }
 
         async async_init() {
+            await this.async_load_appearances();
         }
 
         register_handler(event_descr, handler_py_func) {
