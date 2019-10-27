@@ -3,6 +3,17 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Constants, convenience utilities
+
+    const s_dunder_name = Sk.builtin.str("__name__");
+
+    const name_of_py_class
+          = (py_cls =>
+             Sk.ffi.remapToJs(Sk.builtin.getattr(py_cls, s_dunder_name)));
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // PytchActor: An actor (Sprite or Stage) within the Project.  It holds (a
     // reference to) the Python-level class (which should be derived from
     // pytch.Sprite or pytch.Stage), together with a list of its live instances.
@@ -48,6 +59,23 @@ var $builtinmodule = function (name) {
     class Project {
         constructor() {
             this.actors = [];
+        }
+
+        actor_by_class_name(cls_name) {
+            let actors_having_name
+                = this.actors.filter(s => name_of_py_class(s.py_cls) == cls_name);
+
+            if (actors_having_name.length > 1)
+                throw Error(`duplicate PytchActors with name "${cls_name}"`);
+
+            if (actors_having_name.length === 0)
+                throw Error(`no PytchActors with name "${cls_name}"`);
+
+            return actors_having_name[0];
+        }
+
+        instance_0_by_class_name(cls_name) {
+            return this.actor_by_class_name(cls_name).instances[0];
         }
 
         register_sprite_class(py_sprite_cls) {
