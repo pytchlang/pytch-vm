@@ -61,6 +61,19 @@ var $builtinmodule = function (name) {
             this.actors = [];
         }
 
+        actor_by_class_name(cls_name) {
+            let actors_having_name
+                = this.actors.filter(s => name_of_py_class(s.py_cls) == cls_name);
+
+            if (actors_having_name.length > 1)
+                throw Error(`duplicate PytchActors with name "${cls_name}"`);
+
+            if (actors_having_name.length === 0)
+                throw Error(`no PytchActors with name "${cls_name}"`);
+
+            return actors_having_name[0];
+        }
+
         register_sprite_class(py_sprite_cls) {
             this.actors.push(new PytchSprite(py_sprite_cls));
         }
