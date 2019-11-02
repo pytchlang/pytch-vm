@@ -19,6 +19,18 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // PytchActorInstance: One instance of a particular actor.
+
+    class PytchActorInstance {
+        constructor(actor, py_object) {
+            this.actor = actor;
+            this.py_object = py_object;
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Javascript-level "Project" class
 
     class Project {
