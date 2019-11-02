@@ -49,6 +49,7 @@ before(() => {
         "library/images/question-mark.png": [32, 32],
         "library/images/marching-alien.png": [60, 20],
         "library/images/firing-alien.png": [80, 30],
+        "library/images/ball.png": [16, 16],
     };
 
     class MockImage {
