@@ -247,6 +247,28 @@ var $builtinmodule = function (name) {
         get render_y() { return js_getattr(this.py_object, s_y); }
         get render_size() { return js_getattr(this.py_object, s_size); }
         get render_appearance() { return js_getattr(this.py_object, s_appearance); }
+
+        rendering_instructions() {
+            if (! this.render_shown)
+                return [];
+
+            let size = this.render_size;
+            let appearance_name = this.render_appearance;
+            let appearance = this.actor.appearance_from_name(appearance_name);
+
+            // The 'centre' of the image must end up at Stage coordinates
+            // (this.render_x, this.render_y).  The strange arithmetic here is
+            // because the centre-(x, y) coords of the image are most naturally
+            // expressed in the normal image frame, i.e., (0, 0) is at the top
+            // left, x increases rightwards, and y increases downwards.  We must
+            // remap this into the Stage frame, where y increases upwards.
+            //
+            return [new RenderImage(this.render_x - size * appearance.centre_x,
+                                    this.render_y + size * appearance.centre_y,
+                                    size,
+                                    appearance.image,
+                                    appearance_name)];
+        }
     }
 
 
