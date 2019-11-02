@@ -99,6 +99,11 @@ var $builtinmodule = function (name) {
             await this.async_load_appearances();
         }
 
+        appearance_from_name(appearance_name) {
+            let appearance = this._appearance_from_name[appearance_name];
+            return appearance;
+        }
+
         register_handler(event_descr, handler_py_func) {
             let [event_type, event_data] = event_descr;
             let handler = new EventHandler(this, handler_py_func);
