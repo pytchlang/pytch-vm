@@ -104,6 +104,10 @@ var $builtinmodule = function (name) {
             return appearance;
         }
 
+        get n_appearances() {
+            return this._appearances.length;
+        }
+
         register_handler(event_descr, handler_py_func) {
             let [event_type, event_data] = event_descr;
             let handler = new EventHandler(this, handler_py_func);
