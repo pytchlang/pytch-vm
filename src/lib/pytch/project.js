@@ -288,6 +288,22 @@ var $builtinmodule = function (name) {
                                     appearance.image,
                                     appearance_name)];
         }
+
+        bounding_box() {
+            let size = this.render_size;
+            let appearance_name = this.render_appearance;
+            let appearance = this.actor.appearance_from_name(appearance_name);
+
+            // Annoying mixture of addition and subtraction, and care needed
+            // with respect to which is min and which is max, to account for the
+            // different coordinate systems of appearance-centre vs stage.
+            let x_min = this.render_x - size * appearance.centre_x;
+            let y_max = this.render_y + size * appearance.centre_y;
+            let x_max = x_min + size * appearance.image.width;
+            let y_min = y_max - size * appearance.image.height;
+
+            return new BoundingBox(x_min, x_max, y_min, y_max);
+        }
     }
 
 
