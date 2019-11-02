@@ -11,6 +11,11 @@ var $builtinmodule = function (name) {
     const s_im_func = Sk.builtin.str("im_func");
     const s_pytch_handler_for = Sk.builtin.str("_pytch_handler_for");
     const s_Costumes = Sk.builtin.str("Costumes");
+    const s_shown = Sk.builtin.str("_shown");
+    const s_x = Sk.builtin.str("_x");
+    const s_y = Sk.builtin.str("_y");
+    const s_size = Sk.builtin.str("_size");
+    const s_appearance = Sk.builtin.str("_appearance");
 
     const name_of_py_class
           = (py_cls =>
