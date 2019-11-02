@@ -58,4 +58,20 @@ before(() => {
             this.height = size[1];
         }
     }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // Specialised testing predicates.
+
+    global.assert_Appearance_equal = (got_appearance,
+                                      exp_img_url, exp_img_wd, exp_img_ht,
+                                      exp_centre_x,
+                                      exp_centre_y) => {
+        assert.equal(got_appearance.image.url, exp_img_url);
+        assert.equal(got_appearance.image.width, exp_img_wd);
+        assert.equal(got_appearance.image.height, exp_img_ht);
+        assert.strictEqual(got_appearance.centre_x, exp_centre_x)
+        assert.strictEqual(got_appearance.centre_y, exp_centre_y);
+    };
 });
