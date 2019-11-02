@@ -21,4 +21,14 @@ describe("Costume handling", () => {
                                 "library/images/firing-alien.png",
                                 80, 30, 40, 15);
     });
+
+    it("rejects unknown costume", async () => {
+        let import_result
+            = await import_local_file("py/project/some_costumes.py");
+        let project = import_result.$d.project.js_project;
+        let alien = project.actor_by_class_name("Alien");
+
+        assert.throws(() => alien.appearance_from_name("banana"),
+                      /could not find Costume "banana" in class "Alien"/);
+    });
 });
