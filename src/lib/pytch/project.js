@@ -10,6 +10,7 @@ var $builtinmodule = function (name) {
     const s_dunder_name = Sk.builtin.str("__name__");
     const s_im_func = Sk.builtin.str("im_func");
     const s_pytch_handler_for = Sk.builtin.str("_pytch_handler_for");
+    const s_Costumes = Sk.builtin.str("Costumes");
 
     const name_of_py_class
           = (py_cls =>
@@ -23,8 +24,30 @@ var $builtinmodule = function (name) {
          ? [true, Sk.builtin.getattr(py_obj, py_attr_name)]
          : [false, null]));
 
+    const js_getattr = (py_obj, py_attr_name) => (
+        Sk.ffi.remapToJs(Sk.builtin.getattr(py_obj, py_attr_name)));
+
     const map_concat
           = (fun, xs) => Array.prototype.concat.apply([], xs.map(fun));
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // Appearance: A Sprite has Costumes; a Stage has Backdrops.  Refer to one
+    // of either of these things as an "Appearance".
+
+    class Appearance {
+        constructor(image, centre_x, centre_y) {
+            this.image = image;
+            this.centre_x = centre_x;
+            this.centre_y = centre_y;
+        }
+
+        static async async_create(url, centre_x, centre_y) {
+            let image = await Sk.pytch.async_load_image(url);
+            return new Appearance(image, centre_x, centre_y);
+        }
+    }
 
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -54,7 +77,22 @@ var $builtinmodule = function (name) {
             this.register_event_handlers();
         }
 
+        async async_load_appearances() {
+            let attr_name = this.appearances_attr_name;
+            let appearance_descriptors = js_getattr(this.py_cls, attr_name);
+
+            let async_appearances = appearance_descriptors.map(async d => {
+                let [url, cx, cy] = [d[1], d[2], d[3]];
+                let appearance = await Appearance.async_create(url, cx, cy);
+                return [d[0], appearance];
+            });
+
+            let appearances = await Promise.all(async_appearances);
+            this.appearances = appearances;
+        }
+
         async async_init() {
+            await this.async_load_appearances();
         }
 
         register_handler(event_descr, handler_py_func) {
@@ -121,6 +159,10 @@ var $builtinmodule = function (name) {
             await sprite.async_init();
             py_cls.$pytchActor = sprite;
             return sprite;
+        }
+
+        get appearances_attr_name() {
+            return s_Costumes;
         }
     }
 
