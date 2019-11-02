@@ -13,6 +13,10 @@ var $builtinmodule = function (name) {
     class PytchActor {
         constructor(py_cls) {
             this.py_cls = py_cls;
+
+            let py_instance = Sk.misceval.callsim(py_cls);
+            let instance_0 = new PytchActorInstance(this, py_instance);
+            this.instances = [instance_0];
         }
     }
 
