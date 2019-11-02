@@ -240,6 +240,13 @@ var $builtinmodule = function (name) {
         js_attr(js_attr_name) {
             return js_getattr(this.py_object, Sk.builtin.str(js_attr_name));
         }
+
+        // Special-case these; they might be performance-sensitive.
+        get render_shown() { return js_getattr(this.py_object, s_shown); }
+        get render_x() { return js_getattr(this.py_object, s_x); }
+        get render_y() { return js_getattr(this.py_object, s_y); }
+        get render_size() { return js_getattr(this.py_object, s_size); }
+        get render_appearance() { return js_getattr(this.py_object, s_appearance); }
     }
 
 
