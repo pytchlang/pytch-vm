@@ -3,7 +3,51 @@ class Actor:
 
 
 class Sprite(Actor):
-    Costumes = []
+    Costumes = [
+        ('question-mark',
+         'library/images/question-mark.png', 16, 16),
+    ]
+
+    def __init__(self):
+        self._x = 0
+        self._y = 0
+        self._size = 1.0
+        self._shown = False
+        self._appearance = 'question-mark';
+
+    def go_to_xy(self, x, y):
+        self._x = x
+        self._y = y
+
+    def get_x(self):
+        return self._x
+
+    def set_x(self, x):
+        self._x = x
+
+    def change_x(self, dx):
+        self._x += dx
+
+    def get_y(self):
+        return self._y
+
+    def set_y(self, y):
+        self._y = y
+
+    def change_y(self, dy):
+        self._y += dy
+
+    def set_size(self, size):
+        self._size = size
+
+    def show(self):
+        self._shown = True
+
+    def hide(self):
+        self._shown = False
+
+    def switch_costume(self, costume_name):
+        self._appearance = costume_name
 
 
 class Stage(Actor):

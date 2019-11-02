@@ -46,6 +46,7 @@ before(() => {
     // properties.  Some of the images used in tests won't truly exist.
 
     const image_size_from_url = {
+        "library/images/question-mark.png": [32, 32],
         "library/images/marching-alien.png": [60, 20],
         "library/images/firing-alien.png": [80, 30],
     };
