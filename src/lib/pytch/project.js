@@ -88,11 +88,33 @@ var $builtinmodule = function (name) {
             });
 
             let appearances = await Promise.all(async_appearances);
-            this.appearances = appearances;
+            this._appearances = appearances;
+
+            this._appearance_from_name = {};
+            for (let [nm, app] of appearances)
+                this._appearance_from_name[nm] = app;
         }
 
         async async_init() {
             await this.async_load_appearances();
+        }
+
+        appearance_from_name(appearance_name) {
+            let appearance = this._appearance_from_name[appearance_name];
+
+            if (typeof appearance == "undefined") {
+                let cls_name = name_of_py_class(this.py_cls);
+                let kind_name = this.appearance_single_name;
+
+                throw Error(`could not find ${kind_name} "${appearance_name}"`
+                            + ` in class "${cls_name}"`);
+            }
+
+            return appearance;
+        }
+
+        get n_appearances() {
+            return this._appearances.length;
         }
 
         register_handler(event_descr, handler_py_func) {
@@ -163,6 +185,10 @@ var $builtinmodule = function (name) {
 
         get appearances_attr_name() {
             return s_Costumes;
+        }
+
+        get appearance_single_name() {
+            return "Costume";
         }
     }
 
