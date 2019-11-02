@@ -9,6 +9,7 @@ from pytch import (
 
 class FlagClickCounter(Sprite):
     def __init__(self):
+        Sprite.__init__(self)
         self.n_clicks = 0
 
     @when_green_flag_clicked

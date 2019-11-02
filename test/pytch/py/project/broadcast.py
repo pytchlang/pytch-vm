@@ -9,6 +9,7 @@ from pytch import (
 
 class Sender(Sprite):
     def __init__(self):
+        Sprite.__init__(self)
         self.n_steps = 0
 
     @when_green_flag_clicked
@@ -20,6 +21,7 @@ class Sender(Sprite):
 
 class Receiver(Sprite):
     def __init__(self):
+        Sprite.__init__(self)
         self.n_events = 0
 
     @when_I_receive('something-happened')
