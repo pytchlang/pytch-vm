@@ -11,6 +11,11 @@ var $builtinmodule = function (name) {
     const s_im_func = Sk.builtin.str("im_func");
     const s_pytch_handler_for = Sk.builtin.str("_pytch_handler_for");
     const s_Costumes = Sk.builtin.str("Costumes");
+    const s_shown = Sk.builtin.str("_shown");
+    const s_x = Sk.builtin.str("_x");
+    const s_y = Sk.builtin.str("_y");
+    const s_size = Sk.builtin.str("_size");
+    const s_appearance = Sk.builtin.str("_appearance");
 
     const name_of_py_class
           = (py_cls =>
@@ -46,6 +51,35 @@ var $builtinmodule = function (name) {
         static async async_create(url, centre_x, centre_y) {
             let image = await Sk.pytch.async_load_image(url);
             return new Appearance(image, centre_x, centre_y);
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // Rendering instructions.  To ease testing, there is no interaction here
+    // with an actual canvas.  Instead, the project has a method which provides
+    // a list of a list of rendering instructions.  These will in general be of
+    // various types, but for now the only one is 'render this image here'.
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // RenderImage: A request that a particular image be drawn at a particular
+    // location at a particular scale.  The 'location' is that of the top-left
+    // corner.  The 'image label' is ignored in real rendering but is useful for
+    // testing.
+    //
+    // (In due course, 'at a particular angle of rotation' will be added here.)
+
+    class RenderImage {
+        constructor(x, y, scale, image, image_label) {
+            this.kind = "RenderImage";
+            this.x = x;
+            this.y = y;
+            this.scale = scale;
+            this.image = image;
+            this.image_label = image_label;
         }
     }
 
@@ -173,6 +207,11 @@ var $builtinmodule = function (name) {
                                        || EventHandlerGroup.empty);
             return event_handler_group.create_threads(this.parent_project);
         }
+
+        rendering_instructions() {
+            return map_concat(i => i.rendering_instructions(),
+                              this.instances);
+        }
     }
 
     class PytchSprite extends PytchActor {
@@ -205,6 +244,35 @@ var $builtinmodule = function (name) {
 
         js_attr(js_attr_name) {
             return js_getattr(this.py_object, Sk.builtin.str(js_attr_name));
+        }
+
+        // Special-case these; they might be performance-sensitive.
+        get render_shown() { return js_getattr(this.py_object, s_shown); }
+        get render_x() { return js_getattr(this.py_object, s_x); }
+        get render_y() { return js_getattr(this.py_object, s_y); }
+        get render_size() { return js_getattr(this.py_object, s_size); }
+        get render_appearance() { return js_getattr(this.py_object, s_appearance); }
+
+        rendering_instructions() {
+            if (! this.render_shown)
+                return [];
+
+            let size = this.render_size;
+            let appearance_name = this.render_appearance;
+            let appearance = this.actor.appearance_from_name(appearance_name);
+
+            // The 'centre' of the image must end up at Stage coordinates
+            // (this.render_x, this.render_y).  The strange arithmetic here is
+            // because the centre-(x, y) coords of the image are most naturally
+            // expressed in the normal image frame, i.e., (0, 0) is at the top
+            // left, x increases rightwards, and y increases downwards.  We must
+            // remap this into the Stage frame, where y increases upwards.
+            //
+            return [new RenderImage(this.render_x - size * appearance.centre_x,
+                                    this.render_y + size * appearance.centre_y,
+                                    size,
+                                    appearance.image,
+                                    appearance_name)];
         }
     }
 
@@ -487,6 +555,10 @@ var $builtinmodule = function (name) {
                                                this.thread_groups);
 
             this.thread_groups = new_thread_groups;
+        }
+
+        rendering_instructions() {
+            return map_concat(a => a.rendering_instructions(), this.actors);
         }
     }
 
