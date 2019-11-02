@@ -31,6 +31,10 @@ var $builtinmodule = function (name) {
             this.actor = actor;
             this.py_object = py_object;
         }
+
+        js_attr(js_attr_name) {
+            return js_getattr(this.py_object, Sk.builtin.str(js_attr_name));
+        }
     }
 
 
