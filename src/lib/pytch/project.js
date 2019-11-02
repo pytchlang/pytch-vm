@@ -207,6 +207,11 @@ var $builtinmodule = function (name) {
                                        || EventHandlerGroup.empty);
             return event_handler_group.create_threads(this.parent_project);
         }
+
+        rendering_instructions() {
+            return map_concat(i => i.rendering_instructions(),
+                              this.instances);
+        }
     }
 
     class PytchSprite extends PytchActor {
