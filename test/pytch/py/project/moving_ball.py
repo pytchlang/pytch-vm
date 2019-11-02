@@ -18,6 +18,8 @@ class Ball(Sprite):
     @when_green_flag_clicked
     def move(self):
         self.change_x(50)
+        pytch.wait_seconds(0.5)
+        self.change_x(60)
 
 
 project = Project()
