@@ -76,4 +76,44 @@ before(() => {
         assert.strictEqual(got_appearance.centre_x, exp_centre_x)
         assert.strictEqual(got_appearance.centre_y, exp_centre_y);
     };
+
+    global.assert_renders_as = (label,
+                                project,
+                                exp_render_instrns) => {
+        let got_render_instrns = project.rendering_instructions();
+
+        let exp_n_instrns = exp_render_instrns.length;
+        let got_n_instrns = got_render_instrns.length;
+        assert.strictEqual(got_n_instrns, exp_n_instrns,
+                           `for ${label}, got ${got_n_instrns} rendering`
+                           + ` instruction/s but expected ${exp_n_instrns}`);
+
+        got_render_instrns.forEach((got_instr, idx) => {
+            let exp_instr = exp_render_instrns[idx];
+
+            assert.strictEqual(got_instr.kind, exp_instr[0],
+                               `at index ${idx} of ${label}, got instruction`
+                               + ` of kind "${got_instr.kind}" but expected`
+                               + ` kind "${exp_instr[0]}"`);
+
+            switch(got_instr.kind) {
+            case "RenderImage":
+                let pfx = `in RenderImage at index ${idx} of ${label}`;
+                assert.ok(((got_instr.x == exp_instr[1])
+                           && (got_instr.y == exp_instr[2])),
+                          `${pfx}, got coords (${got_instr.x}, ${got_instr.y})`
+                          + ` but expected (${exp_instr[1]}, ${exp_instr[2]})`);
+                assert.ok(got_instr.scale == exp_instr[3],
+                          `${pfx}, got scale ${got_instr.scale}`
+                          + ` but expected ${exp_instr[3]}`);
+                assert.ok(got_instr.image_label == exp_instr[4],
+                          `${pfx}, got image-label "${got_instr.image_label}"`
+                          + ` but expected "${exp_instr[4]}"`);
+                break;
+            default:
+                assert.ok(null,
+                          `unknown instruction kind "${got_instr.kind}"`);
+            }
+        });
+    };
 });
