@@ -101,6 +101,15 @@ var $builtinmodule = function (name) {
 
         appearance_from_name(appearance_name) {
             let appearance = this._appearance_from_name[appearance_name];
+
+            if (typeof appearance == "undefined") {
+                let cls_name = name_of_py_class(this.py_cls);
+                let kind_name = this.appearance_single_name;
+
+                throw Error(`could not find ${kind_name} "${appearance_name}"`
+                            + ` in class "${cls_name}"`);
+            }
+
             return appearance;
         }
 
