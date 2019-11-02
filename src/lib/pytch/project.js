@@ -177,6 +177,10 @@ var $builtinmodule = function (name) {
         get appearances_attr_name() {
             return s_Costumes;
         }
+
+        get appearance_single_name() {
+            return "Costume";
+        }
     }
 
 
