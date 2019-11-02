@@ -24,6 +24,22 @@ describe("moving ball example", () => {
                           project,
                           [["RenderImage", 142, 58, 1, "yellow-ball"]]);
 
+        // For 30 frames (the half-second sleep), it should not
+        // move.  We have already done one of those 30, so for the
+        // next 29 frames it should not move.
+        for (let i = 0; i < 29; ++i) {
+            project.one_frame();
+            assert_renders_as(`frame-${i}`,
+                              project,
+                              [["RenderImage", 142, 58, 1, "yellow-ball"]]);
+        }
+
+        // And now it should move another 60.
+        project.one_frame();
+        assert_renders_as("frame-29",
+                          project,
+                          [["RenderImage", 202, 58, 1, "yellow-ball"]]);
+
         // Everything should have finished.
         assert.strictEqual(project.thread_groups.length, 0);
     });
