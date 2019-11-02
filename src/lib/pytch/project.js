@@ -86,6 +86,20 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // BoundingBox: A rectangle which tightly encloses an image.
+
+    class BoundingBox {
+        constructor(x_min, x_max, y_min, y_max) {
+            this.x_min = x_min;
+            this.x_max = x_max;
+            this.y_min = y_min;
+            this.y_max = y_max;
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // PytchActor: An actor (Sprite or Stage) within the Project.  It holds (a
     // reference to) the Python-level class (which should be derived from
     // pytch.Sprite or pytch.Stage), together with a list of its live instances.
