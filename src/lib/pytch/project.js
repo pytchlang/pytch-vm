@@ -52,6 +52,35 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Rendering instructions.  To ease testing, there is no interaction here
+    // with an actual canvas.  Instead, the project has a method which provides
+    // a list of a list of rendering instructions.  These will in general be of
+    // various types, but for now the only one is 'render this image here'.
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // RenderImage: A request that a particular image be drawn at a particular
+    // location at a particular scale.  The 'location' is that of the top-left
+    // corner.  The 'image label' is ignored in real rendering but is useful for
+    // testing.
+    //
+    // (In due course, 'at a particular angle of rotation' will be added here.)
+
+    class RenderImage {
+        constructor(x, y, scale, image, image_label) {
+            this.kind = "RenderImage";
+            this.x = x;
+            this.y = y;
+            this.scale = scale;
+            this.image = image;
+            this.image_label = image_label;
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // PytchActor: An actor (Sprite or Stage) within the Project.  It holds (a
     // reference to) the Python-level class (which should be derived from
     // pytch.Sprite or pytch.Stage), together with a list of its live instances.
