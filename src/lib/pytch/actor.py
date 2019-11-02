@@ -3,7 +3,10 @@ class Actor:
 
 
 class Sprite(Actor):
-    Costumes = []
+    Costumes = [
+        ('question-mark',
+         'library/images/question-mark.png', 16, 16),
+    ]
 
 
 class Stage(Actor):
