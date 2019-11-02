@@ -556,6 +556,10 @@ var $builtinmodule = function (name) {
 
             this.thread_groups = new_thread_groups;
         }
+
+        rendering_instructions() {
+            return map_concat(a => a.rendering_instructions(), this.actors);
+        }
     }
 
 
