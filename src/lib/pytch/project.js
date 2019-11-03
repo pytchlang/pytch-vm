@@ -86,6 +86,27 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // BoundingBox: A rectangle which tightly encloses an image.
+
+    class BoundingBox {
+        constructor(x_min, x_max, y_min, y_max) {
+            this.x_min = x_min;
+            this.x_max = x_max;
+            this.y_min = y_min;
+            this.y_max = y_max;
+        }
+
+        overlaps_with(other_bbox) {
+            return ((this.x_min < other_bbox.x_max)
+                    && (other_bbox.x_min < this.x_max)
+                    && (this.y_min < other_bbox.y_max)
+                    && (other_bbox.y_min < this.y_max));
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // PytchActor: An actor (Sprite or Stage) within the Project.  It holds (a
     // reference to) the Python-level class (which should be derived from
     // pytch.Sprite or pytch.Stage), together with a list of its live instances.
@@ -273,6 +294,22 @@ var $builtinmodule = function (name) {
                                     size,
                                     appearance.image,
                                     appearance_name)];
+        }
+
+        bounding_box() {
+            let size = this.render_size;
+            let appearance_name = this.render_appearance;
+            let appearance = this.actor.appearance_from_name(appearance_name);
+
+            // Annoying mixture of addition and subtraction, and care needed
+            // with respect to which is min and which is max, to account for the
+            // different coordinate systems of appearance-centre vs stage.
+            let x_min = this.render_x - size * appearance.centre_x;
+            let y_max = this.render_y + size * appearance.centre_y;
+            let x_max = x_min + size * appearance.image.width;
+            let y_min = y_max - size * appearance.image.height;
+
+            return new BoundingBox(x_min, x_max, y_min, y_max);
         }
     }
 

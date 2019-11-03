@@ -50,6 +50,8 @@ before(() => {
         "library/images/marching-alien.png": [60, 20],
         "library/images/firing-alien.png": [80, 30],
         "library/images/ball.png": [16, 16],
+        "library/images/square-80x80.png": [80, 80],
+        "library/images/rectangle-60x30.png": [60, 30],
     };
 
     class MockImage {
@@ -115,5 +117,23 @@ before(() => {
                           `unknown instruction kind "${got_instr.kind}"`);
             }
         });
+    };
+
+    global.assert_has_bbox = (label, actor_instance,
+                              exp_xmin, exp_xmax,
+                              exp_ymin, exp_ymax) => {
+        let got_bbox = actor_instance.bounding_box();
+
+        const assert_prop_eq = ((slot, exp_val) => {
+            let got_val = got_bbox[slot];
+            let msg = (`got ${got_val} for ${slot} of ${label}`
+                       + ` but expected ${exp_val}`);
+            assert.equal(got_val, exp_val, msg);
+        });
+
+        assert_prop_eq("x_min", exp_xmin);
+        assert_prop_eq("x_max", exp_xmax);
+        assert_prop_eq("y_min", exp_ymin);
+        assert_prop_eq("y_max", exp_ymax);
     };
 });
