@@ -83,4 +83,53 @@ describe("collision detection", () => {
                                "for Square having y of " + sq_y);
         }
     });
+
+    it("can detect sprite touching any-of-class depending on their locations", async () => {
+        let import_result = await import_local_file("py/project/bounding_boxes.py");
+        let project = import_result.$d.project.js_project;
+
+        let py_square_cls = project.actor_by_class_name("Square").py_cls;
+        let py_square = project.instance_0_by_class_name("Square").py_object;
+        let py_rectangle_cls = project.actor_by_class_name("Rectangle").py_cls;
+        let py_rectangle = project.instance_0_by_class_name("Rectangle").py_object;
+
+        // Move the Square around and test for hits against stationary
+        // Rectangle.  Keeping Square's y constant, it should touch the
+        // Rectangle if x is (exclusively) between -100 and 40.
+        //
+        for (let sq_x = -120; sq_x < 60; sq_x += 1) {
+            call_method(py_square, "set_x", [sq_x]);
+
+            let got_touch_sr = project.instance_is_touching_any_of(py_square,
+                                                                   py_rectangle_cls);
+            let got_touch_rs = project.instance_is_touching_any_of(py_rectangle,
+                                                                   py_square_cls);
+            let exp_touch = (sq_x > -100) && (sq_x < 40);
+
+            assert.strictEqual(got_touch_sr, exp_touch,
+                               "for Square-vs-any-Rect having x of " + sq_x);
+            assert.strictEqual(got_touch_rs, exp_touch,
+                               "for Rect-vs-any-Square having x of " + sq_x);
+        }
+
+        // Keeping Square's x constant at a level where it touches
+        // Rectangle, the Square should touch the Rectangle if the
+        // Square's y is (exclusively) between -140 and -30.
+        //
+        call_method(py_square, "set_x", [0]);
+        for (let sq_y = -160; sq_y < 10; sq_y += 1) {
+            call_method(py_square, "set_y", [sq_y]);
+
+            let got_touch_sr = project.instance_is_touching_any_of(py_square,
+                                                                   py_rectangle_cls);
+            let got_touch_rs = project.instance_is_touching_any_of(py_rectangle,
+                                                                   py_square_cls);
+            let exp_touch = (sq_y > -140) && (sq_y < -30);
+
+            assert.strictEqual(got_touch_sr, exp_touch,
+                               "for Square having y of " + sq_y);
+            assert.strictEqual(got_touch_rs, exp_touch,
+                               "for Square having y of " + sq_y);
+        }
+    });
 });
