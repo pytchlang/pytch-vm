@@ -38,6 +38,12 @@ before(() => {
     global.js_getattr = (py_obj, js_attr_name) =>
         Sk.ffi.remapToJs(py_getattr(py_obj, js_attr_name));
 
+    global.call_method = (py_obj, js_methodname, js_args) => {
+        let fun = py_getattr(py_obj, js_methodname);
+        let py_args = js_args.map(Sk.ffi.remapToPy);
+        let py_result = Sk.misceval.callsimArray(fun, py_args);
+        return Sk.ffi.remapToJs(py_result);
+    };
 
     ////////////////////////////////////////////////////////////////////////////////
     //

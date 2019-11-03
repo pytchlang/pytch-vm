@@ -312,6 +312,18 @@ var $builtinmodule = function (name) {
 
             return new BoundingBox(x_min, x_max, y_min, y_max);
         }
+
+        is_touching(other) {
+            const both_shown = (this.render_shown && other.render_shown);
+
+            if (! both_shown)
+                return false;
+
+            let bbox_0 = this.bounding_box();
+            let bbox_1 = other.bounding_box();
+
+            return bbox_0.overlaps_with(bbox_1);
+        }
     }
 
 
@@ -574,6 +586,21 @@ var $builtinmodule = function (name) {
             this.actors.push(sprite);
         }
 
+        sprite_instances_are_touching(py_sprite_instance_0, py_sprite_instance_1) {
+            let actor_instance_0 = py_sprite_instance_0.$pytchActorInstance;
+            let actor_instance_1 = py_sprite_instance_1.$pytchActorInstance;
+
+            // TODO: Proper pixel-wise collision detection.
+            return actor_instance_0.is_touching(actor_instance_1);
+        }
+
+        instance_is_touching_any_of(py_sprite_instance, py_other_sprite_class) {
+            let instance = py_sprite_instance.$pytchActorInstance;
+            let other_sprite = py_other_sprite_class.$pytchActor;
+            return other_sprite.instances.some(
+                other_instance => instance.is_touching(other_instance));
+        }
+
         on_green_flag_clicked() {
             let threads = map_concat(a => a.create_threads_for_green_flag(), this.actors);
             let thread_group = new ThreadGroup(threads);
@@ -609,6 +636,13 @@ var $builtinmodule = function (name) {
         $loc.__init__ = new Sk.builtin.func(self => {
             self.js_project = new Project();
         });
+
+        $loc.instance_is_touching_any_of = new Sk.builtin.func(
+            (self, instance, target_cls) => (
+                (self.js_project.instance_is_touching_any_of(instance,
+                                                             target_cls)
+                 ? Sk.builtin.bool.true$
+                 : Sk.builtin.bool.false$)));
 
         $loc.register_sprite_class = new Sk.builtin.func((self, sprite_cls) => {
             Sk.builtin.setattr(sprite_cls, s_pytch_parent_project, self);
