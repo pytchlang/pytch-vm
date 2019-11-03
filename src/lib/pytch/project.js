@@ -312,6 +312,18 @@ var $builtinmodule = function (name) {
 
             return new BoundingBox(x_min, x_max, y_min, y_max);
         }
+
+        is_touching(other) {
+            const both_shown = (this.render_shown && other.render_shown);
+
+            if (! both_shown)
+                return false;
+
+            let bbox_0 = this.bounding_box();
+            let bbox_1 = other.bounding_box();
+
+            return bbox_0.overlaps_with(bbox_1);
+        }
     }
 
 
