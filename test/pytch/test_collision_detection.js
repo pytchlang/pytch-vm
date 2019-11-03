@@ -45,6 +45,26 @@ describe("collision detection", () => {
         });
     });
 
+    // Hopefully this abstraction isn't worse than the duplication.  For a
+    // test we need to know what method to call, and which args to pass out
+    // of the candidate list of [square-class, square-instance,
+    // rectangle-class, rectangle-instance].  Gather these into specs:
+    //
+    const touch_test_specs = [
+        { tag: "two touching sprites",
+          method_name: "sprite_instances_are_touching",
+          get_arg0: (sc, si, rc, ri) => si,
+          get_arg1: (sc, si, rc, ri) => ri },
+        { tag: "Square touching any Rectangle",
+          method_name: "instance_is_touching_any_of",
+          get_arg0: (sc, si, rc, ri) => si,
+          get_arg1: (sc, si, rc, ri) => rc },
+        { tag: "Rectangle touching any Square",
+          method_name: "instance_is_touching_any_of",
+          get_arg0: (sc, si, rc, ri) => ri,
+          get_arg1: (sc, si, rc, ri) => sc },
+    ];
+
     it("can detect two touching sprites depending on their locations", async () => {
         let import_result = await import_local_file("py/project/bounding_boxes.py");
         let project = import_result.$d.project.js_project;
