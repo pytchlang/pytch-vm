@@ -130,6 +130,8 @@ var $builtinmodule = function (name) {
                 message: {},
             };
 
+            this.clone_handlers = [];
+
             this.register_event_handlers();
         }
 
@@ -187,6 +189,10 @@ var $builtinmodule = function (name) {
                 if (! msg_handlers.hasOwnProperty(event_data))
                     msg_handlers[event_data] = new EventHandlerGroup();
                 msg_handlers[event_data].push(handler);
+                break;
+
+            case "clone":
+                this.clone_handlers.push(handler_py_func);
                 break;
 
             default:
