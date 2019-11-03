@@ -8,6 +8,7 @@ var $builtinmodule = function (name) {
     const FRAMES_PER_SECOND = 60;
 
     const s_dunder_name = Sk.builtin.str("__name__");
+    const s_dunder_class = Sk.builtin.str("__class__");
     const s_im_func = Sk.builtin.str("im_func");
     const s_pytch_handler_for = Sk.builtin.str("_pytch_handler_for");
     const s_Costumes = Sk.builtin.str("Costumes");
@@ -446,6 +447,27 @@ var $builtinmodule = function (name) {
                     this.sleeping_on = n_frames;
 
                     return [];
+                }
+
+                case "register-instance": {
+                    // The thread remains running.
+                    this.skulpt_susp = susp;
+
+                    let py_instance = susp.data.subtype_data;
+                    let py_cls = Sk.builtin.getattr(py_instance, s_dunder_class);
+                    let actor = py_cls.$pytchActor;
+
+                    let new_instance = new PytchActorInstance(actor, py_instance);
+                    py_instance.$pytchActorInstance = new_instance;
+                    actor.instances.push(new_instance);
+
+                    let threads = actor.clone_handlers.map(
+                        py_fun => new Thread(py_fun,
+                                             py_instance,
+                                             this.parent_project));
+
+                    let new_thread_group = new ThreadGroup(threads);
+                    return [new_thread_group];
                 }
 
                 default:
