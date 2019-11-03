@@ -95,6 +95,13 @@ var $builtinmodule = function (name) {
             this.y_min = y_min;
             this.y_max = y_max;
         }
+
+        overlaps_with(other_bbox) {
+            return ((this.x_min < other_bbox.x_max)
+                    && (other_bbox.x_min < this.x_max)
+                    && (this.y_min < other_bbox.y_max)
+                    && (other_bbox.y_min < this.y_max));
+        }
     }
 
 
