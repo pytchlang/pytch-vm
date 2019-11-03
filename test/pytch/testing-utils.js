@@ -46,4 +46,13 @@ before(() => {
         "library/images/marching-alien.png": [60, 20],
         "library/images/firing-alien.png": [80, 30],
     };
+
+    class MockImage {
+        constructor(url) {
+            let size = image_size_from_url[url];
+            this.url = url;
+            this.width = size[0];
+            this.height = size[1];
+        }
+    }
 });
