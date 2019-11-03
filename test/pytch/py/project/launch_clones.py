@@ -30,5 +30,22 @@ class Alien(Sprite):
         pytch.create_clone_of(self)
 
 
+class Broom(Sprite):
+    def __init__(self):
+        Sprite.__init__(self)
+        self.copied_id = 1
+
+    @when_I_start_as_a_clone
+    def update_id(self):
+        self.copied_id += 1
+        if self.copied_id < 5:
+            pytch.create_clone_of(self)
+
+    @when_I_receive('clone-self')
+    def clone_self(self):
+        pytch.create_clone_of(self)
+
+
 project = Project()
 project.register_sprite_class(Alien)
+project.register_sprite_class(Broom)
