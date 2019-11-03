@@ -594,6 +594,13 @@ var $builtinmodule = function (name) {
             return actor_instance_0.is_touching(actor_instance_1);
         }
 
+        instance_is_touching_any_of(py_sprite_instance, py_other_sprite_class) {
+            let instance = py_sprite_instance.$pytchActorInstance;
+            let other_sprite = py_other_sprite_class.$pytchActor;
+            return other_sprite.instances.some(
+                other_instance => instance.is_touching(other_instance));
+        }
+
         on_green_flag_clicked() {
             let threads = map_concat(a => a.create_threads_for_green_flag(), this.actors);
             let thread_group = new ThreadGroup(threads);
