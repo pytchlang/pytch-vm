@@ -22,4 +22,26 @@ describe("collision detection", () => {
         let rectangle = project.instance_0_by_class_name("Rectangle");
         assert_has_bbox("Rectangle", rectangle, -40, 20, -110, -80);
     });
+
+    it("can detect two touching sprites depending on their visibility", async () => {
+        let import_result = await import_local_file("py/project/bounding_boxes.py");
+        let project = import_result.$d.project.js_project;
+
+        let py_square = project.instance_0_by_class_name("Square").py_object;
+        let py_rectangle = project.instance_0_by_class_name("Rectangle").py_object;
+
+        [false, true].forEach(show_square => {
+            call_method(py_square, "set_visibility", [show_square]);
+
+            [false, true].forEach(show_rectangle => {
+                call_method(py_rectangle, "set_visibility", [show_rectangle]);
+
+                let got_touch = project.sprite_instances_are_touching(py_square,
+                                                                      py_rectangle);
+                let exp_touch = (show_square && show_rectangle);
+
+                assert.strictEqual(got_touch, exp_touch);
+            });
+        });
+    });
 });
