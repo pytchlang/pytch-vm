@@ -653,6 +653,12 @@ var $builtinmodule = function (name) {
         rendering_instructions() {
             return map_concat(a => a.rendering_instructions(), this.actors);
         }
+
+        do_synthetic_broadcast(js_msg) {
+            let new_thread_group
+                = this.thread_group_for_broadcast_receivers(js_msg);
+            this.thread_groups.push(new_thread_group);
+        }
     }
 
 
