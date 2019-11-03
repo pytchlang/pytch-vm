@@ -44,4 +44,27 @@ describe("collision detection", () => {
             });
         });
     });
+
+    it("can detect two touching sprites depending on their locations", async () => {
+        let import_result = await import_local_file("py/project/bounding_boxes.py");
+        let project = import_result.$d.project.js_project;
+
+        let py_square = project.instance_0_by_class_name("Square").py_object;
+        let py_rectangle = project.instance_0_by_class_name("Rectangle").py_object;
+
+        // Move the Square around and test for hits against stationary
+        // Rectangle.  Keeping Square's y constant, it should touch the
+        // Rectangle if x is (exclusively) between -100 and 40.
+        //
+        for (let sq_x = -120; sq_x < 60; sq_x += 1) {
+            call_method(py_square, "set_x", [sq_x]);
+
+            let got_touch = project.sprite_instances_are_touching(py_square,
+                                                                  py_rectangle);
+            let exp_touch = (sq_x > -100) && (sq_x < 40);
+
+            assert.strictEqual(got_touch, exp_touch,
+                               "for Square having x of " + sq_x);
+        }
+    });
 });
