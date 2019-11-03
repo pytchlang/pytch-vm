@@ -16,6 +16,7 @@ var $builtinmodule = function (name) {
 
             let py_instance = Sk.misceval.callsim(py_cls);
             let instance_0 = new PytchActorInstance(this, py_instance);
+            py_instance.$pytchActorInstance = instance_0;
             this.instances = [instance_0];
         }
     }
