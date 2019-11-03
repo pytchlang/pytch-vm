@@ -15,6 +15,10 @@ from .hat_blocks import (
     when_I_start_as_a_clone,
 )
 
+from .clone import (
+    create_clone_of,
+)
+
 from .syscalls import (
     yield_until_next_frame,
     broadcast,
