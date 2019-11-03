@@ -586,6 +586,14 @@ var $builtinmodule = function (name) {
             this.actors.push(sprite);
         }
 
+        sprite_instances_are_touching(py_sprite_instance_0, py_sprite_instance_1) {
+            let actor_instance_0 = py_sprite_instance_0.$pytchActorInstance;
+            let actor_instance_1 = py_sprite_instance_1.$pytchActorInstance;
+
+            // TODO: Proper pixel-wise collision detection.
+            return actor_instance_0.is_touching(actor_instance_1);
+        }
+
         on_green_flag_clicked() {
             let threads = map_concat(a => a.create_threads_for_green_flag(), this.actors);
             let thread_group = new ThreadGroup(threads);
