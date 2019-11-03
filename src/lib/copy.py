@@ -203,8 +203,9 @@ def _deepcopy_inst(x, memo):
     if hasattr(y, '__setstate__'):
         y.__setstate__(state)
     else:
-        y.__dict__.update(state)
-        return y
+        y.__dict__.update((k, v) for (k, v) in state.items()
+                          if k != '__dict__')
+    return y
 d["InstanceType"] = _deepcopy_inst
 
 def _keep_alive(x, memo):
