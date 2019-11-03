@@ -2,6 +2,14 @@ import pytch
 from pytch import Sprite, Project
 
 
+class SetVis:
+    def set_visibility(self, visible):
+        if visible:
+            self.show()
+        else:
+            self.hide()
+
+
 class Square(Sprite):
     Costumes = [('square', 'library/images/square-80x80.png', 20, 30)]
 
