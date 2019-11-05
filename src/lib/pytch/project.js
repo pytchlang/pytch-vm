@@ -16,6 +16,7 @@ var $builtinmodule = function (name) {
     const s_y = Sk.builtin.str("_y");
     const s_size = Sk.builtin.str("_size");
     const s_appearance = Sk.builtin.str("_appearance");
+    const s_pytch_parent_project = Sk.builtin.str("_pytch_parent_project");
 
     const name_of_py_class
           = (py_cls =>
@@ -610,6 +611,7 @@ var $builtinmodule = function (name) {
         });
 
         $loc.register_sprite_class = new Sk.builtin.func((self, sprite_cls) => {
+            Sk.builtin.setattr(sprite_cls, s_pytch_parent_project, self);
             let do_register = self.js_project.register_sprite_class(sprite_cls);
             return Sk.misceval.promiseToSuspension(do_register);
         });
