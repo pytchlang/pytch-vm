@@ -53,6 +53,9 @@ class Sprite(Actor):
         return (self._pytch_parent_project
                 .instance_is_touching_any_of(self, target_class))
 
+    def delete_this_clone(self):
+        self._pytch_parent_project.unregister_actor_instance(self)
+
 
 class Stage(Actor):
     Backdrops = []
