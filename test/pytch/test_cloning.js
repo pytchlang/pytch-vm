@@ -119,5 +119,42 @@ describe("cloning", () => {
             project.one_frame();
             assert_state(exp_n_clone_reqs, exp_n_pings);
         }
+
+        assert_state(0, 0);
+        project.do_synthetic_broadcast("create-clone");
+
+        // There's a frame lag between the broadcast and the counting, and we
+        // broadcast on every other frame because of the 'and wait', so the
+        // threads after the first few frames are:
+        //
+        //     Beacon         Beacon clone            Counter
+        // 0   create-clone   deferred bcast/wait     (idle)
+        // 1   resume/finish  bcast/wait              count_ping() in run queue
+        // 2   (idle)         (wait)                  note ping, thread done
+        // 3   (idle)         bcast/wait              count_ping() in run queue
+        // 4   (idle)         (wait)                  note ping, thread done
+        // 5   (idle)         bcast/wait              count_ping() in run queue
+
+        frame_then_assert_state(1, 0);
+        frame_then_assert_state(1, 0);
+        frame_then_assert_state(1, 1);
+        frame_then_assert_state(1, 1);
+        frame_then_assert_state(1, 2);
+        frame_then_assert_state(1, 2);
+
+        // This should kill the clone and stop the pinging.
+        project.do_synthetic_broadcast("destroy-clones");
+
+        // We don't have any guarantees as to the order in which the different
+        // threads will run, so wait a few frames for things to stabilise and
+        // then check that the number of pings has stopped increasing.
+
+        for (let i = 0; i < 5; ++i)
+            project.one_frame();
+
+        let steady_state_n_pings = n_pings();
+
+        for (let i = 0; i < 10; ++i)
+            frame_then_assert_state(1, steady_state_n_pings);
     });
 });
