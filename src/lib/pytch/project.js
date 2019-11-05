@@ -302,6 +302,7 @@ var $builtinmodule = function (name) {
             this.actor = actor;
             this.py_object = py_object;
             this.numeric_id = next_global_id();
+            this.py_object_is_registered = true;
         }
 
         js_attr(js_attr_name) {
@@ -368,6 +369,8 @@ var $builtinmodule = function (name) {
         unregister_self() {
             let actor = this.actor;
             actor.unregister_instance(this);
+
+            this.py_object_is_registered = false;
         }
     }
 
