@@ -359,6 +359,22 @@ var $builtinmodule = function (name) {
             return this.state == Thread.State.ZOMBIE;
         }
 
+        get human_readable_sleeping_on() {
+            switch (this.state) {
+            case Thread.State.RUNNING:
+                return "-";
+
+            case Thread.State.AWAITING_THREAD_GROUP_COMPLETION:
+                return `thread group [${this.sleeping_on.label}]`;
+
+            case Thread.State.AWAITING_PASSAGE_OF_TIME:
+                return `${this.sleeping_on} frames`;
+
+            default:
+                throw Error(`thread in bad state "${this.state}"`);
+            }
+        }
+
         should_wake() {
             switch (this.state) {
             case Thread.State.AWAITING_THREAD_GROUP_COMPLETION:
