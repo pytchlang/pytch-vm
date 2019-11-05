@@ -701,6 +701,11 @@ var $builtinmodule = function (name) {
                 other_instance => instance.is_touching(other_instance));
         }
 
+        unregister_actor_instance(py_actor_instance) {
+            let actor_instance = py_actor_instance.$pytchActorInstance;
+            actor_instance.unregister_self();
+        }
+
         on_green_flag_clicked() {
             let threads = map_concat(a => a.create_threads_for_green_flag(), this.actors);
             let thread_group = new ThreadGroup("green-flag", threads);
