@@ -100,4 +100,92 @@ describe("cloning", () => {
         for (let i = 0; i < 10; ++i)
             frame_then_assert_all_IDs([1, 2, 3, 4, 5])
     });
+
+    it("can delete clones after chain-clone", async () => {
+        let import_result = await import_local_file("py/project/launch_clones.py");
+        let project = import_result.$d.project.js_project;
+        let broom_actor = project.actor_by_class_name("Broom");
+        let all_brooms = () => broom_actor.instances;
+
+        // Do not want to make assumptions about which order instances get
+        // cloned, so sort the returned list of values of attributes.
+        const assert_all_IDs = exp_values => {
+            let values = all_brooms().map(a => a.js_attr("copied_id"));
+            values.sort((x, y) => (x - y));
+            assert.deepStrictEqual(values, exp_values);
+        };
+
+        const frame_then_assert_all_IDs = exp_values => {
+            project.one_frame();
+            assert_all_IDs(exp_values);
+        };
+
+        // The synthetic broadcast just puts the handler threads in the queue;
+        // they don't run immediately.
+        project.do_synthetic_broadcast("clone-self");
+        for (let i = 0; i < 10; ++i)
+            project.one_frame();
+
+        assert_all_IDs([1, 2, 3, 4, 5])
+
+        project.do_synthetic_broadcast("destroy-broom-clones");
+        frame_then_assert_all_IDs([1]);
+    });
+
+    it("can unregister a clone", async () => {
+        let import_result = await import_local_file("py/project/unregister_clone.py");
+        let project = import_result.$d.project.js_project;
+        let beacon = project.instance_0_by_class_name("Beacon");
+        let counter = project.instance_0_by_class_name("Counter");
+
+        const n_pings = () => counter.js_attr("n_pings");
+        const n_clone_reqs = () => beacon.js_attr("n_clone_reqs");
+
+        const assert_state = (exp_n_clone_reqs, exp_n_pings) => {
+            assert.strictEqual(n_clone_reqs(), exp_n_clone_reqs);
+            assert.strictEqual(n_pings(), exp_n_pings);
+        }
+
+        const frame_then_assert_state = (exp_n_clone_reqs, exp_n_pings) => {
+            project.one_frame();
+            assert_state(exp_n_clone_reqs, exp_n_pings);
+        }
+
+        assert_state(0, 0);
+        project.do_synthetic_broadcast("create-clone");
+
+        // There's a frame lag between the broadcast and the counting, and we
+        // broadcast on every other frame because of the 'and wait', so the
+        // threads after the first few frames are:
+        //
+        //     Beacon         Beacon clone            Counter
+        // 0   create-clone   deferred bcast/wait     (idle)
+        // 1   resume/finish  bcast/wait              count_ping() in run queue
+        // 2   (idle)         (wait)                  note ping, thread done
+        // 3   (idle)         bcast/wait              count_ping() in run queue
+        // 4   (idle)         (wait)                  note ping, thread done
+        // 5   (idle)         bcast/wait              count_ping() in run queue
+
+        frame_then_assert_state(1, 0);
+        frame_then_assert_state(1, 0);
+        frame_then_assert_state(1, 1);
+        frame_then_assert_state(1, 1);
+        frame_then_assert_state(1, 2);
+        frame_then_assert_state(1, 2);
+
+        // This should kill the clone and stop the pinging.
+        project.do_synthetic_broadcast("destroy-clones");
+
+        // We don't have any guarantees as to the order in which the different
+        // threads will run, so wait a few frames for things to stabilise and
+        // then check that the number of pings has stopped increasing.
+
+        for (let i = 0; i < 5; ++i)
+            project.one_frame();
+
+        let steady_state_n_pings = n_pings();
+
+        for (let i = 0; i < 10; ++i)
+            frame_then_assert_state(1, steady_state_n_pings);
+    });
 });

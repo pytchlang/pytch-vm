@@ -239,6 +239,26 @@ var $builtinmodule = function (name) {
             }
         }
 
+        unregister_instance(instance) {
+            let instance_idx = this.instances.indexOf(instance);
+
+            // Only allow de-registration of actual clones.  The test
+            // 'instance_idx > 0' fails for two kinds of result from the
+            // indexOf() call:
+            //
+            // If instance_idx == 0, then we have found this instance but it is
+            // the 'original' instance of this actor-class.  So it can't be
+            // deleted; it's not a true clone.
+            //
+            // If instance_idx == -1, then we could not find this instance at
+            // all.  This seems like an error, but can happen if two threads
+            // both try to unregister the same sprite in the same
+            // scheduler-time-slice.
+            //
+            if (instance_idx > 0)
+                this.instances.splice(instance_idx, 1);
+        }
+
         create_threads_for_green_flag() {
             return this.event_handlers.green_flag.create_threads(this.parent_project);
         }
@@ -282,6 +302,7 @@ var $builtinmodule = function (name) {
             this.actor = actor;
             this.py_object = py_object;
             this.numeric_id = next_global_id();
+            this.py_object_is_registered = true;
         }
 
         js_attr(js_attr_name) {
@@ -344,6 +365,13 @@ var $builtinmodule = function (name) {
 
             return bbox_0.overlaps_with(bbox_1);
         }
+
+        unregister_self() {
+            let actor = this.actor;
+            actor.unregister_instance(this);
+
+            this.py_object_is_registered = false;
+        }
     }
 
 
@@ -400,6 +428,9 @@ var $builtinmodule = function (name) {
                 this.sleeping_on -= 1;
                 return (this.sleeping_on == 0);
 
+            case Thread.State.ZOMBIE:
+                return false;
+
             default:
                 // This on purpose includes "RUNNING"; we should never ask
                 // if an already-RUNNING thread is ready to wake up.
@@ -410,6 +441,13 @@ var $builtinmodule = function (name) {
         maybe_wake() {
             if ((! this.is_running()) && this.should_wake()) {
                 this.state = Thread.State.RUNNING;
+                this.sleeping_on = null;
+            }
+        }
+
+        maybe_cull() {
+            if (! this.actor_instance.py_object_is_registered) {
+                this.state = Thread.State.ZOMBIE;
                 this.sleeping_on = null;
             }
         }
@@ -563,6 +601,10 @@ var $builtinmodule = function (name) {
             this.threads.forEach(t => t.maybe_wake());
         }
 
+        maybe_cull_threads() {
+            this.threads.forEach(t => t.maybe_cull());
+        }
+
         one_frame() {
             let new_thread_groups = map_concat(t => t.one_frame(), this.threads);
 
@@ -676,6 +718,11 @@ var $builtinmodule = function (name) {
                 other_instance => instance.is_touching(other_instance));
         }
 
+        unregister_actor_instance(py_actor_instance) {
+            let actor_instance = py_actor_instance.$pytchActorInstance;
+            actor_instance.unregister_self();
+        }
+
         on_green_flag_clicked() {
             let threads = map_concat(a => a.create_threads_for_green_flag(), this.actors);
             let thread_group = new ThreadGroup("green-flag", threads);
@@ -689,6 +736,7 @@ var $builtinmodule = function (name) {
         }
 
         one_frame() {
+            this.thread_groups.forEach(tg => tg.maybe_cull_threads());
             this.thread_groups.forEach(tg => tg.maybe_wake_threads());
 
             let new_thread_groups = map_concat(tg => tg.one_frame(),
@@ -733,6 +781,10 @@ var $builtinmodule = function (name) {
             Sk.builtin.setattr(sprite_cls, s_pytch_parent_project, self);
             let do_register = self.js_project.register_sprite_class(sprite_cls);
             return Sk.misceval.promiseToSuspension(do_register);
+        });
+
+        $loc.unregister_actor_instance = new Sk.builtin.func((self, py_obj) => {
+            self.js_project.unregister_actor_instance(py_obj);
         });
     };
 
