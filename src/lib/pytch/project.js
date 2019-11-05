@@ -428,6 +428,9 @@ var $builtinmodule = function (name) {
                 this.sleeping_on -= 1;
                 return (this.sleeping_on == 0);
 
+            case Thread.State.ZOMBIE:
+                return false;
+
             default:
                 // This on purpose includes "RUNNING"; we should never ask
                 // if an already-RUNNING thread is ready to wake up.
