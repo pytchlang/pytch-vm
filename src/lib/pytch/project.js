@@ -362,6 +362,9 @@ var $builtinmodule = function (name) {
             this.parent_project = parent_project;
             this.state = Thread.State.RUNNING;
             this.sleeping_on = null;
+
+            this.actor_instance = py_arg.$pytchActorInstance;
+            this.callable_name = js_getattr(py_callable, s_dunder_name);
         }
 
         is_running() {
