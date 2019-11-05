@@ -706,6 +706,10 @@ var $builtinmodule = function (name) {
                 = this.thread_group_for_broadcast_receivers(js_msg);
             this.thread_groups.push(new_thread_group);
         }
+
+        threads_info() {
+            return map_concat(tg => tg.threads_info(), this.thread_groups);
+        }
     }
 
 
