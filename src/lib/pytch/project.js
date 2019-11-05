@@ -8,6 +8,7 @@ var $builtinmodule = function (name) {
     const FRAMES_PER_SECOND = 60;
 
     const s_dunder_name = Sk.builtin.str("__name__");
+    const s_dunder_class = Sk.builtin.str("__class__");
     const s_im_func = Sk.builtin.str("im_func");
     const s_pytch_handler_for = Sk.builtin.str("_pytch_handler_for");
     const s_Costumes = Sk.builtin.str("Costumes");
@@ -130,6 +131,8 @@ var $builtinmodule = function (name) {
                 message: {},
             };
 
+            this.clone_handlers = [];
+
             this.register_event_handlers();
         }
 
@@ -187,6 +190,10 @@ var $builtinmodule = function (name) {
                 if (! msg_handlers.hasOwnProperty(event_data))
                     msg_handlers[event_data] = new EventHandlerGroup();
                 msg_handlers[event_data].push(handler);
+                break;
+
+            case "clone":
+                this.clone_handlers.push(handler_py_func);
                 break;
 
             default:
@@ -442,6 +449,27 @@ var $builtinmodule = function (name) {
                     return [];
                 }
 
+                case "register-instance": {
+                    // The thread remains running.
+                    this.skulpt_susp = susp;
+
+                    let py_instance = susp.data.subtype_data;
+                    let py_cls = Sk.builtin.getattr(py_instance, s_dunder_class);
+                    let actor = py_cls.$pytchActor;
+
+                    let new_instance = new PytchActorInstance(actor, py_instance);
+                    py_instance.$pytchActorInstance = new_instance;
+                    actor.instances.push(new_instance);
+
+                    let threads = actor.clone_handlers.map(
+                        py_fun => new Thread(py_fun,
+                                             py_instance,
+                                             this.parent_project));
+
+                    let new_thread_group = new ThreadGroup(threads);
+                    return [new_thread_group];
+                }
+
                 default:
                     throw Error(`unknown Pytch syscall "${susp.data.subtype}"`);
                 }
@@ -624,6 +652,12 @@ var $builtinmodule = function (name) {
 
         rendering_instructions() {
             return map_concat(a => a.rendering_instructions(), this.actors);
+        }
+
+        do_synthetic_broadcast(js_msg) {
+            let new_thread_group
+                = this.thread_group_for_broadcast_receivers(js_msg);
+            this.thread_groups.push(new_thread_group);
         }
     }
 

@@ -12,6 +12,11 @@ from .actor import (
 from .hat_blocks import (
     when_green_flag_clicked,
     when_I_receive,
+    when_I_start_as_a_clone,
+)
+
+from .clone import (
+    create_clone_of,
 )
 
 from .syscalls import (
