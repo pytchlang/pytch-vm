@@ -598,6 +598,10 @@ var $builtinmodule = function (name) {
             this.threads.forEach(t => t.maybe_wake());
         }
 
+        maybe_cull_threads() {
+            this.threads.forEach(t => t.maybe_cull());
+        }
+
         one_frame() {
             let new_thread_groups = map_concat(t => t.one_frame(), this.threads);
 
