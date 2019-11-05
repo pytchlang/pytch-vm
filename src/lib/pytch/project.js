@@ -466,7 +466,7 @@ var $builtinmodule = function (name) {
                                              py_instance,
                                              this.parent_project));
 
-                    let new_thread_group = new ThreadGroup(threads);
+                    let new_thread_group = new ThreadGroup("start-as-clone", threads);
                     return [new_thread_group];
                 }
 
@@ -508,7 +508,8 @@ var $builtinmodule = function (name) {
     // being broadcast.
 
     class ThreadGroup {
-        constructor(threads) {
+        constructor(label, threads) {
+            this.label = label;
             this.threads = threads;
         }
 
@@ -631,14 +632,14 @@ var $builtinmodule = function (name) {
 
         on_green_flag_clicked() {
             let threads = map_concat(a => a.create_threads_for_green_flag(), this.actors);
-            let thread_group = new ThreadGroup(threads);
+            let thread_group = new ThreadGroup("green-flag", threads);
             this.thread_groups.push(thread_group);
         }
 
         thread_group_for_broadcast_receivers(js_message) {
             let threads = map_concat(a => a.create_threads_for_broadcast(js_message),
                                      this.actors);
-            return new ThreadGroup(threads);
+            return new ThreadGroup(`message "${js_message}"`, threads);
         }
 
         one_frame() {
