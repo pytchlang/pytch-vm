@@ -101,6 +101,37 @@ describe("cloning", () => {
             frame_then_assert_all_IDs([1, 2, 3, 4, 5])
     });
 
+    it("can delete clones after chain-clone", async () => {
+        let import_result = await import_local_file("py/project/launch_clones.py");
+        let project = import_result.$d.project.js_project;
+        let broom_actor = project.actor_by_class_name("Broom");
+        let all_brooms = () => broom_actor.instances;
+
+        // Do not want to make assumptions about which order instances get
+        // cloned, so sort the returned list of values of attributes.
+        const assert_all_IDs = exp_values => {
+            let values = all_brooms().map(a => a.js_attr("copied_id"));
+            values.sort((x, y) => (x - y));
+            assert.deepStrictEqual(values, exp_values);
+        };
+
+        const frame_then_assert_all_IDs = exp_values => {
+            project.one_frame();
+            assert_all_IDs(exp_values);
+        };
+
+        // The synthetic broadcast just puts the handler threads in the queue;
+        // they don't run immediately.
+        project.do_synthetic_broadcast("clone-self");
+        for (let i = 0; i < 10; ++i)
+            project.one_frame();
+
+        assert_all_IDs([1, 2, 3, 4, 5])
+
+        project.do_synthetic_broadcast("destroy-broom-clones");
+        frame_then_assert_all_IDs([1]);
+    });
+
     it("can unregister a clone", async () => {
         let import_result = await import_local_file("py/project/unregister_clone.py");
         let project = import_result.$d.project.js_project;
