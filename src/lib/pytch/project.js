@@ -507,6 +507,16 @@ var $builtinmodule = function (name) {
                 }
             }
         }
+
+        info() {
+            let instance = this.actor_instance;
+            return {
+                target: (`${instance.actor.class_name}-${instance.numeric_id}`
+                         + ` (${this.callable_name})`),
+                state: this.state,
+                wait: this.human_readable_sleeping_on,
+            };
+        }
     }
 
     Thread.State = {
