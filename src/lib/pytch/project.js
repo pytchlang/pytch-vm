@@ -37,6 +37,14 @@ var $builtinmodule = function (name) {
     const map_concat
           = (fun, xs) => Array.prototype.concat.apply([], xs.map(fun));
 
+    const next_global_id = (() => {
+        let id = 1000;
+        return () => {
+            id += 1;
+            return id;
+        }
+    })();
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
@@ -134,6 +142,10 @@ var $builtinmodule = function (name) {
             this.clone_handlers = [];
 
             this.register_event_handlers();
+        }
+
+        get class_name() {
+            return name_of_py_class(this.py_cls);
         }
 
         async async_load_appearances() {
@@ -269,6 +281,7 @@ var $builtinmodule = function (name) {
         constructor(actor, py_object) {
             this.actor = actor;
             this.py_object = py_object;
+            this.numeric_id = next_global_id();
         }
 
         js_attr(js_attr_name) {
@@ -349,6 +362,9 @@ var $builtinmodule = function (name) {
             this.parent_project = parent_project;
             this.state = Thread.State.RUNNING;
             this.sleeping_on = null;
+
+            this.actor_instance = py_arg.$pytchActorInstance;
+            this.callable_name = js_getattr(py_callable, s_dunder_name);
         }
 
         is_running() {
@@ -357,6 +373,22 @@ var $builtinmodule = function (name) {
 
         is_zombie() {
             return this.state == Thread.State.ZOMBIE;
+        }
+
+        get human_readable_sleeping_on() {
+            switch (this.state) {
+            case Thread.State.RUNNING:
+                return "-";
+
+            case Thread.State.AWAITING_THREAD_GROUP_COMPLETION:
+                return `thread group [${this.sleeping_on.label}]`;
+
+            case Thread.State.AWAITING_PASSAGE_OF_TIME:
+                return `${this.sleeping_on} frames`;
+
+            default:
+                throw Error(`thread in bad state "${this.state}"`);
+            }
         }
 
         should_wake() {
@@ -466,7 +498,7 @@ var $builtinmodule = function (name) {
                                              py_instance,
                                              this.parent_project));
 
-                    let new_thread_group = new ThreadGroup(threads);
+                    let new_thread_group = new ThreadGroup("start-as-clone", threads);
                     return [new_thread_group];
                 }
 
@@ -474,6 +506,16 @@ var $builtinmodule = function (name) {
                     throw Error(`unknown Pytch syscall "${susp.data.subtype}"`);
                 }
             }
+        }
+
+        info() {
+            let instance = this.actor_instance;
+            return {
+                target: (`${instance.actor.class_name}-${instance.numeric_id}`
+                         + ` (${this.callable_name})`),
+                state: this.state,
+                wait: this.human_readable_sleeping_on,
+            };
         }
     }
 
@@ -508,7 +550,8 @@ var $builtinmodule = function (name) {
     // being broadcast.
 
     class ThreadGroup {
-        constructor(threads) {
+        constructor(label, threads) {
+            this.label = label;
             this.threads = threads;
         }
 
@@ -529,6 +572,10 @@ var $builtinmodule = function (name) {
                 new_thread_groups.push(this);
 
             return new_thread_groups;
+        }
+
+        threads_info() {
+            return this.threads.map(t => t.info());
         }
     }
 
@@ -631,14 +678,14 @@ var $builtinmodule = function (name) {
 
         on_green_flag_clicked() {
             let threads = map_concat(a => a.create_threads_for_green_flag(), this.actors);
-            let thread_group = new ThreadGroup(threads);
+            let thread_group = new ThreadGroup("green-flag", threads);
             this.thread_groups.push(thread_group);
         }
 
         thread_group_for_broadcast_receivers(js_message) {
             let threads = map_concat(a => a.create_threads_for_broadcast(js_message),
                                      this.actors);
-            return new ThreadGroup(threads);
+            return new ThreadGroup(`message "${js_message}"`, threads);
         }
 
         one_frame() {
@@ -658,6 +705,10 @@ var $builtinmodule = function (name) {
             let new_thread_group
                 = this.thread_group_for_broadcast_receivers(js_msg);
             this.thread_groups.push(new_thread_group);
+        }
+
+        threads_info() {
+            return map_concat(tg => tg.threads_info(), this.thread_groups);
         }
     }
 
