@@ -364,6 +364,11 @@ var $builtinmodule = function (name) {
 
             return bbox_0.overlaps_with(bbox_1);
         }
+
+        unregister_self() {
+            let actor = this.actor;
+            actor.unregister_instance(this);
+        }
     }
 
 
