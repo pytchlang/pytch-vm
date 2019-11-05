@@ -573,6 +573,10 @@ var $builtinmodule = function (name) {
 
             return new_thread_groups;
         }
+
+        threads_info() {
+            return this.threads.map(t => t.info());
+        }
     }
 
 
