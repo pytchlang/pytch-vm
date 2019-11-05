@@ -144,6 +144,10 @@ var $builtinmodule = function (name) {
             this.register_event_handlers();
         }
 
+        get class_name() {
+            return name_of_py_class(this.py_cls);
+        }
+
         async async_load_appearances() {
             let attr_name = this.appearances_attr_name;
             let appearance_descriptors = js_getattr(this.py_cls, attr_name);
