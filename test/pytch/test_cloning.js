@@ -100,4 +100,24 @@ describe("cloning", () => {
         for (let i = 0; i < 10; ++i)
             frame_then_assert_all_IDs([1, 2, 3, 4, 5])
     });
+
+    it("can unregister a clone", async () => {
+        let import_result = await import_local_file("py/project/unregister_clone.py");
+        let project = import_result.$d.project.js_project;
+        let beacon = project.instance_0_by_class_name("Beacon");
+        let counter = project.instance_0_by_class_name("Counter");
+
+        const n_pings = () => counter.js_attr("n_pings");
+        const n_clone_reqs = () => beacon.js_attr("n_clone_reqs");
+
+        const assert_state = (exp_n_clone_reqs, exp_n_pings) => {
+            assert.strictEqual(n_clone_reqs(), exp_n_clone_reqs);
+            assert.strictEqual(n_pings(), exp_n_pings);
+        }
+
+        const frame_then_assert_state = (exp_n_clone_reqs, exp_n_pings) => {
+            project.one_frame();
+            assert_state(exp_n_clone_reqs, exp_n_pings);
+        }
+    });
 });
