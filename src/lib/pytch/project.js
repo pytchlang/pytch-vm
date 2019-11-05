@@ -37,6 +37,14 @@ var $builtinmodule = function (name) {
     const map_concat
           = (fun, xs) => Array.prototype.concat.apply([], xs.map(fun));
 
+    const next_global_id = (() => {
+        let id = 1000;
+        return () => {
+            id += 1;
+            return id;
+        }
+    })();
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
