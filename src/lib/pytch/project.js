@@ -277,6 +277,7 @@ var $builtinmodule = function (name) {
         constructor(actor, py_object) {
             this.actor = actor;
             this.py_object = py_object;
+            this.numeric_id = next_global_id();
         }
 
         js_attr(js_attr_name) {
