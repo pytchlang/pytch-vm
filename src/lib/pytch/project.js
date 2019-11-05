@@ -609,10 +609,10 @@ var $builtinmodule = function (name) {
             self.js_project = new Project();
         });
 
-        $loc.register_sprite_class = new Sk.builtin.func(
-            (self, sprite_cls) => (
-                Sk.misceval.promiseToSuspension(
-                    self.js_project.register_sprite_class(sprite_cls))));
+        $loc.register_sprite_class = new Sk.builtin.func((self, sprite_cls) => {
+            let do_register = self.js_project.register_sprite_class(sprite_cls);
+            return Sk.misceval.promiseToSuspension(do_register);
+        });
     };
 
     mod.Project = Sk.misceval.buildClass(mod, project_cls, "Project", []);
