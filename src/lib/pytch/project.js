@@ -442,6 +442,13 @@ var $builtinmodule = function (name) {
             }
         }
 
+        maybe_cull() {
+            if (! this.actor_instance.py_object_is_registered) {
+                this.state = Thread.State.ZOMBIE;
+                this.sleeping_on = null;
+            }
+        }
+
         one_frame() {
             if (! this.is_running())
                 return [];
