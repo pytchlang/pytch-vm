@@ -45,6 +45,10 @@ class Broom(Sprite):
     def clone_self(self):
         pytch.create_clone_of(self)
 
+    @when_I_receive('destroy-broom-clones')
+    def self_destruct(self):
+        self.delete_this_clone()
+
 
 project = Project()
 project.register_sprite_class(Alien)
