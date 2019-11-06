@@ -155,21 +155,26 @@ describe("cloning", () => {
         project.do_synthetic_broadcast("create-clone");
 
         // There's a frame lag between the broadcast and the counting, and we
-        // broadcast on every other frame because of the 'and wait', so the
-        // threads after the first few frames are:
+        // broadcast on every third frame because of the 'and wait' followed by
+        // the auto-added yield_until_next_frame(), so the threads after the
+        // first few frames are:
         //
         //     Beacon         Beacon clone            Counter
         // 0   create-clone   deferred bcast/wait     (idle)
         // 1   resume/finish  bcast/wait              count_ping() in run queue
         // 2   (idle)         (wait)                  note ping, thread done
-        // 3   (idle)         bcast/wait              count_ping() in run queue
-        // 4   (idle)         (wait)                  note ping, thread done
-        // 5   (idle)         bcast/wait              count_ping() in run queue
+        // 3   (idle)         (yield/next-frame)      (idle)
+        // 4   (idle)         bcast/wait              count_ping() in run queue
+        // 5   (idle)         (wait)                  note ping, thread done
+        // 6   (idle)         (yield/next-frame)      (idle)
+        // 7   (idle)         bcast/wait              count_ping() in run queue
 
         frame_then_assert_state(1, 0);
         frame_then_assert_state(1, 0);
         frame_then_assert_state(1, 1);
         frame_then_assert_state(1, 1);
+        frame_then_assert_state(1, 1);
+        frame_then_assert_state(1, 2);
         frame_then_assert_state(1, 2);
         frame_then_assert_state(1, 2);
 
@@ -180,7 +185,7 @@ describe("cloning", () => {
         // threads will run, so wait a few frames for things to stabilise and
         // then check that the number of pings has stopped increasing.
 
-        for (let i = 0; i < 5; ++i)
+        for (let i = 0; i < 10; ++i)
             project.one_frame();
 
         let steady_state_n_pings = n_pings();

@@ -24,6 +24,33 @@ describe("scheduling", () => {
         assert.strictEqual(project.thread_groups.length, 0);
     });
 
+    it("can run two threads concurrently", async () => {
+        let import_result = await import_local_file("py/project/two_threads.py");
+        let project = import_result.$d.project.js_project;
+        let t1 = project.instance_0_by_class_name("T1");
+        let t2 = project.instance_0_by_class_name("T2");
+
+        const assert_counters_both = (exp_counter => {
+            assert.strictEqual(t1.js_attr("counter"), exp_counter);
+            assert.strictEqual(t2.js_attr("counter"), exp_counter);
+        });
+
+        assert_counters_both(0);
+
+        project.on_green_flag_clicked();
+        project.one_frame();
+
+        // After one frame both threads should have had a chance to run.
+        assert_counters_both(1);
+
+        // After each further frame, both threads should have gone another time
+        // round their 'while' loops.
+        for (let i = 0; i < 10; ++i) {
+            project.one_frame();
+            assert_counters_both(2 + i);
+        }
+    });
+
     class BroadcastActors {
         constructor(project) {
             this.sender = project.instance_0_by_class_name("Sender");

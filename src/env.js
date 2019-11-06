@@ -17,6 +17,7 @@
  * nonreadopen: Boolean - set to true to allow non-read file operations
  * fileopen: Optional function to call any time a file is opened
  * filewrite: Optional function to call when writing to a file
+ * pytchThreading: Add a call to pytch.yield_until_next_frame() into strategic points in the AST.
  *
  * Any variables that aren't set will be left alone.
  */
@@ -114,6 +115,9 @@ Sk.configure = function (options) {
 
     Sk.filewrite = options["filewrite"] || undefined;
     Sk.asserts.assert(typeof Sk.filewrite === "function" || typeof Sk.filewrite === "undefined");
+
+    Sk.pytchThreading = options["pytchThreading"] || false;
+    Sk.asserts.assert(typeof Sk.pytchThreading === "boolean");
 
     Sk.timeoutMsg = options["timeoutMsg"] || Sk.timeoutMsg;
     Sk.asserts.assert(typeof Sk.timeoutMsg === "function");
