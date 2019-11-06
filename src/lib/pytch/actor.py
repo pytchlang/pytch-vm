@@ -49,6 +49,10 @@ class Sprite(Actor):
     def switch_costume(self, costume_name):
         self._appearance = costume_name
 
+    def touching(self, target_class):
+        return (self._pytch_parent_project
+                .instance_is_touching_any_of(self, target_class))
+
 
 class Stage(Actor):
     Backdrops = []
