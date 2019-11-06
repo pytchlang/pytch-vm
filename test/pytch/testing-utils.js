@@ -33,9 +33,12 @@ before(() => {
             return evts;
         };
 
+        const key_is_pressed = (keyname => (key_is_down[keyname] || false));
+
         return {
             press_key,
             release_key,
+            key_is_pressed,
             drain_new_keydown_events,
         };
     })();
