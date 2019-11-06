@@ -273,6 +273,24 @@ function new_identifier(n, c) {
     return Sk.builtin.str(n);
 }
 
+/*
+  This is the AST for a function call to pytch.yield_until_next_frame().  We
+  insert one of these at the end of every loop when we are in Pytch mode.  The
+  parameter 'n' is the tokeniser object for the outer loop.
+*/
+function astForPytchYield(n) {
+    var l = `'(auto-added yield at end of loop started on line ${n.lineno})'`;
+    var c = `'(auto-added yield at end of loop started on column ${n.col_offset})'`;
+    var attr = new Sk.astnodes.Attribute(new Sk.astnodes.Name(Sk.builtin.str("pytch"),
+                                                              Sk.astnodes.Load,
+                                                              l, c),
+                                         Sk.builtin.str("yield_until_next_frame"),
+                                         Sk.astnodes.Load,
+                                         l, c);
+    var call = new Sk.astnodes.Call(attr, null, null, l, c);
+    return new Sk.astnodes.Expr(call, l, c);
+}
+
 function astForCompOp (c, n) {
     /* comp_op: '<'|'>'|'=='|'>='|'<='|'!='|'in'|'not' 'in'|'is'
      |'is' 'not'
