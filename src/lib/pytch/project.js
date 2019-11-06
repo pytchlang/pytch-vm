@@ -277,6 +277,12 @@ var $builtinmodule = function (name) {
             return event_handler_group.create_threads(this.parent_project);
         }
 
+        create_threads_for_keypress(keyname) {
+            let event_handler_group = (this.event_handlers.keypress[keyname]
+                                       || EventHandlerGroup.empty);
+            return event_handler_group.create_threads(this.parent_project);
+        }
+
         rendering_instructions() {
             return map_concat(i => i.rendering_instructions(),
                               this.instances);
