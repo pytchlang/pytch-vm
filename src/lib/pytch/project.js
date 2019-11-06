@@ -637,6 +637,13 @@ var $builtinmodule = function (name) {
             self.js_project = new Project();
         });
 
+        $loc.instance_is_touching_any_of = new Sk.builtin.func(
+            (self, instance, target_cls) => (
+                (self.js_project.instance_is_touching_any_of(instance,
+                                                             target_cls)
+                 ? Sk.builtin.bool.true$
+                 : Sk.builtin.bool.false$)));
+
         $loc.register_sprite_class = new Sk.builtin.func((self, sprite_cls) => {
             Sk.builtin.setattr(sprite_cls, s_pytch_parent_project, self);
             let do_register = self.js_project.register_sprite_class(sprite_cls);
