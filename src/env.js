@@ -82,6 +82,7 @@ Sk.python3 = {
     };
 
     let inactive_keyboard = {
+        key_is_pressed: (keyname) => false,
         drain_new_keydown_events: () => [],
     };
 
