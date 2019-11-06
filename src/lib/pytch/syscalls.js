@@ -31,5 +31,12 @@ var $builtinmodule = function (name) {
         return new_pytch_suspension("register-instance", py_instance);
     });
 
+    mod.key_is_pressed = new Sk.builtin.func((py_keyname) => {
+        let js_keyname = Sk.ffi.remapToJs(py_keyname);
+        return (Sk.pytch.keyboard.key_is_pressed(js_keyname)
+                ? Sk.builtin.bool.true$
+                : Sk.builtin.bool.false$);
+    });
+
     return mod;
 };

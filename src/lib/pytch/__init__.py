@@ -25,4 +25,5 @@ from .syscalls import (
     broadcast,
     broadcast_and_wait,
     wait_seconds,
+    key_is_pressed,
 )
