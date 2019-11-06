@@ -749,6 +749,16 @@ var $builtinmodule = function (name) {
             return new ThreadGroup(`message "${js_message}"`, threads);
         }
 
+        launch_keypress_handlers() {
+            let new_keydowns = Sk.pytch.keyboard.drain_new_keydown_events();
+            new_keydowns.forEach(keyname => {
+                let threads = map_concat(a => a.create_threads_for_keypress(keyname),
+                                         this.actors);
+                let thread_group = new ThreadGroup(`keypress "${keyname}"`, threads);
+                this.thread_groups.push(thread_group);
+            });
+        }
+
         one_frame() {
             this.thread_groups.forEach(tg => tg.maybe_cull_threads());
             this.thread_groups.forEach(tg => tg.maybe_wake_threads());
