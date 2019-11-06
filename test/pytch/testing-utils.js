@@ -46,6 +46,7 @@ before(() => {
         output: (args) => { process.stdout.write(args); },
         pytch: {
             async_load_image: (url => Promise.resolve(new MockImage(url))),
+            keyboard: mock_keyboard,
         },
     });
 
