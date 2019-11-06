@@ -10,6 +10,36 @@ before(() => {
     // Inject 'Sk' object into global namespace.
     reqskulpt(false);
 
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // API dependencies for Skulpt
+
+    global.mock_keyboard = (() => {
+        let undrained_keydown_events = [];
+        let key_is_down = {};
+
+        const press_key = (keyname) => {
+            key_is_down[keyname] = true;
+            undrained_keydown_events.push(keyname);
+        };
+
+        const release_key = (keyname) => {
+            key_is_down[keyname] = false;
+        };
+
+        const drain_new_keydown_events = () => {
+            let evts = undrained_keydown_events;
+            undrained_keydown_events = [];
+            return evts;
+        };
+
+        return {
+            press_key,
+            release_key,
+            drain_new_keydown_events,
+        };
+    })();
+
     // Connect read/write to filesystem and stdout; configure Pytch environment.
     Sk.configure({
         read: (fname => fs.readFileSync(fname, { encoding: "utf8" })),
