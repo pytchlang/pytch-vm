@@ -34,6 +34,15 @@ describe("pytch.project module", () => {
                            import_result.$d.FlagClickCounter.note_click);
     });
 
+    it("populates parent-project inside Sprite class", async () => {
+        let import_result = await import_local_file("py/project/single_sprite.py");
+        let py_project = import_result.$d.project;
+        let project = py_project.js_project;
+        let py_counter = project.actor_by_class_name("FlagClickCounter").py_cls;
+        let py_parent_project = py_getattr(py_counter, "_pytch_parent_project");
+        assert.strictEqual(py_parent_project, py_project);
+    });
+
     describe("can look up Actors by name", async () => {
         const async_project = async () => {
             let import_result
