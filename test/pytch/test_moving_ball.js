@@ -43,4 +43,35 @@ describe("moving ball example", () => {
         // Everything should have finished.
         assert.strictEqual(project.thread_groups.length, 0);
     });
+
+    it("responds to key presses", async () => {
+        let import_result = await import_local_file("py/project/moving_ball.py");
+        let project = import_result.$d.project.js_project;
+
+        const ball_at = (x, y) => [["RenderImage", x, y, 1, "yellow-ball"]];
+        assert_renders_as("start", project, ball_at(92, 58));
+
+        mock_keyboard.press_key('w')
+        project.one_frame()
+        assert_renders_as("frame-1", project, ball_at(92, 68));
+
+        // Key 'w' is still down, but it is not freshly pressed, so
+        // nothing should change.
+        project.one_frame()
+        assert_renders_as("frame-2", project, ball_at(92, 68));
+
+        // Release 'w'.
+        mock_keyboard.release_key('w')
+
+        // If someone is quick enough to type more than one key, they all
+        // take effect.
+        mock_keyboard.press_key('w')
+        mock_keyboard.release_key('w')
+        mock_keyboard.press_key('w')
+        mock_keyboard.release_key('w')
+        mock_keyboard.press_key('s')
+        mock_keyboard.release_key('s')
+        project.one_frame()
+        assert_renders_as("frame-3", project, ball_at(92, 68 + 10 + 10 - 100));
+    });
 });
