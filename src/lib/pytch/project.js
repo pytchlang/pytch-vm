@@ -760,6 +760,8 @@ var $builtinmodule = function (name) {
         }
 
         one_frame() {
+            this.launch_keypress_handlers();
+
             this.thread_groups.forEach(tg => tg.maybe_cull_threads());
             this.thread_groups.forEach(tg => tg.maybe_wake_threads());
 
