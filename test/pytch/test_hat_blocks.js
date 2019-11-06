@@ -43,4 +43,14 @@ describe("pytch.hat_blocks module", () => {
         assert.strictEqual(reset_n_clicks.n_events, 1);
         assert.ok(reset_n_clicks.includes("message", "reset"));
     });
+
+    it("registers when-key-pressed", async () => {
+        let import_result = await import_local_file("py/project/single_sprite.py");
+
+        let py_FlagClickCounter = py_getattr(import_result, "FlagClickCounter");
+
+        let forget_a_click = new EventsHandledBy(py_FlagClickCounter, "forget_a_click");
+        assert.strictEqual(forget_a_click.n_events, 1);
+        assert.ok(forget_a_click.includes("keypress", "x"));
+    });
 });
