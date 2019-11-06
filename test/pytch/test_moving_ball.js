@@ -67,4 +67,30 @@ describe("moving ball example", () => {
         project.one_frame()
         assert_renders_as("frame-3", project, ball_at(92, 68 + 10 + 10 - 100));
     });
+
+    it("can tell which keys are pressed", async () => {
+        let import_result = await import_local_file("py/project/moving_ball.py");
+        let project = import_result.$d.project.js_project;
+        let ball = project.instance_0_by_class_name("Ball");
+
+        const assert_keys = (exp_keys => {
+            project.do_synthetic_broadcast("check-keys");
+            project.one_frame();
+            assert.strictEqual(ball.js_attr("keys_pressed"), exp_keys);
+        });
+
+        assert_keys("");
+        mock_keyboard.press_key("a");
+        assert_keys("a");
+        mock_keyboard.press_key("b");
+        assert_keys("ab");
+        mock_keyboard.release_key("a");
+        assert_keys("b");
+        mock_keyboard.press_key("c");
+        assert_keys("bc");
+        mock_keyboard.release_key("b");
+        assert_keys("c");
+        mock_keyboard.release_key("c");
+        assert_keys("");
+    });
 });
