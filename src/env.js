@@ -81,8 +81,14 @@ Sk.python3 = {
         throw Error("please set async_load_image");
     };
 
+    let inactive_keyboard = {
+        key_is_pressed: (keyname) => false,
+        drain_new_keydown_events: () => [],
+    };
+
     Sk.default_pytch_environment = {
         async_load_image: bad_async_load_image,
+        keyboard: inactive_keyboard,
     };
 })();
 

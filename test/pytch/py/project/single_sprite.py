@@ -4,6 +4,7 @@ from pytch import (
     Sprite,
     when_green_flag_clicked,
     when_I_receive,
+    when_key_pressed,
 )
 
 
@@ -21,6 +22,10 @@ class FlagClickCounter(Sprite):
     @when_I_receive('reset')
     def reset_n_clicks(self):
         self.n_clicks = 0
+
+    @when_key_pressed('x')
+    def forget_a_click(self):
+        self.n_clicks -= 1
 
 
 project = Project()

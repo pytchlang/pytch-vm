@@ -12,6 +12,7 @@ from .actor import (
 from .hat_blocks import (
     when_green_flag_clicked,
     when_I_receive,
+    when_key_pressed,
     when_I_start_as_a_clone,
 )
 
@@ -24,4 +25,5 @@ from .syscalls import (
     broadcast,
     broadcast_and_wait,
     wait_seconds,
+    key_is_pressed,
 )

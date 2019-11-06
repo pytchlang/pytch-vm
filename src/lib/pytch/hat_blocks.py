@@ -19,3 +19,11 @@ class when_I_receive:
 
     def __call__(self, fun):
         return _append_handler(fun, 'message', self.message)
+
+
+class when_key_pressed:
+    def __init__(self, keyname):
+        self.keyname = keyname
+
+    def __call__(self, fun):
+        return _append_handler(fun, 'keypress', self.keyname)

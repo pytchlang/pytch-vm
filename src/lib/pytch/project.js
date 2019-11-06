@@ -136,6 +136,7 @@ var $builtinmodule = function (name) {
 
             this.event_handlers = {
                 green_flag: new EventHandlerGroup(),
+                keypress: {},
                 message: {},
             };
 
@@ -204,6 +205,13 @@ var $builtinmodule = function (name) {
                 msg_handlers[event_data].push(handler);
                 break;
 
+            case "keypress":
+                let key_handlers = this.event_handlers.keypress;
+                if (! key_handlers.hasOwnProperty(event_data))
+                    key_handlers[event_data] = new EventHandlerGroup();
+                key_handlers[event_data].push(handler);
+                break;
+
             case "clone":
                 this.clone_handlers.push(handler_py_func);
                 break;
@@ -265,6 +273,12 @@ var $builtinmodule = function (name) {
 
         create_threads_for_broadcast(js_message) {
             let event_handler_group = (this.event_handlers.message[js_message]
+                                       || EventHandlerGroup.empty);
+            return event_handler_group.create_threads(this.parent_project);
+        }
+
+        create_threads_for_keypress(keyname) {
+            let event_handler_group = (this.event_handlers.keypress[keyname]
                                        || EventHandlerGroup.empty);
             return event_handler_group.create_threads(this.parent_project);
         }
@@ -735,7 +749,19 @@ var $builtinmodule = function (name) {
             return new ThreadGroup(`message "${js_message}"`, threads);
         }
 
+        launch_keypress_handlers() {
+            let new_keydowns = Sk.pytch.keyboard.drain_new_keydown_events();
+            new_keydowns.forEach(keyname => {
+                let threads = map_concat(a => a.create_threads_for_keypress(keyname),
+                                         this.actors);
+                let thread_group = new ThreadGroup(`keypress "${keyname}"`, threads);
+                this.thread_groups.push(thread_group);
+            });
+        }
+
         one_frame() {
+            this.launch_keypress_handlers();
+
             this.thread_groups.forEach(tg => tg.maybe_cull_threads());
             this.thread_groups.forEach(tg => tg.maybe_wake_threads());
 
