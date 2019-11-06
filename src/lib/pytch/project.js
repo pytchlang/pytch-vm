@@ -205,6 +205,13 @@ var $builtinmodule = function (name) {
                 msg_handlers[event_data].push(handler);
                 break;
 
+            case "keypress":
+                let key_handlers = this.event_handlers.keypress;
+                if (! key_handlers.hasOwnProperty(event_data))
+                    key_handlers[event_data] = new EventHandlerGroup();
+                key_handlers[event_data].push(handler);
+                break;
+
             case "clone":
                 this.clone_handlers.push(handler_py_func);
                 break;
