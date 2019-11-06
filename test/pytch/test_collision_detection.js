@@ -48,7 +48,8 @@ describe("collision detection", () => {
     // Hopefully this abstraction isn't worse than the duplication.  For a
     // test we need to know what method to call, and which args to pass out
     // of the candidate list of [square-class, square-instance,
-    // rectangle-class, rectangle-instance].  Gather these into specs:
+    // rectangle-class, rectangle-instance].  The handling of the method
+    // calls like  square.touching(Rectangle)  is a bit of a fudge, sorry.
     //
     const touch_test_specs = [
         { tag: "two touching sprites",
@@ -59,8 +60,16 @@ describe("collision detection", () => {
           method_name: "instance_is_touching_any_of",
           get_arg0: (sc, si, rc, ri) => si,
           get_arg1: (sc, si, rc, ri) => rc },
+        { tag: "Python square.touching(Rectangle)",
+          method_name: "Py-touching",
+          get_arg0: (sc, si, rc, ri) => si,
+          get_arg1: (sc, si, rc, ri) => rc },
         { tag: "Rectangle touching any Square",
           method_name: "instance_is_touching_any_of",
+          get_arg0: (sc, si, rc, ri) => ri,
+          get_arg1: (sc, si, rc, ri) => sc },
+        { tag: "Python rectangle.touching(Square)",
+          method_name: "Py-touching",
           get_arg0: (sc, si, rc, ri) => ri,
           get_arg1: (sc, si, rc, ri) => sc },
     ];
@@ -75,7 +84,9 @@ describe("collision detection", () => {
         let py_rectangle_cls = project.actor_by_class_name("Rectangle").py_cls;
         let py_rectangle = project.instance_0_by_class_name("Rectangle").py_object;
 
-        let is_touching_fun = project[spec.method_name].bind(project);
+        let is_touching_fun = (spec.method_name === "Py-touching"
+                               ? ((obj, cls) => call_method(obj, "touching", [cls]))
+                               : project[spec.method_name].bind(project));
         let arg0 = spec.get_arg0(py_square_cls, py_square,
                                  py_rectangle_cls, py_rectangle);
         let arg1 = spec.get_arg1(py_square_cls, py_square,
