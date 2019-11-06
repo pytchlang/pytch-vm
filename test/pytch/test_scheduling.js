@@ -42,6 +42,13 @@ describe("scheduling", () => {
 
         // After one frame both threads should have had a chance to run.
         assert_counters_both(1);
+
+        // After each further frame, both threads should have gone another time
+        // round their 'while' loops.
+        for (let i = 0; i < 10; ++i) {
+            project.one_frame();
+            assert_counters_both(2 + i);
+        }
     });
 
     class BroadcastActors {
