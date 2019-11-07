@@ -24,6 +24,56 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Provide rendering target and source keyboard events via canvas
+
+    const stage_canvas = (() => {
+        const dom_elt = $("#pytch-canvas")[0];
+
+        if (! dom_elt.hasAttribute("tabindex"))
+            dom_elt.setAttribute("tabindex", 0);
+
+        const stage_width = dom_elt.width;
+        const stage_half_width = (stage_width / 2) | 0;
+        const stage_height = dom_elt.height;
+        const stage_half_height = (stage_height / 2) | 0;
+
+        const canvas_ctx = dom_elt.getContext("2d");
+
+        canvas_ctx.translate(stage_half_width, stage_half_height);
+        canvas_ctx.scale(1, -1);
+
+        const enact_instructions = (rendering_instructions => {
+            rendering_instructions.forEach(instr => {
+                switch(instr.kind) {
+                case "RenderImage":
+                    canvas_ctx.save();
+                    canvas_ctx.translate(instr.x, instr.y);
+                    canvas_ctx.scale(instr.scale, -instr.scale);
+                    canvas_ctx.drawImage(instr.image, 0, 0);
+                    canvas_ctx.restore();
+                    break;
+
+                default:
+                    throw Error(`unknown render-instruction kind "${instr.kind}"`);
+                }
+            });
+        });
+
+        const render = (project => {
+            canvas_ctx.clearRect(-stage_half_width, -stage_half_height,
+                                 stage_width, stage_height);
+            enact_instructions(project.rendering_instructions());
+        });
+
+        return {
+            dom_elt,
+            render,
+        };
+    })();
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Provide 'keyboard' interface via browser keyboard
 
     const browser_keyboard = (() => {
