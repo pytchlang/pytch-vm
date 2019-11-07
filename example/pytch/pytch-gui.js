@@ -27,6 +27,10 @@ $(document).ready(function() {
     // Provide rendering target and source keyboard events via canvas
 
     const stage_canvas = (() => {
+        const dom_elt = $("#pytch-canvas")[0];
+
+        if (! dom_elt.hasAttribute("tabindex"))
+            dom_elt.setAttribute("tabindex", 0);
     })();
 
 
