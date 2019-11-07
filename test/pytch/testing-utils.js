@@ -64,6 +64,11 @@ before(() => {
         return Sk.misceval.asyncToPromise(() => do_import);
     });
 
+    global.import_project = (async fname => {
+        let import_result = await import_local_file(fname);
+        return import_result.$d.project.js_project;
+    });
+
     global.assert = require("assert");
 
     global.py_getattr = (py_obj, js_attr_name) =>
