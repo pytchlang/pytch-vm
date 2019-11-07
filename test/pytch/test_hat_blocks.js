@@ -24,6 +24,12 @@ describe("pytch.hat_blocks module", () => {
         }
     }
 
+    let single_sprite_project = async () => {
+        let import_result = await import_local_file("py/project/single_sprite.py");
+        let py_FlagClickCounter = py_getattr(import_result, "FlagClickCounter");
+        return py_FlagClickCounter;
+    };
+
     it("registers green-flag", async () => {
         let import_result = await import_local_file("py/project/single_sprite.py");
 
