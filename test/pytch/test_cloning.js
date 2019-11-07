@@ -193,4 +193,7 @@ describe("cloning", () => {
         for (let i = 0; i < 10; ++i)
             frame_then_assert_state(1, steady_state_n_pings);
     });
+
+    it("deletes all clones on red-stop", async () => {
+    });
 });

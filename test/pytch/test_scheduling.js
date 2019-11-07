@@ -51,6 +51,9 @@ describe("scheduling", () => {
         }
     });
 
+    it("halts everything on red flag", async () => {
+    });
+
     class BroadcastActors {
         constructor(project) {
             this.sender = project.instance_0_by_class_name("Sender");
