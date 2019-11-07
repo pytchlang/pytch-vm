@@ -37,14 +37,7 @@ describe("scheduling", () => {
     };
 
     it("can run two threads concurrently", async () => {
-        let project = await import_project("py/project/two_threads.py");
-        let t1 = project.instance_0_by_class_name("T1");
-        let t2 = project.instance_0_by_class_name("T2");
-
-        const assert_counters_both = (exp_counter => {
-            assert.strictEqual(t1.js_attr("counter"), exp_counter);
-            assert.strictEqual(t2.js_attr("counter"), exp_counter);
-        });
+        let [project, assert_counters_both] = await two_threads_project();
 
         assert_counters_both(0);
 
@@ -65,14 +58,7 @@ describe("scheduling", () => {
     [{method: 'on_red_stop_clicked', exp_count: 10},
      {method: 'on_green_flag_clicked', exp_count: 5}].forEach(spec =>
     it(`${spec.method} halts everything`, async () => {
-        let project = await import_project("py/project/two_threads.py");
-        let t1 = project.instance_0_by_class_name("T1");
-        let t2 = project.instance_0_by_class_name("T2");
-
-        const assert_counters_both = (exp_counter => {
-            assert.strictEqual(t1.js_attr("counter"), exp_counter);
-            assert.strictEqual(t2.js_attr("counter"), exp_counter);
-        });
+        let [project, assert_counters_both] = await two_threads_project();
 
         project.on_green_flag_clicked();
 
