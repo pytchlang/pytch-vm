@@ -6,9 +6,7 @@
 
 describe("Costume handling", () => {
     it("can load costumes", async () => {
-        let import_result
-            = await import_local_file("py/project/some_costumes.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/some_costumes.py");
         let alien = project.actor_by_class_name("Alien");
 
         assert.strictEqual(alien.n_appearances, 2);
@@ -23,9 +21,7 @@ describe("Costume handling", () => {
     });
 
     it("rejects unknown costume", async () => {
-        let import_result
-            = await import_local_file("py/project/some_costumes.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/some_costumes.py");
         let alien = project.actor_by_class_name("Alien");
 
         assert.throws(() => alien.appearance_from_name("banana"),

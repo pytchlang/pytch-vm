@@ -6,8 +6,7 @@
 
 describe("cloning", () => {
     it("can clone by instance", async () => {
-        let import_result = await import_local_file("py/project/launch_clones.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/launch_clones.py");
         let alien_actor = project.actor_by_class_name("Alien");
         let all_aliens = () => alien_actor.instances;
 
@@ -56,8 +55,7 @@ describe("cloning", () => {
     });
 
     it("can chain-clone", async () => {
-        let import_result = await import_local_file("py/project/launch_clones.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/launch_clones.py");
         let broom_actor = project.actor_by_class_name("Broom");
         let all_brooms = () => broom_actor.instances;
 
@@ -102,8 +100,7 @@ describe("cloning", () => {
     });
 
     it("can delete clones after chain-clone", async () => {
-        let import_result = await import_local_file("py/project/launch_clones.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/launch_clones.py");
         let broom_actor = project.actor_by_class_name("Broom");
         let all_brooms = () => broom_actor.instances;
 
@@ -133,8 +130,7 @@ describe("cloning", () => {
     });
 
     it("can unregister a clone", async () => {
-        let import_result = await import_local_file("py/project/unregister_clone.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/unregister_clone.py");
         let beacon = project.instance_0_by_class_name("Beacon");
         let counter = project.instance_0_by_class_name("Counter");
 
@@ -196,8 +192,7 @@ describe("cloning", () => {
 
     ['on_red_stop_clicked', 'on_green_flag_clicked'].forEach(method =>
     it(`${method} deletes all clones`, async () => {
-        let import_result = await import_local_file("py/project/launch_clones.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/launch_clones.py");
         let broom_actor = project.actor_by_class_name("Broom");
         let n_brooms = () => broom_actor.instances.length;
 

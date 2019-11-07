@@ -6,8 +6,7 @@
 
 describe("collision detection", () => {
     it("can extract bounding boxes", async () => {
-        let import_result = await import_local_file("py/project/bounding_boxes.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/bounding_boxes.py");
         assert.equal(project.actors.length, 2);
 
         // Square's centre-x should be at -50; its costume is 80 wide and has a
@@ -24,8 +23,7 @@ describe("collision detection", () => {
     });
 
     it("can detect two touching sprites depending on their visibility", async () => {
-        let import_result = await import_local_file("py/project/bounding_boxes.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/bounding_boxes.py");
 
         let py_square = project.instance_0_by_class_name("Square").py_object;
         let py_rectangle = project.instance_0_by_class_name("Rectangle").py_object;
@@ -76,8 +74,7 @@ describe("collision detection", () => {
 
     touch_test_specs.forEach(spec =>
     it(`can detect ${spec.tag} depending on their locations`, async () => {
-        let import_result = await import_local_file("py/project/bounding_boxes.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/bounding_boxes.py");
 
         let py_square_cls = project.actor_by_class_name("Square").py_cls;
         let py_square = project.instance_0_by_class_name("Square").py_object;

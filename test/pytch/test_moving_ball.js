@@ -4,8 +4,7 @@ describe("moving ball example", () => {
     const ball_at = (x, y) => [["RenderImage", x, y, 1, "yellow-ball"]];
 
     it("renders correctly", async () => {
-        let import_result = await import_local_file("py/project/moving_ball.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/moving_ball.py");
 
         assert.equal(project.actors.length, 1);
 
@@ -39,8 +38,7 @@ describe("moving ball example", () => {
     });
 
     it("responds to key presses", async () => {
-        let import_result = await import_local_file("py/project/moving_ball.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/moving_ball.py");
 
         assert_renders_as("start", project, ball_at(92, 58));
 
@@ -69,8 +67,7 @@ describe("moving ball example", () => {
     });
 
     it("can tell which keys are pressed", async () => {
-        let import_result = await import_local_file("py/project/moving_ball.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/moving_ball.py");
         let ball = project.instance_0_by_class_name("Ball");
 
         const assert_keys = (exp_keys => {
