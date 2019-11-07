@@ -775,6 +775,11 @@ var $builtinmodule = function (name) {
             this.thread_groups = new_thread_groups;
         }
 
+        on_red_stop_clicked() {
+            this.thread_groups = [];
+            this.actors.forEach(a => a.delete_all_clones());
+        }
+
         rendering_instructions() {
             return map_concat(a => a.rendering_instructions(), this.actors);
         }
