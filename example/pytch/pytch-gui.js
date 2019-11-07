@@ -76,5 +76,9 @@ $(document).ready(function() {
 
     Sk.configure({
         read: builtinRead,
+        pytch: {
+            async_load_image: async_load_image,
+            keyboard: browser_keyboard,
+        },
     });
 });
