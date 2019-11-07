@@ -87,9 +87,21 @@ Sk.python3 = {
         drain_new_keydown_events: () => [],
     };
 
+    let do_nothing = (() => {});
+    let return_empty_list = (() => []);
+
+    let do_nothing_project = {
+        on_green_flag_clicked: do_nothing,
+        on_red_stop_clicked: do_nothing,
+        one_frame: do_nothing,
+        rendering_instructions: return_empty_list,
+        threads_info: return_empty_list,
+    };
+
     Sk.default_pytch_environment = {
         async_load_image: bad_async_load_image,
         keyboard: inactive_keyboard,
+        current_live_project: do_nothing_project,
     };
 })();
 
