@@ -41,6 +41,23 @@ $(document).ready(function() {
 
         canvas_ctx.translate(stage_half_width, stage_half_height);
         canvas_ctx.scale(1, -1);
+
+        const enact_instructions = (rendering_instructions => {
+            rendering_instructions.forEach(instr => {
+                switch(instr.kind) {
+                case "RenderImage":
+                    canvas_ctx.save();
+                    canvas_ctx.translate(instr.x, instr.y);
+                    canvas_ctx.scale(instr.scale, -instr.scale);
+                    canvas_ctx.drawImage(instr.image, 0, 0);
+                    canvas_ctx.restore();
+                    break;
+
+                default:
+                    throw Error(`unknown render-instruction kind "${instr.kind}"`);
+                }
+            });
+        });
     })();
 
 
