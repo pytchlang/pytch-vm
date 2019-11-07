@@ -283,6 +283,10 @@ var $builtinmodule = function (name) {
             return event_handler_group.create_threads(this.parent_project);
         }
 
+        delete_all_clones() {
+            this.instances.splice(1);
+        }
+
         rendering_instructions() {
             return map_concat(i => i.rendering_instructions(),
                               this.instances);
