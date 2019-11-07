@@ -1,0 +1,11 @@
+// pytch-gui.js
+
+$(document).ready(function() {
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // Editor interaction
+
+    let ace_editor = ace.edit("editor");
+
+});
