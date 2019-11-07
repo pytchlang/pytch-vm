@@ -65,4 +65,9 @@ describe("pytch.project module", () => {
                           /duplicate PytchActors with name "Alien"/);
         });
     });
+
+    it("can go-live an empty Project", async () => {
+        let project = await import_project("py/project/go_live_empty_project.py");
+        assert.strictEqual(Sk.pytch.current_live_project, project);
+    });
 });

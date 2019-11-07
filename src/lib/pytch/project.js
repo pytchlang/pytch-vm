@@ -824,6 +824,11 @@ var $builtinmodule = function (name) {
         $loc.unregister_actor_instance = new Sk.builtin.func((self, py_obj) => {
             self.js_project.unregister_actor_instance(py_obj);
         });
+
+        $loc.go_live = new Sk.builtin.func((self) => {
+            Sk.pytch.current_live_project = self.js_project;
+            return Sk.builtin.none.none$;
+        });
     };
 
     mod.Project = Sk.misceval.buildClass(mod, project_cls, "Project", []);
