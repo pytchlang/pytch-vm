@@ -64,6 +64,11 @@ $(document).ready(function() {
                                  stage_width, stage_height);
             enact_instructions(project.rendering_instructions());
         });
+
+        return {
+            dom_elt,
+            render,
+        };
     })();
 
 
