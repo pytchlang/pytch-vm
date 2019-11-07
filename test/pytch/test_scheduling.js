@@ -23,6 +23,19 @@ describe("scheduling", () => {
         assert.strictEqual(project.thread_groups.length, 0);
     });
 
+    let two_threads_project = async () => {
+        let project = await import_project("py/project/two_threads.py");
+        let t1 = project.instance_0_by_class_name("T1");
+        let t2 = project.instance_0_by_class_name("T2");
+
+        const assert_counters_both = (exp_counter => {
+            assert.strictEqual(t1.js_attr("counter"), exp_counter);
+            assert.strictEqual(t2.js_attr("counter"), exp_counter);
+        });
+
+        return [project, assert_counters_both];
+    };
+
     it("can run two threads concurrently", async () => {
         let project = await import_project("py/project/two_threads.py");
         let t1 = project.instance_0_by_class_name("T1");
