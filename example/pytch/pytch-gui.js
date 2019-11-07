@@ -24,6 +24,14 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Provide rendering target and source keyboard events via canvas
+
+    const stage_canvas = (() => {
+    })();
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Provide 'keyboard' interface via browser keyboard
 
     const browser_keyboard = (() => {
