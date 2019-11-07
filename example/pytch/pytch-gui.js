@@ -58,6 +58,12 @@ $(document).ready(function() {
                 }
             });
         });
+
+        const render = (project => {
+            canvas_ctx.clearRect(-stage_half_width, -stage_half_height,
+                                 stage_width, stage_height);
+            enact_instructions(project.rendering_instructions());
+        });
     })();
 
 
