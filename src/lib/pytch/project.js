@@ -283,6 +283,10 @@ var $builtinmodule = function (name) {
             return event_handler_group.create_threads(this.parent_project);
         }
 
+        delete_all_clones() {
+            this.instances.splice(1);
+        }
+
         rendering_instructions() {
             return map_concat(i => i.rendering_instructions(),
                               this.instances);
@@ -738,6 +742,9 @@ var $builtinmodule = function (name) {
         }
 
         on_green_flag_clicked() {
+            // Stop the world before re-launching anything.
+            this.on_red_stop_clicked();
+
             let threads = map_concat(a => a.create_threads_for_green_flag(), this.actors);
             let thread_group = new ThreadGroup("green-flag", threads);
             this.thread_groups.push(thread_group);
@@ -769,6 +776,11 @@ var $builtinmodule = function (name) {
                                                this.thread_groups);
 
             this.thread_groups = new_thread_groups;
+        }
+
+        on_red_stop_clicked() {
+            this.thread_groups = [];
+            this.actors.forEach(a => a.delete_all_clones());
         }
 
         rendering_instructions() {
