@@ -31,6 +31,16 @@ $(document).ready(function() {
 
         if (! dom_elt.hasAttribute("tabindex"))
             dom_elt.setAttribute("tabindex", 0);
+
+        const stage_width = dom_elt.width;
+        const stage_half_width = (stage_width / 2) | 0;
+        const stage_height = dom_elt.height;
+        const stage_half_height = (stage_height / 2) | 0;
+
+        const canvas_ctx = dom_elt.getContext("2d");
+
+        canvas_ctx.translate(stage_half_width, stage_half_height);
+        canvas_ctx.scale(1, -1);
     })();
 
 
