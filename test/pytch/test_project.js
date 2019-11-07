@@ -16,8 +16,7 @@ describe("pytch.project module", () => {
     });
 
     it("can register a Sprite class", async () => {
-        let import_result = await import_local_file("py/project/single_sprite.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/single_sprite.py");
         assert.strictEqual(project.actors.length, 1);
 
         let actor_0 = project.actors[0];
@@ -30,8 +29,7 @@ describe("pytch.project module", () => {
         let green_flag_handler = actor_0.event_handlers.green_flag.handlers[0];
 
         assert.strictEqual(green_flag_handler.pytch_actor, actor_0);
-        assert.strictEqual(green_flag_handler.py_func,
-                           import_result.$d.FlagClickCounter.note_click);
+        assert.strictEqual(green_flag_handler.py_func, actor_0.py_cls.note_click);
     });
 
     it("populates parent-project inside Sprite class", async () => {
@@ -45,9 +43,8 @@ describe("pytch.project module", () => {
 
     describe("can look up Actors by name", async () => {
         const async_project = async () => {
-            let import_result
-                = await import_local_file("py/project/bad_registrations.py");
-            return import_result.$d.project.js_project;
+            let project = await import_project("py/project/bad_registrations.py");
+            return project;
         }
 
         it("can find unique Actor", async () => {

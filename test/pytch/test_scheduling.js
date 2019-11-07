@@ -6,8 +6,7 @@
 
 describe("scheduling", () => {
     it("can launch thread on green-flag", async () => {
-        let import_result = await import_local_file("py/project/single_sprite.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/single_sprite.py");
         let instance_0 = project.actors[0].instances[0];
 
         project.on_green_flag_clicked();
@@ -25,8 +24,7 @@ describe("scheduling", () => {
     });
 
     it("can run two threads concurrently", async () => {
-        let import_result = await import_local_file("py/project/two_threads.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/two_threads.py");
         let t1 = project.instance_0_by_class_name("T1");
         let t2 = project.instance_0_by_class_name("T2");
 
@@ -54,8 +52,7 @@ describe("scheduling", () => {
     [{method: 'on_red_stop_clicked', exp_count: 10},
      {method: 'on_green_flag_clicked', exp_count: 5}].forEach(spec =>
     it(`${spec.method} halts everything`, async () => {
-        let import_result = await import_local_file("py/project/two_threads.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/two_threads.py");
         let t1 = project.instance_0_by_class_name("T1");
         let t2 = project.instance_0_by_class_name("T2");
 
@@ -96,8 +93,7 @@ describe("scheduling", () => {
     }
 
     it("can schedule threads on broadcast", async () => {
-        let import_result = await import_local_file("py/project/broadcast.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/broadcast.py");
         let actors = new BroadcastActors(project);
 
         // Initially only the __init__() methods have run.
@@ -123,9 +119,7 @@ describe("scheduling", () => {
     });
 
     it("can pause threads on broadcast/wait", async () => {
-        let import_result
-            = await import_local_file("py/project/broadcast_and_wait.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/broadcast_and_wait.py");
         let actors = new BroadcastActors(project);
 
         // Initially only the __init__() methods have run.
@@ -162,9 +156,7 @@ describe("scheduling", () => {
     });
 
     it("can pause for a number of seconds", async () => {
-        let import_result
-            = await import_local_file("py/project/wait_seconds.py");
-        let project = import_result.$d.project.js_project;
+        let project = await import_project("py/project/wait_seconds.py");
 
         let alien = project.instance_0_by_class_name("Alien");
 
