@@ -31,30 +31,21 @@ describe("pytch.hat_blocks module", () => {
     };
 
     it("registers green-flag", async () => {
-        let import_result = await import_local_file("py/project/single_sprite.py");
-
-        let py_FlagClickCounter = py_getattr(import_result, "FlagClickCounter");
-
+        let py_FlagClickCounter = await single_sprite_project();
         let note_click_evts = new EventsHandledBy(py_FlagClickCounter, "note_click");
         assert.strictEqual(note_click_evts.n_events, 1);
         assert.ok(note_click_evts.includes("green-flag", null));
     });
 
     it("registers when-I-receive", async () => {
-        let import_result = await import_local_file("py/project/single_sprite.py");
-
-        let py_FlagClickCounter = py_getattr(import_result, "FlagClickCounter");
-
+        let py_FlagClickCounter = await single_sprite_project();
         let reset_n_clicks = new EventsHandledBy(py_FlagClickCounter, "reset_n_clicks");
         assert.strictEqual(reset_n_clicks.n_events, 1);
         assert.ok(reset_n_clicks.includes("message", "reset"));
     });
 
     it("registers when-key-pressed", async () => {
-        let import_result = await import_local_file("py/project/single_sprite.py");
-
-        let py_FlagClickCounter = py_getattr(import_result, "FlagClickCounter");
-
+        let py_FlagClickCounter = await single_sprite_project();
         let forget_a_click = new EventsHandledBy(py_FlagClickCounter, "forget_a_click");
         assert.strictEqual(forget_a_click.n_events, 1);
         assert.ok(forget_a_click.includes("keypress", "x"));
