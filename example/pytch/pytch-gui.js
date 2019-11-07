@@ -20,4 +20,13 @@ $(document).ready(function() {
 
         return Sk.builtinFiles["files"][fname];
     });
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // Connect Skulpt to our various interfaces
+
+    Sk.configure({
+        read: builtinRead,
+    });
 });
