@@ -195,5 +195,18 @@ describe("cloning", () => {
     });
 
     it("deletes all clones on red-stop", async () => {
+        let import_result = await import_local_file("py/project/launch_clones.py");
+        let project = import_result.$d.project.js_project;
+        let broom_actor = project.actor_by_class_name("Broom");
+        let n_brooms = () => broom_actor.instances.length;
+
+        project.do_synthetic_broadcast("clone-self");
+        for (let i = 0; i < 10; ++i)
+            project.one_frame();
+
+        assert.strictEqual(n_brooms(), 5);
+
+        project.on_red_stop_clicked();
+        assert.strictEqual(n_brooms(), 1);
     });
 });
