@@ -26,6 +26,30 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Populate 'Examples' drop-down menu
+
+    (() => {
+        let examples_menu_contents = $('#jq-dropdown-examples > ul');
+
+        let examples = [
+            {label: 'Moving Ball', url: 'examples/moving_ball.py'},
+        ];
+
+        examples.forEach(example => {
+            let label_elt = $("<label"
+                              + ` data-pytch-url="${example.url}"`
+                              + ` data-pytch-label="${example.label}">`
+                              + example.label
+                              + "</label>");
+            let li_elt = $("<li></li>");
+            li_elt.append(label_elt);
+            examples_menu_contents.append(li_elt);
+        });
+    })();
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Skulpt interaction
 
     let builtinRead = (fname => {
