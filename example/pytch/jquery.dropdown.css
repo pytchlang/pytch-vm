@@ -40,6 +40,9 @@
   line-height: 18px;
   color: white;
 }
+.jq-dropdown .jq-dropdown-menu li {
+    padding: 3px;
+}
 .jq-dropdown .jq-dropdown-menu li > a,
 .jq-dropdown .jq-dropdown-menu label {
   user-select: none;
