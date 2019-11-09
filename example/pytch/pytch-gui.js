@@ -32,6 +32,60 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Info tabs (stdout, stderr)
+
+    let make_tab_current_via_evt = (evt => {
+        let tab_nub = evt.target.dataset.tab;
+        make_tab_current(tab_nub);
+    });
+
+    let make_tab_current = (tab_nub => {
+        $("#info-panels-container ul.tabs li").removeClass("current");
+        $("#info-panels-container div.tab-content").removeClass("current");
+
+        $(`#tab-header-${tab_nub}`).addClass("current");
+        $(`#tab-pane-${tab_nub}`).addClass("current");
+    });
+
+    $("#info-panels-container ul.tabs li").click(make_tab_current_via_evt);
+
+    ////////////////////////////////////////////////////////////////////////
+    //
+    // Contents of individual panes
+
+    class TextPane {
+        constructor(initial_html, tab_nub) {
+            this.initial_html = initial_html;
+            this.content_elt = document.getElementById(`tab-content-${tab_nub}`);
+            this.reset();
+        }
+
+        reset() {
+            this.content_elt.innerHTML = this.initial_html;
+            this.is_placeholder = true;
+        }
+
+        append_text(txt) {
+            if (this.is_placeholder) {
+                this.content_elt.innerHTML = txt;
+                this.is_placeholder = false;
+            } else {
+                this.content_elt.innerHTML += txt;
+            }
+        }
+    }
+
+    let stdout_info_pane = new TextPane(
+        "<span class=\"info\">Any output from your script will appear here.</span>",
+        "stdout");
+
+    let stderr_info_pane = new TextPane(
+        "<span class=\"info\">Any errors from your script will appear here.</span>",
+        "stderr");
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Populate 'Examples' drop-down menu
 
     (() => {
@@ -180,6 +234,17 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Report errors
+
+    let report_uncaught_exception = (e => {
+        let msg = Sk.builtin.str(e).v;
+        stderr_info_pane.append_text(msg + "\n");
+        make_tab_current("stderr");
+    });
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Build user code
 
     (() => {
@@ -201,14 +266,21 @@ $(document).ready(function() {
 
         const build = async () => {
             let code_text = ace_editor.getValue();
-            await Sk.misceval.asyncToPromise(
-                () => Sk.importMainWithBody("<stdin>", false, code_text, true));
+            try {
+                await Sk.misceval.asyncToPromise(
+                    () => Sk.importMainWithBody("<stdin>", false, code_text, true));
+            } catch (err) {
+                report_uncaught_exception(err);
+            }
             stage_canvas.dom_elt.focus();
             enable();
         };
 
         const immediate_feedback = () => {
             disable();
+            stdout_info_pane.reset();
+            stderr_info_pane.reset();
+            make_tab_current("stdout");
             hide_code_changed_indicator();
         };
 
@@ -230,6 +302,7 @@ $(document).ready(function() {
 
     Sk.configure({
         read: builtinRead,
+        output: (txt => stdout_info_pane.append_text(txt)),
         pytch: {
             async_load_image: async_load_image,
             keyboard: browser_keyboard,

@@ -16,12 +16,15 @@ class Ball(Sprite):
         self.go_to_xy(100, 50)
         self.switch_costume('ball')
         self.show()
+        print('hello, world')
 
     @when_green_flag_clicked
     def move(self):
         self.change_x(50)
+        print('moved once')
         wait_seconds(0.5)
         self.change_x(50)
+        print('moved twice')
 
     @when_key_pressed('w')
     def move_up(self):
