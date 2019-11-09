@@ -23,6 +23,12 @@ $(document).ready(function() {
 
     ace_editor.on("change", show_code_changed_indicator);
 
+    let ace_editor_set_code = (code_text => {
+        ace_editor.setValue(code_text);
+        ace_editor.clearSelection();
+        ace_editor.moveCursorTo(0, 0);
+    });
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
