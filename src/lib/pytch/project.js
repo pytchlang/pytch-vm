@@ -309,6 +309,10 @@ var $builtinmodule = function (name) {
         get appearance_single_name() {
             return "Costume";
         }
+
+        url_centre_from_descriptor(descr) {
+            return [descr[1], descr[2], descr[3]];
+        }
     }
 
 
