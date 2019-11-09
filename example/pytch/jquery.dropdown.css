@@ -41,13 +41,15 @@
 }
 .jq-dropdown .jq-dropdown-menu li > a,
 .jq-dropdown .jq-dropdown-menu label {
-  display: block;
+  user-select: none;
+  display: inline-block;
   color: inherit;
   text-decoration: none;
   line-height: 18px;
   padding: 3px 15px;
   margin: 0;
   white-space: nowrap;
+  width: 12em;
 }
 .jq-dropdown .jq-dropdown-menu li > a:hover,
 .jq-dropdown .jq-dropdown-menu label:hover {
