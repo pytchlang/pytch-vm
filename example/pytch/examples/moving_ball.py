@@ -3,6 +3,7 @@ from pytch import (
     Sprite,
     Project,
     when_green_flag_clicked,
+    when_key_pressed,
     wait_seconds,
 )
 
@@ -21,6 +22,11 @@ class Ball(Sprite):
         self.change_x(50)
         wait_seconds(0.5)
         self.change_x(50)
+
+    @when_key_pressed('w')
+    def move_up(self):
+        self.change_y(25)
+        print('moved up')
 
 
 project = Project()
