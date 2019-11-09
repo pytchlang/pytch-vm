@@ -23,6 +23,49 @@ $(document).ready(function() {
 
     ace_editor.on("change", show_code_changed_indicator);
 
+    let ace_editor_set_code = (code_text => {
+        ace_editor.setValue(code_text);
+        ace_editor.clearSelection();
+        ace_editor.moveCursorTo(0, 0);
+    });
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // Populate 'Examples' drop-down menu
+
+    (() => {
+        let examples_menu_contents = $('#jq-dropdown-examples > ul');
+
+        let examples = [
+            {label: 'Moving Ball', url: 'examples/moving_ball.py'},
+        ];
+
+        let menubar = $("#editor-menubar");
+
+        let load_example = (async evt => {
+            menubar.jqDropdown("hide");
+
+            let evt_data = evt.target.dataset;
+            let code_url = evt_data.pytchUrl;
+            let code_response = await fetch(code_url);
+            let code_text = await code_response.text();
+            ace_editor_set_code(code_text);
+        });
+
+        examples.forEach(example => {
+            let label_elt = $("<label"
+                              + ` data-pytch-url="${example.url}"`
+                              + ` data-pytch-label="${example.label}">`
+                              + example.label
+                              + "</label>");
+            $(label_elt).click(load_example);
+            let li_elt = $("<li></li>");
+            li_elt.append(label_elt);
+            examples_menu_contents.append(li_elt);
+        });
+    })();
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
