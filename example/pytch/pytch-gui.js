@@ -13,6 +13,14 @@ $(document).ready(function() {
     ace_editor.setValue("#\n# Write your Pytch code here!\n#\n");
     ace_editor.clearSelection();
 
+    let show_code_changed_indicator = (evt => {
+        $("#code-change-indicator").show();
+    });
+
+    let hide_code_changed_indicator = (evt => {
+        $("#code-change-indicator").hide();
+    });
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
