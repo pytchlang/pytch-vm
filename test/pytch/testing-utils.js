@@ -98,6 +98,8 @@ before(() => {
         "library/images/square-80x80.png": [80, 80],
         "library/images/rectangle-60x30.png": [60, 30],
         "library/images/stage/solid-white.png": [480, 360],
+        "library/images/yellow-banana.png": [80, 30],
+        "library/images/stage/wooden.png": [480, 360],
     };
 
     class MockImage {
