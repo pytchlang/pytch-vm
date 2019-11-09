@@ -194,7 +194,8 @@ describe("cloning", () => {
             frame_then_assert_state(1, steady_state_n_pings);
     });
 
-    it("deletes all clones on red-stop", async () => {
+    ['on_red_stop_clicked', 'on_green_flag_clicked'].forEach(method =>
+    it(`${method} deletes all clones`, async () => {
         let import_result = await import_local_file("py/project/launch_clones.py");
         let project = import_result.$d.project.js_project;
         let broom_actor = project.actor_by_class_name("Broom");
@@ -206,7 +207,7 @@ describe("cloning", () => {
 
         assert.strictEqual(n_brooms(), 5);
 
-        project.on_red_stop_clicked();
+        project[method]();
         assert.strictEqual(n_brooms(), 1);
-    });
+    }));
 });
