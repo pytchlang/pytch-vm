@@ -722,6 +722,14 @@ var $builtinmodule = function (name) {
             this.actors.push(sprite);
         }
 
+        async register_stage_class(py_stage_cls) {
+            let stage = await PytchStage.async_create(py_stage_cls, this);
+            // Ensure Stage is first in 'actors' array, so that it renders
+            // first, i.e., at the bottom.  This will be done differently once
+            // z-order is implemented.
+            this.actors.unshift(stage);
+        }
+
         sprite_instances_are_touching(py_sprite_instance_0, py_sprite_instance_1) {
             let actor_instance_0 = py_sprite_instance_0.$pytchActorInstance;
             let actor_instance_1 = py_sprite_instance_1.$pytchActorInstance;
