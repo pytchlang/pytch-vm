@@ -32,6 +32,26 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Info tabs (stdout, stderr)
+
+    let make_tab_current_via_evt = (evt => {
+        let tab_nub = evt.target.dataset.tab;
+        make_tab_current(tab_nub);
+    });
+
+    let make_tab_current = (tab_nub => {
+        $("#info-panels-container ul.tabs li").removeClass("current");
+        $("#info-panels-container div.tab-content").removeClass("current");
+
+        $(`#tab-header-${tab_nub}`).addClass("current");
+        $(`#tab-pane-${tab_nub}`).addClass("current");
+    });
+
+    $("#info-panels-container ul.tabs li").click(make_tab_current_via_evt);
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Populate 'Examples' drop-down menu
 
     (() => {
