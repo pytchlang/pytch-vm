@@ -155,7 +155,7 @@ var $builtinmodule = function (name) {
             let appearance_descriptors = js_getattr(this.py_cls, attr_name);
 
             let async_appearances = appearance_descriptors.map(async d => {
-                let [url, cx, cy] = [d[1], d[2], d[3]];
+                let [url, cx, cy] = this.url_centre_from_descriptor(d);
                 let appearance = await Appearance.async_create(url, cx, cy);
                 return [d[0], appearance];
             });
