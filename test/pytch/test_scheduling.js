@@ -51,7 +51,9 @@ describe("scheduling", () => {
         }
     });
 
-    it("halts everything on red flag", async () => {
+    [{method: 'on_red_stop_clicked', exp_count: 10},
+     {method: 'on_green_flag_clicked', exp_count: 5}].forEach(spec =>
+    it(`${spec.method} halts everything`, async () => {
         let import_result = await import_local_file("py/project/two_threads.py");
         let project = import_result.$d.project.js_project;
         let t1 = project.instance_0_by_class_name("T1");
@@ -70,12 +72,12 @@ describe("scheduling", () => {
         assert_counters_both(10);
 
         // Everything should stop if we hit the red button:
-        project.on_red_stop_clicked();
+        project[spec.method]();
         for (let i = 0; i < 5; ++i)
             project.one_frame();
 
-        assert_counters_both(10);
-    });
+        assert_counters_both(spec.exp_count);
+    }));
 
     class BroadcastActors {
         constructor(project) {
