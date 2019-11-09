@@ -10,6 +10,8 @@ $(document).ready(function() {
 
     ace_editor.getSession().setUseWorker(false);
     ace_editor.getSession().setMode("ace/mode/python");
+    ace_editor.setValue("#\n# Write your Pytch code here!\n#\n");
+    ace_editor.clearSelection();
 
 
     ////////////////////////////////////////////////////////////////////////////////
