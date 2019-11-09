@@ -22,6 +22,26 @@ h1 {
     font-size: 16px;
 }
 
+#code-change-indicator {
+    width: 680px;
+    background-color: #ff8;
+    padding: 1.0ex 0em;
+    margin-top: 1.0ex;
+    margin-bottom: 1.0ex;
+    border: 1px solid #222;
+}
+
+#code-change-indicator p {
+    margin: 0.75ex 0em;
+    text-align: center;
+}
+
+#code-change-indicator p span.button {
+    background-color: lightgreen;
+    padding: 4px;
+    margin: 0ex 0.25em;
+}
+
 #editor-menubar {
     padding-top: 0.5ex; padding-bottom: 0.5ex;
     margin-bottom: 1.5ex;
