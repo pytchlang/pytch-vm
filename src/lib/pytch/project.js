@@ -6,12 +6,15 @@ var $builtinmodule = function (name) {
     // Constants, convenience utilities
 
     const FRAMES_PER_SECOND = 60;
+    const STAGE_WIDTH = 480;
+    const STAGE_HEIGHT = 360;
 
     const s_dunder_name = Sk.builtin.str("__name__");
     const s_dunder_class = Sk.builtin.str("__class__");
     const s_im_func = Sk.builtin.str("im_func");
     const s_pytch_handler_for = Sk.builtin.str("_pytch_handler_for");
     const s_Costumes = Sk.builtin.str("Costumes");
+    const s_Backdrops = Sk.builtin.str("Backdrops");
     const s_shown = Sk.builtin.str("_shown");
     const s_x = Sk.builtin.str("_x");
     const s_y = Sk.builtin.str("_y");
@@ -154,7 +157,7 @@ var $builtinmodule = function (name) {
             let appearance_descriptors = js_getattr(this.py_cls, attr_name);
 
             let async_appearances = appearance_descriptors.map(async d => {
-                let [url, cx, cy] = [d[1], d[2], d[3]];
+                let [url, cx, cy] = this.url_centre_from_descriptor(d);
                 let appearance = await Appearance.async_create(url, cx, cy);
                 return [d[0], appearance];
             });
@@ -307,6 +310,31 @@ var $builtinmodule = function (name) {
 
         get appearance_single_name() {
             return "Costume";
+        }
+
+        url_centre_from_descriptor(descr) {
+            return [descr[1], descr[2], descr[3]];
+        }
+    }
+
+    class PytchStage extends PytchActor {
+        static async async_create(py_cls, parent_project) {
+            let stage = new PytchStage(py_cls, parent_project);
+            await stage.async_init();
+            py_cls.$pytchActor = stage;
+            return stage;
+        }
+
+        get appearances_attr_name() {
+            return s_Backdrops;
+        }
+
+        get appearance_single_name() {
+            return "Backdrop";
+        }
+
+        url_centre_from_descriptor(descr) {
+            return [descr[1], STAGE_WIDTH / 2, STAGE_HEIGHT / 2];
         }
     }
 
@@ -721,6 +749,14 @@ var $builtinmodule = function (name) {
             this.actors.push(sprite);
         }
 
+        async register_stage_class(py_stage_cls) {
+            let stage = await PytchStage.async_create(py_stage_cls, this);
+            // Ensure Stage is first in 'actors' array, so that it renders
+            // first, i.e., at the bottom.  This will be done differently once
+            // z-order is implemented.
+            this.actors.unshift(stage);
+        }
+
         sprite_instances_are_touching(py_sprite_instance_0, py_sprite_instance_1) {
             let actor_instance_0 = py_sprite_instance_0.$pytchActorInstance;
             let actor_instance_1 = py_sprite_instance_1.$pytchActorInstance;
@@ -818,6 +854,12 @@ var $builtinmodule = function (name) {
         $loc.register_sprite_class = new Sk.builtin.func((self, sprite_cls) => {
             Sk.builtin.setattr(sprite_cls, s_pytch_parent_project, self);
             let do_register = self.js_project.register_sprite_class(sprite_cls);
+            return Sk.misceval.promiseToSuspension(do_register);
+        });
+
+        $loc.register_stage_class = new Sk.builtin.func((self, stage_cls) => {
+            Sk.builtin.setattr(stage_cls, s_pytch_parent_project, self);
+            let do_register = self.js_project.register_stage_class(stage_cls);
             return Sk.misceval.promiseToSuspension(do_register);
         });
 

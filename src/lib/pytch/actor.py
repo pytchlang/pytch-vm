@@ -58,4 +58,15 @@ class Sprite(Actor):
 
 
 class Stage(Actor):
-    Backdrops = []
+    Backdrops = [('solid-white', 'library/images/stage/solid-white.png')]
+    _x = 0
+    _y = 0
+    _size = 1.0
+    _shown = True
+    _appearance = 'solid-white'
+
+    def __init__(self):
+        pass
+
+    def switch_backdrop(self, backdrop_name):
+        self._appearance = backdrop_name
