@@ -41,6 +41,17 @@ describe("pytch.project module", () => {
         assert.strictEqual(py_parent_project, py_project);
     });
 
+    it("can register a Stage class", async () => {
+        let project = await import_project("py/project/custom_stage.py");
+        assert.strictEqual(project.actors.length, 1);
+
+        let actor_0 = project.actors[0];
+        assert.strictEqual(actor_0.instances.length, 1);
+
+        let instance_0 = actor_0.instances[0];
+        assert.strictEqual(instance_0.js_attr("colour"), "red");
+    });
+
     describe("can look up Actors by name", async () => {
         const async_project = async () => {
             let project = await import_project("py/project/bad_registrations.py");
