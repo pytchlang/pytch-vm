@@ -332,6 +332,10 @@ var $builtinmodule = function (name) {
         get appearance_single_name() {
             return "Backdrop";
         }
+
+        url_centre_from_descriptor(descr) {
+            return [descr[1], STAGE_WIDTH / 2, STAGE_HEIGHT / 2];
+        }
     }
 
 
