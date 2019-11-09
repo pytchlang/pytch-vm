@@ -12,6 +12,7 @@ var $builtinmodule = function (name) {
     const s_im_func = Sk.builtin.str("im_func");
     const s_pytch_handler_for = Sk.builtin.str("_pytch_handler_for");
     const s_Costumes = Sk.builtin.str("Costumes");
+    const s_Backdrops = Sk.builtin.str("Backdrops");
     const s_shown = Sk.builtin.str("_shown");
     const s_x = Sk.builtin.str("_x");
     const s_y = Sk.builtin.str("_y");
