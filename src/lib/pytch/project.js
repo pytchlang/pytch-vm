@@ -322,6 +322,14 @@ var $builtinmodule = function (name) {
             py_cls.$pytchActor = stage;
             return stage;
         }
+
+        get appearances_attr_name() {
+            return s_Backdrops;
+        }
+
+        get appearance_single_name() {
+            return "Backdrop";
+        }
     }
 
 
