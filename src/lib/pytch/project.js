@@ -315,6 +315,15 @@ var $builtinmodule = function (name) {
         }
     }
 
+    class PytchStage extends PytchActor {
+        static async async_create(py_cls, parent_project) {
+            let stage = new PytchStage(py_cls, parent_project);
+            await stage.async_init();
+            py_cls.$pytchActor = stage;
+            return stage;
+        }
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
