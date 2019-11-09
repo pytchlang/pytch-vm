@@ -41,5 +41,16 @@
       <div id="code-change-indicator" style="display:none;"><p>You have changed your code &mdash;
         click the <span class="button">BUILD</span> button to refresh your project.</p></div>
     </div>
+
+    <div id="info-panels-container">
+      <ul class="tabs">
+        <li id="tab-header-stdout" class="tab-link stdout current" data-tab="stdout">Output</li>
+        <li id="tab-header-stderr" class="tab-link stderr" data-tab="stderr">Errors</li>
+      </ul>
+      <div id="tab-pane-stdout" class="tab-content current">
+        <pre id="tab-content-stdout"></pre></div>
+      <div id="tab-pane-stderr" class="tab-content">
+        <pre id="tab-content-stderr"></pre></div>
+    </div>
   </body>
 </html>

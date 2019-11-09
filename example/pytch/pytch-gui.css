@@ -93,3 +93,55 @@ h1 {
     background-color: red;
     margin-left: 1em;
 }
+
+#info-panels-container {
+    clear: both;
+}
+
+#info-panels-container ul.tabs {
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+}
+
+#info-panels-container ul.tabs li {
+    background: none;
+    color: #336;
+    font-size: 16px;
+    display: inline-block;
+    padding: 10px 15px;
+    cursor: pointer;
+    user-select: none;
+}
+
+#info-panels-container ul.tabs li.current {
+    color: #000;
+}
+
+#info-panels-container ul.tabs li.current.stdout {
+    background-color: #88c;
+}
+
+#info-panels-container ul.tabs li.current.stderr {
+    background-color: #f44;
+}
+
+#tab-pane-stdout {
+    background-color: #88c;
+}
+
+#tab-pane-stderr {
+    background-color: #f44;
+}
+
+#info-panels-container div.tab-content {
+    display: none;
+    padding: 10px 15px;
+    height: 60ex;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+#info-panels-container div.tab-content.current {
+    display: inherit;
+}
