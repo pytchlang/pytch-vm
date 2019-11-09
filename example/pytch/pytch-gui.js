@@ -21,6 +21,8 @@ $(document).ready(function() {
         $("#code-change-indicator").hide();
     });
 
+    ace_editor.on("change", show_code_changed_indicator);
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
@@ -164,6 +166,7 @@ $(document).ready(function() {
 
         const immediate_feedback = () => {
             disable();
+            hide_code_changed_indicator();
         };
 
         // If the program is very short, it looks like nothing has happened
