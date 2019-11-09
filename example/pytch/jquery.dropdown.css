@@ -27,34 +27,6 @@
 .jq-dropdown.jq-dropdown-tip {
   margin-top: 8px;
 }
-.jq-dropdown.jq-dropdown-tip:before {
-  position: absolute;
-  top: -6px;
-  left: 9px;
-  content: "";
-  border-left: 7px solid transparent;
-  border-right: 7px solid transparent;
-  border-bottom: 7px solid #ddd;
-  display: inline-block;
-}
-.jq-dropdown.jq-dropdown-tip:after {
-  position: absolute;
-  top: -5px;
-  left: 10px;
-  content: "";
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-bottom: 6px solid white;
-  display: inline-block;
-}
-.jq-dropdown.jq-dropdown-tip.jq-dropdown-anchor-right:before {
-  left: auto;
-  right: 9px;
-}
-.jq-dropdown.jq-dropdown-tip.jq-dropdown-anchor-right:after {
-  left: auto;
-  right: 10px;
-}
 .jq-dropdown.jq-dropdown-scroll .jq-dropdown-menu,
 .jq-dropdown.jq-dropdown-scroll .jq-dropdown-panel {
   max-height: 180px;
