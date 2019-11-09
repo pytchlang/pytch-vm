@@ -52,6 +52,23 @@ describe("pytch.project module", () => {
         assert.strictEqual(instance_0.js_attr("colour"), "red");
     });
 
+    it("can register Sprite and Stage", async () => {
+        let project = await import_project("py/project/sprite_on_stage.py");
+
+        // Even though we registered Table after Banana, Table should
+        // end up in the first slot.
+        var table = project.actor_by_class_name("Table");
+        assert.strictEqual(table, project.actors[0]);
+
+        // And Banana in the second.
+        var banana = project.actor_by_class_name("Banana");
+        assert.strictEqual(banana, project.actors[1]);
+
+        // Their Costume and Backdrop should have been picked out OK.
+        assert.strictEqual(banana.appearance_from_name("yellow").centre_x, 50);
+        assert.strictEqual(table.appearance_from_name("wooden").centre_x, 240);
+    });
+
     describe("can look up Actors by name", async () => {
         const async_project = async () => {
             let project = await import_project("py/project/bad_registrations.py");
