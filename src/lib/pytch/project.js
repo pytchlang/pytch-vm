@@ -857,6 +857,12 @@ var $builtinmodule = function (name) {
             return Sk.misceval.promiseToSuspension(do_register);
         });
 
+        $loc.register_stage_class = new Sk.builtin.func((self, stage_cls) => {
+            Sk.builtin.setattr(stage_cls, s_pytch_parent_project, self);
+            let do_register = self.js_project.register_stage_class(stage_cls);
+            return Sk.misceval.promiseToSuspension(do_register);
+        });
+
         $loc.unregister_actor_instance = new Sk.builtin.func((self, py_obj) => {
             self.js_project.unregister_actor_instance(py_obj);
         });
