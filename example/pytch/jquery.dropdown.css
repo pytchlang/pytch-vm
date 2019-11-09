@@ -38,6 +38,7 @@
   text-indent: 0;
   margin: 0;
   line-height: 18px;
+  color: white;
 }
 .jq-dropdown .jq-dropdown-menu li > a,
 .jq-dropdown .jq-dropdown-menu label {
