@@ -223,6 +223,57 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Provide 'mouse' interface via browser mouse
+
+    const browser_mouse = (() => {
+        const canvas_elt = stage_canvas.dom_elt;
+        const stage_hwd = (canvas_elt.width / 2) | 0;
+        const stage_hht = (canvas_elt.height / 2) | 0;
+
+        let undrained_clicks = [];
+        let client_x = 0.0;
+        let client_y = 0.0;
+
+        const on_mouse_move = (evt => {
+            client_x = evt.clientX;
+            client_y = evt.clientY;
+        });
+
+        const current_stage_coords = (() => {
+            let elt_rect = canvas_elt.getBoundingClientRect();
+            let canvas_x0 = elt_rect.left;
+            let canvas_y0 = elt_rect.top;
+
+            let canvas_x = client_x - canvas_x0;
+            let canvas_y = client_y - canvas_y0;
+
+            // Recover stage coords by: translating; flipping y.
+            let stage_x = canvas_x - stage_hwd;
+            let stage_y = stage_hht - canvas_y;
+
+            return { stage_x, stage_y };
+        });
+
+        const on_mouse_down = (evt => {
+            undrained_clicks.push(current_stage_coords());
+        });
+
+        const drain_new_click_events = (() => {
+            let evts = undrained_clicks;
+            undrained_clicks = [];
+            return evts;
+        });
+
+        return {
+            on_mouse_move,
+            on_mouse_down,
+            drain_new_click_events,
+        };
+    })();
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Provide 'asynchronous load image' interface
 
     const async_load_image = (url =>
@@ -307,6 +358,7 @@ $(document).ready(function() {
         pytch: {
             async_load_image: async_load_image,
             keyboard: browser_keyboard,
+            mouse: browser_mouse,
             on_exception: report_uncaught_exception,
         },
     });
@@ -328,6 +380,9 @@ $(document).ready(function() {
 
     stage_canvas.dom_elt.onkeydown = browser_keyboard.on_key_down;
     stage_canvas.dom_elt.onkeyup = browser_keyboard.on_key_up;
+
+    stage_canvas.dom_elt.onmousemove = browser_mouse.on_mouse_move;
+    stage_canvas.dom_elt.onmousedown = browser_mouse.on_mouse_down;
 
 
     ////////////////////////////////////////////////////////////////////////////////
