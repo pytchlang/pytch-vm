@@ -115,6 +115,11 @@ var $builtinmodule = function (name) {
                     && (this.y_min < other_bbox.y_max)
                     && (other_bbox.y_min < this.y_max));
         }
+
+        contains_point(x, y) {
+            return (this.x_min <= x && x <= this.x_max
+                    && this.y_min <= y && y <= this.y_max);
+        }
     }
 
 
