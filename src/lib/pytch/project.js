@@ -854,6 +854,12 @@ var $builtinmodule = function (name) {
                               this.actors);
         }
 
+        shown_instances_front_to_back () {
+            let shown_instances = this.shown_instances_back_to_front();
+            shown_instances.reverse();
+            return shown_instances;
+        }
+
         threads_info() {
             return map_concat(tg => tg.threads_info(), this.thread_groups);
         }
