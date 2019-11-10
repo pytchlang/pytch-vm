@@ -144,6 +144,7 @@ var $builtinmodule = function (name) {
             };
 
             this.clone_handlers = [];
+            this.click_handlers = [];
 
             this.register_event_handlers();
         }
@@ -217,6 +218,10 @@ var $builtinmodule = function (name) {
 
             case "clone":
                 this.clone_handlers.push(handler_py_func);
+                break;
+
+            case "click":
+                this.click_handlers.push(handler_py_func);
                 break;
 
             default:
