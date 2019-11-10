@@ -839,6 +839,30 @@ var $builtinmodule = function (name) {
             });
         }
 
+        // Check for the first shown sprite instance whose bounding box contains the
+        // given point (stage_x, stage_y).  If one is found, launch any click
+        // handlers it has.  (If no shown true sprite is found, the sole instance of
+        // the Stage-derived class should have been hit since it covers the whole
+        // stage coordinate space.)
+        launch_click_handlers(stage_x, stage_y) {
+            let shown_instances = this.shown_instances_front_to_back();
+            let hit_instance = shown_instances.find(instance => {
+                let bbox = instance.bounding_box();
+                return bbox.contains_point(stage_x, stage_y);
+            });
+
+            // Really should find something because the Stage covers every possible
+            // (stage-x, stage-y) point, but be careful:
+            if (typeof hit_instance == "undefined")
+                return;  // TODO: Log a warning first?
+
+            let threads = hit_instance.create_click_handlers_threads();
+            let thread_group = new ThreadGroup(`click "${hit_instance.info_label}"`,
+                                               threads);
+
+            this.thread_groups.push(thread_group);
+        }
+
         one_frame() {
             this.launch_keypress_handlers();
 
