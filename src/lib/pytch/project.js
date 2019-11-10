@@ -6,6 +6,8 @@ var $builtinmodule = function (name) {
     // Constants, convenience utilities
 
     const FRAMES_PER_SECOND = 60;
+    const STAGE_WIDTH = 480;
+    const STAGE_HEIGHT = 360;
 
     const s_dunder_name = Sk.builtin.str("__name__");
     const s_dunder_class = Sk.builtin.str("__class__");
