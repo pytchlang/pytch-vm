@@ -27,3 +27,10 @@ class when_key_pressed:
 
     def __call__(self, fun):
         return _append_handler(fun, 'keypress', self.keyname)
+
+
+def when_this_sprite_clicked(fun):
+    return _append_handler(fun, 'click')
+
+
+when_stage_clicked = when_this_sprite_clicked

@@ -115,6 +115,11 @@ var $builtinmodule = function (name) {
                     && (this.y_min < other_bbox.y_max)
                     && (other_bbox.y_min < this.y_max));
         }
+
+        contains_point(x, y) {
+            return (this.x_min <= x && x <= this.x_max
+                    && this.y_min <= y && y <= this.y_max);
+        }
     }
 
 
@@ -144,6 +149,7 @@ var $builtinmodule = function (name) {
             };
 
             this.clone_handlers = [];
+            this.click_handlers = [];
 
             this.register_event_handlers();
         }
@@ -217,6 +223,10 @@ var $builtinmodule = function (name) {
 
             case "clone":
                 this.clone_handlers.push(handler_py_func);
+                break;
+
+            case "click":
+                this.click_handlers.push(handler_py_func);
                 break;
 
             default:
@@ -425,6 +435,13 @@ var $builtinmodule = function (name) {
 
         get info_label() {
             return `${this.actor.class_name}-${this.numeric_id}`;
+        }
+
+        create_click_handlers_threads() {
+            return this.actor.click_handlers.map(
+                py_fun => new Thread(py_fun,
+                                     this.py_object,
+                                     this.actor.parent_project));
         }
     }
 
@@ -822,8 +839,41 @@ var $builtinmodule = function (name) {
             });
         }
 
+        // Check for the first shown sprite instance whose bounding box contains the
+        // given point (stage_x, stage_y).  If one is found, launch any click
+        // handlers it has.  (If no shown true sprite is found, the sole instance of
+        // the Stage-derived class should have been hit since it covers the whole
+        // stage coordinate space.)
+        launch_click_handlers(stage_x, stage_y) {
+            let shown_instances = this.shown_instances_front_to_back();
+            let hit_instance = shown_instances.find(instance => {
+                let bbox = instance.bounding_box();
+                return bbox.contains_point(stage_x, stage_y);
+            });
+
+            // Really should find something because the Stage covers every possible
+            // (stage-x, stage-y) point, but be careful:
+            if (typeof hit_instance == "undefined")
+                return;  // TODO: Log a warning first?
+
+            let threads = hit_instance.create_click_handlers_threads();
+            let thread_group = new ThreadGroup(`click "${hit_instance.info_label}"`,
+                                               threads);
+
+            this.thread_groups.push(thread_group);
+        }
+
+        launch_mouse_click_handlers() {
+            let new_clicks = Sk.pytch.mouse.drain_new_click_events();
+
+            new_clicks.forEach(click => {
+                this.launch_click_handlers(click.stage_x, click.stage_y);
+            });
+        }
+
         one_frame() {
             this.launch_keypress_handlers();
+            this.launch_mouse_click_handlers();
 
             this.thread_groups.forEach(tg => tg.maybe_cull_threads());
             this.thread_groups.forEach(tg => tg.maybe_wake_threads());

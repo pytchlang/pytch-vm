@@ -50,4 +50,25 @@ describe("pytch.hat_blocks module", () => {
         assert.strictEqual(forget_a_click.n_events, 1);
         assert.ok(forget_a_click.includes("keypress", "x"));
     });
+
+    let sprite_on_stage = async () => {
+        let project = await import_project("py/project/sprite_on_stage.py");
+        let banana = project.actor_by_class_name("Banana");
+        let table = project.actor_by_class_name("Table");
+        return {banana, table};
+    };
+
+    it("register sprite-clicked", async () => {
+        let {banana, table} = await sprite_on_stage();
+        let hello = new EventsHandledBy(banana.py_cls, "say_hello_banana");
+        assert.strictEqual(hello.n_events, 1);
+        assert.ok(hello.includes("click", null));
+    });
+
+    it("register stage-clicked", async () => {
+        let {banana, table} = await sprite_on_stage();
+        let hello = new EventsHandledBy(table.py_cls, "say_hello_table");
+        assert.strictEqual(hello.n_events, 1);
+        assert.ok(hello.includes("click", null));
+    });
 });

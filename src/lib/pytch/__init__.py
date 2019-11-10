@@ -14,6 +14,8 @@ from .hat_blocks import (
     when_I_receive,
     when_key_pressed,
     when_I_start_as_a_clone,
+    when_this_sprite_clicked,
+    when_stage_clicked,
 )
 
 from .clone import (
