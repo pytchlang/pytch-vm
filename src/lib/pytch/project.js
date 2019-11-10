@@ -418,6 +418,10 @@ var $builtinmodule = function (name) {
 
             this.py_object_is_registered = false;
         }
+
+        get info_label() {
+            return `${this.actor.class_name}-${this.numeric_id}`;
+        }
     }
 
 
