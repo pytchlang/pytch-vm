@@ -436,6 +436,13 @@ var $builtinmodule = function (name) {
         get info_label() {
             return `${this.actor.class_name}-${this.numeric_id}`;
         }
+
+        create_click_handlers_threads() {
+            return this.actor.click_handlers.map(
+                py_fun => new Thread(py_fun,
+                                     this.py_object,
+                                     this.actor.parent_project));
+        }
     }
 
 
