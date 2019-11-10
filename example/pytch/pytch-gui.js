@@ -358,6 +358,7 @@ $(document).ready(function() {
         pytch: {
             async_load_image: async_load_image,
             keyboard: browser_keyboard,
+            mouse: browser_mouse,
             on_exception: report_uncaught_exception,
         },
     });
@@ -379,6 +380,9 @@ $(document).ready(function() {
 
     stage_canvas.dom_elt.onkeydown = browser_keyboard.on_key_down;
     stage_canvas.dom_elt.onkeyup = browser_keyboard.on_key_up;
+
+    stage_canvas.dom_elt.onmousemove = browser_mouse.on_mouse_move;
+    stage_canvas.dom_elt.onmousedown = browser_mouse.on_mouse_down;
 
 
     ////////////////////////////////////////////////////////////////////////////////
