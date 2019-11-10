@@ -612,8 +612,7 @@ var $builtinmodule = function (name) {
         info() {
             let instance = this.actor_instance;
             return {
-                target: (`${instance.info_label}`
-                         + ` (${this.callable_name})`),
+                target: `${instance.info_label} (${this.callable_name})`,
                 state: this.state,
                 wait: this.human_readable_sleeping_on,
             };
