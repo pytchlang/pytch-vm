@@ -102,6 +102,7 @@ Sk.python3 = {
         async_load_image: bad_async_load_image,
         keyboard: inactive_keyboard,
         current_live_project: do_nothing_project,
+        on_exception: do_nothing,
     };
 })();
 

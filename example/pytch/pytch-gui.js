@@ -307,6 +307,7 @@ $(document).ready(function() {
         pytch: {
             async_load_image: async_load_image,
             keyboard: browser_keyboard,
+            on_exception: report_uncaught_exception,
         },
     });
 
