@@ -101,6 +101,7 @@ before(() => {
         pytch: {
             async_load_image: (url => Promise.resolve(new MockImage(url))),
             keyboard: mock_keyboard,
+            mouse: mock_mouse,
             on_exception: pytch_errors.append_error,
         },
     });
