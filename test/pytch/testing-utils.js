@@ -43,6 +43,38 @@ before(() => {
         };
     })();
 
+    global.mock_mouse = (() => {
+        let undrained_clicks = [];
+        let pointer_stage_x = 0.0;
+        let pointer_stage_y = 0.0;
+
+        const stage_coords = () => ({ stage_x: pointer_stage_x,
+                                      stage_y: pointer_stage_y });
+
+        const move = (x, y) => {
+            pointer_stage_x = x;
+            pointer_stage_y = y;
+        };
+
+        const click = () => { undrained_clicks.push(stage_coords()); };
+
+        const click_at = (x, y) => {
+            move(x, y);
+            click();
+        };
+
+        const drain_new_click_events = () => {
+            let evts = undrained_clicks;
+            undrained_clicks = [];
+            return evts;
+        };
+
+        return {
+            click_at,
+            drain_new_click_events,
+        };
+    })();
+
     global.pytch_errors = (() => {
         let uncollected_errors = [];
 
