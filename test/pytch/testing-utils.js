@@ -205,3 +205,8 @@ before(() => {
         assert_prop_eq("y_max", exp_ymax);
     };
 });
+
+afterEach(() => {
+    assert.strictEqual(pytch_errors.drain_errors().length, 0,
+                       "undrained errors at end of test");
+});
