@@ -87,6 +87,10 @@ Sk.python3 = {
         drain_new_keydown_events: () => [],
     };
 
+    let inactive_mouse = {
+        drain_new_click_events: () => [],
+    };
+
     let do_nothing = (() => {});
     let return_empty_list = (() => []);
 
@@ -101,6 +105,7 @@ Sk.python3 = {
     Sk.default_pytch_environment = {
         async_load_image: bad_async_load_image,
         keyboard: inactive_keyboard,
+        mouse: inactive_mouse,
         current_live_project: do_nothing_project,
         on_exception: do_nothing,
     };
