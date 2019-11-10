@@ -290,6 +290,10 @@ var $builtinmodule = function (name) {
             this.instances.splice(1);
         }
 
+        shown_instances_back_to_front() {
+            return this.instances.filter(i => i.render_shown);
+        }
+
         rendering_instructions() {
             return map_concat(i => i.rendering_instructions(),
                               this.instances);
