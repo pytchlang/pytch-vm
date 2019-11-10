@@ -43,6 +43,25 @@ before(() => {
         };
     })();
 
+    global.pytch_errors = (() => {
+        let uncollected_errors = [];
+
+        const append_error = (err => {
+            uncollected_errors.push(err);
+        });
+
+        const drain_errors = (() => {
+            let errors = uncollected_errors;
+            uncollected_errors = [];
+            return errors;
+        });
+
+        return {
+            append_error,
+            drain_errors,
+        };
+    })();
+
     // Connect read/write to filesystem and stdout; configure Pytch environment.
     Sk.configure({
         read: (fname => fs.readFileSync(fname, { encoding: "utf8" })),
@@ -50,6 +69,7 @@ before(() => {
         pytch: {
             async_load_image: (url => Promise.resolve(new MockImage(url))),
             keyboard: mock_keyboard,
+            on_exception: pytch_errors.append_error,
         },
     });
 
