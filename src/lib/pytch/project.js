@@ -863,6 +863,14 @@ var $builtinmodule = function (name) {
             this.thread_groups.push(thread_group);
         }
 
+        launch_mouse_click_handlers() {
+            let new_clicks = Sk.pytch.mouse.drain_new_click_events();
+
+            new_clicks.forEach(click => {
+                this.launch_click_handlers(click.stage_x, click.stage_y);
+            });
+        }
+
         one_frame() {
             this.launch_keypress_handlers();
 
