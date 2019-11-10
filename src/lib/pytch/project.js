@@ -849,6 +849,11 @@ var $builtinmodule = function (name) {
             this.thread_groups.push(new_thread_group);
         }
 
+        shown_instances_back_to_front () {
+            return map_concat(a => a.shown_instances_back_to_front(),
+                              this.actors);
+        }
+
         threads_info() {
             return map_concat(tg => tg.threads_info(), this.thread_groups);
         }
