@@ -418,6 +418,10 @@ var $builtinmodule = function (name) {
 
             this.py_object_is_registered = false;
         }
+
+        get info_label() {
+            return `${this.actor.class_name}-${this.numeric_id}`;
+        }
     }
 
 
@@ -608,8 +612,7 @@ var $builtinmodule = function (name) {
         info() {
             let instance = this.actor_instance;
             return {
-                target: (`${instance.actor.class_name}-${instance.numeric_id}`
-                         + ` (${this.callable_name})`),
+                target: `${instance.info_label} (${this.callable_name})`,
                 state: this.state,
                 wait: this.human_readable_sleeping_on,
             };
