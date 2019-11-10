@@ -290,6 +290,10 @@ var $builtinmodule = function (name) {
             this.instances.splice(1);
         }
 
+        shown_instances_back_to_front() {
+            return this.instances.filter(i => i.render_shown);
+        }
+
         rendering_instructions() {
             return map_concat(i => i.rendering_instructions(),
                               this.instances);
@@ -843,6 +847,17 @@ var $builtinmodule = function (name) {
             let new_thread_group
                 = this.thread_group_for_broadcast_receivers(js_msg);
             this.thread_groups.push(new_thread_group);
+        }
+
+        shown_instances_back_to_front () {
+            return map_concat(a => a.shown_instances_back_to_front(),
+                              this.actors);
+        }
+
+        shown_instances_front_to_back () {
+            let shown_instances = this.shown_instances_back_to_front();
+            shown_instances.reverse();
+            return shown_instances;
         }
 
         threads_info() {
