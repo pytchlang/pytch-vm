@@ -1,5 +1,5 @@
 class Actor:
-    pass
+    Sounds = []
 
 
 class Sprite(Actor):
