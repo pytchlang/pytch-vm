@@ -323,6 +323,11 @@ var $builtinmodule = function (name) {
             return this.instances.filter(i => i.render_shown);
         }
 
+        launch_sound_performance(name) {
+            let sound = this._sound_from_name[name];
+            return sound.launch_new_performance();
+        }
+
         rendering_instructions() {
             return map_concat(i => i.rendering_instructions(),
                               this.instances);
