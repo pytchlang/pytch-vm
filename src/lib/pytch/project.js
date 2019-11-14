@@ -677,6 +677,12 @@ var $builtinmodule = function (name) {
         // one_frame() call, and resume the one after that.  And so on.
         AWAITING_PASSAGE_OF_TIME: "awaiting-passage-of-time",
 
+        // AWAITING_SOUND_COMPLETION: The thread will pause execution until the
+        // relevant sound has finished playing.  A reference to the
+        // 'performance' of the 'relevant sound' is stored in the Thread
+        // instance's "sleeping_on" property.
+        AWAITING_SOUND_COMPLETION: "awaiting-sound-completion",
+
         // ZOMBIE: The thread has terminated but has not yet been cleared from
         // the list of live threads.
         ZOMBIE: "zombie",
