@@ -177,6 +177,23 @@ var $builtinmodule = function (name) {
                 this._appearance_from_name[nm] = app;
         }
 
+        async async_load_sounds() {
+            let sound_descriptors = js_getattr(this.py_cls, s_Sounds);
+
+            let async_sounds = sound_descriptors.map(async d => {
+                let sound = await (Sk.pytch.sound_manager
+                                   .async_load_sound(d[0], d[1]));
+                return [d[0], sound];
+            });
+
+            let sounds = await Promise.all(async_sounds);
+            this._sounds = sounds;
+
+            this._sound_from_name = {};
+            for (let [nm, sound] of sounds)
+                this._sound_from_name[nm] = sound;
+        }
+
         async async_init() {
             await this.async_load_appearances();
         }
