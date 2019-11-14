@@ -142,6 +142,7 @@ before(() => {
             async_load_image: (url => Promise.resolve(new MockImage(url))),
             keyboard: mock_keyboard,
             mouse: mock_mouse,
+            sound_manager: mock_sound_manager,
             on_exception: pytch_errors.append_error,
         },
     });
