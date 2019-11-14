@@ -619,6 +619,26 @@ var $builtinmodule = function (name) {
                     return [new_thread_group];
                 }
 
+                case "play-sound": {
+                    // Either immediately (when 'wait' false, i.e.,
+                    // 'start-sound') or after the sound has finished (when
+                    // 'wait' true, i.e., 'play-sound-until-done'), the thread
+                    // will resume here:
+                    this.skulpt_susp = susp;
+
+                    let args = susp.data.subtype_data;
+                    let sound_name = args.sound_name;
+                    let actor = args.py_obj.$pytchActorInstance.actor;
+                    let performance = actor.launch_sound_performance(sound_name);
+
+                    if (args.wait) {
+                        this.state = Thread.State.AWAITING_SOUND_COMPLETION;
+                        this.sleeping_on = performance;
+                    }
+
+                    return [];
+                }
+
                 case "wait-seconds": {
                     // When it resumes, this thread will pick up here.
                     this.skulpt_susp = susp;
