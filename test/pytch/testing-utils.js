@@ -168,6 +168,16 @@ before(() => {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Sounds: Do not actually load anything from the network.  Instead keep a
+    // map of URL to duration in frames, and create a mock sound with the right
+    // properties.
+
+    const sound_duration_from_url = {
+    };
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Specialised testing predicates.
 
     global.assert_Appearance_equal = (got_appearance,
