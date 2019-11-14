@@ -26,6 +26,7 @@ from .syscalls import (
     yield_until_next_frame,
     broadcast,
     broadcast_and_wait,
+    play_sound,
     wait_seconds,
     key_is_pressed,
 )

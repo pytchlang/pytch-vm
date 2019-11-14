@@ -22,6 +22,12 @@ var $builtinmodule = function (name) {
         return new_pytch_suspension("broadcast-and-wait", js_message);
     });
 
+    mod.play_sound = new Sk.builtin.func((py_obj, py_sound_name, py_wait) => {
+        let sound_name = Sk.ffi.remapToJs(py_sound_name);
+        let wait = Sk.ffi.remapToJs(py_wait);
+        return new_pytch_suspension("play-sound", {py_obj, sound_name, wait});
+    });
+
     mod.wait_seconds = new Sk.builtin.func(py_n_seconds => {
         let js_n_seconds = Sk.ffi.remapToJs(py_n_seconds);
         return new_pytch_suspension("wait-seconds", js_n_seconds);
