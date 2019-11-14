@@ -75,6 +75,10 @@ before(() => {
         };
     })();
 
+    global.mock_sound_manager = (() => {
+        let running_performances_ = [];
+    })();
+
     global.pytch_errors = (() => {
         let uncollected_errors = [];
 
