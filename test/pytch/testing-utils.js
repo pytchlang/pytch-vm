@@ -81,6 +81,10 @@ before(() => {
         let async_load_sound = ((tag, url) => {
             return Promise.resolve(new MockSound(mock_sound_manager, tag, url));
         });
+
+        let register_running_performance = (performance => {
+            running_performances_.push(performance);
+        });
     })();
 
     global.pytch_errors = (() => {
