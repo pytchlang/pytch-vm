@@ -943,6 +943,7 @@ var $builtinmodule = function (name) {
         on_red_stop_clicked() {
             this.thread_groups = [];
             this.actors.forEach(a => a.delete_all_clones());
+            Sk.pytch.sound_manager.stop_all_performances();
         }
 
         rendering_instructions() {
