@@ -116,6 +116,7 @@ Sk.python3 = {
         async_load_image: bad_async_load_image,
         keyboard: inactive_keyboard,
         mouse: inactive_mouse,
+        sound_manager: do_nothing_sound_manager,
         current_live_project: do_nothing_project,
         on_exception: do_nothing,
     };
