@@ -77,6 +77,10 @@ before(() => {
 
     global.mock_sound_manager = (() => {
         let running_performances_ = [];
+
+        let async_load_sound = ((tag, url) => {
+            return Promise.resolve(new MockSound(mock_sound_manager, tag, url));
+        });
     })();
 
     global.pytch_errors = (() => {
