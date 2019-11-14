@@ -102,6 +102,10 @@ Sk.python3 = {
         threads_info: return_empty_list,
     };
 
+    let bad_async_load_sound = url => {
+        throw Error("please set sound_manager.async_load_sound");
+    };
+
     Sk.default_pytch_environment = {
         async_load_image: bad_async_load_image,
         keyboard: inactive_keyboard,
