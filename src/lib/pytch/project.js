@@ -196,6 +196,7 @@ var $builtinmodule = function (name) {
 
         async async_init() {
             await this.async_load_appearances();
+            await this.async_load_sounds();
         }
 
         appearance_from_name(appearance_name) {
