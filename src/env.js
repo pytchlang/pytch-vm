@@ -106,6 +106,12 @@ Sk.python3 = {
         throw Error("please set sound_manager.async_load_sound");
     };
 
+    let do_nothing_sound_manager = {
+        async_load_sound: bad_async_load_sound,
+        one_frame: do_nothing,
+        stop_all_performances: do_nothing,
+    };
+
     Sk.default_pytch_environment = {
         async_load_image: bad_async_load_image,
         keyboard: inactive_keyboard,
