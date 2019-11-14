@@ -105,6 +105,14 @@ before(() => {
             running_performances_.forEach(p => p.has_ended = true);
             running_performances_ = [];
         });
+
+        return {
+            running_performances,
+            async_load_sound,
+            register_running_performance,
+            one_frame,
+            stop_all_performances,
+        };
     })();
 
     global.pytch_errors = (() => {
