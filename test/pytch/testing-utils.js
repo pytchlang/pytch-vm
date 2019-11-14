@@ -98,6 +98,11 @@ before(() => {
                     = running_performances_.filter(p => (! p.has_ended));
             });
         };
+
+        let stop_all_performances = (() => {
+            running_performances_.forEach(p => p.has_ended = true);
+            running_performances_ = [];
+        });
     })();
 
     global.pytch_errors = (() => {
