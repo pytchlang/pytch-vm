@@ -504,6 +504,9 @@ var $builtinmodule = function (name) {
             case Thread.State.AWAITING_PASSAGE_OF_TIME:
                 return `${this.sleeping_on} frames`;
 
+            case Thread.State.AWAITING_SOUND_COMPLETION:
+                return `performance of sound "${this.sleeping_on.tag}"`;
+
             default:
                 throw Error(`thread in bad state "${this.state}"`);
             }
