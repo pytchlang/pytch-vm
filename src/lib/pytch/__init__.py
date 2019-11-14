@@ -27,6 +27,7 @@ from .syscalls import (
     broadcast,
     broadcast_and_wait,
     play_sound,
+    stop_all_sounds,
     wait_seconds,
     key_is_pressed,
 )
