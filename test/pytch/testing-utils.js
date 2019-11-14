@@ -183,6 +183,14 @@ before(() => {
         }
     }
 
+    class MockSoundPerformance {
+        constructor(tag, duration) {
+            this.tag = tag;
+            this.n_frames_left = duration;
+            this.has_ended = false;
+        }
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
