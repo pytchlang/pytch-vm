@@ -85,6 +85,19 @@ before(() => {
         let register_running_performance = (performance => {
             running_performances_.push(performance);
         });
+
+        let one_frame = () => {
+            running_performances_.forEach(p => {
+                p.n_frames_left -= 1;
+                if (p.n_frames_left < 0)
+                    p.n_frames_left = 0;
+                if (p.n_frames_left == 0)
+                    p.has_ended = true;
+
+                running_performances_
+                    = running_performances_.filter(p => (! p.has_ended));
+            });
+        };
     })();
 
     global.pytch_errors = (() => {
