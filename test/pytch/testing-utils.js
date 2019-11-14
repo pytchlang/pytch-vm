@@ -181,6 +181,12 @@ before(() => {
             this.tag = tag;
             this.duration = sound_duration_from_url[url];
         }
+
+        launch_new_performance() {
+            let performance = new MockSoundPerformance(this.tag, this.duration);
+            this.parent_sound_manager.register_running_performance(performance);
+            return performance;
+        }
     }
 
     class MockSoundPerformance {
