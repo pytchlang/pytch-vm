@@ -313,6 +313,12 @@ $(document).ready(function() {
             let audio_buffer = await this.audio_context.decodeAudioData(raw_data);
             return new BrowserSound(this, tag, audio_buffer);
         }
+
+        create_buffer_source() {
+            let buffer_source = this.audio_context.createBufferSource();
+            buffer_source.connect(this.audio_context.destination);
+            return buffer_source;
+        }
     }
 
 
