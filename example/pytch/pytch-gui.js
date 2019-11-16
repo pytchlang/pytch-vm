@@ -306,6 +306,13 @@ $(document).ready(function() {
             this.audio_context = new AudioContext();
             this.running_performances = [];
         }
+
+        async async_load_sound(tag, url) {
+            let response = await fetch(url);
+            let raw_data = await response.arrayBuffer();
+            let audio_buffer = await this.audio_context.decodeAudioData(raw_data);
+            return new BrowserSound(this, tag, audio_buffer);
+        }
     }
 
 
