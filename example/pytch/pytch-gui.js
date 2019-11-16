@@ -293,6 +293,11 @@ $(document).ready(function() {
     }
 
     class BrowserSound {
+        constructor(parent_sound_manager, tag, audio_buffer) {
+            this.parent_sound_manager = parent_sound_manager;
+            this.tag = tag;
+            this.audio_buffer = audio_buffer;
+        }
     }
 
     class BrowserSoundManager {
