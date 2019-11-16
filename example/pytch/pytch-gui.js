@@ -298,6 +298,13 @@ $(document).ready(function() {
             this.tag = tag;
             this.audio_buffer = audio_buffer;
         }
+
+        create_buffer_source() {
+            let sound_manager = this.parent_sound_manager;
+            let buffer_source = sound_manager.create_buffer_source();
+            buffer_source.buffer = this.audio_buffer;
+            return buffer_source;
+        }
     }
 
     class BrowserSoundManager {
