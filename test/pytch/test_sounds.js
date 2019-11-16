@@ -75,4 +75,47 @@ describe("waiting and non-waiting sounds", () => {
         assert_running_performances([]);
         assert.strictEqual(orchestra.js_attr("played_violin"), "yes")
     });
+
+    it("can play both", async () => {
+        let project = await import_project("py/project/make_noise.py");
+        let orchestra = project.instance_0_by_class_name("Orchestra");
+        let one_frame = one_frame_fun(project);
+
+        project.do_synthetic_broadcast("play-both");
+
+        // On the next frame, the trumpet should start, but the launching
+        // thread shouldn't have run again yet.
+        one_frame();
+        assert_running_performances(["trumpet"]);
+        assert.strictEqual(orchestra.js_attr("played_both"), "no")
+
+        // On the next frame, the violin should start, and the launching
+        // thread should be sleeping.
+        one_frame();
+        assert_running_performances(["trumpet", "violin"]);
+        assert.strictEqual(orchestra.js_attr("played_both"), "nearly")
+
+        // For the rest of the length of the 'violin' sound, both sounds should
+        // stay playing, and the thread should remain sleeping.
+        for (let i = 0; i != 9; ++i) {
+            one_frame();
+            assert_running_performances(["trumpet", "violin"]);
+            assert.strictEqual(orchestra.js_attr("played_both"), "nearly")
+            assert.strictEqual(project.thread_groups.length, 1);
+        }
+
+        // For the rest of the length of the 'trumpet' sound, it alone should
+        // stay playing, with the thread having run to completion.
+        for (let i = 0; i != 9; ++i) {
+            one_frame();
+            assert_running_performances(["trumpet"]);
+            assert.strictEqual(orchestra.js_attr("played_both"), "yes")
+            assert.strictEqual(project.thread_groups.length, 0);
+        }
+
+        // And then silence should fall again.
+        one_frame();
+        assert_running_performances([]);
+        assert.strictEqual(orchestra.js_attr("played_both"), "yes")
+    });
 });

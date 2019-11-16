@@ -22,6 +22,14 @@ class Orchestra(Sprite):
         self.play_sound_until_done('violin')
         self.played_violin = 'yes'
 
+    @when_I_receive('play-both')
+    def play_both(self):
+        self.played_both = 'no'
+        self.start_sound('trumpet')
+        self.played_both = 'nearly'
+        self.play_sound_until_done('violin')
+        self.played_both = 'yes'
+
 
 project = Project()
 project.register_sprite_class(Orchestra)
