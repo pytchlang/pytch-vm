@@ -296,6 +296,11 @@ $(document).ready(function() {
     }
 
     class BrowserSoundManager {
+        constructor() {
+            let AudioContext = window.AudioContext || window.webkitAudioContext;
+            this.audio_context = new AudioContext();
+            this.running_performances = [];
+        }
     }
 
 
