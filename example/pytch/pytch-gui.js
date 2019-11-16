@@ -354,6 +354,11 @@ $(document).ready(function() {
             this.running_performances = [];
         }
 
+        one_frame() {
+            this.running_performances
+                = this.running_performances.filter(p => (! p.has_ended));
+        }
+
         create_buffer_source() {
             let buffer_source = this.audio_context.createBufferSource();
             buffer_source.connect(this.audio_context.destination);
