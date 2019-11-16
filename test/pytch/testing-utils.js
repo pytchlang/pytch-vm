@@ -75,6 +75,46 @@ before(() => {
         };
     })();
 
+    global.mock_sound_manager = (() => {
+        let running_performances_ = [];
+
+        let running_performances = () => running_performances_;
+
+        let async_load_sound = ((tag, url) => {
+            return Promise.resolve(new MockSound(mock_sound_manager, tag, url));
+        });
+
+        let register_running_performance = (performance => {
+            running_performances_.push(performance);
+        });
+
+        let one_frame = () => {
+            running_performances_.forEach(p => {
+                p.n_frames_left -= 1;
+                if (p.n_frames_left < 0)
+                    p.n_frames_left = 0;
+                if (p.n_frames_left == 0)
+                    p.has_ended = true;
+
+                running_performances_
+                    = running_performances_.filter(p => (! p.has_ended));
+            });
+        };
+
+        let stop_all_performances = (() => {
+            running_performances_.forEach(p => p.has_ended = true);
+            running_performances_ = [];
+        });
+
+        return {
+            running_performances,
+            async_load_sound,
+            register_running_performance,
+            one_frame,
+            stop_all_performances,
+        };
+    })();
+
     global.pytch_errors = (() => {
         let uncollected_errors = [];
 
@@ -102,6 +142,7 @@ before(() => {
             async_load_image: (url => Promise.resolve(new MockImage(url))),
             keyboard: mock_keyboard,
             mouse: mock_mouse,
+            sound_manager: mock_sound_manager,
             on_exception: pytch_errors.append_error,
         },
     });
@@ -162,6 +203,40 @@ before(() => {
             this.url = url;
             this.width = size[0];
             this.height = size[1];
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // Sounds: Do not actually load anything from the network.  Instead keep a
+    // map of URL to duration in frames, and create a mock sound with the right
+    // properties.
+
+    const sound_duration_from_url = {
+        'library/sounds/trumpet.mp3': 20,
+        'library/sounds/violin.mp3': 10,
+    };
+
+    class MockSound {
+        constructor(parent_sound_manager, tag, url) {
+            this.parent_sound_manager = parent_sound_manager;
+            this.tag = tag;
+            this.duration = sound_duration_from_url[url];
+        }
+
+        launch_new_performance() {
+            let performance = new MockSoundPerformance(this.tag, this.duration);
+            this.parent_sound_manager.register_running_performance(performance);
+            return performance;
+        }
+    }
+
+    class MockSoundPerformance {
+        constructor(tag, duration) {
+            this.tag = tag;
+            this.n_frames_left = duration;
+            this.has_ended = false;
         }
     }
 
@@ -238,6 +313,10 @@ before(() => {
         assert_prop_eq("y_min", exp_ymin);
         assert_prop_eq("y_max", exp_ymax);
     };
+});
+
+beforeEach(() => {
+    mock_sound_manager.stop_all_performances();
 });
 
 afterEach(() => {
