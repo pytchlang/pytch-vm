@@ -369,7 +369,9 @@ $(document).ready(function() {
     // Chrome (and possibly other browsers) won't let you create a running
     // AudioContext unless you're doing so in response to a user gesture.  We
     // therefore defer creation and connection of the global Skulpt/Pytch sound
-    // manager until first 'BUILD'.
+    // manager until first 'BUILD'.  The default Pytch sound-manager has a
+    // 'do-nothing' implementation of one_frame(), so we can safely call it in
+    // the main per-frame function below.
 
     let browser_sound_manager = null;
 
@@ -490,6 +492,7 @@ $(document).ready(function() {
     const one_frame = function() {
         let project = Sk.pytch.current_live_project;
 
+        Sk.pytch.sound_manager.one_frame();
         project.one_frame();
         stage_canvas.render(project);
 
