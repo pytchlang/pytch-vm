@@ -15,6 +15,7 @@ var $builtinmodule = function (name) {
     const s_pytch_handler_for = Sk.builtin.str("_pytch_handler_for");
     const s_Costumes = Sk.builtin.str("Costumes");
     const s_Backdrops = Sk.builtin.str("Backdrops");
+    const s_Sounds = Sk.builtin.str("Sounds");
     const s_shown = Sk.builtin.str("_shown");
     const s_x = Sk.builtin.str("_x");
     const s_y = Sk.builtin.str("_y");
@@ -176,8 +177,26 @@ var $builtinmodule = function (name) {
                 this._appearance_from_name[nm] = app;
         }
 
+        async async_load_sounds() {
+            let sound_descriptors = js_getattr(this.py_cls, s_Sounds);
+
+            let async_sounds = sound_descriptors.map(async d => {
+                let sound = await (Sk.pytch.sound_manager
+                                   .async_load_sound(d[0], d[1]));
+                return [d[0], sound];
+            });
+
+            let sounds = await Promise.all(async_sounds);
+            this._sounds = sounds;
+
+            this._sound_from_name = {};
+            for (let [nm, sound] of sounds)
+                this._sound_from_name[nm] = sound;
+        }
+
         async async_init() {
             await this.async_load_appearances();
+            await this.async_load_sounds();
         }
 
         appearance_from_name(appearance_name) {
@@ -302,6 +321,11 @@ var $builtinmodule = function (name) {
 
         shown_instances_back_to_front() {
             return this.instances.filter(i => i.render_shown);
+        }
+
+        launch_sound_performance(name) {
+            let sound = this._sound_from_name[name];
+            return sound.launch_new_performance();
         }
 
         rendering_instructions() {
@@ -485,6 +509,9 @@ var $builtinmodule = function (name) {
             case Thread.State.AWAITING_PASSAGE_OF_TIME:
                 return `${this.sleeping_on} frames`;
 
+            case Thread.State.AWAITING_SOUND_COMPLETION:
+                return `performance of sound "${this.sleeping_on.tag}"`;
+
             default:
                 throw Error(`thread in bad state "${this.state}"`);
             }
@@ -498,6 +525,9 @@ var $builtinmodule = function (name) {
             case Thread.State.AWAITING_PASSAGE_OF_TIME:
                 this.sleeping_on -= 1;
                 return (this.sleeping_on == 0);
+
+            case Thread.State.AWAITING_SOUND_COMPLETION:
+                return this.sleeping_on.has_ended;
 
             case Thread.State.ZOMBIE:
                 return false;
@@ -589,6 +619,26 @@ var $builtinmodule = function (name) {
                     return [new_thread_group];
                 }
 
+                case "play-sound": {
+                    // Either immediately (when 'wait' false, i.e.,
+                    // 'start-sound') or after the sound has finished (when
+                    // 'wait' true, i.e., 'play-sound-until-done'), the thread
+                    // will resume here:
+                    this.skulpt_susp = susp;
+
+                    let args = susp.data.subtype_data;
+                    let sound_name = args.sound_name;
+                    let actor = args.py_obj.$pytchActorInstance.actor;
+                    let performance = actor.launch_sound_performance(sound_name);
+
+                    if (args.wait) {
+                        this.state = Thread.State.AWAITING_SOUND_COMPLETION;
+                        this.sleeping_on = performance;
+                    }
+
+                    return [];
+                }
+
                 case "wait-seconds": {
                     // When it resumes, this thread will pick up here.
                     this.skulpt_susp = susp;
@@ -657,6 +707,12 @@ var $builtinmodule = function (name) {
         // call.  If it's 2, the thread will remain non-runnable for the next
         // one_frame() call, and resume the one after that.  And so on.
         AWAITING_PASSAGE_OF_TIME: "awaiting-passage-of-time",
+
+        // AWAITING_SOUND_COMPLETION: The thread will pause execution until the
+        // relevant sound has finished playing.  A reference to the
+        // 'performance' of the 'relevant sound' is stored in the Thread
+        // instance's "sleeping_on" property.
+        AWAITING_SOUND_COMPLETION: "awaiting-sound-completion",
 
         // ZOMBIE: The thread has terminated but has not yet been cleared from
         // the list of live threads.
@@ -887,6 +943,7 @@ var $builtinmodule = function (name) {
         on_red_stop_clicked() {
             this.thread_groups = [];
             this.actors.forEach(a => a.delete_all_clones());
+            Sk.pytch.sound_manager.stop_all_performances();
         }
 
         rendering_instructions() {

@@ -1,5 +1,16 @@
+from pytch.syscalls import (
+    play_sound,
+)
+
+
 class Actor:
-    pass
+    Sounds = []
+
+    def start_sound(self, sound_name):
+        play_sound(self, sound_name, False)
+
+    def play_sound_until_done(self, sound_name):
+        play_sound(self, sound_name, True)
 
 
 class Sprite(Actor):
