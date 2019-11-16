@@ -287,6 +287,20 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Sound, SoundPerformance, SoundManager
+
+    class BrowserSoundPerformance {
+    }
+
+    class BrowserSound {
+    }
+
+    class BrowserSoundManager {
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Report errors
 
     let report_uncaught_exception = (e => {
