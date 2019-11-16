@@ -287,6 +287,104 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Sound, SoundPerformance, SoundManager
+
+    class BrowserSoundPerformance {
+        constructor(sound) {
+            this.tag = sound.tag;
+            this.buffer_source = sound.create_buffer_source();
+
+            this.has_ended = false;
+            this.buffer_source.onended = () => { this.has_ended = true; };
+
+            this.buffer_source.start();
+        }
+
+        stop() {
+            this.buffer_source.stop();
+            this.has_ended = true;
+        }
+    }
+
+    class BrowserSound {
+        constructor(parent_sound_manager, tag, audio_buffer) {
+            this.parent_sound_manager = parent_sound_manager;
+            this.tag = tag;
+            this.audio_buffer = audio_buffer;
+        }
+
+        launch_new_performance() {
+            let sound_manager = this.parent_sound_manager;
+
+            let buffer_source = sound_manager.create_buffer_source();
+            let performance = new BrowserSoundPerformance(this);
+            sound_manager.register_running_performance(performance);
+
+            return performance;
+        }
+
+        create_buffer_source() {
+            let sound_manager = this.parent_sound_manager;
+            let buffer_source = sound_manager.create_buffer_source();
+            buffer_source.buffer = this.audio_buffer;
+            return buffer_source;
+        }
+    }
+
+    class BrowserSoundManager {
+        constructor() {
+            let AudioContext = window.AudioContext || window.webkitAudioContext;
+            this.audio_context = new AudioContext();
+            this.running_performances = [];
+        }
+
+        async async_load_sound(tag, url) {
+            let response = await fetch(url);
+            let raw_data = await response.arrayBuffer();
+            let audio_buffer = await this.audio_context.decodeAudioData(raw_data);
+            return new BrowserSound(this, tag, audio_buffer);
+        }
+
+        register_running_performance(performance) {
+            this.running_performances.push(performance);
+        }
+
+        stop_all_performances() {
+            this.running_performances.forEach(p => p.stop());
+            this.running_performances = [];
+        }
+
+        one_frame() {
+            this.running_performances
+                = this.running_performances.filter(p => (! p.has_ended));
+        }
+
+        create_buffer_source() {
+            let buffer_source = this.audio_context.createBufferSource();
+            buffer_source.connect(this.audio_context.destination);
+            return buffer_source;
+        }
+    }
+
+    // Chrome (and possibly other browsers) won't let you create a running
+    // AudioContext unless you're doing so in response to a user gesture.  We
+    // therefore defer creation and connection of the global Skulpt/Pytch sound
+    // manager until first 'BUILD'.  The default Pytch sound-manager has a
+    // 'do-nothing' implementation of one_frame(), so we can safely call it in
+    // the main per-frame function below.
+
+    let browser_sound_manager = null;
+
+    let ensure_sound_manager = () => {
+        if (browser_sound_manager === null) {
+            browser_sound_manager = new BrowserSoundManager();
+            Sk.pytch.sound_manager = browser_sound_manager;
+        }
+    };
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Report errors
 
     let report_uncaught_exception = (e => {
@@ -341,6 +439,7 @@ $(document).ready(function() {
         // unless we have a short flash of the "Working..."  message.  Split the
         // behaviour into immediate / real work portions.
         const visibly_build = () => {
+            ensure_sound_manager();
             immediate_feedback();
             window.setTimeout(build, 125);
         };
@@ -393,6 +492,7 @@ $(document).ready(function() {
     const one_frame = function() {
         let project = Sk.pytch.current_live_project;
 
+        Sk.pytch.sound_manager.one_frame();
         project.one_frame();
         stage_canvas.render(project);
 
