@@ -308,6 +308,16 @@ $(document).ready(function() {
             this.audio_buffer = audio_buffer;
         }
 
+        launch_new_performance() {
+            let sound_manager = this.parent_sound_manager;
+
+            let buffer_source = sound_manager.create_buffer_source();
+            let performance = new BrowserSoundPerformance(this);
+            sound_manager.register_running_performance(performance);
+
+            return performance;
+        }
+
         create_buffer_source() {
             let sound_manager = this.parent_sound_manager;
             let buffer_source = sound_manager.create_buffer_source();
