@@ -114,6 +114,7 @@ class Player_2(Sprite):
 
 class Ball(Sprite):
     Costumes = [('ball', 'library/images/ball.png', 8, 8)]
+    Sounds = [('click', 'library/sounds/drumstick-click.mp3')]
 
     def __init__(self):
         pytch.Sprite.__init__(self)
@@ -163,17 +164,21 @@ class Ball(Sprite):
 
     def bounce_off_top_bottom(self):
         if self.get_y() > GlobalVariables.ball_max_y:
+            self.start_sound('click')
             self.set_y(GlobalVariables.ball_max_y)
             self.y_speed = -1.5
         if self.get_y() < GlobalVariables.ball_min_y:
+            self.start_sound('click')
             self.set_y(GlobalVariables.ball_min_y)
             self.y_speed = 1.5
 
     def bounce_off_players(self):
         if self.touching(Player_1):
+            self.start_sound('click')
             self.x_speed = -1 * self.x_speed
             self.change_x(4)
         if self.touching(Player_2):
+            self.start_sound('click')
             self.x_speed = -1 * self.x_speed
             self.change_x(-4)
 
