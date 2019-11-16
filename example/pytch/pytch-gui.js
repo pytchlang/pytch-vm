@@ -299,6 +299,11 @@ $(document).ready(function() {
 
             this.buffer_source.start();
         }
+
+        stop() {
+            this.buffer_source.stop();
+            this.has_ended = true;
+        }
     }
 
     class BrowserSound {
