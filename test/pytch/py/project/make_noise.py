@@ -16,6 +16,12 @@ class Orchestra(Sprite):
         self.start_sound('trumpet')
         self.played_trumpet = 'yes'
 
+    @when_I_receive('play-violin')
+    def play_violin(self):
+        self.played_violin = 'no'
+        self.play_sound_until_done('violin')
+        self.played_violin = 'yes'
+
 
 project = Project()
 project.register_sprite_class(Orchestra)

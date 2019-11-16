@@ -47,4 +47,32 @@ describe("waiting and non-waiting sounds", () => {
         one_frame();
         assert_running_performances([]);
     });
+
+    it("can play violin", async () => {
+        let project = await import_project("py/project/make_noise.py");
+        let orchestra = project.instance_0_by_class_name("Orchestra");
+        let one_frame = one_frame_fun(project);
+
+        project.do_synthetic_broadcast("play-violin");
+
+        // On the next frame, the sound should start, and the launching
+        // thread shouldn't have run again yet.
+        one_frame();
+        assert_running_performances(["violin"]);
+        assert.strictEqual(orchestra.js_attr("played_violin"), "no")
+
+        // For the rest of the length of the 'violin' sound, it should stay
+        // playing, and the thread should remain sleeping.
+        for (let i = 0; i != 9; ++i) {
+            one_frame();
+            assert_running_performances(["violin"]);
+            assert.strictEqual(orchestra.js_attr("played_violin"), "no")
+            assert.strictEqual(project.thread_groups.length, 1);
+        }
+
+        // And then silence should fall again as the thread runs to completion.
+        one_frame();
+        assert_running_performances([]);
+        assert.strictEqual(orchestra.js_attr("played_violin"), "yes")
+    });
 });
