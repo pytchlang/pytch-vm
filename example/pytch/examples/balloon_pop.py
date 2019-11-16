@@ -23,6 +23,7 @@ class BalloonStage(Stage):
 
 class Balloon(Sprite):
     Costumes = [('balloon', 'library/images/balloon.png', 50, 80)]
+    Sounds = [('pop', 'library/sounds/pop.mp3')]
 
     def __init__(self):
         Sprite.__init__(self)
@@ -45,6 +46,7 @@ class Balloon(Sprite):
 
     @when_this_sprite_clicked
     def pop(self):
+        self.start_sound('pop')
         self.hide()
         self.score += 1
 
