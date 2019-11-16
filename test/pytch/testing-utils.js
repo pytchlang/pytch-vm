@@ -214,6 +214,8 @@ before(() => {
     // properties.
 
     const sound_duration_from_url = {
+        'library/sounds/trumpet.mp3': 20,
+        'library/sounds/violin.mp3': 10,
     };
 
     class MockSound {
