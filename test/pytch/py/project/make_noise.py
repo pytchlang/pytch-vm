@@ -30,6 +30,10 @@ class Orchestra(Sprite):
         self.play_sound_until_done('violin')
         self.played_both = 'yes'
 
+    @when_I_receive('silence')
+    def silence(self):
+        pytch.stop_all_sounds()
+
 
 project = Project()
 project.register_sprite_class(Orchestra)
