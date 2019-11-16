@@ -330,6 +330,10 @@ $(document).ready(function() {
             return new BrowserSound(this, tag, audio_buffer);
         }
 
+        register_running_performance(performance) {
+            this.running_performances.push(performance);
+        }
+
         create_buffer_source() {
             let buffer_source = this.audio_context.createBufferSource();
             buffer_source.connect(this.audio_context.destination);
