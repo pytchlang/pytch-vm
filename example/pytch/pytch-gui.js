@@ -366,6 +366,20 @@ $(document).ready(function() {
         }
     }
 
+    // Chrome (and possibly other browsers) won't let you create a running
+    // AudioContext unless you're doing so in response to a user gesture.  We
+    // therefore defer creation and connection of the global Skulpt/Pytch sound
+    // manager until first 'BUILD'.
+
+    let browser_sound_manager = null;
+
+    let ensure_sound_manager = () => {
+        if (browser_sound_manager === null) {
+            browser_sound_manager = new BrowserSoundManager();
+            Sk.pytch.sound_manager = browser_sound_manager;
+        }
+    };
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
@@ -423,6 +437,7 @@ $(document).ready(function() {
         // unless we have a short flash of the "Working..."  message.  Split the
         // behaviour into immediate / real work portions.
         const visibly_build = () => {
+            ensure_sound_manager();
             immediate_feedback();
             window.setTimeout(build, 125);
         };
