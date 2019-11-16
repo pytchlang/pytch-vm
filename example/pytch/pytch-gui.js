@@ -290,6 +290,15 @@ $(document).ready(function() {
     // Sound, SoundPerformance, SoundManager
 
     class BrowserSoundPerformance {
+        constructor(sound) {
+            this.tag = sound.tag;
+            this.buffer_source = sound.create_buffer_source();
+
+            this.has_ended = false;
+            this.buffer_source.onended = () => { this.has_ended = true; };
+
+            this.buffer_source.start();
+        }
     }
 
     class BrowserSound {
