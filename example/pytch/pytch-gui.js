@@ -450,6 +450,27 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Local storage for projects
+
+    let user_projects = (() => {
+        let local_storage_key = "pytch-saved-projects";
+
+        let saved_project_data = (() => {
+            let json_saved_projects = window.localStorage.getItem(local_storage_key);
+            return ((json_saved_projects === null)
+                    ? []
+                    : JSON.parse(json_saved_projects));
+        });
+
+        let persist_saved_projects = (project_descriptors => {
+            window.localStorage.setItem(local_storage_key,
+                                        JSON.stringify(project_descriptors));
+        });
+    })();
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Connect Skulpt to our various interfaces
 
     Sk.configure({
