@@ -545,6 +545,10 @@ $(document).ready(function() {
                 label_elt.click(load_project);
                 li_elt.append(label_elt);
 
+                let delete_elt = $("<span class=\"delete-button\">DELETE</span>");
+                $(delete_elt).click(delete_saved_project);
+                li_elt.append(delete_elt);
+
                 user_projects_contents.append(li_elt);
             });
 

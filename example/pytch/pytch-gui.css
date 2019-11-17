@@ -75,6 +75,16 @@ h1 {
     padding-bottom: 0.3333ex;
 }
 
+.jq-dropdown .jq-dropdown-menu li span.delete-button {
+    font-size: 90%;
+    padding: 3px;
+    background-color: #c11;
+    margin-left: 4px;
+    margin-right: 4px;
+    float: right;
+    cursor: pointer;
+}
+
 #editor-menubar #build-button {
     margin-left: 2.5em;
     display: inline-block;
