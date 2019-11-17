@@ -472,6 +472,20 @@ $(document).ready(function() {
                                         JSON.stringify(project_descriptors));
         });
 
+        let maybe_project_by_name = ((projects, target_name) => {
+            let tgt_idx = projects.findIndex(proj => (proj.name === target_name));
+
+            let next_tgt_idx = projects.findIndex(
+                (proj, idx) => ((idx > tgt_idx) && (proj.name === target_name)));
+
+            if (next_tgt_idx !== -1)
+                // TODO: More useful error-reporting, even though this is an
+                // internal error.
+                throw Error(`found "${target_name}" more than once`);
+
+            return (tgt_idx === -1) ? null : projects[tgt_idx];
+        });
+
         let refresh = (() => {
             user_projects_contents.empty();
 
