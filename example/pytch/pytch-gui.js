@@ -486,6 +486,29 @@ $(document).ready(function() {
             return (tgt_idx === -1) ? null : projects[tgt_idx];
         });
 
+        let save_project = (() => {
+            // TODO: Prompt for confirmation of overwriting if different name
+            // to last loaded/saved.
+
+            let project_name = user_project_name_input.val();
+            let saved_projects = saved_project_data();
+            let project_code_text = ace_editor.getValue();
+
+            let maybe_existing_project
+                = maybe_project_by_name(saved_projects, project_name);
+
+            if (maybe_existing_project !== null) {
+                let existing_project = maybe_existing_project;
+                existing_project.code_text = project_code_text;
+            } else {
+                saved_projects.push({ name: project_name,
+                                      code_text: project_code_text });
+            }
+
+            persist_saved_projects(saved_projects);
+            refresh();
+        });
+
         let refresh = (() => {
             user_projects_contents.empty();
 
@@ -508,6 +531,7 @@ $(document).ready(function() {
         });
 
         refresh();
+        save_my_project_button.click(save_project);
     })();
 
 
