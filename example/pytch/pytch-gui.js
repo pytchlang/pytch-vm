@@ -518,6 +518,18 @@ $(document).ready(function() {
             ace_editor_set_code(project.code_text);
         });
 
+        let delete_saved_project = (evt => {
+            menubar.jqDropdown("hide");
+            evt.stopPropagation();
+
+            let all_projects = saved_project_data();
+            let project_idx = +(evt.target.parentNode.dataset.pytchEntryIdx);
+            all_projects.splice(project_idx, 1);
+            persist_saved_projects(all_projects);
+
+            refresh();
+        });
+
         let refresh = (() => {
             user_projects_contents.empty();
 
