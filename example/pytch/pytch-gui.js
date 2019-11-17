@@ -509,6 +509,15 @@ $(document).ready(function() {
             refresh();
         });
 
+        let load_project = (evt => {
+            menubar.jqDropdown("hide");
+
+            let all_projects = saved_project_data();
+            let project_idx = +(evt.target.parentNode.dataset.pytchEntryIdx);
+            let project = all_projects[project_idx];
+            ace_editor_set_code(project.code_text);
+        });
+
         let refresh = (() => {
             user_projects_contents.empty();
 
@@ -521,6 +530,7 @@ $(document).ready(function() {
 
                 let label_elt = $("<label></label>");
                 label_elt.text(name);  // Ensure special chars are escaped.
+                label_elt.click(load_project);
                 li_elt.append(label_elt);
 
                 user_projects_contents.append(li_elt);
