@@ -471,6 +471,29 @@ $(document).ready(function() {
             window.localStorage.setItem(local_storage_key,
                                         JSON.stringify(project_descriptors));
         });
+
+        let refresh = (() => {
+            user_projects_contents.empty();
+
+            let all_projects = saved_project_data();
+            all_projects.forEach((project_descriptor, entry_idx) => {
+                let name = project_descriptor.name;
+
+                let li_elt = $("<li></li>");
+                li_elt.attr("data-pytch-entry-idx", entry_idx);
+
+                let label_elt = $("<label></label>");
+                label_elt.text(name);  // Ensure special chars are escaped.
+                li_elt.append(label_elt);
+
+                user_projects_contents.append(li_elt);
+            });
+
+            user_projects_menu_header.toggleClass("greyed-out jq-dropdown-ignore",
+                                                  (all_projects.length == 0));
+        });
+
+        refresh();
     })();
 
 
