@@ -107,6 +107,9 @@ $(document).ready(function() {
             let code_response = await fetch(code_url);
             let code_text = await code_response.text();
             ace_editor_set_code(code_text);
+
+            let user_project_name = `My ${evt_data.pytchLabel}`;
+            user_projects.set_project_name(user_project_name);
         });
 
         examples.forEach(example => {
