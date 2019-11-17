@@ -107,6 +107,9 @@ $(document).ready(function() {
             let code_response = await fetch(code_url);
             let code_text = await code_response.text();
             ace_editor_set_code(code_text);
+
+            let user_project_name = `My ${evt_data.pytchLabel}`;
+            user_projects.set_project_name(user_project_name);
         });
 
         examples.forEach(example => {
@@ -445,6 +448,139 @@ $(document).ready(function() {
         };
 
         enable();
+    })();
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // Local storage for projects
+
+    let user_projects = (() => {
+        let local_storage_key = "pytch-saved-projects";
+        let menubar = $("#editor-menubar");
+        let user_projects_menu_header = $("#user-projects-menu-header");
+        let user_projects_contents = $("#jq-dropdown-user-projects > ul");
+        let user_project_name_input = $("#user-chosen-project-name");
+        let save_my_project_button = $("#save-my-project-button");
+
+        let saved_project_data = (() => {
+            let json_saved_projects = window.localStorage.getItem(local_storage_key);
+            return ((json_saved_projects === null)
+                    ? []
+                    : JSON.parse(json_saved_projects));
+        });
+
+        let persist_saved_projects = (project_descriptors => {
+            window.localStorage.setItem(local_storage_key,
+                                        JSON.stringify(project_descriptors));
+        });
+
+        let maybe_project_by_name = ((projects, target_name) => {
+            let tgt_idx = projects.findIndex(proj => (proj.name === target_name));
+
+            let next_tgt_idx = projects.findIndex(
+                (proj, idx) => ((idx > tgt_idx) && (proj.name === target_name)));
+
+            if (next_tgt_idx !== -1)
+                // TODO: More useful error-reporting, even though this is an
+                // internal error.
+                throw Error(`found "${target_name}" more than once`);
+
+            return (tgt_idx === -1) ? null : projects[tgt_idx];
+        });
+
+        let save_project = (() => {
+            // TODO: Prompt for confirmation of overwriting if different name
+            // to last loaded/saved.
+
+            let project_name = user_project_name_input.val();
+            let saved_projects = saved_project_data();
+            let project_code_text = ace_editor.getValue();
+
+            let maybe_existing_project
+                = maybe_project_by_name(saved_projects, project_name);
+
+            if (maybe_existing_project !== null) {
+                let existing_project = maybe_existing_project;
+                existing_project.code_text = project_code_text;
+            } else {
+                saved_projects.push({ name: project_name,
+                                      code_text: project_code_text });
+            }
+
+            persist_saved_projects(saved_projects);
+            refresh();
+        });
+
+        let load_project = (evt => {
+            menubar.jqDropdown("hide");
+
+            let all_projects = saved_project_data();
+            let project_idx = +(evt.target.parentNode.dataset.pytchEntryIdx);
+            let project = all_projects[project_idx];
+            ace_editor_set_code(project.code_text);
+        });
+
+        let highlight_to_be_deleted_project = (evt => {
+            let entry_label = $(evt.target.parentNode).find("label");
+            entry_label.addClass("cued-for-delete");
+        });
+
+        let unhighlight_to_be_deleted_project = (evt => {
+            let entry_label = $(evt.target.parentNode).find("label");
+            entry_label.removeClass("cued-for-delete");
+        });
+
+        let delete_saved_project = (evt => {
+            menubar.jqDropdown("hide");
+            evt.stopPropagation();
+
+            let all_projects = saved_project_data();
+            let project_idx = +(evt.target.parentNode.dataset.pytchEntryIdx);
+            all_projects.splice(project_idx, 1);
+            persist_saved_projects(all_projects);
+
+            refresh();
+        });
+
+        let refresh = (() => {
+            user_projects_contents.empty();
+
+            let all_projects = saved_project_data();
+            all_projects.forEach((project_descriptor, entry_idx) => {
+                let name = project_descriptor.name;
+
+                let li_elt = $("<li></li>");
+                li_elt.attr("data-pytch-entry-idx", entry_idx);
+
+                let label_elt = $("<label></label>");
+                label_elt.text(name);  // Ensure special chars are escaped.
+                label_elt.click(load_project);
+                li_elt.append(label_elt);
+
+                let delete_elt = $("<span class=\"delete-button\">DELETE</span>");
+                $(delete_elt).click(delete_saved_project);
+                $(delete_elt).hover(highlight_to_be_deleted_project,
+                                    unhighlight_to_be_deleted_project);
+                li_elt.append(delete_elt);
+
+                user_projects_contents.append(li_elt);
+            });
+
+            user_projects_menu_header.toggleClass("greyed-out jq-dropdown-ignore",
+                                                  (all_projects.length == 0));
+        });
+
+        let set_project_name = (name => {
+            user_project_name_input.val(name);
+        });
+
+        refresh();
+        save_my_project_button.click(save_project);
+
+        return {
+            set_project_name,
+        };
     })();
 
 

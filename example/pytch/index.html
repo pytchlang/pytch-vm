@@ -20,11 +20,21 @@
         <span class="menu-elt" data-jq-dropdown="#jq-dropdown-examples">
           Examples&nbsp;&#x25bc;
         </span>
+        <span class="menu-elt greyed-out" data-jq-dropdown="#jq-dropdown-user-projects"
+              id="user-projects-menu-header">
+          My&nbsp;projects&nbsp;&#x25bc;
+        </span>
+        <span id="save-my-project-button" class="menu-elt">Save</span>
+        <input id="user-chosen-project-name" type="text"
+               class="menu-elt project-name" value="Untitled"></input>
         <span class="menu-elt" id="build-button">BUILD</span>
       </p>
     </div>
 
     <div id="jq-dropdown-examples" class="jq-dropdown jq-dropdown-tip">
+      <ul class="jq-dropdown-menu"><!-- will be filled in on load by JS --></ul>
+    </div>
+    <div id="jq-dropdown-user-projects" class="jq-dropdown jq-dropdown-tip">
       <ul class="jq-dropdown-menu"><!-- will be filled in on load by JS --></ul>
     </div>
 
