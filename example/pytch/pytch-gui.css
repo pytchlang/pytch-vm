@@ -75,6 +75,10 @@ h1 {
     padding-bottom: 0.3333ex;
 }
 
+.jq-dropdown .jq-dropdown-menu label.cued-for-delete {
+    background-color: #c11;
+}
+
 .jq-dropdown .jq-dropdown-menu li span.delete-button {
     font-size: 90%;
     padding: 3px;

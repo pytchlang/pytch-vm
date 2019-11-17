@@ -518,6 +518,16 @@ $(document).ready(function() {
             ace_editor_set_code(project.code_text);
         });
 
+        let highlight_to_be_deleted_project = (evt => {
+            let entry_label = $(evt.target.parentNode).find("label");
+            entry_label.addClass("cued-for-delete");
+        });
+
+        let unhighlight_to_be_deleted_project = (evt => {
+            let entry_label = $(evt.target.parentNode).find("label");
+            entry_label.removeClass("cued-for-delete");
+        });
+
         let delete_saved_project = (evt => {
             menubar.jqDropdown("hide");
             evt.stopPropagation();
@@ -547,6 +557,8 @@ $(document).ready(function() {
 
                 let delete_elt = $("<span class=\"delete-button\">DELETE</span>");
                 $(delete_elt).click(delete_saved_project);
+                $(delete_elt).hover(highlight_to_be_deleted_project,
+                                    unhighlight_to_be_deleted_project);
                 li_elt.append(delete_elt);
 
                 user_projects_contents.append(li_elt);
