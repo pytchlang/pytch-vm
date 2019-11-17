@@ -63,6 +63,18 @@ h1 {
     cursor: default;
 }
 
+#editor-menubar input.menu-elt.project-name {
+    background-color: #bbf;
+    border-width: none;
+    border: none;
+    font-family: Roboto;
+    font-size: 16px;
+    width: 12em;
+    padding-left: 0.5em;
+    padding-top: 0.3333ex;
+    padding-bottom: 0.3333ex;
+}
+
 #editor-menubar #build-button {
     margin-left: 2.5em;
     display: inline-block;
