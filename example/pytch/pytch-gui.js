@@ -122,6 +122,51 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Build user code
+
+    (() => {
+        const button = $("#build-button");
+
+        const enable = () => {
+            (button
+             .html("BUILD")
+             .removeClass("greyed-out")
+             .click(visibly_build));
+        };
+
+        const disable = () => {
+            (button
+             .html("<i>Working...</i>")
+             .addClass("greyed-out")
+             .off("click"));
+        };
+
+        const build = async () => {
+            let code_text = ace_editor.getValue();
+            await Sk.misceval.asyncToPromise(
+                () => Sk.importMainWithBody("<stdin>", false, code_text, true));
+            stage_canvas.dom_elt.focus();
+            enable();
+        };
+
+        const immediate_feedback = () => {
+            disable();
+        };
+
+        // If the program is very short, it looks like nothing has happened
+        // unless we have a short flash of the "Working..."  message.  Split the
+        // behaviour into immediate / real work portions.
+        const visibly_build = () => {
+            immediate_feedback();
+            window.setTimeout(build, 125);
+        };
+
+        enable();
+    })();
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Connect Skulpt to our various interfaces
 
     Sk.configure({
