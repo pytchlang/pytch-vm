@@ -31,6 +31,9 @@ h1 {
 #build-button {
     padding: 0.75ex 1.25em;
     margin-left: 2.5em;
+    display: inline-block;
+    text-align: center;
+    width: 5em;
     background-color: lightgreen;
     color: black;
     font-size: 16px;
