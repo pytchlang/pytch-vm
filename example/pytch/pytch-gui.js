@@ -145,6 +145,7 @@ $(document).ready(function() {
             let code_text = ace_editor.getValue();
             await Sk.misceval.asyncToPromise(
                 () => Sk.importMainWithBody("<stdin>", false, code_text, true));
+            stage_canvas.dom_elt.focus();
             enable();
         };
 
