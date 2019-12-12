@@ -948,6 +948,10 @@ function astForForStmt (c, n) {
     }
 
     var body = astForSuite(c, CHILD(n, 5));
+    if (Sk.pytchThreading) {
+        // Add the yield-until-next-frame wait for a Pytch program.
+        body.push(astForPytchYield(n));
+    }
 
     return new Sk.astnodes.For(target,
         ast_for_testlist(c, CHILD(n, 3)),
