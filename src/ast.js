@@ -2028,6 +2028,10 @@ function astForWhileStmt (c, n) {
     REQ(n, SYM.while_stmt);
 
     var body = astForSuite(c, CHILD(n, 3));
+    if (Sk.pytchThreading) {
+        // Add the yield-until-next-frame wait for a Pytch program.
+        body.push(astForPytchYield(n));
+    }
 
     if (NCH(n) === 4) {
         return new Sk.astnodes.While(ast_for_expr(c, CHILD(n, 1)), body, [], n.lineno, n.col_offset);
