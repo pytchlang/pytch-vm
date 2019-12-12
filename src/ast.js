@@ -947,9 +947,11 @@ function astForForStmt (c, n) {
         target = new Sk.astnodes.Tuple(_target, Sk.astnodes.Store, n.lineno, n.col_offset);
     }
 
+    var body = astForSuite(c, CHILD(n, 5));
+
     return new Sk.astnodes.For(target,
         ast_for_testlist(c, CHILD(n, 3)),
-        astForSuite(c, CHILD(n, 5)),
+        body,
         seq, n.lineno, n.col_offset);
 }
 
@@ -2020,11 +2022,14 @@ function ast_for_setcomp(c, n) {
 function astForWhileStmt (c, n) {
     /* while_stmt: 'while' test ':' suite ['else' ':' suite] */
     REQ(n, SYM.while_stmt);
+
+    var body = astForSuite(c, CHILD(n, 3));
+
     if (NCH(n) === 4) {
-        return new Sk.astnodes.While(ast_for_expr(c, CHILD(n, 1)), astForSuite(c, CHILD(n, 3)), [], n.lineno, n.col_offset);
+        return new Sk.astnodes.While(ast_for_expr(c, CHILD(n, 1)), body, [], n.lineno, n.col_offset);
     }
     else if (NCH(n) === 7) {
-        return new Sk.astnodes.While(ast_for_expr(c, CHILD(n, 1)), astForSuite(c, CHILD(n, 3)), astForSuite(c, CHILD(n, 6)), n.lineno, n.col_offset);
+        return new Sk.astnodes.While(ast_for_expr(c, CHILD(n, 1)), body, astForSuite(c, CHILD(n, 6)), n.lineno, n.col_offset);
     }
     Sk.asserts.fail("wrong number of tokens for 'while' stmt");
 }
