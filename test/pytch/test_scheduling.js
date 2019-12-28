@@ -81,13 +81,13 @@ describe("scheduling", () => {
             this.receiver = project.instance_0_by_class_name("Receiver");
         }
 
-        has_steps_and_events(exp_n_steps, exp_n_events) {
-            let sender_correct
-                = (this.sender.js_attr("n_steps") === exp_n_steps);
-            let receiver_correct
-                = (this.receiver.js_attr("n_events") === exp_n_events);
-
-            return (sender_correct && receiver_correct);
+        assert_has_steps_and_events(exp_n_steps, exp_n_events) {
+            assert.strictEqual(this.sender.js_attr("n_steps"),
+                               exp_n_steps,
+                               "sender-n-steps");
+            assert.strictEqual(this.receiver.js_attr("n_events"),
+                               exp_n_events,
+                               "receiver-n-events");
         }
     }
 
