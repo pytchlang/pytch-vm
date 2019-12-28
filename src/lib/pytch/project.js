@@ -601,13 +601,12 @@ var $builtinmodule = function (name) {
                 }
 
                 case "broadcast": {
-                    let args = susp.data.subtype_data;
-                    let js_message = args.message;
+                    let js_message = syscall_args.message;
                     let new_thread_group
                         = (this.parent_project
                            .thread_group_for_broadcast_receivers(js_message));
 
-                    if (args.wait) {
+                    if (syscall_args.wait) {
                         this.state = Thread.State.AWAITING_THREAD_GROUP_COMPLETION;
                         this.sleeping_on = new_thread_group;
                     }
@@ -616,12 +615,11 @@ var $builtinmodule = function (name) {
                 }
 
                 case "play-sound": {
-                    let args = susp.data.subtype_data;
-                    let sound_name = args.sound_name;
-                    let actor = args.py_obj.$pytchActorInstance.actor;
+                    let sound_name = syscall_args.sound_name;
+                    let actor = syscall_args.py_obj.$pytchActorInstance.actor;
                     let performance = actor.launch_sound_performance(sound_name);
 
-                    if (args.wait) {
+                    if (syscall_args.wait) {
                         this.state = Thread.State.AWAITING_SOUND_COMPLETION;
                         this.sleeping_on = performance;
                     }
