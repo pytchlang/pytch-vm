@@ -601,7 +601,8 @@ var $builtinmodule = function (name) {
                     // The thread remains running, as in "next-frame".
                     this.skulpt_susp = susp;
 
-                    let js_message = susp.data.subtype_data;
+                    let args = susp.data.subtype_data;
+                    let js_message = args.message;
                     let new_thread_group
                         = (this.parent_project
                            .thread_group_for_broadcast_receivers(js_message));
