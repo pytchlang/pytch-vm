@@ -177,9 +177,7 @@ var $builtinmodule = function (name) {
             let appearances = await Promise.all(async_appearances);
             this._appearances = appearances;
 
-            this._appearance_from_name = {};
-            for (let [nm, app] of appearances)
-                this._appearance_from_name[nm] = app;
+            this._appearance_from_name = new Map(appearances);
         }
 
         async async_load_sounds() {
