@@ -665,10 +665,7 @@ var $builtinmodule = function (name) {
                     let py_instance = susp.data.subtype_data;
                     let py_cls = Sk.builtin.getattr(py_instance, s_dunder_class);
                     let actor = py_cls.$pytchActor;
-
-                    let new_instance = new PytchActorInstance(actor, py_instance);
-                    py_instance.$pytchActorInstance = new_instance;
-                    actor.instances.push(new_instance);
+                    actor.register_py_instance(py_instance);
 
                     let threads = actor.clone_handlers.map(
                         py_fun => new Thread(py_fun,
