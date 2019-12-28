@@ -96,12 +96,12 @@ describe("scheduling", () => {
         let actors = new BroadcastActors(project);
 
         // Initially only the __init__() methods have run.
-        assert.ok(actors.has_steps_and_events(0, 0));
+        actors.assert_has_steps_and_events(0, 0);
 
         // Clicking green flag only launches the threads and puts them
         // in the runnable queue.  Nothing has actually run yet.
         project.on_green_flag_clicked();
-        assert.ok(actors.has_steps_and_events(0, 0));
+        actors.assert_has_steps_and_events(0, 0);
 
         // First pass through scheduler causes an event in the sender,
         // which notes a step, and broadcasts the message.
@@ -109,12 +109,12 @@ describe("scheduling", () => {
         // on the receiver in the run queue.  The receiver thread has
         // not yet run.
         project.one_frame();
-        assert.ok(actors.has_steps_and_events(1, 0));
+        actors.assert_has_steps_and_events(1, 0);
 
         // Next pass through does give the receiver thread a go; and the
         // sender continues to run.
         project.one_frame();
-        assert.ok(actors.has_steps_and_events(2, 1));
+        actors.assert_has_steps_and_events(2, 1);
     });
 
     it("can pause threads on broadcast/wait", async () => {
@@ -122,12 +122,12 @@ describe("scheduling", () => {
         let actors = new BroadcastActors(project);
 
         // Initially only the __init__() methods have run.
-        assert.ok(actors.has_steps_and_events(0, 0));
+        actors.assert_has_steps_and_events(0, 0);
 
         // Clicking green flag only launches the threads and puts them
         // in the runnable queue.  Nothing has actually run yet.
         project.on_green_flag_clicked();
-        assert.ok(actors.has_steps_and_events(0, 0));
+        actors.assert_has_steps_and_events(0, 0);
 
         // First pass through scheduler causes an event in the sender,
         // which notes a step, and broadcasts the message.
@@ -135,23 +135,23 @@ describe("scheduling", () => {
         // on the receiver in the run queue.  The receiver thread has
         // not yet run.
         project.one_frame();
-        assert.ok(actors.has_steps_and_events(1, 0));
+        actors.assert_has_steps_and_events(1, 0);
 
         // Next frame does give the receiver thread a go; it runs
         // until its yield-until-next-frame syscall.  The sender is
         // sleeping.
         project.one_frame();
-        assert.ok(actors.has_steps_and_events(1, 1));
+        actors.assert_has_steps_and_events(1, 1);
 
         // Next frame: Receiver resumes after its yield and runs to
         // completion.  Sender is still sleeping.
         project.one_frame();
-        assert.ok(actors.has_steps_and_events(1, 2));
+        actors.assert_has_steps_and_events(1, 2);
 
         // Next frame: Sender wakes up as the thread-group it was
         // sleeping on has finished.
         project.one_frame();
-        assert.ok(actors.has_steps_and_events(2, 2));
+        actors.assert_has_steps_and_events(2, 2);
     });
 
     it("can pause for a number of seconds", async () => {
