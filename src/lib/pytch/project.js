@@ -137,11 +137,10 @@ var $builtinmodule = function (name) {
         constructor(py_cls, parent_project) {
             this.py_cls = py_cls;
             this.parent_project = parent_project;
+            this.instances = [];
 
             let py_instance = Sk.misceval.callsim(py_cls);
-            let instance_0 = new PytchActorInstance(this, py_instance);
-            py_instance.$pytchActorInstance = instance_0;
-            this.instances = [instance_0];
+            this.register_py_instance(py_instance);
 
             this.event_handlers = {
                 green_flag: new EventHandlerGroup(),
