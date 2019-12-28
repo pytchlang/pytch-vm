@@ -12,15 +12,16 @@ var $builtinmodule = function (name) {
         return new_pytch_suspension("next-frame", null);
     });
 
-    mod.broadcast = new Sk.builtin.func(py_message => {
-        let js_message = Sk.ffi.remapToJs(py_message);
-        return new_pytch_suspension("broadcast", js_message);
-    });
+    const broadcast_maybe_wait = (py_message, wait) => {
+        let message = Sk.ffi.remapToJs(py_message);
+        return new_pytch_suspension("broadcast", {message, wait});
+    };
 
-    mod.broadcast_and_wait = new Sk.builtin.func(py_message => {
-        let js_message = Sk.ffi.remapToJs(py_message);
-        return new_pytch_suspension("broadcast-and-wait", js_message);
-    });
+    mod.broadcast = new Sk.builtin.func(
+        py_message => broadcast_maybe_wait(py_message, false));
+
+    mod.broadcast_and_wait = new Sk.builtin.func(
+        py_message => broadcast_maybe_wait(py_message, true));
 
     mod.play_sound = new Sk.builtin.func((py_obj, py_sound_name, py_wait) => {
         let sound_name = Sk.ffi.remapToJs(py_sound_name);
