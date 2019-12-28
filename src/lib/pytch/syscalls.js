@@ -35,8 +35,8 @@ var $builtinmodule = function (name) {
     });
 
     mod.wait_seconds = new Sk.builtin.func(py_n_seconds => {
-        let js_n_seconds = Sk.ffi.remapToJs(py_n_seconds);
-        return new_pytch_suspension("wait-seconds", js_n_seconds);
+        let n_seconds = Sk.ffi.remapToJs(py_n_seconds);
+        return new_pytch_suspension("wait-seconds", {n_seconds});
     });
 
     mod.register_sprite_instance = new Sk.builtin.func(py_instance => {

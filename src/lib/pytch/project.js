@@ -628,7 +628,7 @@ var $builtinmodule = function (name) {
                 }
 
                 case "wait-seconds": {
-                    let js_n_seconds = susp.data.subtype_data;
+                    let js_n_seconds = syscall_args.n_seconds;
                     let raw_n_frames = Math.ceil(js_n_seconds * FRAMES_PER_SECOND);
                     let n_frames = (raw_n_frames < 1 ? 1 : raw_n_frames);
 
