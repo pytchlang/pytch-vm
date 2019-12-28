@@ -155,6 +155,12 @@ var $builtinmodule = function (name) {
             this.register_event_handlers();
         }
 
+        register_py_instance(py_instance) {
+            let actor_instance = new PytchActorInstance(this, py_instance);
+            py_instance.$pytchActorInstance = actor_instance;
+            this.instances.push(actor_instance);
+        }
+
         get class_name() {
             return name_of_py_class(this.py_cls);
         }
