@@ -137,11 +137,10 @@ var $builtinmodule = function (name) {
         constructor(py_cls, parent_project) {
             this.py_cls = py_cls;
             this.parent_project = parent_project;
+            this.instances = [];
 
             let py_instance = Sk.misceval.callsim(py_cls);
-            let instance_0 = new PytchActorInstance(this, py_instance);
-            py_instance.$pytchActorInstance = instance_0;
-            this.instances = [instance_0];
+            this.register_py_instance(py_instance);
 
             this.event_handlers = {
                 green_flag: new EventHandlerGroup(),
@@ -153,6 +152,12 @@ var $builtinmodule = function (name) {
             this.click_handlers = [];
 
             this.register_event_handlers();
+        }
+
+        register_py_instance(py_instance) {
+            let actor_instance = new PytchActorInstance(this, py_instance);
+            py_instance.$pytchActorInstance = actor_instance;
+            this.instances.push(actor_instance);
         }
 
         get class_name() {
@@ -660,10 +665,7 @@ var $builtinmodule = function (name) {
                     let py_instance = susp.data.subtype_data;
                     let py_cls = Sk.builtin.getattr(py_instance, s_dunder_class);
                     let actor = py_cls.$pytchActor;
-
-                    let new_instance = new PytchActorInstance(actor, py_instance);
-                    py_instance.$pytchActorInstance = new_instance;
-                    actor.instances.push(new_instance);
+                    actor.register_py_instance(py_instance);
 
                     let threads = actor.clone_handlers.map(
                         py_fun => new Thread(py_fun,
