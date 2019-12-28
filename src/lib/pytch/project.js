@@ -175,11 +175,7 @@ var $builtinmodule = function (name) {
             });
 
             let appearances = await Promise.all(async_appearances);
-            this._appearances = appearances;
-
-            this._appearance_from_name = {};
-            for (let [nm, app] of appearances)
-                this._appearance_from_name[nm] = app;
+            this._appearance_from_name = new Map(appearances);
         }
 
         async async_load_sounds() {
@@ -205,7 +201,7 @@ var $builtinmodule = function (name) {
         }
 
         appearance_from_name(appearance_name) {
-            let appearance = this._appearance_from_name[appearance_name];
+            let appearance = this._appearance_from_name.get(appearance_name);
 
             if (typeof appearance == "undefined") {
                 let cls_name = name_of_py_class(this.py_cls);
@@ -219,7 +215,7 @@ var $builtinmodule = function (name) {
         }
 
         get n_appearances() {
-            return this._appearances.length;
+            return this._appearance_from_name.size;
         }
 
         register_handler(event_descr, handler_py_func) {
