@@ -589,19 +589,16 @@ var $builtinmodule = function (name) {
                 if (susp.data.type !== "Pytch")
                     throw Error("cannot handle non-Pytch suspensions");
 
+                // When the thread next runs, which might be on the next frame for some
+                // syscalls, we want it to resume the new suspension:
+                this.skulpt_susp = susp;
+
                 switch (susp.data.subtype) {
                 case "next-frame": {
-                    // The thread remains running; update suspension so we
-                    // continue running on the next frame.
-                    this.skulpt_susp = susp;
                     return [];
                 }
 
                 case "broadcast": {
-                    // When it resumes (which will be on the next frame, if we're not
-                    // waiting), the thread will pick up here:
-                    this.skulpt_susp = susp;
-
                     let args = susp.data.subtype_data;
                     let js_message = args.message;
                     let new_thread_group
@@ -617,12 +614,6 @@ var $builtinmodule = function (name) {
                 }
 
                 case "play-sound": {
-                    // Either immediately (when 'wait' false, i.e.,
-                    // 'start-sound') or after the sound has finished (when
-                    // 'wait' true, i.e., 'play-sound-until-done'), the thread
-                    // will resume here:
-                    this.skulpt_susp = susp;
-
                     let args = susp.data.subtype_data;
                     let sound_name = args.sound_name;
                     let actor = args.py_obj.$pytchActorInstance.actor;
@@ -637,9 +628,6 @@ var $builtinmodule = function (name) {
                 }
 
                 case "wait-seconds": {
-                    // When it resumes, this thread will pick up here.
-                    this.skulpt_susp = susp;
-
                     let js_n_seconds = susp.data.subtype_data;
                     let raw_n_frames = Math.ceil(js_n_seconds * FRAMES_PER_SECOND);
                     let n_frames = (raw_n_frames < 1 ? 1 : raw_n_frames);
@@ -651,9 +639,6 @@ var $builtinmodule = function (name) {
                 }
 
                 case "register-instance": {
-                    // The thread remains running.
-                    this.skulpt_susp = susp;
-
                     let py_instance = susp.data.subtype_data;
                     let py_cls = Sk.builtin.getattr(py_instance, s_dunder_class);
                     let actor = py_cls.$pytchActor;
