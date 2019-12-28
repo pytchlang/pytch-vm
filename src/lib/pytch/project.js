@@ -598,7 +598,8 @@ var $builtinmodule = function (name) {
                 }
 
                 case "broadcast": {
-                    // The thread remains running, as in "next-frame".
+                    // When it resumes (which will be on the next frame, if we're not
+                    // waiting), the thread will pick up here:
                     this.skulpt_susp = susp;
 
                     let args = susp.data.subtype_data;
