@@ -607,6 +607,11 @@ var $builtinmodule = function (name) {
                         = (this.parent_project
                            .thread_group_for_broadcast_receivers(js_message));
 
+                    if (args.wait) {
+                        this.state = Thread.State.AWAITING_THREAD_GROUP_COMPLETION;
+                        this.sleeping_on = new_thread_group;
+                    }
+
                     return [new_thread_group];
                 }
 
