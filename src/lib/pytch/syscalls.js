@@ -1,15 +1,17 @@
 var $builtinmodule = function (name) {
     let mod = {};
 
-    const new_pytch_suspension = (subtype, data) => {
+    const new_pytch_suspension = (syscall_name, syscall_args) => {
         let susp = new Sk.misceval.Suspension();
         susp.resume = () => Sk.builtin.none.none$;
-        susp.data = { type: "Pytch", subtype: subtype, subtype_data: data };
+        susp.data = { type: "Pytch",
+                      subtype: syscall_name,
+                      subtype_data: syscall_args };
         return susp;
     };
 
     mod.yield_until_next_frame = new Sk.builtin.func(() => {
-        return new_pytch_suspension("next-frame", null);
+        return new_pytch_suspension("next-frame", {});
     });
 
     const broadcast_maybe_wait = (py_message, wait) => {
@@ -35,12 +37,12 @@ var $builtinmodule = function (name) {
     });
 
     mod.wait_seconds = new Sk.builtin.func(py_n_seconds => {
-        let js_n_seconds = Sk.ffi.remapToJs(py_n_seconds);
-        return new_pytch_suspension("wait-seconds", js_n_seconds);
+        let n_seconds = Sk.ffi.remapToJs(py_n_seconds);
+        return new_pytch_suspension("wait-seconds", {n_seconds});
     });
 
     mod.register_sprite_instance = new Sk.builtin.func(py_instance => {
-        return new_pytch_suspension("register-instance", py_instance);
+        return new_pytch_suspension("register-instance", {py_instance});
     });
 
     mod.key_is_pressed = new Sk.builtin.func((py_keyname) => {
