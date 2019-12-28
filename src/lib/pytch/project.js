@@ -615,21 +615,6 @@ var $builtinmodule = function (name) {
                     return [new_thread_group];
                 }
 
-                case "broadcast-and-wait": {
-                    // When it resumes, this thread will pick up here.
-                    this.skulpt_susp = susp;
-
-                    let js_message = susp.data.subtype_data;
-                    let new_thread_group
-                        = (this.parent_project
-                           .thread_group_for_broadcast_receivers(js_message));
-
-                    this.state = Thread.State.AWAITING_THREAD_GROUP_COMPLETION;
-                    this.sleeping_on = new_thread_group;
-
-                    return [new_thread_group];
-                }
-
                 case "play-sound": {
                     // Either immediately (when 'wait' false, i.e.,
                     // 'start-sound') or after the sound has finished (when
