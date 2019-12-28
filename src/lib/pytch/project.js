@@ -175,8 +175,6 @@ var $builtinmodule = function (name) {
             });
 
             let appearances = await Promise.all(async_appearances);
-            this._appearances = appearances;
-
             this._appearance_from_name = new Map(appearances);
         }
 
