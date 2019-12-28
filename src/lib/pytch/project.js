@@ -601,10 +601,10 @@ var $builtinmodule = function (name) {
                 }
 
                 case "broadcast": {
-                    let js_message = syscall_args.message;
+                    let message = syscall_args.message;
                     let new_thread_group
                         = (this.parent_project
-                           .thread_group_for_broadcast_receivers(js_message));
+                           .thread_group_for_broadcast_receivers(message));
 
                     if (syscall_args.wait) {
                         this.state = Thread.State.AWAITING_THREAD_GROUP_COMPLETION;
@@ -628,8 +628,8 @@ var $builtinmodule = function (name) {
                 }
 
                 case "wait-seconds": {
-                    let js_n_seconds = syscall_args.n_seconds;
-                    let raw_n_frames = Math.ceil(js_n_seconds * FRAMES_PER_SECOND);
+                    let n_seconds = syscall_args.n_seconds;
+                    let raw_n_frames = Math.ceil(n_seconds * FRAMES_PER_SECOND);
                     let n_frames = (raw_n_frames < 1 ? 1 : raw_n_frames);
 
                     this.state = Thread.State.AWAITING_PASSAGE_OF_TIME;

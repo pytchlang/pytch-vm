@@ -1,10 +1,12 @@
 var $builtinmodule = function (name) {
     let mod = {};
 
-    const new_pytch_suspension = (subtype, data) => {
+    const new_pytch_suspension = (syscall_name, syscall_args) => {
         let susp = new Sk.misceval.Suspension();
         susp.resume = () => Sk.builtin.none.none$;
-        susp.data = { type: "Pytch", subtype: subtype, subtype_data: data };
+        susp.data = { type: "Pytch",
+                      subtype: syscall_name,
+                      subtype_data: syscall_args };
         return susp;
     };
 
