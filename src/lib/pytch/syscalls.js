@@ -40,7 +40,7 @@ var $builtinmodule = function (name) {
     });
 
     mod.register_sprite_instance = new Sk.builtin.func(py_instance => {
-        return new_pytch_suspension("register-instance", py_instance);
+        return new_pytch_suspension("register-instance", {py_instance});
     });
 
     mod.key_is_pressed = new Sk.builtin.func((py_keyname) => {

@@ -639,7 +639,7 @@ var $builtinmodule = function (name) {
                 }
 
                 case "register-instance": {
-                    let py_instance = susp.data.subtype_data;
+                    let py_instance = syscall_args.py_instance;
                     let py_cls = Sk.builtin.getattr(py_instance, s_dunder_class);
                     let actor = py_cls.$pytchActor;
                     actor.register_py_instance(py_instance);
