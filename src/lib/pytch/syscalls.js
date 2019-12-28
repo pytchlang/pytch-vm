@@ -9,7 +9,7 @@ var $builtinmodule = function (name) {
     };
 
     mod.yield_until_next_frame = new Sk.builtin.func(() => {
-        return new_pytch_suspension("next-frame", null);
+        return new_pytch_suspension("next-frame", {});
     });
 
     const broadcast_maybe_wait = (py_message, wait) => {
