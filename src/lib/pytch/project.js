@@ -217,7 +217,7 @@ var $builtinmodule = function (name) {
         }
 
         get n_appearances() {
-            return this._appearances.length;
+            return this._appearance_from_name.size;
         }
 
         register_handler(event_descr, handler_py_func) {
