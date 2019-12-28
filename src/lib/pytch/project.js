@@ -589,6 +589,8 @@ var $builtinmodule = function (name) {
                 if (susp.data.type !== "Pytch")
                     throw Error("cannot handle non-Pytch suspensions");
 
+                let syscall_args = susp.data.subtype_data;
+
                 // When the thread next runs, which might be on the next frame for some
                 // syscalls, we want it to resume the new suspension:
                 this.skulpt_susp = susp;
