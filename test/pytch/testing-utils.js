@@ -4,7 +4,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 const fs = require("fs");
-const reqskulpt = require('../../support/run/require-skulpt').requireSkulpt;
+const reqskulpt = require("../../support/run/require-skulpt").requireSkulpt;
 
 before(() => {
     // Inject 'Sk' object into global namespace.
@@ -214,8 +214,8 @@ before(() => {
     // properties.
 
     const sound_duration_from_url = new Map([
-        ['library/sounds/trumpet.mp3', 20],
-        ['library/sounds/violin.mp3', 10],
+        ["library/sounds/trumpet.mp3", 20],
+        ["library/sounds/violin.mp3", 10],
     ]);
 
     class MockSound {
