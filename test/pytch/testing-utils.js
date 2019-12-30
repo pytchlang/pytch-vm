@@ -213,16 +213,16 @@ before(() => {
     // map of URL to duration in frames, and create a mock sound with the right
     // properties.
 
-    const sound_duration_from_url = {
-        'library/sounds/trumpet.mp3': 20,
-        'library/sounds/violin.mp3': 10,
-    };
+    const sound_duration_from_url = new Map([
+        ['library/sounds/trumpet.mp3', 20],
+        ['library/sounds/violin.mp3', 10],
+    ]);
 
     class MockSound {
         constructor(parent_sound_manager, tag, url) {
             this.parent_sound_manager = parent_sound_manager;
             this.tag = tag;
-            this.duration = sound_duration_from_url[url];
+            this.duration = sound_duration_from_url.get(url);
         }
 
         launch_new_performance() {
