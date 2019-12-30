@@ -4,7 +4,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 const fs = require("fs");
-const reqskulpt = require('../../support/run/require-skulpt').requireSkulpt;
+const reqskulpt = require("../../support/run/require-skulpt").requireSkulpt;
 
 before(() => {
     // Inject 'Sk' object into global namespace.
@@ -184,22 +184,22 @@ before(() => {
     // map of URL to width and height, and create a mock image with the right
     // properties.  Some of the images used in tests won't truly exist.
 
-    const image_size_from_url = {
-        "library/images/question-mark.png": [32, 32],
-        "library/images/marching-alien.png": [60, 20],
-        "library/images/firing-alien.png": [80, 30],
-        "library/images/ball.png": [16, 16],
-        "library/images/square-80x80.png": [80, 80],
-        "library/images/rectangle-60x30.png": [60, 30],
-        "library/images/stage/solid-white.png": [480, 360],
-        "library/images/yellow-banana.png": [80, 30],
-        "library/images/balloon.png": [100, 200],
-        "library/images/stage/wooden.png": [480, 360],
-    };
+    const image_size_from_url = new Map([
+        ["library/images/question-mark.png", [32, 32]],
+        ["library/images/marching-alien.png", [60, 20]],
+        ["library/images/firing-alien.png", [80, 30]],
+        ["library/images/ball.png", [16, 16]],
+        ["library/images/square-80x80.png", [80, 80]],
+        ["library/images/rectangle-60x30.png", [60, 30]],
+        ["library/images/stage/solid-white.png", [480, 360]],
+        ["library/images/yellow-banana.png", [80, 30]],
+        ["library/images/balloon.png", [100, 200]],
+        ["library/images/stage/wooden.png", [480, 360]],
+    ]);
 
     class MockImage {
         constructor(url) {
-            let size = image_size_from_url[url];
+            let size = image_size_from_url.get(url);
             this.url = url;
             this.width = size[0];
             this.height = size[1];
@@ -213,16 +213,16 @@ before(() => {
     // map of URL to duration in frames, and create a mock sound with the right
     // properties.
 
-    const sound_duration_from_url = {
-        'library/sounds/trumpet.mp3': 20,
-        'library/sounds/violin.mp3': 10,
-    };
+    const sound_duration_from_url = new Map([
+        ["library/sounds/trumpet.mp3", 20],
+        ["library/sounds/violin.mp3", 10],
+    ]);
 
     class MockSound {
         constructor(parent_sound_manager, tag, url) {
             this.parent_sound_manager = parent_sound_manager;
             this.tag = tag;
-            this.duration = sound_duration_from_url[url];
+            this.duration = sound_duration_from_url.get(url);
         }
 
         launch_new_performance() {
