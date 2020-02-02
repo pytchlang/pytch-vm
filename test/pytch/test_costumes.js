@@ -63,6 +63,15 @@ describe("Costume access within base-url", () => {
         Sk.pytch.asset_url_base = "beta/";
     });
 
+    it("loads costumes within base-url", async () => {
+        let project = await import_project("py/project/some_costumes.py");
+        let alien = project.actor_by_class_name("Alien");
+
+        assert_Appearance_equal(alien.appearance_from_name("marching"),
+                                "beta/library/images/marching-alien.png",
+                                60, 20, 30, 10);
+    });
+
     after(() => {
         Sk.pytch.asset_url_base = original_url_base;
     });
