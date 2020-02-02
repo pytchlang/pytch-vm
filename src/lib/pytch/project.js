@@ -63,7 +63,8 @@ var $builtinmodule = function (name) {
         }
 
         static async async_create(url, centre_x, centre_y) {
-            let image = await Sk.pytch.async_load_image(url);
+            let full_url = `${Sk.pytch.asset_url_base}${url}`;
+            let image = await Sk.pytch.async_load_image(full_url);
             return new Appearance(image, centre_x, centre_y);
         }
     }
