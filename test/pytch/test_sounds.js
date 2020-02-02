@@ -55,7 +55,8 @@ describe(`waiting and non-waiting sounds (${test_case.tag})`, () => {
 
         // For the rest of the length of the 'trumpet' sound, it should stay
         // playing.
-        for (let i = 0; i != 18; ++i) {
+        let exp_remaining_trumpet_frames = test_case.durations.trumpet - 2;
+        for (let i = 0; i != exp_remaining_trumpet_frames; ++i) {
             one_frame();
             assert_running_performances(["trumpet"]);
         }
@@ -80,7 +81,8 @@ describe(`waiting and non-waiting sounds (${test_case.tag})`, () => {
 
         // For the rest of the length of the 'violin' sound, it should stay
         // playing, and the thread should remain sleeping.
-        for (let i = 0; i != 9; ++i) {
+        let exp_remaining_violin_frames = test_case.durations.violin - 1;
+        for (let i = 0; i != exp_remaining_violin_frames; ++i) {
             one_frame();
             assert_running_performances(["violin"]);
             assert.strictEqual(orchestra.js_attr("played_violin"), "no")
@@ -143,7 +145,8 @@ describe(`waiting and non-waiting sounds (${test_case.tag})`, () => {
 
         // For the rest of the length of the 'violin' sound, both sounds should
         // stay playing, and the thread should remain sleeping.
-        for (let i = 0; i != 9; ++i) {
+        let exp_remaining_violin_frames = test_case.durations.violin - 1;
+        for (let i = 0; i != exp_remaining_violin_frames; ++i) {
             one_frame();
             assert_running_performances(["trumpet", "violin"]);
             assert.strictEqual(orchestra.js_attr("played_both"), "nearly")
@@ -152,7 +155,10 @@ describe(`waiting and non-waiting sounds (${test_case.tag})`, () => {
 
         // For the rest of the length of the 'trumpet' sound, it alone should
         // stay playing, with the thread having run to completion.
-        for (let i = 0; i != 9; ++i) {
+        let exp_remaining_trumpet_frames = (test_case.durations.trumpet
+                                            - test_case.durations.violin
+                                            - 1);
+        for (let i = 0; i != exp_remaining_trumpet_frames; ++i) {
             one_frame();
             assert_running_performances(["trumpet"]);
             assert.strictEqual(orchestra.js_attr("played_both"), "yes")
