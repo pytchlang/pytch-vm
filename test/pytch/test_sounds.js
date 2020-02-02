@@ -4,6 +4,15 @@
 //
 // Sounds
 
+const test_cases = [
+    { tag: "empty url-base",
+      url_base: "",
+      durations: { trumpet: 20, violin: 10} },
+    { tag: "url-base of 'beta'",
+      url_base: "beta/",
+      durations: { trumpet: 43, violin: 30} },
+];
+
 describe("waiting and non-waiting sounds", () => {
     let one_frame_fun = (project => () => {
         mock_sound_manager.one_frame();
