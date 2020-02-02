@@ -238,6 +238,8 @@ before(() => {
     const sound_duration_from_url = new Map([
         ["library/sounds/trumpet.mp3", 20],
         ["library/sounds/violin.mp3", 10],
+        ["beta/library/sounds/trumpet.mp3", 43],
+        ["beta/library/sounds/violin.mp3", 30],
     ]);
 
     class MockSound {
