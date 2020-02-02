@@ -13,7 +13,15 @@ const test_cases = [
       durations: { trumpet: 43, violin: 30} },
 ];
 
-describe("waiting and non-waiting sounds", () => {
+test_cases.forEach(test_case => {
+describe(`waiting and non-waiting sounds (${test_case.tag})`, () => {
+    let original_url_base;
+
+    before(() => {
+        original_url_base = Sk.pytch.asset_url_base;
+        Sk.pytch.asset_url_base = test_case.url_base;
+    });
+
     let one_frame_fun = (project => () => {
         mock_sound_manager.one_frame();
         project.one_frame();
@@ -156,4 +164,9 @@ describe("waiting and non-waiting sounds", () => {
         assert_running_performances([]);
         assert.strictEqual(orchestra.js_attr("played_both"), "yes")
     });
+
+    after(() => {
+        Sk.pytch.asset_url_base = original_url_base;
+    });
+});
 });
