@@ -200,6 +200,7 @@ before(() => {
 
     const image_size_from_url = new Map([
         ["library/images/question-mark.png", [32, 32]],
+        ["beta/library/images/question-mark.png", [32, 32]],
         ["library/images/marching-alien.png", [60, 20]],
         ["beta/library/images/marching-alien.png", [60, 20]],
         ["library/images/firing-alien.png", [80, 30]],
