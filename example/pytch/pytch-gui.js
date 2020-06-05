@@ -10,8 +10,15 @@ $(document).ready(function() {
 
     ace_editor.getSession().setUseWorker(false);
     ace_editor.getSession().setMode("ace/mode/python");
-    ace_editor.setValue("#\n# Write your Pytch code here!\n#\n");
+    ace_editor.setValue("import pytch\n"
+                        + "from pytch import (\n"
+                        + "    Project,\n"
+                        + ")\n\n\n\n"
+                        + "project = Project()\n"
+                        + "project.go_live()\n");
     ace_editor.clearSelection();
+    ace_editor.moveCursorTo(5, 0);
+    ace_editor.focus();
 
     let show_code_changed_indicator = (evt => {
         $("#code-change-indicator").show();
