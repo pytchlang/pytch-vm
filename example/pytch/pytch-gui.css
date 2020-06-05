@@ -194,3 +194,56 @@ h1 {
 #info-panels-container div.tab-content span.info {
     font-style: italic;
 }
+
+#tab-pane-tutorial .header p {
+    margin: 0.5ex 0px 0px 0px;
+    text-align: right;
+    font-size: 120%;
+    font-weight: bold;
+}
+
+#tab-pane-tutorial .nav {
+    cursor: default;
+    background-color: inherit;
+}
+
+#tab-pane-tutorial .nav.enabled {
+    cursor: pointer;
+    background-color: #ccf;
+}
+
+#tab-pane-tutorial .nav p {
+    text-align: center;
+    visibility: hidden;
+    margin: 3ex 0px;
+}
+
+#tab-pane-tutorial .nav.enabled p {
+    visibility: visible;
+}
+
+#tab-pane-tutorial .nav {
+    border-radius: 6px;
+    width: 5em;
+}
+
+#tab-pane-tutorial .prev.nav {
+    margin-right: 16px;
+    float: left;
+}
+
+#tab-pane-tutorial .next.nav {
+    margin-left: 16px;
+    float: right;
+}
+
+#tab-pane-tutorial .page {
+    height: 44ex;
+    margin: 8px 8em;
+    overflow-y: scroll;
+}
+
+#tab-pane-tutorial .page h2 {
+    font-size: 125%;
+    margin: 0px;
+}
