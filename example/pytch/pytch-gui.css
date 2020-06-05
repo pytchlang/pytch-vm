@@ -182,7 +182,7 @@ h1 {
 #info-panels-container div.tab-content {
     display: none;
     padding: 10px 15px;
-    height: 60ex;
+    height: 50ex;
     overflow-x: auto;
     overflow-y: auto;
 }
