@@ -112,6 +112,50 @@ $(document).ready(function() {
         }
     }
 
+    class TutorialPresentation {
+        constructor(tutorial, target_elt) {
+            this.tutorial = tutorial;
+            this.header_elt = target_elt.querySelector(".header");
+            this.page_elt = target_elt.querySelector(".page");
+            this.nav_next_elt = target_elt.querySelector(".next.nav");
+            this.nav_prev_elt = target_elt.querySelector(".prev.nav");
+            this.page_index = 0;
+            this.refresh();
+        }
+
+        refresh() {
+            let page_index_1b = this.page_index + 1;
+            this.header_elt.innerHTML
+                = `<p>Make a Boing game (${page_index_1b}/${this.tutorial.n_pages})</p>`;
+            this.page_elt.innerHTML = "";
+            this.page_elt.appendChild(this.tutorial.page(this.page_index));
+
+            let on_first_page = (this.page_index == 0);
+            let on_last_page = (this.page_index == this.tutorial.n_pages - 1);
+
+            $(this.nav_prev_elt).toggleClass("enabled", ( ! on_first_page));
+            $(this.nav_next_elt).toggleClass("enabled", ( ! on_last_page));
+
+            $(this.nav_prev_elt).off("click");
+            if ( ! on_first_page)
+                $(this.nav_prev_elt).click(() => this.prev_page());
+
+            $(this.nav_next_elt).off("click");
+            if ( ! on_last_page)
+                $(this.nav_next_elt).click(() => this.next_page());
+        }
+
+        next_page() {
+            this.page_index += 1;
+            this.refresh();
+        }
+
+        prev_page() {
+            this.page_index -= 1;
+            this.refresh();
+        }
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
