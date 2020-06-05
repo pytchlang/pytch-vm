@@ -6,6 +6,10 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
+#ide-content {
+    margin: 0px 8px;
+}
+
 h1 {
     background-color: #336;
     color: white;
