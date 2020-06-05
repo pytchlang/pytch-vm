@@ -52,6 +52,8 @@ h1 {
     background-color: #66a;
 }
 
+#editor-menubar > p { margin: 0px; }
+
 #editor-menubar span.menu-elt {
     padding: 0.75ex 1.25em;
     margin: 0ex 0.5em;
