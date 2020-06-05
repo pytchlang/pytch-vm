@@ -93,6 +93,28 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Tutorials
+
+    class Tutorial {
+        constructor(html) {
+            let pages_elt = document.createElement("div");
+            pages_elt.innerHTML = html;
+
+            this.pages = pages_elt.querySelectorAll("div");
+        }
+
+        page(page_index) {
+            return this.pages[page_index];
+        }
+
+        get n_pages() {
+            return this.pages.length;
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Populate 'Examples' drop-down menu
 
     (() => {
