@@ -1,0 +1,328 @@
+<div>
+  <h2>Make the Stage</h2>
+  <p>
+    The first step is to make our <i>Stage</i>.  This is like the Stage
+    in Scratch, and we want it to have a
+    particular <i>Backdrop</i>:
+  </p>
+  <table class="diff">
+  <tr class="diff-unch">
+    <td>1</td>
+    <td>1</td>
+    <td><pre><span class="kn">import</span> <span class="nn">pytch</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>2</td>
+    <td>2</td>
+    <td><pre><span class="kn">from</span> <span class="nn">pytch</span> <span class="kn">import</span> <span class="p">(</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>3</td>
+    <td><pre>    <span class="n">Stage</span><span class="p">,</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>3</td>
+    <td>4</td>
+    <td><pre>    <span class="n">Project</span><span class="p">,</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>4</td>
+    <td>5</td>
+    <td><pre><span class="p">)</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>5</td>
+    <td>6</td>
+    <td><pre></pre></td></tr>
+  <tr class="diff-unch">
+    <td>6</td>
+    <td>7</td>
+    <td><pre></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>8</td>
+    <td><pre><span class="k">class</span> <span class="nc">BoingBackground</span><span class="p">(</span><span class="n">Stage</span><span class="p">):</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>9</td>
+    <td><pre>    <span class="n">Backdrops</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;boing&#39;</span><span class="p">,</span> <span class="s1">&#39;images/table.png&#39;</span><span class="p">)]</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>10</td>
+    <td><pre></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>11</td>
+    <td><pre>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>12</td>
+    <td><pre>        <span class="n">Stage</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>13</td>
+    <td><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">switch_backdrop</span><span class="p">(</span><span class="s1">&#39;boing&#39;</span><span class="p">)</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>14</td>
+    <td><pre></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>15</td>
+    <td><pre></pre></td></tr>
+  <tr class="diff-unch">
+    <td>7</td>
+    <td>16</td>
+    <td><pre><span class="n">project</span> <span class="o">=</span> <span class="n">Project</span><span class="p">()</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>17</td>
+    <td><pre><span class="n">project</span><span class="o">.</span><span class="n">register_stage_class</span><span class="p">(</span><span class="n">BoingBackground</span><span class="p">)</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>8</td>
+    <td>18</td>
+    <td><pre><span class="n">project</span><span class="o">.</span><span class="n">go_live</span><span class="p">()</span></pre></td></tr>
+  </table>
+</div>
+<div>
+  <h2>Add the player's bat</h2>
+  <p>
+    Hooray!  Now we can add the player's bat.  In Scratch, this would
+    be a Sprite.  In Pytch, we make a new <i>class</i> for the bat:
+  </p>
+  <table class="diff">
+  <tr class="diff-unch">
+    <td>1</td>
+    <td>1</td>
+    <td><pre><span class="kn">import</span> <span class="nn">pytch</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>2</td>
+    <td>2</td>
+    <td><pre><span class="kn">from</span> <span class="nn">pytch</span> <span class="kn">import</span> <span class="p">(</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>3</td>
+    <td>3</td>
+    <td><pre>    <span class="n">Stage</span><span class="p">,</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>4</td>
+    <td><pre>    <span class="n">Sprite</span><span class="p">,</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>4</td>
+    <td>5</td>
+    <td><pre>    <span class="n">Project</span><span class="p">,</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>5</td>
+    <td>6</td>
+    <td><pre><span class="p">)</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>6</td>
+    <td>7</td>
+    <td><pre></pre></td></tr>
+  </table>
+  <p class="inter-hunk">&vellip;</p>
+  <table class="diff">
+  <tr class="diff-unch">
+    <td>13</td>
+    <td>14</td>
+    <td><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">switch_backdrop</span><span class="p">(</span><span class="s1">&#39;boing&#39;</span><span class="p">)</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>14</td>
+    <td>15</td>
+    <td><pre></pre></td></tr>
+  <tr class="diff-unch">
+    <td>15</td>
+    <td>16</td>
+    <td><pre></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>17</td>
+    <td><pre><span class="k">class</span> <span class="nc">Bat</span><span class="p">(</span><span class="n">Sprite</span><span class="p">):</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>18</td>
+    <td><pre>    <span class="n">Costumes</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;normal&#39;</span><span class="p">,</span> <span class="s1">&#39;images/bat00.png&#39;</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">60</span><span class="p">)]</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>19</td>
+    <td><pre></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>20</td>
+    <td><pre>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>21</td>
+    <td><pre>        <span class="n">Sprite</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>22</td>
+    <td><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">switch_costume</span><span class="p">(</span><span class="s1">&#39;normal&#39;</span><span class="p">)</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>23</td>
+    <td><pre></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>24</td>
+    <td><pre></pre></td></tr>
+  <tr class="diff-unch">
+    <td>16</td>
+    <td>25</td>
+    <td><pre><span class="n">project</span> <span class="o">=</span> <span class="n">Project</span><span class="p">()</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>17</td>
+    <td>26</td>
+    <td><pre><span class="n">project</span><span class="o">.</span><span class="n">register_stage_class</span><span class="p">(</span><span class="n">BoingBackground</span><span class="p">)</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>27</td>
+    <td><pre><span class="n">project</span><span class="o">.</span><span class="n">register_sprite_class</span><span class="p">(</span><span class="n">Bat</span><span class="p">)</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>18</td>
+    <td>28</td>
+    <td><pre><span class="n">project</span><span class="o">.</span><span class="n">go_live</span><span class="p">()</span></pre></td></tr>
+  </table>
+</div>
+<div>
+  <h2>Move the bat to the starting position on green-flag</h2>
+  <p>
+    In Scratch you would set this up with a Green-Flag <i>hat
+    block</i>.  In Pytch, we write the piece of code as part of
+    a <i>method</i> with a name we choose, and then <i>decorate</i> it
+    to say that the code should run when the green flag is clicked:
+  </p>
+  <table class="diff">
+  <tr class="diff-unch">
+    <td>3</td>
+    <td>3</td>
+    <td><pre>    <span class="n">Stage</span><span class="p">,</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>4</td>
+    <td>4</td>
+    <td><pre>    <span class="n">Sprite</span><span class="p">,</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>5</td>
+    <td>5</td>
+    <td><pre>    <span class="n">Project</span><span class="p">,</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>6</td>
+    <td><pre>    <span class="n">when_green_flag_clicked</span><span class="p">,</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>6</td>
+    <td>7</td>
+    <td><pre><span class="p">)</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>7</td>
+    <td>8</td>
+    <td><pre></pre></td></tr>
+  <tr class="diff-unch">
+    <td>8</td>
+    <td>9</td>
+    <td><pre></pre></td></tr>
+  </table>
+  <p class="inter-hunk">&vellip;</p>
+  <table class="diff">
+  <tr class="diff-unch">
+    <td>21</td>
+    <td>22</td>
+    <td><pre>        <span class="n">Sprite</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>22</td>
+    <td>23</td>
+    <td><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">switch_costume</span><span class="p">(</span><span class="s1">&#39;normal&#39;</span><span class="p">)</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>23</td>
+    <td>24</td>
+    <td><pre></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>25</td>
+    <td><pre>    <span class="nd">@when_green_flag_clicked</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>26</td>
+    <td><pre>    <span class="k">def</span> <span class="nf">get_ready_to_play</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>27</td>
+    <td><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">go_to_xy</span><span class="p">(</span><span class="o">-</span><span class="mi">215</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>28</td>
+    <td><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>29</td>
+    <td><pre></pre></td></tr>
+  <tr class="diff-unch">
+    <td>24</td>
+    <td>30</td>
+    <td><pre></pre></td></tr>
+  <tr class="diff-unch">
+    <td>25</td>
+    <td>31</td>
+    <td><pre><span class="n">project</span> <span class="o">=</span> <span class="n">Project</span><span class="p">()</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>26</td>
+    <td>32</td>
+    <td><pre><span class="n">project</span><span class="o">.</span><span class="n">register_stage_class</span><span class="p">(</span><span class="n">BoingBackground</span><span class="p">)</span></pre></td></tr>
+  </table>
+</div>
+<div>
+  <h2>Let the player move the bat with the keyboard</h2>
+  <p>
+    Once the bat is at the starting position, we enter an infinite
+    loop, moving up or down according to whether the player is
+    pressing the relevant keys.  In Scratch this would be with
+    a <i>forever</i> block.  In Pytch, we say <code>while True:</code>
+    and indent the loop body:
+  </p>
+  <table class="diff">
+  <tr class="diff-unch">
+    <td>27</td>
+    <td>27</td>
+    <td><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">go_to_xy</span><span class="p">(</span><span class="o">-</span><span class="mi">215</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>28</td>
+    <td>28</td>
+    <td><pre>        <span class="bp">self</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>29</td>
+    <td>29</td>
+    <td><pre></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>30</td>
+    <td><pre>        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>31</td>
+    <td><pre>            <span class="k">if</span> <span class="n">pytch</span><span class="o">.</span><span class="n">key_is_pressed</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">):</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>32</td>
+    <td><pre>                <span class="bp">self</span><span class="o">.</span><span class="n">change_y</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>33</td>
+    <td><pre>            <span class="k">if</span> <span class="n">pytch</span><span class="o">.</span><span class="n">key_is_pressed</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">):</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>34</td>
+    <td><pre>                <span class="bp">self</span><span class="o">.</span><span class="n">change_y</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">)</span></pre></td></tr>
+  <tr class="diff-add">
+    <td></td>
+    <td>35</td>
+    <td><pre></pre></td></tr>
+  <tr class="diff-unch">
+    <td>30</td>
+    <td>36</td>
+    <td><pre></pre></td></tr>
+  <tr class="diff-unch">
+    <td>31</td>
+    <td>37</td>
+    <td><pre><span class="n">project</span> <span class="o">=</span> <span class="n">Project</span><span class="p">()</span></pre></td></tr>
+  <tr class="diff-unch">
+    <td>32</td>
+    <td>38</td>
+    <td><pre><span class="n">project</span><span class="o">.</span><span class="n">register_stage_class</span><span class="p">(</span><span class="n">BoingBackground</span><span class="p">)</span></pre></td></tr>
+  </table>
+</div>
