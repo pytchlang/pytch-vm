@@ -155,12 +155,20 @@ h1 {
     color: #000;
 }
 
+#info-panels-container ul.tabs li.current.tutorial {
+    background-color: #fff;
+}
+
 #info-panels-container ul.tabs li.current.stdout {
     background-color: #88c;
 }
 
 #info-panels-container ul.tabs li.current.stderr {
     background-color: #f44;
+}
+
+#tab-pane-tutorial {
+    background-color: #fff;
 }
 
 #tab-pane-stdout {
