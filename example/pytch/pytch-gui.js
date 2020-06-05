@@ -714,5 +714,23 @@ $(document).ready(function() {
         window.requestAnimationFrame(one_frame);
     };
 
-    window.requestAnimationFrame(one_frame);
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // Load example tutorial
+
+    let running_tutorial_presentation = null;
+
+    const launch_tutorial = async (url) => {
+        let tutorial_response = await fetch(url);
+        let tutorial_text = await tutorial_response.text();
+
+        let tutorial = new Tutorial(tutorial_text);
+        running_tutorial_presentation
+            = new TutorialPresentation(tutorial,
+                                       $("#tab-pane-tutorial")[0]);
+    };
+
+    launch_tutorial("boing-tutorial.html").then(
+        () => window.requestAnimationFrame(one_frame));
 });
