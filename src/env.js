@@ -28,6 +28,11 @@ Sk.bool_check = function(variable, name) {
     }
 };
 
+/**
+ * Please use python3 flag to control new behavior that is different
+ * between Python 2/3, rather than adding new flags.
+ */
+
 Sk.python2 = {
     print_function: false,
     division: false,
@@ -35,7 +40,6 @@ Sk.python2 = {
     unicode_literals: false,
     // skulpt specific
     python3: false,
-    set_repr: false,
     class_repr: false,
     inherit_from_object: false,
     super_args: false,
@@ -43,8 +47,7 @@ Sk.python2 = {
     bankers_rounding: false,
     python_version: false,
     dunder_next: false,
-    dunder_round: false,    
-    list_clear: false,
+    dunder_round: false,
     exceptions: false,
     no_long_type: false,
     ceil_floor_int: false,
@@ -58,7 +61,6 @@ Sk.python3 = {
     unicode_literals: true,
     // skulpt specific
     python3: true,
-    set_repr: true,
     class_repr: true,
     inherit_from_object: true,
     super_args: true,
@@ -67,7 +69,6 @@ Sk.python3 = {
     python_version: true,
     dunder_next: true,
     dunder_round: true,
-    list_clear: true,
     exceptions: true,
     no_long_type: true,
     ceil_floor_int: true,
@@ -160,7 +161,6 @@ Sk.configure = function (options) {
     Sk.bool_check(Sk.__future__.print_function, "Sk.__future__.print_function");
     Sk.bool_check(Sk.__future__.division, "Sk.__future__.division");
     Sk.bool_check(Sk.__future__.unicode_literals, "Sk.__future__.unicode_literals");
-    Sk.bool_check(Sk.__future__.set_repr, "Sk.__future__.set_repr");
     Sk.bool_check(Sk.__future__.class_repr, "Sk.__future__.class_repr");
     Sk.bool_check(Sk.__future__.inherit_from_object, "Sk.__future__.inherit_from_object");
     Sk.bool_check(Sk.__future__.super_args, "Sk.__future__.super_args");
@@ -169,7 +169,6 @@ Sk.configure = function (options) {
     Sk.bool_check(Sk.__future__.python_version, "Sk.__future__.python_version");
     Sk.bool_check(Sk.__future__.dunder_next, "Sk.__future__.dunder_next");
     Sk.bool_check(Sk.__future__.dunder_round, "Sk.__future__.dunder_round");
-    Sk.bool_check(Sk.__future__.list_clear, "Sk.__future__.list_clear");
     Sk.bool_check(Sk.__future__.exceptions, "Sk.__future__.exceptions");
     Sk.bool_check(Sk.__future__.no_long_type, "Sk.__future__.no_long_type");
     Sk.bool_check(Sk.__future__.ceil_floor_int, "Sk.__future__.ceil_floor_int");
@@ -260,12 +259,15 @@ Sk.configure = function (options) {
 
     Sk.switch_version("round$", Sk.__future__.dunder_round);
     Sk.switch_version("next$", Sk.__future__.dunder_next);
-    Sk.switch_version("clear$", Sk.__future__.list_clear);
+    Sk.switch_version("haskey$", Sk.__future__.python3);
+    Sk.switch_version("clear$", Sk.__future__.python3);
+    Sk.switch_version("copy$", Sk.__future__.python3);
 
     Sk.builtin.lng.tp$name = Sk.__future__.no_long_type ? "int" : "long";
 
     Sk.setupOperators(Sk.__future__.python3);
     Sk.setupDunderMethods(Sk.__future__.python3);
+    Sk.setupDictIterators(Sk.__future__.python3);
     Sk.setupObjects(Sk.__future__.python3);
 };
 
@@ -394,10 +396,16 @@ Sk.setup_method_mappings = function () {
             2: null,
             3: "clear"
         },
+        "copy$": {
+            "classes": [Sk.builtin.list],
+            2: null,
+            3: "copy"
+        },
         "next$": {
             "classes": [Sk.builtin.dict_iter_,
                         Sk.builtin.list_iter_,
                         Sk.builtin.set_iter_,
+                        Sk.builtin.frozenset_iter_,
                         Sk.builtin.str_iter_,
                         Sk.builtin.tuple_iter_,
                         Sk.builtin.generator,
@@ -408,7 +416,12 @@ Sk.setup_method_mappings = function () {
                         Sk.builtin.iterator],
             2: "next",
             3: "__next__"
-        }
+        },
+        "haskey$": {
+            "classes": [Sk.builtin.dict],
+            2: "has_key",
+            3: null
+        },
     };
 };
 
@@ -442,4 +455,3 @@ Sk.switch_version = function (method_to_map, python3) {
 
 Sk.exportSymbol("Sk.__future__", Sk.__future__);
 Sk.exportSymbol("Sk.inputfun", Sk.inputfun);
-
