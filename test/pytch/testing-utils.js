@@ -211,6 +211,12 @@ before(() => {
             this.width = size[0];
             this.height = size[1];
         }
+
+        static maybe_create(url) {
+            return (image_size_from_url.has(url)
+                    ? new MockImage(url)
+                    : null);
+        }
     }
 
 
