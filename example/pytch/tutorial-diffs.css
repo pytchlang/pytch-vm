@@ -38,3 +38,29 @@ p.inter-hunk {
     margin-top: 0.5ex;
     margin-bottom: 0.5ex;
 }
+
+div.interactive-commit > .decoration {
+    padding: 1.5ex 1em;
+    margin: 0px 3em;
+    background-color: #f7f7f7;
+    text-align: left;
+    font-size: 100%;
+    color: #000;
+}
+
+div.interactive-commit > .interaction-group {
+    padding-top: 3ex;
+    padding-bottom: 2.5ex;
+}
+
+div.interactive-commit .commit-interaction {
+    margin-left: 3em;
+    cursor: pointer;
+    background-color: #ccf;
+    padding: 6px;
+    border-radius: 4px;
+}
+
+div.interactive-commit .commit-interaction:nth-child(1) {
+    margin-left: 0em;
+}
