@@ -393,6 +393,13 @@ var $builtinmodule = function (name) {
             return "Backdrop";
         }
 
+        validate_descriptor(descr) {
+            if (descr.length !== 2)
+                this.reject_appearance_descriptor(
+                    descr,
+                    "descriptor must have 2 elements");
+        }
+
         url_centre_from_descriptor(descr) {
             return [descr[1], STAGE_WIDTH / 2, STAGE_HEIGHT / 2];
         }
