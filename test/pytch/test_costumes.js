@@ -30,6 +30,12 @@ describe("Costume handling", () => {
     it("throws Python error if appearance-spec malformed", async () => {
         let module = await import_local_file("py/project/bad_appearance_spec.py");
 
+        const assert_exception_matches = (obj_name, expected_regexp) => {
+            let caught_exception = module.$d[obj_name];
+            let err_msg = Sk.builtin.str(caught_exception).v;
+            assert.ok(expected_regexp.test(err_msg));
+        }
+
         let caught_exception = module.$d.caught_exception_StarrySky;
         let err_msg = Sk.builtin.str(caught_exception).v;
         assert.ok(/Backdrop.*must have 2 elements/.test(err_msg));
