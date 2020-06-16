@@ -360,6 +360,18 @@ var $builtinmodule = function (name) {
             return "Costume";
         }
 
+        validate_descriptor(descr) {
+            if (descr.length !== 4)
+                this.reject_appearance_descriptor(
+                    descr,
+                    "descriptor must have 4 elements");
+
+            if ((typeof descr[2] != "number") || (typeof descr[3] != "number"))
+                this.reject_appearance_descriptor(
+                    descr,
+                    "third and fourth elements of descriptor must be numbers");
+        }
+
         url_centre_from_descriptor(descr) {
             return [descr[1], descr[2], descr[3]];
         }
