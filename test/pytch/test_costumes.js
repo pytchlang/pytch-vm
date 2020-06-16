@@ -36,17 +36,14 @@ describe("Costume handling", () => {
             assert.ok(expected_regexp.test(err_msg));
         }
 
-        let caught_exception = module.$d.caught_exception_StarrySky;
-        let err_msg = Sk.builtin.str(caught_exception).v;
-        assert.ok(/Backdrop.*must have 2 elements/.test(err_msg));
+        assert_exception_matches("caught_exception_StarrySky",
+                                 /Backdrop.*must have 2 elements/);
 
-        caught_exception = module.$d.caught_exception_Alien;
-        err_msg = Sk.builtin.str(caught_exception).v;
-        assert.ok(/Costume.*must have 4 elements/.test(err_msg));
+        assert_exception_matches("caught_exception_Alien",
+                                 /Costume.*must have 4 elements/);
 
-        caught_exception = module.$d.caught_exception_Spaceship;
-        err_msg = Sk.builtin.str(caught_exception).v;
-        assert.ok(/Costume.*must be numbers/.test(err_msg));
+        assert_exception_matches("caught_exception_Spaceship",
+                                 /Costume.*must be numbers/);
     });
 
     it("rejects unknown costume", async () => {
