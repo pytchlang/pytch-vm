@@ -148,6 +148,13 @@ $(document).ready(function() {
                 $(this.nav_next_elt).click(() => this.next_page());
         }
 
+        copy_paste_code(div) {
+            ace_editor.setValue(div.dataset.codeAsOfCommit);
+            ace_editor.clearSelection();
+            // TODO: Go to the approximate location of the diff.
+            // TODO: Highlight the new lines of the diff with Ace Range; fade out or click-to-dismiss.
+        }
+
         maybe_augment_patch_divs() {
             let content_elt = this.page_elt.querySelector("div.page-content");
 
@@ -175,6 +182,7 @@ $(document).ready(function() {
                 let copy_paste_span = document.createElement("span");
                 copy_paste_span.innerHTML = "Make mine like this";
                 $(copy_paste_span).addClass("commit-interaction");
+                $(copy_paste_span).click(() => this.copy_paste_code(div));
                 buttons_p.appendChild(copy_paste_span);
                 div.appendChild(buttons_p);
             });
