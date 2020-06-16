@@ -100,7 +100,7 @@ $(document).ready(function() {
             let pages_elt = document.createElement("div");
             pages_elt.innerHTML = html;
 
-            this.pages = pages_elt.querySelectorAll("div");
+            this.pages = pages_elt.querySelectorAll("div.tutorial-bundle > div");
         }
 
         page(page_index) {
