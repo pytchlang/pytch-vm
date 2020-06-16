@@ -776,6 +776,6 @@ $(document).ready(function() {
                                        $("#tab-pane-tutorial")[0]);
     };
 
-    launch_tutorial("boing-tutorial.html").then(
+    launch_tutorial("compiled-boing-tutorial.html").then(
         () => window.requestAnimationFrame(one_frame));
 });
