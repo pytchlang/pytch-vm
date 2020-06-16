@@ -577,7 +577,7 @@ Compiler.prototype.ccompgen = function (type, tmpname, generators, genIndex, val
 Compiler.prototype.cyield = function(e)
 {
     if (this.u.ste.blockType !== Sk.SYMTAB_CONSTS.FunctionBlock) {
-        throw new SyntaxError("'yield' outside function");
+        throw new Sk.builtin.SyntaxError("'yield' outside function", this.filename, e.lineno);
     }
     var val = "null",
         nextBlock;
@@ -664,13 +664,7 @@ Compiler.prototype.ccall = function (e) {
         out("if (typeof self === \"undefined\" || self.toString().indexOf(\"Window\") > 0) { throw new Sk.builtin.RuntimeError(\"super(): no arguments\") };")
         positionalArgs = "[$gbl.__class__,self]";
     }
-    if (keywordArgs !== "undefined") {
-        out("$ret = Sk.misceval.applyOrSuspend(",func,",undefined,undefined,",keywordArgs,",",positionalArgs,");");
-    } else if (positionalArgs != "[]") {
-        out ("$ret = Sk.misceval.callsimOrSuspendArray(", func, ", ", positionalArgs, ");");
-    } else {
-        out ("$ret = Sk.misceval.callsimOrSuspendArray(", func, ");");
-    }
+    out ("$ret = (",func,".tp$call)?",func,".tp$call(",positionalArgs,",",keywordArgs,") : Sk.misceval.applyOrSuspend(",func,",undefined,undefined,",keywordArgs,",",positionalArgs,");");
 
     this._checkSuspension(e);
 
@@ -782,6 +776,45 @@ Compiler.prototype.cboolop = function (e) {
     this._jump(end);
     this.setBlock(end);
     return retval;
+};
+
+
+Compiler.prototype.cjoinedstr = function (e) {
+    let ret;
+    Sk.asserts.assert(e instanceof Sk.astnodes.JoinedStr);
+
+    for (let s of e.values) {
+        let v = this.vexpr(s);
+        if (!ret) {
+            ret = this._gr("joinedstr", v);
+        } else {
+            out(ret,"=",ret,".sq$concat(",v,");");
+        }
+    }
+
+    if (!ret) {
+        ret = 'Sk.builtin.str.$emptystr';
+    }
+
+    return ret;
+};
+
+Compiler.prototype.cformattedvalue = function(e) {
+    let value = this.vexpr(e.value);
+    switch (e.conversion) {
+        case 's':
+            value = this._gr("value", "Sk.builtin.str(",value,")");
+            break;
+        case 'a':
+            // TODO when repr() becomes more unicode-aware,
+            // we'll want to handle repr() and ascii() differently.
+            // For now, they're the same
+        case 'r':
+            value = this._gr("value", "Sk.builtin.repr(",value,")");
+            break;
+    }
+    let formatSpec = (e.format_spec ? this.vexpr(e.format_spec) : "Sk.builtin.str.$emptystr");
+    return this._gr("formatted", "Sk.abstr.objectFormat("+value+","+formatSpec+")");
 };
 
 
@@ -955,6 +988,10 @@ Compiler.prototype.vexpr = function (e, data, augvar, augsubs) {
             return this.ctuplelistorset(e, data, 'set');
         case Sk.astnodes.Starred:
             break;
+        case Sk.astnodes.JoinedStr:
+            return this.cjoinedstr(e);
+        case Sk.astnodes.FormattedValue:
+            return this.cformattedvalue(e);
         default:
             Sk.asserts.fail("unhandled case " + e.constructor.name + " vexpr");
     }
@@ -1518,7 +1555,7 @@ Compiler.prototype.ctry = function (s) {
         this.setBlock(handlers[i]);
         handler = s.handlers[i];
         if (!handler.type && i < n - 1) {
-            throw new SyntaxError("default 'except:' must be last");
+            throw new Sk.builtin.SyntaxError("default 'except:' must be last", this.filename, handler.lineno);
         }
 
         if (handler.type) {
@@ -1852,10 +1889,12 @@ Compiler.prototype.buildcodeobj = function (n, coname, decorator_list, args, cal
     if (isGenerator) {
         // TODO make generators deal with arguments properly
         if (kwarg) {
-            throw new SyntaxError(coname.v + "(): keyword arguments in generators not supported");
+            throw new Sk.builtin.SyntaxError(coname.v + "(): keyword arguments in generators not supported",
+                                            this.filename, n.lineno);
         }
         if (vararg) {
-            throw new SyntaxError(coname.v + "(): variable number of arguments in generators not supported");
+            throw new Sk.builtin.SyntaxError(coname.v + "(): variable number of arguments in generators not supported",
+                                            this.filename, n.lineno);
         }
         funcArgs.push("$gen");
     }
@@ -1979,7 +2018,7 @@ Compiler.prototype.buildcodeobj = function (n, coname, decorator_list, args, cal
     this.u.varDeclsCode += "}";
 
     // inject __class__ cell when running python3
-    if (Sk.python3 && class_for_super) {
+    if (Sk.__future__.python3 && class_for_super) {
         this.u.varDeclsCode += "$gbl.__class__=this." + class_for_super.v + ";";
     }
 
@@ -2034,10 +2073,6 @@ Compiler.prototype.buildcodeobj = function (n, coname, decorator_list, args, cal
         out(scopename, ".co_argcount=", args.args.length, ";");
         out(scopename, ".co_kwonlyargcount=", args.kwonlyargs.length, ";");
         out(scopename, ".$kwdefs=[", kw_defaults.join(","), "];");
-    }
-
-    if (decos.length > 0) {
-        out(scopename, ".$decorators=[", decos.join(","), "];");
     }
 
     //
@@ -2101,8 +2136,11 @@ Compiler.prototype.buildcodeobj = function (n, coname, decorator_list, args, cal
     else {
         var res;
         if (decos.length > 0) {
-            out("$ret = Sk.misceval.callsimOrSuspendArray(", scopename, ".$decorators[0], [new Sk.builtins['function'](", scopename, ",$gbl", frees, ")]);");
-            this._checkSuspension();
+            out("$ret = new Sk.builtins['function'](", scopename, ",$gbl", frees, ");");
+            for (let decorator of decos) {
+                out("$ret = Sk.misceval.callsimOrSuspendArray(", decorator, ",[$ret]);");
+                this._checkSuspension();
+            }
             return this._gr("funcobj", "$ret");
         }
 
@@ -2243,10 +2281,8 @@ Compiler.prototype.cclass = function (s) {
     var bases;
     var decos;
     Sk.asserts.assert(s instanceof Sk.astnodes.ClassDef);
-    decos = s.decorator_list;
 
-    // decorators and bases need to be eval'd out here
-    //this.vseqexpr(decos);
+    decos = this.vseqexpr(s.decorator_list);
 
     bases = this.vseqexpr(s.bases);
 
@@ -2277,21 +2313,26 @@ Compiler.prototype.cclass = function (s) {
 
     // build class
 
-    // apply decorators
-
     this.exitScope();
 
     // todo; metaclass
-    wrapped = this._gr("built", "Sk.misceval.buildClass($gbl,", scopename, ",", s.name["$r"]().v, ",[", bases, "], $cell)");
+    out("$ret = Sk.misceval.buildClass($gbl,", scopename, ",", s.name["$r"]().v, ",[", bases, "], $cell);")
+
+    // apply decorators
+
+    for (let decorator of decos) {
+        out("$ret = Sk.misceval.callsimOrSuspendArray(", decorator, ", [$ret]);");
+        this._checkSuspension();
+    }
 
     // store our new class under the right name
-    this.nameop(s.name, Sk.astnodes.Store, wrapped);
+    this.nameop(s.name, Sk.astnodes.Store, "$ret");
 };
 
 Compiler.prototype.ccontinue = function (s) {
     var nextFinally = this.peekFinallyBlock(), gotoBlock;
     if (this.u.continueBlocks.length == 0) {
-        throw new SyntaxError("'continue' outside loop");
+        throw new Sk.builtin.SyntaxError("'continue' outside loop", this.filename, s.lineno);
     }
     // todo; continue out of exception blocks
     gotoBlock = this.u.continueBlocks[this.u.continueBlocks.length - 1];
@@ -2307,7 +2348,7 @@ Compiler.prototype.cbreak = function (s) {
     var nextFinally = this.peekFinallyBlock(), gotoBlock;
 
     if (this.u.breakBlocks.length === 0) {
-        throw new SyntaxError("'break' outside loop");
+        throw new Sk.builtin.SyntaxError("'break' outside loop", this.filename, s.lineno);
     }
     gotoBlock = this.u.breakBlocks[this.u.breakBlocks.length - 1];
     if (nextFinally && nextFinally.breakDepth == this.u.breakBlocks.length) {
@@ -2355,7 +2396,7 @@ Compiler.prototype.vstmt = function (s, class_for_super) {
             break;
         case Sk.astnodes.Return:
             if (this.u.ste.blockType !== Sk.SYMTAB_CONSTS.FunctionBlock) {
-                throw new SyntaxError("'return' outside function");
+                throw new Sk.builtin.SyntaxError("'return' outside function", this.filename, s.lineno);
             }
             val = s.value ? this.vexpr(s.value) : "Sk.builtin.none.none$";
             if (this.u.finallyBlocks.length == 0) {
@@ -2461,7 +2502,7 @@ Compiler.prototype.nameop = function (name, ctx, dataToStore) {
     var op;
     var mangled;
     if ((ctx === Sk.astnodes.Store || ctx === Sk.astnodes.AugStore || ctx === Sk.astnodes.Del) && name.v === "__debug__") {
-        throw new Sk.builtin.SyntaxError("can not assign to __debug__");
+        throw new Sk.builtin.SyntaxError("can not assign to __debug__", this.filename, this.u.lineno);
     }
     Sk.asserts.assert(name.v !== "None");
 
