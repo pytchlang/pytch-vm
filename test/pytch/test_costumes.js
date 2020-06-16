@@ -27,6 +27,22 @@ describe("Costume handling", () => {
         assert.ok(/could not load image/.test(err_msg));
     });
 
+    it("throws Python error if appearance-spec malformed", async () => {
+        let module = await import_local_file("py/project/bad_appearance_spec.py");
+
+        let caught_exception = module.$d.caught_exception_StarrySky;
+        let err_msg = Sk.builtin.str(caught_exception).v;
+        assert.ok(/Backdrop.*must have 2 elements/.test(err_msg));
+
+        caught_exception = module.$d.caught_exception_Alien;
+        err_msg = Sk.builtin.str(caught_exception).v;
+        assert.ok(/Costume.*must have 4 elements/.test(err_msg));
+
+        caught_exception = module.$d.caught_exception_Spaceship;
+        err_msg = Sk.builtin.str(caught_exception).v;
+        assert.ok(/Costume.*must be numbers/.test(err_msg));
+    });
+
     it("rejects unknown costume", async () => {
         let project = await import_project("py/project/some_costumes.py");
         let alien = project.actor_by_class_name("Alien");
