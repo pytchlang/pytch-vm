@@ -20,6 +20,13 @@ describe("Costume handling", () => {
                                 80, 30, 40, 15);
     });
 
+    it("throws Python error if costume not found", async () => {
+        let module = await import_local_file("py/project/bad_costume.py");
+        let caught_exception = module.$d.caught_exception;
+        let err_msg = Sk.builtin.str(caught_exception).v;
+        assert.ok(/could not load image/.test(err_msg));
+    });
+
     it("rejects unknown costume", async () => {
         let project = await import_project("py/project/some_costumes.py");
         let alien = project.actor_by_class_name("Alien");
