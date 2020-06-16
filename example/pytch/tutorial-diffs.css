@@ -1,5 +1,6 @@
 /* table.diff { width: 100%; margin: 0px; } */
 div.patch { background-color: #f7f7f7; border-spacing: 0px; margin: 0px 3em; }
+div.patch > table { background-color: #f7f7f7; border-spacing: 0px; margin: 0px 3em; }
 
 div.patch > table tr:nth-child(1) td { padding-top: 0.3333ex; }
 div.patch > table tr:nth-last-child(1) td { padding-bottom: 0.25ex; }
