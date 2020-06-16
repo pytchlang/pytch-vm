@@ -131,6 +131,8 @@ $(document).ready(function() {
             this.page_elt.appendChild(this.tutorial.page(this.page_index));
             this.page_elt.scrollTop = 0;
 
+            this.maybe_augment_patch_divs();
+
             let on_first_page = (this.page_index == 0);
             let on_last_page = (this.page_index == this.tutorial.n_pages - 1);
 
@@ -144,6 +146,40 @@ $(document).ready(function() {
             $(this.nav_next_elt).off("click");
             if ( ! on_last_page)
                 $(this.nav_next_elt).click(() => this.next_page());
+        }
+
+        maybe_augment_patch_divs() {
+            let content_elt = this.page_elt.querySelector("div.page-content");
+
+            // TODO: Could use 'classList' if we're happy to leave users of older IEs behind?
+            if ($(content_elt).hasClass("augmented")) {
+                console.log('already augmented');
+                return;
+            }
+
+            let hunk_divs = content_elt.querySelectorAll("div.interactive-commit");
+
+            hunk_divs.forEach(div => {
+                // TODO: Ugh; redo.
+                let patch_div = div.querySelector("div.patch");
+                let header_div = document.createElement("h1");
+                $(header_div).addClass("decoration");
+                header_div.innerHTML = "Code change:";
+                div.insertBefore(header_div, patch_div);
+                let buttons_p = document.createElement("p");
+                $(buttons_p).addClass("decoration interaction-group");
+                let check_my_work_span = document.createElement("span");
+                check_my_work_span.innerHTML = "Check my work";
+                $(check_my_work_span).addClass("commit-interaction");
+                buttons_p.appendChild(check_my_work_span);
+                let copy_paste_span = document.createElement("span");
+                copy_paste_span.innerHTML = "Make mine like this";
+                $(copy_paste_span).addClass("commit-interaction");
+                buttons_p.appendChild(copy_paste_span);
+                div.appendChild(buttons_p);
+            });
+
+            $(content_elt).addClass("augmented");
         }
 
         next_page() {
