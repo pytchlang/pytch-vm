@@ -129,6 +129,7 @@ $(document).ready(function() {
                 = `<p>Make a Boing game (${page_index_1b}/${this.tutorial.n_pages})</p>`;
             this.page_elt.innerHTML = "";
             this.page_elt.appendChild(this.tutorial.page(this.page_index));
+            this.page_elt.scrollTop = 0;
 
             let on_first_page = (this.page_index == 0);
             let on_last_page = (this.page_index == this.tutorial.n_pages - 1);
