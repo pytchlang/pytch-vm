@@ -137,7 +137,13 @@ before(() => {
     // Implementation of async-load-image.
     // Resolve with the MockImage (see below).
     const async_load_mock_image = (url => {
-        return Promise.resolve(new MockImage(url));
+        let maybe_image = MockImage.maybe_create(url);
+        if (maybe_image === null) {
+            let error_message = `could not load image "${url}"`;
+            let py_error = new Sk.builtin.RuntimeError(error_message);
+            return Promise.reject(py_error);
+        } else
+            return Promise.resolve(maybe_image);
     });
 
 
