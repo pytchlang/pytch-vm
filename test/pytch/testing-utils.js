@@ -135,7 +135,8 @@ before(() => {
     })();
 
     // Implementation of async-load-image.
-    // Resolve with the MockImage (see below).
+    // Resolve with the MockImage (see below), or reject with a
+    // Python-level error if the image is not found.
     const async_load_mock_image = (url => {
         let maybe_image = MockImage.maybe_create(url);
         if (maybe_image === null) {
