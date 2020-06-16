@@ -154,6 +154,15 @@ var $builtinmodule = function (name) {
             this.register_event_handlers();
         }
 
+        reject_appearance_descriptor(descriptor, error_message_nub) {
+            let kind_name = this.appearance_single_name;
+            let descriptor_tag = descriptor[0];
+            let error_message = ("problem with specification"
+                                 + ` for ${kind_name} "${descriptor_tag}":`
+                                 + ` ${error_message_nub}`);
+            throw new Sk.builtin.ValueError(error_message);
+        }
+
         register_py_instance(py_instance) {
             let actor_instance = new PytchActorInstance(this, py_instance);
             py_instance.$pytchActorInstance = actor_instance;
