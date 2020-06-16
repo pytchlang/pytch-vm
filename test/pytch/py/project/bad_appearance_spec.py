@@ -19,3 +19,21 @@ class Spaceship(Sprite):
 
 
 project = Project()
+
+caught_exception_StarrySky = None
+try:
+    project.register_stage_class(StarrySky)
+except ValueError as value_error:
+    caught_exception_StarrySky = value_error
+
+caught_exception_Alien = None
+try:
+    project.register_sprite_class(Alien)
+except ValueError as value_error:
+    caught_exception_Alien = value_error
+
+caught_exception_Spaceship = None
+try:
+    project.register_sprite_class(Spaceship)
+except ValueError as value_error:
+    caught_exception_Spaceship = value_error
