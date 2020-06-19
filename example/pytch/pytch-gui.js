@@ -284,6 +284,12 @@ $(document).ready(function() {
         new Promise((resolve, reject) => {
             let img = new Image();
             img.onload = (() => resolve(img));
+            img.onerror = (ignored_error_event => {
+                // TODO: Can we tell WHY we couldn't load that image?
+                let error_message = `could not load image "${url}"`;
+                let py_error = new Sk.builtin.RuntimeError(error_message);
+                reject(py_error);
+            });
             img.src = url;
         }));
 

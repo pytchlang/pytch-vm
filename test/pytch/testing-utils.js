@@ -134,12 +134,26 @@ before(() => {
         };
     })();
 
+    // Implementation of async-load-image.
+    // Resolve with the MockImage (see below), or reject with a
+    // Python-level error if the image is not found.
+    const async_load_mock_image = (url => {
+        let maybe_image = MockImage.maybe_create(url);
+        if (maybe_image === null) {
+            let error_message = `could not load image "${url}"`;
+            let py_error = new Sk.builtin.RuntimeError(error_message);
+            return Promise.reject(py_error);
+        } else
+            return Promise.resolve(maybe_image);
+    });
+
+
     // Connect read/write to filesystem and stdout; configure Pytch environment.
     Sk.configure({
         read: (fname => fs.readFileSync(fname, { encoding: "utf8" })),
         output: (args) => { process.stdout.write(args); },
         pytch: {
-            async_load_image: (url => Promise.resolve(new MockImage(url))),
+            async_load_image: async_load_mock_image,
             keyboard: mock_keyboard,
             mouse: mock_mouse,
             sound_manager: mock_sound_manager,
@@ -203,6 +217,12 @@ before(() => {
             this.url = url;
             this.width = size[0];
             this.height = size[1];
+        }
+
+        static maybe_create(url) {
+            return (image_size_from_url.has(url)
+                    ? new MockImage(url)
+                    : null);
         }
     }
 
