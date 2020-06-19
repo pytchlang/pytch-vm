@@ -366,12 +366,14 @@ var $builtinmodule = function (name) {
             if (descr.length !== 4)
                 this.reject_appearance_descriptor(
                     descr,
-                    "descriptor must have 4 elements");
+                    ("descriptor must have 4 elements:"
+                    + " (name, url, centre-x, centre-y"));
 
             if ((typeof descr[2] != "number") || (typeof descr[3] != "number"))
                 this.reject_appearance_descriptor(
                     descr,
-                    "third and fourth elements of descriptor must be numbers");
+                    ("third and fourth elements of descriptor"
+                     + " (centre-x and centre-y) must be numbers"));
         }
 
         url_centre_from_descriptor(descr) {
@@ -399,7 +401,8 @@ var $builtinmodule = function (name) {
             if (descr.length !== 2)
                 this.reject_appearance_descriptor(
                     descr,
-                    "descriptor must have 2 elements");
+                    ("descriptor must have 2 elements:"
+                     + " (name, url)"));
         }
 
         url_centre_from_descriptor(descr) {
