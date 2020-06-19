@@ -154,6 +154,15 @@ var $builtinmodule = function (name) {
             this.register_event_handlers();
         }
 
+        reject_appearance_descriptor(descriptor, error_message_nub) {
+            let kind_name = this.appearance_single_name;
+            let descriptor_tag = descriptor[0];
+            let error_message = ("problem with specification"
+                                 + ` for ${kind_name} "${descriptor_tag}":`
+                                 + ` ${error_message_nub}`);
+            throw new Sk.builtin.ValueError(error_message);
+        }
+
         register_py_instance(py_instance) {
             let actor_instance = new PytchActorInstance(this, py_instance);
             py_instance.$pytchActorInstance = actor_instance;
@@ -167,6 +176,8 @@ var $builtinmodule = function (name) {
         async async_load_appearances() {
             let attr_name = this.appearances_attr_name;
             let appearance_descriptors = js_getattr(this.py_cls, attr_name);
+
+            appearance_descriptors.forEach(d => this.validate_descriptor(d));
 
             let async_appearances = appearance_descriptors.map(async d => {
                 let [url, cx, cy] = this.url_centre_from_descriptor(d);
@@ -351,6 +362,20 @@ var $builtinmodule = function (name) {
             return "Costume";
         }
 
+        validate_descriptor(descr) {
+            if (descr.length !== 4)
+                this.reject_appearance_descriptor(
+                    descr,
+                    ("descriptor must have 4 elements:"
+                    + " (name, url, centre-x, centre-y"));
+
+            if ((typeof descr[2] != "number") || (typeof descr[3] != "number"))
+                this.reject_appearance_descriptor(
+                    descr,
+                    ("third and fourth elements of descriptor"
+                     + " (centre-x and centre-y) must be numbers"));
+        }
+
         url_centre_from_descriptor(descr) {
             return [descr[1], descr[2], descr[3]];
         }
@@ -370,6 +395,14 @@ var $builtinmodule = function (name) {
 
         get appearance_single_name() {
             return "Backdrop";
+        }
+
+        validate_descriptor(descr) {
+            if (descr.length !== 2)
+                this.reject_appearance_descriptor(
+                    descr,
+                    ("descriptor must have 2 elements:"
+                     + " (name, url)"));
         }
 
         url_centre_from_descriptor(descr) {
