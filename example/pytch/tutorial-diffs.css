@@ -21,7 +21,7 @@ div.patch > table tr.diff-add { background-color: #caffca; }
 div.patch > table tr.diff-add td:nth-child(3) pre::before { content: '+'; }
 div.patch > table tr.diff-unch { background-color: #f7f7f7; }
 div.patch > table tr.diff-unch td:nth-child(3) pre::before { content: ' '; }
-div.patch > table tr, div.patch > table tr:nth-child(2) { padding: 0px; margin: 0px; border: none; }
+div.patch > table tr { padding: 0px; margin: 0px; border: none; }
 div.patch > table tr td { padding: 0px; margin: 0px; border: none; }
 div.patch > table tr td pre {
     line-height: 100%;
