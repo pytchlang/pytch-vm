@@ -54,3 +54,16 @@ describe("Costume handling", () => {
                       /could not find Costume "banana" in class "Alien"/);
     });
 });
+
+describe("Costume access within base-url", () => {
+    let original_url_base;
+
+    before(() => {
+        original_url_base = Sk.pytch.asset_url_base;
+        Sk.pytch.asset_url_base = "beta/";
+    });
+
+    after(() => {
+        Sk.pytch.asset_url_base = original_url_base;
+    });
+});
