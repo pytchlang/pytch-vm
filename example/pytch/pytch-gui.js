@@ -156,7 +156,7 @@ $(document).ready(function() {
         }
 
         maybe_augment_patch_divs() {
-            let content_elt = this.page_elt.querySelector("div.page-content");
+            let content_elt = this.page_elt.querySelector("div.chapter-content");
 
             // TODO: Could use 'classList' if we're happy to leave users of older IEs behind?
             if ($(content_elt).hasClass("augmented")) {
