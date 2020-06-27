@@ -766,8 +766,9 @@ $(document).ready(function() {
 
     let running_tutorial_presentation = null;
 
-    const launch_tutorial = async (url) => {
-        let tutorial_response = await fetch(url);
+    const launch_tutorial = async (url_base) => {
+	let tutorial_url = `${url_base}/tutorial.html`;
+        let tutorial_response = await fetch(tutorial_url);
         let tutorial_text = await tutorial_response.text();
 
         let tutorial = new Tutorial(tutorial_text);
@@ -776,6 +777,6 @@ $(document).ready(function() {
                                        $("#tab-pane-tutorial")[0]);
     };
 
-    launch_tutorial("compiled-boing-tutorial.html").then(
+    launch_tutorial("tutorials/boing").then(
         () => window.requestAnimationFrame(one_frame));
 });
