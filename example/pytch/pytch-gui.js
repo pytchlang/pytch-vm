@@ -767,16 +767,21 @@ $(document).ready(function() {
     let running_tutorial_presentation = null;
 
     const launch_tutorial = async (url_base) => {
-	let tutorial_url = `${url_base}/tutorial.html`;
+	// TODO: Document, ensure that 'URL BASE' is properly defined
+	// and used, e.g., whether it should have a trailing slash
+	// ('yes' is what's currently assumed in the code here).
+	let tutorial_url = `${url_base}tutorial.html`;
         let tutorial_response = await fetch(tutorial_url);
         let tutorial_text = await tutorial_response.text();
 
         let tutorial = new Tutorial(tutorial_text);
+	// TODO: When to change this back again?
+	Sk.pytch.asset_url_base = `${url_base}project-assets/`;
         running_tutorial_presentation
             = new TutorialPresentation(tutorial,
                                        $("#tab-pane-tutorial")[0]);
     };
 
-    launch_tutorial("tutorials/boing").then(
+    launch_tutorial("tutorials/boing/").then(
         () => window.requestAnimationFrame(one_frame));
 });
