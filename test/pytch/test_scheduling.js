@@ -184,4 +184,45 @@ describe("scheduling", () => {
         assert_n_steps(2);
         assert.strictEqual(project.thread_groups.length, 0);
     });
+
+    it("yields exactly when meant to", async () => {
+	// Loops in a module which explicitly does "import pytch"
+	// should have yield_until_next_frame() calls inserted by our
+	// modified compiler.  Loops not in such a module --- even a
+	// module imported by an "import pytch"-ing module --- should
+	// not have their loops so modified.
+
+	let project = await import_project("py/project/loop_in_module.py");
+	let counter = project.instance_0_by_class_name("Counter");
+
+	let assert_xs = (exp_xs => {
+	    assert.deepEqual(counter.js_attr("xs"), exp_xs);
+	});
+
+	let exp_xs = [0, 0, 0, 0, 0];
+	assert_xs(exp_xs);
+
+	// The first loop of increments should all happen as part of the
+	// first frame; prepare for that.
+	project.do_synthetic_broadcast("go-while");
+	exp_xs = [1, 1, 1, 1, 1];
+
+	for (let i = 0; i != 5; ++i) {
+	    project.one_frame();
+	    // Only one element should be updated per frame.
+	    exp_xs[i] = 2;
+	    assert_xs(exp_xs);
+	}
+
+	// Similarly for loops written with 'for' rather than 'while':
+
+	project.do_synthetic_broadcast("go-for");
+	exp_xs = [3, 3, 3, 3, 3];
+
+	for (let i = 0; i != 5; ++i) {
+	    project.one_frame();
+	    exp_xs[i] = 4;
+	    assert_xs(exp_xs);
+	}
+    });
 });
