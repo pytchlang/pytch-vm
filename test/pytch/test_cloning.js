@@ -190,6 +190,39 @@ describe("cloning", () => {
             frame_then_assert_state(1, steady_state_n_pings);
     });
 
+    it("does not delete or unregister the original instance", async () => {
+        let project = await import_project("py/project/unregister_clone.py");
+
+	// Request a clone, and let project run for a bit.
+        project.do_synthetic_broadcast("create-clone");
+	for (let i = 0; i < 10; ++i)
+	    project.one_frame();
+
+        let beacon_instances = project.actor_by_class_name("Beacon").instances;
+	assert.strictEqual(beacon_instances.length, 2);
+
+	let originality_tag = (x => x.js_attr("is_the_original"));
+	assert.strictEqual(originality_tag(beacon_instances[0]), "yes");
+	assert.strictEqual(originality_tag(beacon_instances[1]), "no");
+
+	// Request clones destroy themselves; let project run.
+        project.do_synthetic_broadcast("destroy-clones");
+	for (let i = 0; i < 10; ++i)
+	    project.one_frame();
+
+	// There should be just the original Beacon instance.
+	assert.strictEqual(beacon_instances.length, 1);
+
+	// Re-extracting the original Beacon should give us the self-same
+	// object we already have.
+	let beacon_0 = project.instance_0_by_class_name("Beacon");
+	assert.strictEqual(beacon_0, beacon_instances[0]);
+
+	// And that original Beacon should have kept running after
+	// the delete_this_clone() call.
+	assert.strictEqual(beacon_0.js_attr("kept_running"), "yes");
+    });
+
     ['on_red_stop_clicked', 'on_green_flag_clicked'].forEach(method =>
     it(`${method} deletes all clones`, async () => {
         let project = await import_project("py/project/launch_clones.py");
