@@ -205,6 +205,11 @@ describe("cloning", () => {
 	assert.strictEqual(originality_tag(beacon_instances[0]), "yes");
 	assert.strictEqual(originality_tag(beacon_instances[1]), "no");
 
+	let pre_destruction_counter = beacon_instances[0].js_attr("counter");
+	// We have executed 10 frames; the create_clone_of() call takes one
+	// frame, so we've only incremented the counter 9 times.
+	assert.strictEqual(pre_destruction_counter, 9);
+
 	// Request clones destroy themselves; let project run.
         project.do_synthetic_broadcast("destroy-clones");
 	for (let i = 0; i < 10; ++i)
@@ -220,7 +225,14 @@ describe("cloning", () => {
 
 	// And that original Beacon should have kept running after
 	// the delete_this_clone() call.
+
+	// This should hold in the same thread calling delete_this_clone():
 	assert.strictEqual(beacon_0.js_attr("kept_running"), "yes");
+
+	// And in the other thread running on the main instance, which has
+	// had ten more iterations of the "increment" loop:
+	let post_destruction_counter = beacon_instances[0].js_attr("counter");
+	assert.strictEqual(post_destruction_counter, 19);
     });
 
     ['on_red_stop_clicked', 'on_green_flag_clicked'].forEach(method =>

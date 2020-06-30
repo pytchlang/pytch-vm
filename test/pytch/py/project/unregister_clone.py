@@ -27,6 +27,9 @@ class Beacon(Sprite):
     def create_clone(self):
         self.n_clone_reqs += 1
         pytch.create_clone_of(self)
+        self.counter = 0
+        while True:
+            self.counter += 1
 
     @when_I_receive('destroy-clones')
     def self_destruct(self):
