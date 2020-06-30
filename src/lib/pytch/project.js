@@ -307,8 +307,10 @@ var $builtinmodule = function (name) {
             // both try to unregister the same sprite in the same
             // scheduler-time-slice.
             //
-            if (instance_idx > 0)
+	    if (instance_idx > 0) {
                 this.instances.splice(instance_idx, 1);
+		instance.py_object_is_registered = false;
+	    }
         }
 
         create_threads_for_green_flag() {
@@ -487,8 +489,6 @@ var $builtinmodule = function (name) {
         unregister_self() {
             let actor = this.actor;
             actor.unregister_instance(this);
-
-            this.py_object_is_registered = false;
         }
 
         get info_label() {
