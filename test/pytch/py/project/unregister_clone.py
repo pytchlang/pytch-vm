@@ -11,6 +11,11 @@ class Beacon(Sprite):
     def __init__(self):
         Sprite.__init__(self)
         self.n_clone_reqs = 0
+        self.is_the_original = 'yes'
+
+    @when_I_start_as_a_clone
+    def note_not_original(self):
+        self.is_the_original = 'no'
 
     @when_I_start_as_a_clone
     def keep_pinging(self):
