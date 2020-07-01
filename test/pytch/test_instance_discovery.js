@@ -27,4 +27,9 @@ describe("instance discovery", () => {
         let project = await prepare_project();
         assert_result(project, 'un-listened-for-message', 0);
     });
+
+    it("can retrieve the original Alien", async () => {
+        let project = await prepare_project();
+        assert_result(project, 'get-original', 100);
+    });
 });
