@@ -80,6 +80,10 @@ class Stage(Actor):
     _shown = True
     _appearance = 'solid-white'
 
+    @classmethod
+    def _appearances(cls):
+        return cls.Backdrops
+
     def __init__(self):
         pass
 
