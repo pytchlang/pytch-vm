@@ -22,4 +22,9 @@ describe("instance discovery", () => {
         let got_ids = scanner.js_attr("got_alien_ids");
         assert.deepEqual(got_ids, exp_ids);
     });
+
+    it("sets up the original Alien", async () => {
+        let project = await prepare_project();
+        assert_result(project, 'un-listened-for-message', 0);
+    });
 });
