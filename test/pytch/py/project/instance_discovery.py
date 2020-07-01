@@ -37,6 +37,9 @@ class Alien(Sprite):
 class Scanner(Sprite):
     @when_green_flag_clicked
     def init(self):
+        # Store the IDs rather than the actual Alien objects, because
+        # the Sk.ffi.remapToJs() does not know how to handle Alien
+        # instances.
         self.got_alien_ids = 0
 
     @when_I_receive('get-original')
