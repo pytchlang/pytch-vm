@@ -19,6 +19,17 @@ class Actor:
             cls._appearance_names = set(
                 appearance[0] for appearance in cls._appearances())
 
+    def switch_appearance(self, appearance_name):
+        self.ensure_have_appearance_names()
+
+        if appearance_name not in self._appearance_names:
+            raise ValueError('could not find {} "{}" in class "{}"'
+                             .format(self._appearance_hyponym,
+                                     appearance_name,
+                                     self.__class__.__name__))
+
+        self._appearance = appearance_name
+
 
 class Sprite(Actor):
     Costumes = [
