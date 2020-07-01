@@ -13,6 +13,12 @@ class Actor:
     def play_sound_until_done(self, sound_name):
         play_sound(self, sound_name, True)
 
+    @classmethod
+    def ensure_have_appearance_names(cls):
+        if cls._appearance_names is None:
+            cls._appearance_names = set(
+                appearance[0] for appearance in cls._appearances())
+
 
 class Sprite(Actor):
     Costumes = [
