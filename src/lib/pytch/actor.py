@@ -118,7 +118,12 @@ class Stage(Actor):
     _appearance_hyponym = 'Backdrop'
 
     def __init__(self):
-        pass
+        if not self.Backdrops:
+            # In contrast to Sprites, a Stage is always shown and so
+            # must have at least one Backdrop.
+            raise ValueError('no Backdrops in Stage')
+
+        self.switch_backdrop(self.Backdrops[0][0])
 
     def switch_backdrop(self, backdrop_name):
         self.switch_appearance(backdrop_name)
