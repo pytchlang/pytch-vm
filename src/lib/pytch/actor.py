@@ -26,6 +26,8 @@ class Sprite(Actor):
          'library/images/question-mark.png', 16, 16),
     ]
 
+    _appearance_hyponym = 'Costume'
+
     @classmethod
     def _appearances(cls):
         return cls.Costumes
@@ -90,6 +92,8 @@ class Stage(Actor):
     @classmethod
     def _appearances(cls):
         return cls.Backdrops
+
+    _appearance_hyponym = 'Backdrop'
 
     def __init__(self):
         pass
