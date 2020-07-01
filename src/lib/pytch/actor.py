@@ -82,7 +82,7 @@ class Sprite(Actor):
         self._shown = False
 
     def switch_costume(self, costume_name):
-        self._appearance = costume_name
+        self.switch_appearance(costume_name)
 
     def touching(self, target_class):
         return (self._pytch_parent_project
@@ -110,4 +110,4 @@ class Stage(Actor):
         pass
 
     def switch_backdrop(self, backdrop_name):
-        self._appearance = backdrop_name
+        self.switch_appearance(backdrop_name)
