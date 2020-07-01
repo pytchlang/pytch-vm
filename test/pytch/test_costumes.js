@@ -46,7 +46,7 @@ describe("Costume handling", () => {
                                  /Costume.*must be numbers/);
     });
 
-    it("rejects unknown costume", async () => {
+    it("rejects unknown costume on direct look-up attempt", async () => {
         let project = await import_project("py/project/some_costumes.py");
         let alien = project.actor_by_class_name("Alien");
 
