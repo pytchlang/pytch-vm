@@ -22,6 +22,12 @@ from .clone import (
     create_clone_of,
 )
 
+from .instances import (
+    the_original,
+    all_clones_of,
+    all_instances_of,
+)
+
 from .syscalls import (
     yield_until_next_frame,
     broadcast,
