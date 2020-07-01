@@ -19,6 +19,10 @@ class Sprite(Actor):
          'library/images/question-mark.png', 16, 16),
     ]
 
+    @classmethod
+    def _appearances(cls):
+        return cls.Costumes
+
     def __init__(self):
         self._x = 0
         self._y = 0
