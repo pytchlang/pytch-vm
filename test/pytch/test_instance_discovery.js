@@ -41,4 +41,10 @@ describe("instance discovery", () => {
         let project = await prepare_project();
         assert_result(project, 'get-original', 100);
     });
+
+    it("can retrieve all clones of Alien", async () => {
+        let project = await prepare_project();
+        launch_clones(project);
+        assert_result(project, 'get-clones', [101, 102, 103]);
+    });
 });
