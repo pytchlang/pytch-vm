@@ -66,4 +66,17 @@ describe("Costume handling", () => {
         let err_str = errs[0].toString();
         assert.ok(/could not find Costume "angry" in class "Alien"/.test(err_str));
     });
+
+    it("throws Python error on switching to unknown backdrop", async () => {
+        let project = await import_project("py/project/switch_to_bad_costume.py");
+
+        project.do_synthetic_broadcast("switch-backdrop");
+        project.one_frame();
+
+        let errs = pytch_errors.drain_errors();
+        assert.strictEqual(errs.length, 1);
+
+        let err_str = errs[0].toString();
+        assert.ok(/could not find Backdrop "plastic" in class "Table"/.test(err_str));
+    });
 });
