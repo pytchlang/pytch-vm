@@ -48,7 +48,15 @@ class Sprite(Actor):
         self._y = 0
         self._size = 1.0
         self._shown = False
-        self._appearance = 'question-mark'
+        if self.Costumes:
+            self.switch_costume(self.Costumes[0][0])
+        else:
+            # It is not necessarily an error to have no Costumes, as
+            # long as the Sprite always remains hidden.  It might, for
+            # example, only receive/broadcast messages or play sounds.
+            # We directly set the attribute here to avoid the check in
+            # switch_appearance().
+            self._appearance = None
 
     def go_to_xy(self, x, y):
         self._x = x
