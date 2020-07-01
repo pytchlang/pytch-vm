@@ -13,4 +13,13 @@ describe("instance discovery", () => {
 
         return project;
     };
+
+    const assert_result = ((project, message, exp_ids) => {
+        project.do_synthetic_broadcast(message);
+        project.one_frame();
+
+        let scanner = project.instance_0_by_class_name("Scanner");
+        let got_ids = scanner.js_attr("got_alien_ids");
+        assert.deepEqual(got_ids, exp_ids);
+    });
 });
