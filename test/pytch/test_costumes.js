@@ -54,6 +54,15 @@ describe("Costume handling", () => {
                       /could not find Costume "banana" in class "Alien"/);
     });
 
+    const bad_switch_test_specs = [
+        { tag: 'costume',
+          message: 'switch-costume',
+          err_test: /could not find Costume "angry" in class "Alien"/ },
+        { tag: 'backdrop',
+          message: 'switch-backdrop',
+          err_test: /could not find Backdrop "plastic" in class "Table"/ },
+    ];
+
     it("throws Python error on switching to unknown costume", async () => {
         let project = await import_project("py/project/switch_to_bad_costume.py");
 
