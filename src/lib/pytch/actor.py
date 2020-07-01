@@ -5,6 +5,7 @@ from pytch.syscalls import (
 
 class Actor:
     Sounds = []
+    _appearance_names = None
 
     def start_sound(self, sound_name):
         play_sound(self, sound_name, False)
