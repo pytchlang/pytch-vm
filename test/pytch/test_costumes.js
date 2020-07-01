@@ -76,4 +76,14 @@ describe("Costume handling", () => {
         let err_str = errs[0].toString();
         assert.ok(spec.err_test.test(err_str));
     })});
+
+    it("uses first appearance by default", async () => {
+        let project = await import_project("py/project/default_appearance.py");
+
+        let ball = project.instance_0_by_class_name("Ball");
+        assert.equal(ball.js_attr("_appearance"), "yellow-ball");
+
+        let table = project.instance_0_by_class_name("Table");
+        assert.equal(table.js_attr("_appearance"), "wooden");
+    });
 });
