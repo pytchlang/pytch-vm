@@ -63,6 +63,20 @@ describe("Costume handling", () => {
           err_test: /could not find Backdrop "plastic" in class "Table"/ },
     ];
 
+    bad_switch_test_specs.forEach(spec => {
+    it(`throws Python error on switching to unknown ${spec.tag}`, async () => {
+        let project = await import_project("py/project/switch_to_bad_costume.py");
+
+        project.do_synthetic_broadcast(spec.message);
+        project.one_frame();
+
+        let errs = pytch_errors.drain_errors();
+        assert.strictEqual(errs.length, 1);
+
+        let err_str = errs[0].toString();
+        assert.ok(spec.err_test.test(err_str));
+    })});
+
     it("throws Python error on switching to unknown costume", async () => {
         let project = await import_project("py/project/switch_to_bad_costume.py");
 
