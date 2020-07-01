@@ -1,0 +1,8 @@
+"use strict";
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// Discovery of instances: original, clones, all
+
+describe("instance discovery", () => {
+});
