@@ -53,4 +53,17 @@ describe("Costume handling", () => {
         assert.throws(() => alien.appearance_from_name("banana"),
                       /could not find Costume "banana" in class "Alien"/);
     });
+
+    it("throws Python error on switching to unknown costume", async () => {
+        let project = await import_project("py/project/switch_to_bad_costume.py");
+
+        project.do_synthetic_broadcast("switch-costume");
+        project.one_frame();
+
+        let errs = pytch_errors.drain_errors();
+        assert.strictEqual(errs.length, 1);
+
+        let err_str = errs[0].toString();
+        assert.ok(/could not find Costume "angry" in class "Alien"/.test(err_str));
+    });
 });
