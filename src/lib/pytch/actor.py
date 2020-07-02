@@ -84,6 +84,9 @@ class Sprite(Actor):
         self._size = size
 
     def show(self):
+        if not self.Costumes:
+            # See comment in __init__().
+            raise RuntimeError('cannot show a Sprite with no Costumes')
         self._shown = True
 
     def hide(self):
