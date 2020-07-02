@@ -1,5 +1,6 @@
 from pytch.syscalls import (
     play_sound,
+    registered_instances,
 )
 
 
@@ -57,6 +58,18 @@ class Sprite(Actor):
             # We directly set the attribute here to avoid the check in
             # switch_appearance().
             self._appearance = None
+
+    @classmethod
+    def the_original(cls):
+        return registered_instances(cls)[0]
+
+    @classmethod
+    def all_clones(cls):
+        return registered_instances(cls)[1:]
+
+    @classmethod
+    def all_instances(cls):
+        return registered_instances(cls)
 
     def go_to_xy(self, x, y):
         self._x = x
