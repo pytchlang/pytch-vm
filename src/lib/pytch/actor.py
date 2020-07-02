@@ -48,7 +48,15 @@ class Sprite(Actor):
         self._y = 0
         self._size = 1.0
         self._shown = False
-        self._appearance = 'question-mark'
+        if self.Costumes:
+            self.switch_costume(self.Costumes[0][0])
+        else:
+            # It is not necessarily an error to have no Costumes, as
+            # long as the Sprite always remains hidden.  It might, for
+            # example, only receive/broadcast messages or play sounds.
+            # We directly set the attribute here to avoid the check in
+            # switch_appearance().
+            self._appearance = None
 
     def go_to_xy(self, x, y):
         self._x = x
@@ -76,6 +84,9 @@ class Sprite(Actor):
         self._size = size
 
     def show(self):
+        if not self.Costumes:
+            # See comment in __init__().
+            raise RuntimeError('cannot show a Sprite with no Costumes')
         self._shown = True
 
     def hide(self):
@@ -107,7 +118,12 @@ class Stage(Actor):
     _appearance_hyponym = 'Backdrop'
 
     def __init__(self):
-        pass
+        if not self.Backdrops:
+            # In contrast to Sprites, a Stage is always shown and so
+            # must have at least one Backdrop.
+            raise ValueError('no Backdrops in Stage')
+
+        self.switch_backdrop(self.Backdrops[0][0])
 
     def switch_backdrop(self, backdrop_name):
         self.switch_appearance(backdrop_name)

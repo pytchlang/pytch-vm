@@ -76,4 +76,42 @@ describe("Costume handling", () => {
         let err_str = errs[0].toString();
         assert.ok(spec.err_test.test(err_str));
     })});
+
+    it("uses first appearance by default", async () => {
+        let project = await import_project("py/project/default_appearance.py");
+
+        let ball = project.instance_0_by_class_name("Ball");
+        assert.equal(ball.js_attr("_appearance"), "yellow-ball");
+
+        let table = project.instance_0_by_class_name("Table");
+        assert.equal(table.js_attr("_appearance"), "wooden");
+    });
+
+    it("allows creation but not show of costume-less Sprite", async () => {
+        // Even though this project contains a Sprite with no Costumes, it
+        // should be fine to import it and create an instance of that Sprite.
+        let project = await import_project("py/project/sprite_without_costumes.py");
+
+        // Nothing should happen if we run a few frames.
+        project.one_frame();
+        project.one_frame();
+        project.one_frame();
+        assert.strictEqual(pytch_errors.drain_errors().length, 0);
+
+        // But asking the costume-less sprite to show itself should produce an
+        // error.
+        project.do_synthetic_broadcast("show-yourself");
+        project.one_frame();
+
+        let errs = pytch_errors.drain_errors();
+        assert.strictEqual(errs.length, 1);
+
+        let err_str = errs[0].toString();
+        assert.ok(/cannot show .* no Costumes/.test(err_str));
+    });
+
+    it("rejects creation of backdrop-less Stage", async () => {
+        await assert.rejects(
+            import_project("py/project/stage_without_backdrops.py"));
+    });
 });
