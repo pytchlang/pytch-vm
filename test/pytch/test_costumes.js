@@ -46,11 +46,34 @@ describe("Costume handling", () => {
                                  /Costume.*must be numbers/);
     });
 
-    it("rejects unknown costume", async () => {
+    it("rejects unknown costume on direct look-up attempt", async () => {
         let project = await import_project("py/project/some_costumes.py");
         let alien = project.actor_by_class_name("Alien");
 
         assert.throws(() => alien.appearance_from_name("banana"),
                       /could not find Costume "banana" in class "Alien"/);
     });
+
+    const bad_switch_test_specs = [
+        { tag: 'costume',
+          message: 'switch-costume',
+          err_test: /could not find Costume "angry" in class "Alien"/ },
+        { tag: 'backdrop',
+          message: 'switch-backdrop',
+          err_test: /could not find Backdrop "plastic" in class "Table"/ },
+    ];
+
+    bad_switch_test_specs.forEach(spec => {
+    it(`throws Python error on switching to unknown ${spec.tag}`, async () => {
+        let project = await import_project("py/project/switch_to_bad_costume.py");
+
+        project.do_synthetic_broadcast(spec.message);
+        project.one_frame();
+
+        let errs = pytch_errors.drain_errors();
+        assert.strictEqual(errs.length, 1);
+
+        let err_str = errs[0].toString();
+        assert.ok(spec.err_test.test(err_str));
+    })});
 });

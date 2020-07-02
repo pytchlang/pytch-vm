@@ -5,6 +5,7 @@ from pytch.syscalls import (
 
 class Actor:
     Sounds = []
+    _appearance_names = None
 
     def start_sound(self, sound_name):
         play_sound(self, sound_name, False)
@@ -12,12 +13,35 @@ class Actor:
     def play_sound_until_done(self, sound_name):
         play_sound(self, sound_name, True)
 
+    @classmethod
+    def ensure_have_appearance_names(cls):
+        if cls._appearance_names is None:
+            cls._appearance_names = set(
+                appearance[0] for appearance in cls._appearances())
+
+    def switch_appearance(self, appearance_name):
+        self.ensure_have_appearance_names()
+
+        if appearance_name not in self._appearance_names:
+            raise ValueError('could not find {} "{}" in class "{}"'
+                             .format(self._appearance_hyponym,
+                                     appearance_name,
+                                     self.__class__.__name__))
+
+        self._appearance = appearance_name
+
 
 class Sprite(Actor):
     Costumes = [
         ('question-mark',
          'library/images/question-mark.png', 16, 16),
     ]
+
+    _appearance_hyponym = 'Costume'
+
+    @classmethod
+    def _appearances(cls):
+        return cls.Costumes
 
     def __init__(self):
         self._x = 0
@@ -58,7 +82,7 @@ class Sprite(Actor):
         self._shown = False
 
     def switch_costume(self, costume_name):
-        self._appearance = costume_name
+        self.switch_appearance(costume_name)
 
     def touching(self, target_class):
         return (self._pytch_parent_project
@@ -76,8 +100,14 @@ class Stage(Actor):
     _shown = True
     _appearance = 'solid-white'
 
+    @classmethod
+    def _appearances(cls):
+        return cls.Backdrops
+
+    _appearance_hyponym = 'Backdrop'
+
     def __init__(self):
         pass
 
     def switch_backdrop(self, backdrop_name):
-        self._appearance = backdrop_name
+        self.switch_appearance(backdrop_name)
