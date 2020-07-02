@@ -48,7 +48,7 @@ class Sprite(Actor):
         self._y = 0
         self._size = 1.0
         self._shown = False
-        self._appearance = 'question-mark';
+        self._appearance = 'question-mark'
 
     def go_to_xy(self, x, y):
         self._x = x
