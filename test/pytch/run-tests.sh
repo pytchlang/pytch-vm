@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../../node_modules/mocha/bin/mocha --reporter list .
+exec ../../node_modules/mocha/bin/mocha --reporter list "$@" .
