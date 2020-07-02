@@ -109,4 +109,9 @@ describe("Costume handling", () => {
         let err_str = errs[0].toString();
         assert.ok(/cannot show .* no Costumes/.test(err_str));
     });
+
+    it("rejects creation of backdrop-less Stage", async () => {
+        await assert.rejects(
+            import_project("py/project/stage_without_backdrops.py"));
+    });
 });
