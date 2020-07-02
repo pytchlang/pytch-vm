@@ -45,6 +45,12 @@ var $builtinmodule = function (name) {
         return new_pytch_suspension("register-instance", {py_instance});
     });
 
+    mod.registered_instances = new Sk.builtin.func(py_class => {
+        let actor = py_class.$pytchActor;
+        let py_instances = actor.instances.map(instance => instance.py_object);
+        return new Sk.builtin.list(py_instances);
+    });
+
     mod.key_is_pressed = new Sk.builtin.func((py_keyname) => {
         let js_keyname = Sk.ffi.remapToJs(py_keyname);
         return (Sk.pytch.keyboard.key_is_pressed(js_keyname)
