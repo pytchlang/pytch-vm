@@ -1,12 +1,13 @@
 const chalk = require('chalk');
 
 module.exports = {
-    requireSkulpt: function (requireOptimized) {
+    requireSkulpt: function (requireOptimized, verbose=true) {
         var skulpt;
 
         try {
             skulpt = require("../../dist/skulpt.min.js");
-            console.log(chalk.green("Using skulpt.min.js"));
+            if (verbose)
+                console.log(chalk.green("Using skulpt.min.js"));
         } catch (err) {
             if (requireOptimized) {
                 skulpt = null;
@@ -14,7 +15,8 @@ module.exports = {
             } else {
                 try {
                     skulpt = require("../../dist/skulpt.js");
-                    console.log(chalk.blue("Using skulpt.js"));
+                    if (verbose)
+                        console.log(chalk.blue("Using skulpt.js"));
                 } catch (err) {
                     skulpt = null;
                     console.log(chalk.red("No skulpt distribution, run 'npm run build' or 'npm run devbuild' first."));
