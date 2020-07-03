@@ -1,5 +1,14 @@
 "use strict";
 
+const {
+    configure_mocha,
+    with_project,
+    assert,
+    mock_sound_manager,
+} = require("./pytch-testing.js");
+configure_mocha();
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Sounds
@@ -16,8 +25,9 @@ describe("waiting and non-waiting sounds", () => {
         assert.deepStrictEqual(got_tags, exp_tags);
     });
 
+    with_project("py/project/make_noise.py", (import_project) => {
     it("can play trumpet", async () => {
-        let project = await import_project("py/project/make_noise.py");
+        let project = await import_project();
         let orchestra = project.instance_0_by_class_name("Orchestra");
         let one_frame = one_frame_fun(project);
 
@@ -49,7 +59,7 @@ describe("waiting and non-waiting sounds", () => {
     });
 
     it("can play violin", async () => {
-        let project = await import_project("py/project/make_noise.py");
+        let project = await import_project();
         let orchestra = project.instance_0_by_class_name("Orchestra");
         let one_frame = one_frame_fun(project);
 
@@ -77,7 +87,7 @@ describe("waiting and non-waiting sounds", () => {
     });
 
     it("can stop sounds", async () => {
-        let project = await import_project("py/project/make_noise.py");
+        let project = await import_project();
         let orchestra = project.instance_0_by_class_name("Orchestra");
         let one_frame = one_frame_fun(project);
 
@@ -106,7 +116,7 @@ describe("waiting and non-waiting sounds", () => {
     });
 
     it("can play both", async () => {
-        let project = await import_project("py/project/make_noise.py");
+        let project = await import_project();
         let orchestra = project.instance_0_by_class_name("Orchestra");
         let one_frame = one_frame_fun(project);
 
@@ -146,5 +156,5 @@ describe("waiting and non-waiting sounds", () => {
         one_frame();
         assert_running_performances([]);
         assert.strictEqual(orchestra.js_attr("played_both"), "yes")
-    });
+    })});
 });

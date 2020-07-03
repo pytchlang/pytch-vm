@@ -1,12 +1,21 @@
 "use strict";
 
+const {
+    configure_mocha,
+    with_project,
+    assert,
+} = require("./pytch-testing.js");
+configure_mocha();
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Cloning
 
 describe("cloning", () => {
+    with_project("py/project/launch_clones.py", (import_project) => {
     it("can clone by instance", async () => {
-        let project = await import_project("py/project/launch_clones.py");
+        let project = await import_project();
         let alien_actor = project.actor_by_class_name("Alien");
         let all_aliens = () => alien_actor.instances;
 
@@ -55,7 +64,7 @@ describe("cloning", () => {
     });
 
     it("can chain-clone", async () => {
-        let project = await import_project("py/project/launch_clones.py");
+        let project = await import_project();
         let broom_actor = project.actor_by_class_name("Broom");
         let all_brooms = () => broom_actor.instances;
 
@@ -100,7 +109,7 @@ describe("cloning", () => {
     });
 
     it("can delete clones after chain-clone", async () => {
-        let project = await import_project("py/project/launch_clones.py");
+        let project = await import_project();
         let broom_actor = project.actor_by_class_name("Broom");
         let all_brooms = () => broom_actor.instances;
 
@@ -127,10 +136,11 @@ describe("cloning", () => {
 
         project.do_synthetic_broadcast("destroy-broom-clones");
         frame_then_assert_all_IDs([1]);
-    });
+    })});
 
+    with_project("py/project/unregister_clone.py", (import_project) => {
     it("can unregister a clone", async () => {
-        let project = await import_project("py/project/unregister_clone.py");
+        let project = await import_project();
         let beacon = project.instance_0_by_class_name("Beacon");
         let counter = project.instance_0_by_class_name("Counter");
 
@@ -191,7 +201,7 @@ describe("cloning", () => {
     });
 
     it("does not delete or unregister the original instance", async () => {
-        let project = await import_project("py/project/unregister_clone.py");
+        let project = await import_project();
 
         // Request a clone, and let project run for a bit.
         project.do_synthetic_broadcast("create-clone");
@@ -233,11 +243,12 @@ describe("cloning", () => {
         // had ten more iterations of the "increment" loop:
         let post_destruction_counter = beacon_instances[0].js_attr("counter");
         assert.strictEqual(post_destruction_counter, 19);
-    });
+    })});
 
+    with_project("py/project/launch_clones.py", (import_project) => {
     ['on_red_stop_clicked', 'on_green_flag_clicked'].forEach(method =>
     it(`${method} deletes all clones`, async () => {
-        let project = await import_project("py/project/launch_clones.py");
+        let project = await import_project();
         let broom_actor = project.actor_by_class_name("Broom");
         let n_brooms = () => broom_actor.instances.length;
 
@@ -249,5 +260,5 @@ describe("cloning", () => {
 
         project[method]();
         assert.strictEqual(n_brooms(), 1);
-    }));
+    }))});
 });

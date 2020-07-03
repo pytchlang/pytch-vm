@@ -1,12 +1,21 @@
 "use strict";
 
+const {
+    configure_mocha,
+    with_project,
+    assert,
+} = require("./pytch-testing.js");
+configure_mocha();
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Discovery of instances: original, clones, all
 
 describe("instance discovery", () => {
+    with_project("py/project/instance_discovery.py", (import_project) => {
     const prepare_project = async () => {
-        let project = await import_project("py/project/instance_discovery.py");
+        let project = await import_project();
 
         project.on_green_flag_clicked();
         project.one_frame();
@@ -52,5 +61,5 @@ describe("instance discovery", () => {
         let project = await prepare_project();
         launch_clones(project);
         assert_result(project, 'get-instances', [100, 101, 102, 103]);
-    });
+    })});
 });

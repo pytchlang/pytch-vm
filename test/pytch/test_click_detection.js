@@ -1,13 +1,22 @@
 "use strict";
 
+const {
+    configure_mocha,
+    with_project,
+    assert,
+    mock_mouse,
+} = require("./pytch-testing.js");
+configure_mocha();
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Click detection
 
 describe("click detection", () => {
+    with_project("py/project/clones_for_instance_list.py", (import_project) => {
     it("can report all shown instances", async () => {
-        let project = await import_project("py/project/clones_for_instance_list.py");
+        let project = await import_project();
 
         const assert_all_ids = (exp_ids => {
             let everything = project.shown_instances_front_to_back();
@@ -36,10 +45,11 @@ describe("click detection", () => {
         project.do_synthetic_broadcast("hide-if-lt-102");
         project.one_frame();
         assert_all_ids([42, 102, 103]);
-    });
+    })});
 
+    with_project("py/project/balloon.py", (import_project) => {
     it("can run balloon-popping game", async () => {
-        let project = await import_project("py/project/balloon.py");
+        let project = await import_project();
 
         let balloon_sprite = project.actor_by_class_name("Balloon");
         let the_Balloon = balloon_sprite.instances[0];
@@ -80,5 +90,5 @@ describe("click detection", () => {
         assert_state_after_next_frame(true, 2);
         mock_mouse.click_at(170, 120);
         assert_state_after_next_frame(false, 3);
-    });
+    })});
 });

@@ -1,12 +1,21 @@
 "use strict";
 
+const {
+    configure_mocha,
+    with_project,
+    assert,
+} = require("./pytch-testing.js");
+configure_mocha();
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Scheduling: launching, running, blocking, etc., threads
 
 describe("scheduling", () => {
+    with_project("py/project/single_sprite.py", (import_project) => {
     it("can launch thread on green-flag", async () => {
-        let project = await import_project("py/project/single_sprite.py");
+        let project = await import_project();
         let instance_0 = project.actors[0].instances[0];
 
         project.on_green_flag_clicked();
@@ -21,10 +30,11 @@ describe("scheduling", () => {
         // And now the thread-group should have finished, and so there
         // should be no live thread-groups in the project.
         assert.strictEqual(project.thread_groups.length, 0);
-    });
+    })});
 
+    with_project("py/project/two_threads.py", (import_project) => {
     let two_threads_project = async () => {
-        let project = await import_project("py/project/two_threads.py");
+        let project = await import_project();
         let t1 = project.instance_0_by_class_name("T1");
         let t2 = project.instance_0_by_class_name("T2");
 
@@ -73,7 +83,7 @@ describe("scheduling", () => {
             project.one_frame();
 
         assert_counters_both(spec.exp_count);
-    }));
+    }))});
 
     class BroadcastActors {
         constructor(project) {
@@ -91,8 +101,9 @@ describe("scheduling", () => {
         }
     }
 
+    with_project("py/project/broadcast.py", (import_project) => {
     it("can schedule threads on broadcast", async () => {
-        let project = await import_project("py/project/broadcast.py");
+        let project = await import_project();
         let actors = new BroadcastActors(project);
 
         // Initially only the __init__() methods have run.
@@ -115,10 +126,11 @@ describe("scheduling", () => {
         // sender continues to run.
         project.one_frame();
         actors.assert_has_steps_and_events(2, 1);
-    });
+    })});
 
+    with_project("py/project/broadcast_and_wait.py", (import_project) => {
     it("can pause threads on broadcast/wait", async () => {
-        let project = await import_project("py/project/broadcast_and_wait.py");
+        let project = await import_project();
         let actors = new BroadcastActors(project);
 
         // Initially only the __init__() methods have run.
@@ -152,10 +164,11 @@ describe("scheduling", () => {
         // sleeping on has finished.
         project.one_frame();
         actors.assert_has_steps_and_events(2, 2);
-    });
+    })});
 
+    with_project("py/project/wait_seconds.py", (import_project) => {
     it("can pause for a number of seconds", async () => {
-        let project = await import_project("py/project/wait_seconds.py");
+        let project = await import_project();
 
         let alien = project.instance_0_by_class_name("Alien");
 
@@ -183,8 +196,9 @@ describe("scheduling", () => {
         project.one_frame();
         assert_n_steps(2);
         assert.strictEqual(project.thread_groups.length, 0);
-    });
+    })});
 
+    with_project("py/project/loop_in_module.py", (import_project) => {
     it("yields exactly when meant to", async () => {
         // Loops in a module which explicitly does "import pytch"
         // should have yield_until_next_frame() calls inserted by our
@@ -192,7 +206,7 @@ describe("scheduling", () => {
         // module imported by an "import pytch"-ing module --- should
         // not have their loops so modified.
 
-        let project = await import_project("py/project/loop_in_module.py");
+        let project = await import_project();
         let counter = project.instance_0_by_class_name("Counter");
 
         let assert_xs = (exp_xs => {
@@ -224,5 +238,5 @@ describe("scheduling", () => {
             exp_xs[i] = 4;
             assert_xs(exp_xs);
         }
-    });
+    })});
 });

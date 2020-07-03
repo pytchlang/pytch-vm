@@ -1,5 +1,15 @@
 "use strict";
 
+const {
+    configure_mocha,
+    with_module,
+    with_project,
+    assert,
+    py_getattr,
+} = require("./pytch-testing.js");
+configure_mocha();
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Module 'pytch.hat_blocks'
@@ -24,8 +34,9 @@ describe("pytch.hat_blocks module", () => {
         }
     }
 
+    with_module("py/project/single_sprite.py", (import_module) => {
     let single_sprite_project = async () => {
-        let import_result = await import_local_file("py/project/single_sprite.py");
+        let import_result = await import_module();
         let py_FlagClickCounter = py_getattr(import_result, "FlagClickCounter");
         return py_FlagClickCounter;
     };
@@ -49,10 +60,11 @@ describe("pytch.hat_blocks module", () => {
         let forget_a_click = new EventsHandledBy(py_FlagClickCounter, "forget_a_click");
         assert.strictEqual(forget_a_click.n_events, 1);
         assert.ok(forget_a_click.includes("keypress", "x"));
-    });
+    })});
 
+    with_project("py/project/sprite_on_stage.py", (import_project) => {
     let sprite_on_stage = async () => {
-        let project = await import_project("py/project/sprite_on_stage.py");
+        let project = await import_project();
         let banana = project.actor_by_class_name("Banana");
         let table = project.actor_by_class_name("Table");
         return {banana, table};
@@ -70,5 +82,5 @@ describe("pytch.hat_blocks module", () => {
         let hello = new EventsHandledBy(table.py_cls, "say_hello_table");
         assert.strictEqual(hello.n_events, 1);
         assert.ok(hello.includes("click", null));
-    });
+    })});
 });
