@@ -357,7 +357,7 @@ const configure_mocha = () => {
 //
 // Load and configure Skulpt.
 
-require("../../support/run/require-skulpt").requireSkulpt(false);
+require("../../support/run/require-skulpt").requireSkulpt(false, false);
 
 Sk.configure({
     read: (fname => fs.readFileSync(fname, { encoding: "utf8" })),
