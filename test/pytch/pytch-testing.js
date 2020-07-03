@@ -343,8 +343,12 @@ const configure_mocha = () => {
 
     afterEach(() => {
         const errors = pytch_errors.drain_errors();
+
+        const error_messages = errors.map(e => Sk.builtin.str(e).v);
+
         assert.strictEqual(errors.length, 0,
-                           "undrained errors at end of test");
+                           ("undrained errors at end of test:\n"
+                            + error_messages.join("\n")));
     });
 };
 
