@@ -171,3 +171,37 @@ class MockImage {
                 : null);
     }
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// Sounds: Do not actually load anything from the network.  Instead keep a
+// map of URL to duration in frames, and create a mock sound with the right
+// properties.
+
+const sound_duration_from_url = new Map([
+    ["library/sounds/trumpet.mp3", 20],
+    ["library/sounds/violin.mp3", 10],
+]);
+
+class MockSound {
+    constructor(parent_sound_manager, tag, url) {
+        this.parent_sound_manager = parent_sound_manager;
+        this.tag = tag;
+        this.duration = sound_duration_from_url.get(url);
+    }
+
+    launch_new_performance() {
+        let performance = new MockSoundPerformance(this.tag, this.duration);
+        this.parent_sound_manager.register_running_performance(performance);
+        return performance;
+    }
+}
+
+class MockSoundPerformance {
+    constructor(tag, duration) {
+        this.tag = tag;
+        this.n_frames_left = duration;
+        this.has_ended = false;
+    }
+}
