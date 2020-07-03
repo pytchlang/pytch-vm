@@ -59,40 +59,6 @@ before(() => {
         return Sk.ffi.remapToJs(py_result);
     };
 
-    ////////////////////////////////////////////////////////////////////////////////
-    //
-    // Images: Do not actually load anything from the network.  Instead keep a
-    // map of URL to width and height, and create a mock image with the right
-    // properties.  Some of the images used in tests won't truly exist.
-
-    const image_size_from_url = new Map([
-        ["library/images/question-mark.png", [32, 32]],
-        ["library/images/marching-alien.png", [60, 20]],
-        ["library/images/firing-alien.png", [80, 30]],
-        ["library/images/ball.png", [16, 16]],
-        ["library/images/square-80x80.png", [80, 80]],
-        ["library/images/rectangle-60x30.png", [60, 30]],
-        ["library/images/stage/solid-white.png", [480, 360]],
-        ["library/images/yellow-banana.png", [80, 30]],
-        ["library/images/balloon.png", [100, 200]],
-        ["library/images/stage/wooden.png", [480, 360]],
-    ]);
-
-    class MockImage {
-        constructor(url) {
-            let size = image_size_from_url.get(url);
-            this.url = url;
-            this.width = size[0];
-            this.height = size[1];
-        }
-
-        static maybe_create(url) {
-            return (image_size_from_url.has(url)
-                    ? new MockImage(url)
-                    : null);
-        }
-    }
-
 
     ////////////////////////////////////////////////////////////////////////////////
     //
