@@ -290,6 +290,23 @@ const assert_has_bbox = (
 
 ////////////////////////////////////////////////////////////////////////////////
 //
+// Hooks to run before/after every test.
+
+const configure_mocha = () => {
+    beforeEach(() => {
+        mock_sound_manager.stop_all_performances();
+    });
+
+    afterEach(() => {
+        const errors = pytch_errors.drain_errors();
+        assert.strictEqual(errors.length, 0,
+                           "undrained errors at end of test");
+    });
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
 // Load and configure Skulpt.
 
 require("../../support/run/require-skulpt").requireSkulpt(false);

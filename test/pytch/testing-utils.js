@@ -41,11 +41,3 @@ before(() => {
     };
 });
 
-beforeEach(() => {
-    mock_sound_manager.stop_all_performances();
-});
-
-afterEach(() => {
-    assert.strictEqual(pytch_errors.drain_errors().length, 0,
-                       "undrained errors at end of test");
-});
