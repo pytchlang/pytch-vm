@@ -823,7 +823,8 @@ var $builtinmodule = function (name) {
     // Javascript-level "Project" class
 
     class Project {
-        constructor() {
+        constructor(py_project) {
+            this.py_project = py_project;
             this.actors = [];
             this.thread_groups = [];
         }
@@ -987,7 +988,7 @@ var $builtinmodule = function (name) {
 
     const project_cls = function($gbl, $loc) {
         $loc.__init__ = new Sk.builtin.func(self => {
-            self.js_project = new Project();
+            self.js_project = new Project(self);
         });
 
         $loc.instance_is_touching_any_of = new Sk.builtin.func(
