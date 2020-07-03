@@ -12,25 +12,6 @@ before(() => {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
-    // API dependencies for Skulpt
-
-
-    // Connect read/write to filesystem and stdout; configure Pytch environment.
-    Sk.configure({
-        read: (fname => fs.readFileSync(fname, { encoding: "utf8" })),
-        output: (args) => { process.stdout.write(args); },
-        pytch: {
-            async_load_image: async_load_mock_image,
-            keyboard: mock_keyboard,
-            mouse: mock_mouse,
-            sound_manager: mock_sound_manager,
-            on_exception: pytch_errors.append_error,
-        },
-    });
-
-
-    ////////////////////////////////////////////////////////////////////////////////
-    //
     // Test helpers
 
     global.import_local_file = (fname => {
