@@ -14,11 +14,6 @@ before(() => {
     //
     // Test helpers
 
-    global.import_project = (async fname => {
-        let import_result = await import_local_file(fname);
-        return import_result.$d.project.js_project;
-    });
-
     global.assert = require("assert");
 });
 

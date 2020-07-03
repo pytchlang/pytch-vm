@@ -15,6 +15,11 @@ const import_from_text = (code_text) => {
     );
 };
 
+const import_project = async (code_text) => {
+    let module = await import_from_text(code_text);
+    return module.$d.project.js_project;
+};
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
