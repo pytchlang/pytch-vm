@@ -9,6 +9,15 @@ const assert = require("assert");
 
 ////////////////////////////////////////////////////////////////////////////////
 
+const import_from_text = (code_text) => {
+    return Sk.misceval.asyncToPromise(
+        () => Sk.importMainWithBody("<stdin>", false, code_text, true)
+    );
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 const mock_keyboard = (() => {
     let undrained_keydown_events = [];
     let key_is_down = {};
