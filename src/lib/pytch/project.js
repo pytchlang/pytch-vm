@@ -847,11 +847,13 @@ var $builtinmodule = function (name) {
         }
 
         async register_sprite_class(py_sprite_cls) {
+            Sk.builtin.setattr(py_sprite_cls, s_pytch_parent_project, this.py_project);
             let sprite = await PytchSprite.async_create(py_sprite_cls, this);
             this.actors.push(sprite);
         }
 
         async register_stage_class(py_stage_cls) {
+            Sk.builtin.setattr(py_stage_cls, s_pytch_parent_project, this.py_project);
             let stage = await PytchStage.async_create(py_stage_cls, this);
             // Ensure Stage is first in 'actors' array, so that it renders
             // first, i.e., at the bottom.  This will be done differently once
@@ -999,13 +1001,11 @@ var $builtinmodule = function (name) {
                  : Sk.builtin.bool.false$)));
 
         $loc.register_sprite_class = new Sk.builtin.func((self, sprite_cls) => {
-            Sk.builtin.setattr(sprite_cls, s_pytch_parent_project, self);
             let do_register = self.js_project.register_sprite_class(sprite_cls);
             return Sk.misceval.promiseToSuspension(do_register);
         });
 
         $loc.register_stage_class = new Sk.builtin.func((self, stage_cls) => {
-            Sk.builtin.setattr(stage_cls, s_pytch_parent_project, self);
             let do_register = self.js_project.register_stage_class(stage_cls);
             return Sk.misceval.promiseToSuspension(do_register);
         });
