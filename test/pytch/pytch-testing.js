@@ -14,6 +14,11 @@ const with_module = (fname, test_fun) => {
     test_fun(() => import_from_text(full_code_text));
 };
 
+const with_project = (fname, test_fun) => {
+    let full_code_text = fs.readFileSync(fname, { encoding: "utf8" });
+    test_fun(() => import_project(full_code_text));
+};
+
 const import_from_text = (code_text) => {
     return Sk.misceval.asyncToPromise(
         () => Sk.importMainWithBody("<stdin>", false, code_text, true)
