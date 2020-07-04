@@ -25,11 +25,25 @@ const with_module = (fname, test_fun) => {
     test_fun(() => import_from_text(full_code_text));
 };
 
+const auto_config_cut_regex = /^.*--cut-here-for-auto-config--/m;
+
 const with_project = (fname, test_fun) => {
     let full_code_text = fs.readFileSync(fname, { encoding: "utf8" });
 
     // Import project as-is.
     test_fun(() => import_project(full_code_text));
+
+    // See whether we need to cut out the manual config code, and run
+    // the test with auto-config.
+    const cut_mark_loc = full_code_text.search(auto_config_cut_regex);
+    if (cut_mark_loc === -1)
+        return;
+
+    const code_text = full_code_text.slice(0, cut_mark_loc);
+
+    describe("(auto config)", () => {
+        test_fun(() => import_project(code_text));
+    });
 };
 
 const import_from_text = (code_text) => {
