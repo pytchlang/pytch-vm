@@ -38,7 +38,9 @@ const import_from_text = (code_text) => {
 
 const import_project = async (code_text) => {
     let module = await import_from_text(code_text);
-    return module.$d.project.js_project;
+    await Sk.pytchsupport.maybe_auto_configure_project(module);
+    let py_project = module.$d.project || module.$d.$auto_created_project;
+    return py_project.js_project;
 };
 
 
