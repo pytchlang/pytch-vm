@@ -345,6 +345,16 @@ const call_method = (py_obj, js_methodname, js_args) => {
 
 ////////////////////////////////////////////////////////////////////////////////
 //
+// Small utilities.
+
+const many_frames = (project, n) => {
+    for (let i = 0; i < n; ++i)
+        project.one_frame();
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
 // Hooks to run before/after every test.
 
 const configure_mocha = () => {
@@ -399,5 +409,6 @@ module.exports = {
     py_getattr,
     js_getattr,
     call_method,
+    many_frames,
     configure_mocha,
 }
