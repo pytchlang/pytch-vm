@@ -67,5 +67,6 @@ require("./typeobject.js");
 require("./builtindict.js");
 require("./constants.js");
 require("./internalpython.js");
+require("./pytchsupport.js");
 
 /* jshint ignore:end */
