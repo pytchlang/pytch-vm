@@ -25,3 +25,13 @@ Sk.pytchsupport.pytch_in_module = (mod => {
     else
         throw Error('module does not do "import pytch"');
 });
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+[
+    "pytch_in_module",
+].forEach(
+    fun_name => {
+        Sk.exportSymbol(`Sk.pytchsupport.${fun_name}`, Sk.pytchsupport[fun_name]);
+    });
