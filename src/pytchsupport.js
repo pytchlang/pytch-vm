@@ -55,11 +55,29 @@ Sk.pytchsupport.actors_of_module = (mod => {
 });
 
 
+/**
+* Predicate testing whether a given object has an attribute which is
+* an instance of the Pytch class Project.
+*
+* Assumes the given object has done "import pytch".
+*/
+Sk.pytchsupport.module_has_Project_instance = (mod => {
+    const pytch = Sk.pytchsupport.pytch_in_module(mod);
+    const cls_Project = pytch.$d.Project;
+
+    const is_Project_instance = (
+        obj => Sk.misceval.isTrue(Sk.builtin.isinstance(obj, cls_Project)));
+
+    return Object.values(mod.$d).some(is_Project_instance);
+});
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
 [
     "pytch_in_module",
     "actors_of_module",
+    "module_has_Project_instance",
 ].forEach(
     fun_name => {
         Sk.exportSymbol(`Sk.pytchsupport.${fun_name}`, Sk.pytchsupport[fun_name]);
