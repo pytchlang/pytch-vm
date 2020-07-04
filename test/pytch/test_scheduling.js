@@ -4,6 +4,7 @@ const {
     configure_mocha,
     with_project,
     assert,
+    many_frames,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -73,14 +74,12 @@ describe("scheduling", () => {
         project.on_green_flag_clicked();
 
         // Each frame that runs should increase both counters by 1.
-        for (let i = 0; i < 10; ++i)
-            project.one_frame();
+        many_frames(project, 10);
         assert_counters_both(10);
 
         // Everything should stop if we hit the red button:
         project[spec.method]();
-        for (let i = 0; i < 5; ++i)
-            project.one_frame();
+        many_frames(project, 5);
 
         assert_counters_both(spec.exp_count);
     }))});

@@ -4,6 +4,7 @@ const {
     configure_mocha,
     with_project,
     assert,
+    many_frames,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -129,8 +130,7 @@ describe("cloning", () => {
         // The synthetic broadcast just puts the handler threads in the queue;
         // they don't run immediately.
         project.do_synthetic_broadcast("clone-self");
-        for (let i = 0; i < 10; ++i)
-            project.one_frame();
+        many_frames(project, 10);
 
         assert_all_IDs([1, 2, 3, 4, 5])
 
@@ -191,8 +191,7 @@ describe("cloning", () => {
         // threads will run, so wait a few frames for things to stabilise and
         // then check that the number of pings has stopped increasing.
 
-        for (let i = 0; i < 10; ++i)
-            project.one_frame();
+        many_frames(project, 10);
 
         let steady_state_n_pings = n_pings();
 
@@ -205,8 +204,7 @@ describe("cloning", () => {
 
         // Request a clone, and let project run for a bit.
         project.do_synthetic_broadcast("create-clone");
-        for (let i = 0; i < 10; ++i)
-            project.one_frame();
+        many_frames(project, 10);
 
         let beacon_instances = project.actor_by_class_name("Beacon").instances;
         assert.strictEqual(beacon_instances.length, 2);
@@ -222,8 +220,7 @@ describe("cloning", () => {
 
         // Request clones destroy themselves; let project run.
         project.do_synthetic_broadcast("destroy-clones");
-        for (let i = 0; i < 10; ++i)
-            project.one_frame();
+        many_frames(project, 10);
 
         // There should be just the original Beacon instance.
         assert.strictEqual(beacon_instances.length, 1);
@@ -253,8 +250,7 @@ describe("cloning", () => {
         let n_brooms = () => broom_actor.instances.length;
 
         project.do_synthetic_broadcast("clone-self");
-        for (let i = 0; i < 10; ++i)
-            project.one_frame();
+        many_frames(project, 10);
 
         assert.strictEqual(n_brooms(), 5);
 

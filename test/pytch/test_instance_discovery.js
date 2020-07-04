@@ -4,6 +4,7 @@ const {
     configure_mocha,
     with_project,
     assert,
+    many_frames,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -36,9 +37,7 @@ describe("instance discovery", () => {
         project.do_synthetic_broadcast('make-clones');
         // Ensure enough frames go by for all create_clone_of() calls
         // to run, and all clones' set_id() calls to run also:
-        project.one_frame();
-        project.one_frame();
-        project.one_frame();
+        many_frames(project, 3);
     });
 
     it("sets up the Scanner", async () => {

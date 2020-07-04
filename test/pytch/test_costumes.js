@@ -6,6 +6,7 @@ const {
     with_project,
     assert,
     assert_Appearance_equal,
+    many_frames,
     pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
@@ -111,9 +112,7 @@ describe("Costume handling", () => {
         let project = await import_project();
 
         // Nothing should happen if we run a few frames.
-        project.one_frame();
-        project.one_frame();
-        project.one_frame();
+        many_frames(project, 3);
         assert.strictEqual(pytch_errors.drain_errors().length, 0);
 
         // But asking the costume-less sprite to show itself should produce an
