@@ -29,6 +29,8 @@ class Receiver(Sprite):
         self.n_events += 1
 
 
+# --cut-here-for-auto-config--
+
 project = Project()
 project.register_sprite_class(Sender)
 project.register_sprite_class(Receiver)

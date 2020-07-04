@@ -24,6 +24,8 @@ class Table(Stage):
         print('hello from Table')
 
 
+# --cut-here-for-auto-config--
+
 project = Project()
 project.register_sprite_class(Banana)
 project.register_stage_class(Table)

@@ -41,6 +41,8 @@ class Alien(Sprite):
             self.hide()
 
 
+# --cut-here-for-auto-config--
+
 project = Project()
 project.register_sprite_class(Alien)
 project.register_stage_class(Galaxies)

@@ -32,5 +32,7 @@ class Counter(Sprite):
             self.xs[i] += 1
 
 
+# --cut-here-for-auto-config--
+
 project = Project()
 project.register_sprite_class(Counter)

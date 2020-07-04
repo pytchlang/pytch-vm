@@ -50,6 +50,8 @@ class Broom(Sprite):
         self.delete_this_clone()
 
 
+# --cut-here-for-auto-config--
+
 project = Project()
 project.register_sprite_class(Alien)
 project.register_sprite_class(Broom)

@@ -51,6 +51,8 @@ class Counter(Sprite):
         self.n_pings += 1
 
 
+# --cut-here-for-auto-config--
+
 project = Project()
 project.register_sprite_class(Beacon)
 project.register_sprite_class(Counter)

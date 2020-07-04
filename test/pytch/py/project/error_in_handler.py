@@ -16,5 +16,7 @@ class Alien(Sprite):
         self.boost_shields()
 
 
+# --cut-here-for-auto-config--
+
 project = Project()
 project.register_sprite_class(Alien)

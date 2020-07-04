@@ -30,6 +30,8 @@ class Rectangle(Sprite, SetVis):
         self.show()
 
 
+# --cut-here-for-auto-config--
+
 project = Project()
 project.register_sprite_class(Square)
 project.register_sprite_class(Rectangle)

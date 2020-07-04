@@ -51,6 +51,8 @@ class Scanner(Sprite):
         self.got_alien_ids = sorted([a.id for a in Alien.all_instances()])
 
 
+# --cut-here-for-auto-config--
+
 project = Project()
 project.register_sprite_class(Alien)
 project.register_sprite_class(Scanner)

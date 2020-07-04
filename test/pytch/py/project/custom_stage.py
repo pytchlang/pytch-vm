@@ -11,5 +11,7 @@ class Scenery(Stage):
         self.colour = 'red'
 
 
+# --cut-here-for-auto-config--
+
 project = Project()
 project.register_stage_class(Scenery)
