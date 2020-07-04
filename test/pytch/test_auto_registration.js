@@ -4,6 +4,7 @@ const {
     configure_mocha,
     with_module,
     assert,
+    js_getattr,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -28,4 +29,16 @@ describe("auto-registration", () => {
                           /does not do "import pytch"/);
         });
     });
+
+    const actor_class_name = (actor => js_getattr(actor.cls, "__name__"));
+
+    const cmp_actor_class_names = (a, b) => {
+        let a_name = actor_class_name(a);
+        let b_name = actor_class_name(b);
+        if (a_name < b_name)
+            return -1;
+        if (a_name > b_name)
+            return 1;
+        return 0;
+    };
 });
