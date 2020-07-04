@@ -77,7 +77,8 @@ describe("scheduling", () => {
         many_frames(project, 10);
         assert_counters_both(10);
 
-        // Everything should stop if we hit the red button:
+        // Everything should stop if we hit the red button, either
+        // explicitly, or implicitly as part of green-flag:
         project[spec.method]();
         many_frames(project, 5);
 
