@@ -8,6 +8,17 @@ const assert = require("assert");
 
 
 ////////////////////////////////////////////////////////////////////////////////
+//
+// Run mocha test functions importing a particular Python file.
+//
+// The main test set-up funtions are with_module() and with_project().
+// See existing tests for examples.
+//
+// The test_fun() is passed an async function rather than the actual
+// result of importing the module, to defer the work of loading and
+// compiling the module until we know we want to run that test.  If we
+// use the "--grep" command-line option to mocha, we don't want to
+// import Python modules for tests that won't be run.
 
 const with_module = (fname, test_fun) => {
     let full_code_text = fs.readFileSync(fname, { encoding: "utf8" });
