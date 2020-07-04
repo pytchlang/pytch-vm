@@ -56,4 +56,18 @@ describe("auto-registration", () => {
             assert.strictEqual(got_actors[1].kind, "Stage");
         });
     });
+
+    with_module("py/project/no_create_project.py", (import_module) => {
+        it("detects lack of Project", async () => {
+            let module = await import_module();
+            assert.ok(! Sk.pytchsupport.module_has_Project_instance(module));
+        });
+    });
+
+    with_module("py/project/sprite_on_stage.py", (import_module) => {
+        it("detects a Project", async () => {
+            let module = await import_module();
+            assert.ok(Sk.pytchsupport.module_has_Project_instance(module));
+        });
+    });
 });
