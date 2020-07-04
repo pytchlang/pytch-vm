@@ -72,12 +72,50 @@ Sk.pytchsupport.module_has_Project_instance = (mod => {
 });
 
 
+/**
+* If the given module lacks a Project instance, create one inside it,
+* and register all Sprite and Stage subclasses found in the module
+* with that Project.  Then make that project the 'current live' one.
+*/
+Sk.pytchsupport.maybe_auto_configure_project = (async mod => {
+    // If the user has already made their own Project, leave it alone.
+    if (Sk.pytchsupport.module_has_Project_instance(mod))
+        return;
+
+    const pytch = Sk.pytchsupport.pytch_in_module(mod);
+    const pytch_Project = pytch.$d.Project;
+
+    // Create a Project instance by calling the class object.
+    const py_project = Sk.misceval.callsim(pytch_Project);
+    const js_project = py_project.js_project;
+
+    // Register all Sprite/Stage subclasses we find.
+    for (const {cls, kind} of Sk.pytchsupport.actors_of_module(mod)) {
+        switch (kind) {
+        case "Sprite":
+            await js_project.register_sprite_class(cls);
+            break;
+        case "Stage":
+            await js_project.register_stage_class(cls);
+            break;
+        default:
+            throw Error(`unknown kind "${kind}" of actor`);
+        }
+    }
+
+    // Insert into the module under a private name, and make it the live one.
+    mod.$d.$auto_created_project = py_project;
+    Sk.pytch.current_live_project = js_project;
+});
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
 [
     "pytch_in_module",
     "actors_of_module",
     "module_has_Project_instance",
+    "maybe_auto_configure_project",
 ].forEach(
     fun_name => {
         Sk.exportSymbol(`Sk.pytchsupport.${fun_name}`, Sk.pytchsupport[fun_name]);
