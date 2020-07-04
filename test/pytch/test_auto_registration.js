@@ -41,4 +41,19 @@ describe("auto-registration", () => {
             return 1;
         return 0;
     };
+
+    with_module("py/project/sprite_on_stage.py", (import_module) => {
+        it("finds actors in module", async () => {
+            let module = await import_module();
+
+            let got_actors = Sk.pytchsupport.actors_of_module(module);
+            got_actors.sort(cmp_actor_class_names);
+
+            assert.strictEqual(actor_class_name(got_actors[0]), "Banana");
+            assert.strictEqual(got_actors[0].kind, "Sprite");
+
+            assert.strictEqual(actor_class_name(got_actors[1]), "Table");
+            assert.strictEqual(got_actors[1].kind, "Stage");
+        });
+    });
 });
