@@ -27,6 +27,8 @@ const with_module = (fname, test_fun) => {
 
 const with_project = (fname, test_fun) => {
     let full_code_text = fs.readFileSync(fname, { encoding: "utf8" });
+
+    // Import project as-is.
     test_fun(() => import_project(full_code_text));
 };
 
