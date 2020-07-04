@@ -70,4 +70,13 @@ describe("auto-registration", () => {
             assert.ok(Sk.pytchsupport.module_has_Project_instance(module));
         });
     });
+
+    with_module("py/project/sprite_on_stage_no_config.py", (import_module) => {
+        it("auto-configures Project", async () => {
+            let module = await import_module();
+            assert.ok(! Sk.pytchsupport.module_has_Project_instance(module));
+            await Sk.pytchsupport.maybe_auto_configure_project(module);
+            assert.ok(Sk.pytchsupport.module_has_Project_instance(module));
+        });
+    });
 });
