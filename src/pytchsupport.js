@@ -109,6 +109,18 @@ Sk.pytchsupport.maybe_auto_configure_project = (async mod => {
 });
 
 
+/*
+* Import a module from code text, and auto-configure its project if it
+* doesn't explicitly define one already.
+*/
+Sk.pytchsupport.import_with_auto_configure = (async code_text => {
+    let module = await Sk.misceval.asyncToPromise(
+        () => Sk.importMainWithBody("<stdin>", false, code_text, true));
+    await Sk.pytchsupport.maybe_auto_configure_project(module);
+    return module;
+});
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
 [
