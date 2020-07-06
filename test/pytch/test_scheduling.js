@@ -72,22 +72,22 @@ describe("scheduling", () => {
         ];
 
         halt_test_specs.forEach(spec => {
-        it(`${spec.method} halts everything`, async () => {
-            let [project, assert_counters_both] = await two_threads_project();
+            it(`${spec.method} halts everything`, async () => {
+                let [project, assert_counters_both] = await two_threads_project();
 
-            project.on_green_flag_clicked();
+                project.on_green_flag_clicked();
 
-            // Each frame that runs should increase both counters by 1.
-            many_frames(project, 10);
-            assert_counters_both(10);
+                // Each frame that runs should increase both counters by 1.
+                many_frames(project, 10);
+                assert_counters_both(10);
 
-            // Everything should stop if we hit the red button, either
-            // explicitly, or implicitly as part of green-flag:
-            project[spec.method]();
-            many_frames(project, 5);
+                // Everything should stop if we hit the red button, either
+                // explicitly, or implicitly as part of green-flag:
+                project[spec.method]();
+                many_frames(project, 5);
 
-            assert_counters_both(spec.exp_count);
-        })})});
+                assert_counters_both(spec.exp_count);
+            })})});
 
     class BroadcastActors {
         constructor(project) {
