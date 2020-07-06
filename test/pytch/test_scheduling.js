@@ -66,8 +66,12 @@ describe("scheduling", () => {
             }
         });
 
-        [{method: 'on_red_stop_clicked', exp_count: 10},
-         {method: 'on_green_flag_clicked', exp_count: 5}].forEach(spec =>
+        const halt_test_specs = [
+            { method: 'on_red_stop_clicked', exp_count: 10 },
+            { method: 'on_green_flag_clicked', exp_count: 5 },
+        ];
+
+        halt_test_specs.forEach(spec => {
         it(`${spec.method} halts everything`, async () => {
             let [project, assert_counters_both] = await two_threads_project();
 
@@ -83,7 +87,7 @@ describe("scheduling", () => {
             many_frames(project, 5);
 
             assert_counters_both(spec.exp_count);
-        }))});
+        })})});
 
     class BroadcastActors {
         constructor(project) {
