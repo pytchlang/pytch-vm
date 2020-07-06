@@ -14,9 +14,9 @@ configure_mocha();
 
 describe("pytch.actor module", () => {
     with_module("py/actor/just_import.py", (import_module) => {
-    it("can be imported", async () => {
-        let import_result = await import_module();
-        assert.ok(import_result.$d.Sprite);
-        assert.ok(import_result.$d.Stage);
-    })});
+        it("can be imported", async () => {
+            let import_result = await import_module();
+            assert.ok(import_result.$d.Sprite);
+            assert.ok(import_result.$d.Stage);
+        })});
 });
