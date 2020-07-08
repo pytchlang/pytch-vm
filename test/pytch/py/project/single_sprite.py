@@ -28,5 +28,7 @@ class FlagClickCounter(Sprite):
         self.n_clicks -= 1
 
 
+# --cut-here-for-auto-config--
+
 project = Project()
 project.register_sprite_class(FlagClickCounter)

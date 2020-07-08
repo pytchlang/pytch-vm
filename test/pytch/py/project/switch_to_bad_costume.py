@@ -1,3 +1,4 @@
+import pytch
 from pytch import Project, Sprite, Stage, when_I_receive
 
 

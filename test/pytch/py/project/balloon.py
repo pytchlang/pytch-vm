@@ -42,6 +42,8 @@ class Balloon(Sprite):
         self.score += 1
 
 
+# --cut-here-for-auto-config--
+
 project = Project()
 project.register_stage_class(Stage)
 project.register_sprite_class(Balloon)

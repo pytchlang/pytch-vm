@@ -427,8 +427,7 @@ $(document).ready(function() {
         const build = async () => {
             let code_text = ace_editor.getValue();
             try {
-                await Sk.misceval.asyncToPromise(
-                    () => Sk.importMainWithBody("<stdin>", false, code_text, true));
+                await Sk.pytchsupport.import_with_auto_configure(code_text);
             } catch (err) {
                 report_uncaught_exception(err);
             }

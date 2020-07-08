@@ -35,5 +35,7 @@ class Orchestra(Sprite):
         pytch.stop_all_sounds()
 
 
+# --cut-here-for-auto-config--
+
 project = Project()
 project.register_sprite_class(Orchestra)

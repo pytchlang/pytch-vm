@@ -38,5 +38,7 @@ class Ball(Sprite):
         self.keys_pressed = ''.join(kn for kn in 'abc' if key_is_pressed(kn))
 
 
+# --cut-here-for-auto-config--
+
 project = Project()
 project.register_sprite_class(Ball)

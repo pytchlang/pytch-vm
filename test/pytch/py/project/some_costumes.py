@@ -7,5 +7,7 @@ class Alien(Sprite):
                 ['firing', 'library/images/firing-alien.png', 40, 15]]
 
 
+# --cut-here-for-auto-config--
+
 project = Project()
 project.register_sprite_class(Alien)
