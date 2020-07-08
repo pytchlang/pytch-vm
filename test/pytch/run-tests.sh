@@ -1,3 +1,3 @@
 #!/bin/bash
 
-exec ../../node_modules/mocha/bin/mocha --reporter list "$@" .
+exec ../../node_modules/.bin/mocha-parallel-tests --reporter list --exclude=pytch-testing.js "$@" .
