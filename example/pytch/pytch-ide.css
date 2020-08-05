@@ -28,6 +28,25 @@ body {
     font-size: 16px;
 }
 
+#stage-with-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 0px 0px 0px 8px;
+}
+
+#stage-controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0px 0px 8px 0px;
+}
+
+#pytch-canvas {
+    border: 1px solid lightgray;
+    background: white;
+}
+
 #info-panel-tabs {
     margin: 0px;
     padding: 0px;
