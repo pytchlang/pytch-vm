@@ -142,6 +142,16 @@ describe("Costume access within project-root", () => {
         Sk.pytch.project_root = "user-projects/1234";
     });
 
+    with_project("py/project/some_costumes.py", (import_project) => {
+    it("loads costumes within base-url", async () => {
+        let project = await import_project();
+        let alien = project.actor_by_class_name("Alien");
+
+        assert_Appearance_equal(alien.appearance_from_name("marching"),
+                                "user-projects/1234/library/images/marching-alien.png",
+                                60, 20, 30, 10);
+    })});
+
     after(() => {
         Sk.pytch.project_root = original_project_root;
     });
