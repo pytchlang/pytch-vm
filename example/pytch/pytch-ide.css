@@ -21,6 +21,13 @@ body {
     flex-direction: row;
 }
 
+#editor {
+    border: 1px solid lightgray;
+    margin: 0px;
+    flex-grow: 1;
+    font-size: 16px;
+}
+
 #info-panel-tabs {
     margin: 0px;
     padding: 0px;
