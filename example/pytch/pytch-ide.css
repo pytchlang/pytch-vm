@@ -1,1 +1,16 @@
 /* pytch-ide.css */
+
+
+/******************************************************************************/
+
+html { height: 100%; }
+
+body {
+    height: 100%;
+    background-color: #dde;
+    margin: 0px 8px;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
