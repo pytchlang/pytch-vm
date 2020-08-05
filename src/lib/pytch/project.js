@@ -49,6 +49,11 @@ var $builtinmodule = function (name) {
         }
     })();
 
+    const within_project_root = (url_tail) => (
+        (Sk.pytch.project_root === ""
+         ? url_tail
+         : `${Sk.pytch.project_root}/${url_tail}`));
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
