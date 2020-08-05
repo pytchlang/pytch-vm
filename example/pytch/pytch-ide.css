@@ -121,3 +121,7 @@ body {
 #info-panel-content div.tab-content.current {
     display: flex;
 }
+
+#info-panel-content div.tab-content span.info {
+    font-style: italic;
+}
