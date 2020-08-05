@@ -74,3 +74,19 @@ body {
     justify-content: center;
     border-radius: 6px;
 }
+
+#stage-controls > div { height: 36px; }
+
+#stage-controls > div > p {
+    text-align: center;
+    color: black;
+    margin: 8px;
+}
+
+#build-button { min-width: 8em; }
+#green-flag, #red-stop, #info-menu { width: 48px; }
+
+#build-button { background-color: lightgreen; }
+#green-flag { background-color: green; }
+#red-stop { background-color: red; }
+#info-menu { background-color: #ff8; }
