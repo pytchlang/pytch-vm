@@ -123,6 +123,11 @@ $(document).ready(function() {
             return first_h2.innerHTML;
         }
 
+        get final_code() {
+            let front_matter = this.chapters[0];
+            return front_matter.dataset.completeCodeText;
+        }
+
         get n_chapters() {
             return this.chapters.length;
         }
