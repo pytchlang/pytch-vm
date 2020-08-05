@@ -108,6 +108,10 @@ $(document).ready(function() {
 
             return new Tutorial(tutorial_text);
         }
+
+        chapter(chapter_index) {
+            return this.chapters[chapter_index];
+        }
     }
 
 
