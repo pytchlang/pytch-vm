@@ -13,6 +13,15 @@ configure_mocha();
 //
 // Sounds
 
+const sound_test_cases = [
+    { tag: "empty project-root",
+      project_root: "",
+      durations: { trumpet: 20, violin: 10} },
+    { tag: "project-root of 'user-projects/1234'",
+      project_root: "user-projects/1234",
+      durations: { trumpet: 43, violin: 30} },
+];
+
 describe("waiting and non-waiting sounds", () => {
     let one_frame_fun = (project => () => {
         mock_sound_manager.one_frame();
