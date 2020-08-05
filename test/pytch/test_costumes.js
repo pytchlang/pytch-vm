@@ -133,3 +133,16 @@ describe("Costume handling", () => {
                 import_project());
         })});
 });
+
+describe("Costume access within project-root", () => {
+    let original_project_root;
+
+    before(() => {
+        original_project_root = Sk.pytch.project_root;
+        Sk.pytch.project_root = "user-projects/1234";
+    });
+
+    after(() => {
+        Sk.pytch.project_root = original_project_root;
+    });
+});
