@@ -243,6 +243,8 @@ class MockImage {
 const sound_duration_from_url = new Map([
     ["library/sounds/trumpet.mp3", 20],
     ["library/sounds/violin.mp3", 10],
+    ["user-projects/1234/library/sounds/trumpet.mp3", 43],
+    ["user-projects/1234/library/sounds/violin.mp3", 30],
 ]);
 
 class MockSound {
