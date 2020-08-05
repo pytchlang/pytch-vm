@@ -214,3 +214,11 @@ body {
     background-color: #6d7;
     border: 1px solid #3a4;
 }
+
+
+/******************************************************************************/
+
+div.patch-container {
+    margin-left: 3em;
+    width: 56em;
+}
