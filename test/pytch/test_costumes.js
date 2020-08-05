@@ -25,11 +25,11 @@ describe("Costume handling", () => {
             assert.strictEqual(alien.n_appearances, 2);
 
             assert_Appearance_equal(alien.appearance_from_name("marching"),
-                                    "library/images/marching-alien.png",
+                                    "project-assets/library/images/marching-alien.png",
                                     60, 20, 30, 10);
 
             assert_Appearance_equal(alien.appearance_from_name("firing"),
-                                    "library/images/firing-alien.png",
+                                    "project-assets/library/images/firing-alien.png",
                                     80, 30, 40, 15);
         })});
 
@@ -148,7 +148,7 @@ describe("Costume access within project-root", () => {
         let alien = project.actor_by_class_name("Alien");
 
         assert_Appearance_equal(alien.appearance_from_name("marching"),
-                                "user-projects/1234/library/images/marching-alien.png",
+                                "user-projects/1234/project-assets/library/images/marching-alien.png",
                                 60, 20, 30, 10);
     })});
 
