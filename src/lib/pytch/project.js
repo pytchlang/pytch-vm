@@ -69,7 +69,7 @@ var $builtinmodule = function (name) {
         }
 
         static async async_create(url_tail, centre_x, centre_y) {
-            let url = within_project_root(url_tail);
+            let url = within_project_root("project-assets", url_tail);
             let image = await Sk.pytch.async_load_image(url);
             return new Appearance(image, centre_x, centre_y);
         }
@@ -201,7 +201,7 @@ var $builtinmodule = function (name) {
 
             let async_sounds = sound_descriptors.map(async d => {
                 let url_tail = d[1];
-                let url = within_project_root(url_tail);
+                let url = within_project_root("project-assets", url_tail);
                 let sound = await (Sk.pytch.sound_manager
                                    .async_load_sound(d[0], url));
                 return [d[0], sound];
