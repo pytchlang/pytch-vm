@@ -177,3 +177,14 @@ body {
     margin: 0px 3em;
 }
 
+#tab-pane-tutorial .front-matter h1 {
+    background-color: inherit;
+    color: black;
+    text-align: left;
+    margin-left: 0px;
+}
+
+#tab-pane-tutorial .chapter-content h2 {
+    font-size: 125%;
+    margin: 2ex 0px 1ex 0px;
+}
