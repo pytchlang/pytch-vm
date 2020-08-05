@@ -49,10 +49,11 @@ var $builtinmodule = function (name) {
         }
     })();
 
-    const within_project_root = (url_tail) => (
-        (Sk.pytch.project_root === ""
-         ? url_tail
-         : `${Sk.pytch.project_root}/${url_tail}`));
+    const within_project_root = (...tail_url_parts) => {
+        const maybe_parts = [Sk.pytch.project_root, ...tail_url_parts];
+        const parts = maybe_parts.filter(part => part !== "");
+        return parts.join("/");
+    };
 
 
     ////////////////////////////////////////////////////////////////////////////////
