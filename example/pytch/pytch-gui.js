@@ -412,14 +412,14 @@ $(document).ready(function() {
 
         const enable = () => {
             (button
-             .html("BUILD")
+             .html("<p>BUILD</p>")
              .removeClass("greyed-out")
              .click(visibly_build));
         };
 
         const disable = () => {
             (button
-             .html("<i>Working...</i>")
+             .html("<p><i>Working...</i></p>")
              .addClass("greyed-out")
              .off("click"));
         };
