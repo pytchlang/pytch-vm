@@ -120,6 +120,7 @@ Sk.python3 = {
         sound_manager: do_nothing_sound_manager,
         current_live_project: do_nothing_project,
         on_exception: do_nothing,
+        project_root: "",
     };
 })();
 
