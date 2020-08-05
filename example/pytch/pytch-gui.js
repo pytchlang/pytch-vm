@@ -407,6 +407,7 @@ $(document).ready(function() {
     //
     // Build user code
 
+    const build_button =
     (() => {
         const button = $("#build-button");
 
