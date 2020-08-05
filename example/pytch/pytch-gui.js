@@ -44,14 +44,14 @@ $(document).ready(function() {
     });
 
     let make_tab_current = (tab_nub => {
-        $("#info-panels-container ul.tabs li").removeClass("current");
-        $("#info-panels-container div.tab-content").removeClass("current");
+        $("#info-panel-tabs p").removeClass("current");
+        $("#info-panel-content div.tab-content").removeClass("current");
 
         $(`#tab-header-${tab_nub}`).addClass("current");
         $(`#tab-pane-${tab_nub}`).addClass("current");
     });
 
-    $("#info-panels-container ul.tabs li").click(make_tab_current_via_evt);
+    $("#info-panel-tabs p").click(make_tab_current_via_evt);
 
     ////////////////////////////////////////////////////////////////////////
     //
