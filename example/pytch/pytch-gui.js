@@ -425,13 +425,17 @@ $(document).ready(function() {
              .off("click"));
         };
 
-        const build = async () => {
+        const build = async (then_green_flag) => {
             let code_text = ace_editor.getValue();
             try {
                 await Sk.pytchsupport.import_with_auto_configure(code_text);
             } catch (err) {
                 report_uncaught_exception(err);
             }
+
+            if (then_green_flag)
+                Sk.pytch.current_live_project.on_green_flag_clicked();
+
             stage_canvas.dom_elt.focus();
             enable();
         };
