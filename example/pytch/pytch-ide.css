@@ -14,3 +14,25 @@ body {
     justify-content: space-between;
     flex-direction: column;
 }
+
+#code-and-stage {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: row;
+}
+
+#info-panel-tabs {
+    margin: 0px;
+    padding: 0px;
+    display: flex;
+    flex-direction: row;
+}
+
+#info-panel-content {
+    overflow: auto;
+    background-color: white;
+    margin: 0px 0px 8px 0px;
+    padding: 0px;
+    flex-grow: 1;
+    flex-shrink: 1;
+}
