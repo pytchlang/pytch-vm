@@ -188,3 +188,29 @@ body {
     font-size: 125%;
     margin: 2ex 0px 1ex 0px;
 }
+
+#tab-pane-tutorial .navigation-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+#tab-pane-tutorial .navigation {
+    cursor: pointer;
+    user-select: none;
+    line-height: 133%;
+    padding: 1ex;
+    border-radius: 4px;
+}
+
+#tab-pane-tutorial .nav-prev {
+    background-color: #bbb;
+    border: 1px solid #888;
+}
+
+#tab-pane-tutorial .nav-next {
+    width: 12em;
+    background-color: #6d7;
+    border: 1px solid #3a4;
+}
