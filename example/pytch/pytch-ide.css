@@ -266,6 +266,27 @@ div.patch > table pre {
     background-color: inherit;
 }
 
+div.patch > table td {
+    position: relative;
+}
+
+div.patch > table td div.copy-button {
+    z-index: 1;
+    cursor: pointer;
+    user-select: none;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+div.patch > table td div.copy-button p {
+    margin: 4px 4px 0px 0px;
+    padding: 4px;
+    background-color: #293;
+    color: white;
+    border-radius: 4px;
+}
+
 div.patch > table tr td:nth-child(3) { width: 100%; }
 div.patch > table tr td:nth-child(3) pre::before { margin-right: 1em; }
 div.patch > table tbody.diff-del tr { background-color: #ffcaca; }
