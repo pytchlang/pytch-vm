@@ -62,7 +62,10 @@ var $builtinmodule = function (name) {
             this.centre_y = centre_y;
         }
 
-        static async async_create(url, centre_x, centre_y) {
+        static async async_create(url_tail, centre_x, centre_y) {
+            let url = (Sk.pytch.project_root === ""
+                       ? url_tail
+                       : `${Sk.pytch.project_root}/${url_tail}`);
             let image = await Sk.pytch.async_load_image(url);
             return new Appearance(image, centre_x, centre_y);
         }
