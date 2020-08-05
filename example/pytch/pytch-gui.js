@@ -449,7 +449,7 @@ $(document).ready(function() {
         };
 
         // If the program is very short, it looks like nothing has happened
-        // unless we have a short flash of the "Working..."  message.  Split the
+        // unless we have a short flash of the "Working..." message.  Split the
         // behaviour into immediate / real work portions.
         const visibly_build = (then_green_flag) => {
             ensure_sound_manager();
