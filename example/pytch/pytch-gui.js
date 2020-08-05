@@ -93,6 +93,13 @@ $(document).ready(function() {
     // Tutorials
 
     class Tutorial {
+        constructor(html) {
+            let chapters_elt = document.createElement("div");
+            chapters_elt.innerHTML = html;
+
+            this.chapters = (chapters_elt
+                             .querySelectorAll("div.tutorial-bundle > div"));
+        }
     }
 
 
