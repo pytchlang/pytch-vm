@@ -100,6 +100,14 @@ $(document).ready(function() {
             this.chapters = (chapters_elt
                              .querySelectorAll("div.tutorial-bundle > div"));
         }
+
+        static async async_create(project_root) {
+            let tutorial_url = `${project_root}/tutorial.html`;
+            let tutorial_response = await fetch(tutorial_url);
+            let tutorial_text = await tutorial_response.text();
+
+            return new Tutorial(tutorial_text);
+        }
     }
 
 
