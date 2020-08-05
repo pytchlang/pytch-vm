@@ -458,6 +458,10 @@ $(document).ready(function() {
         };
 
         enable();
+
+        return {
+            visibly_build,
+        };
     })();
 
 
