@@ -134,6 +134,12 @@ $(document).ready(function() {
     }
 
     class TutorialPresentation {
+        constructor(tutorial, pane_elt, initial_chapter_index=0) {
+            this.tutorial = tutorial;
+            this.chapter_elt = pane_elt.querySelector(".chapter-container");
+            this.toc_list_elt = pane_elt.querySelector(".ToC .entries");
+            this.chapter_index = initial_chapter_index;
+        }
     }
 
 
