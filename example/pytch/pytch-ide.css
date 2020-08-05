@@ -62,3 +62,15 @@ body {
     flex-grow: 1;
     flex-shrink: 1;
 }
+
+
+/******************************************************************************/
+
+#stage-controls > div {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 6px;
+}
