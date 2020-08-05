@@ -171,3 +171,9 @@ body {
 #tab-pane-tutorial .ToC li.shown {
     background-color: #cfc;
 }
+
+#tab-pane-tutorial .chapter-content,
+#tab-pane-tutorial .front-matter {
+    margin: 0px 3em;
+}
+
