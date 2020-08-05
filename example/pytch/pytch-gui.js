@@ -113,6 +113,16 @@ $(document).ready(function() {
             return this.chapters[chapter_index];
         }
 
+        chapter_title(chapter_index) {
+            let chapter_content = this.chapter(chapter_index);
+            let first_h1 = chapter_content.querySelector("h1");
+            if (first_h1 !== null)
+                return first_h1.innerHTML;
+
+            let first_h2 = chapter_content.querySelector("h2");
+            return first_h2.innerHTML;
+        }
+
         get n_chapters() {
             return this.chapters.length;
         }
