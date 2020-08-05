@@ -125,3 +125,23 @@ body {
 #info-panel-content div.tab-content span.info {
     font-style: italic;
 }
+
+#tab-pane-tutorial {
+    display: flex;
+    flex-direction: row;
+}
+
+#tab-pane-tutorial .ToC {
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin: 0px;
+    overflow-y: auto;
+}
+
+#tab-pane-tutorial .chapter-container {
+    flex-grow: 1;
+    flex-shrink: 1;
+    height: 100%;
+    margin: 0px;
+    overflow-y: auto;
+}
