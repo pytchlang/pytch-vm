@@ -231,3 +231,46 @@ div.patch-container > h1.decoration {
     font-size: 100%;
     color: #000;
 }
+
+div.patch, div.patch > table {
+    background-color: #f7f7f7;
+    border-spacing: 0px;
+    margin: 0px 3em;
+}
+
+div.patch > table {
+    padding-bottom: 2.5ex;
+}
+
+div.patch > table tr,
+div.patch > table tr td {
+    padding: 0px;
+    margin: 0px;
+    border: none;
+}
+
+div.patch > table td.linenum {
+    width: 3em;
+    padding-left: 1em;
+    padding-right: 1em;
+    text-align: right;
+    color: #666;
+}
+
+div.patch > table pre {
+    line-height: 100%;
+    padding: 2px;
+    margin: 0px;
+    border: none;
+    border-radius: 0px;
+    background-color: inherit;
+}
+
+div.patch > table tr td:nth-child(3) { width: 100%; }
+div.patch > table tr td:nth-child(3) pre::before { margin-right: 1em; }
+div.patch > table tbody.diff-del tr { background-color: #ffcaca; }
+div.patch > table tbody.diff-del tr td:nth-child(3) pre::before { content: '-'; }
+div.patch > table tbody.diff-add tr { background-color: #caffca; }
+div.patch > table tbody.diff-add tr td:nth-child(3) pre::before { content: '+'; }
+div.patch > table tbody.diff-unch tr { color: #666; background-color: #f7f7f7; }
+div.patch > table tbody.diff-unch tr td:nth-child(3) pre::before { content: ' '; }
