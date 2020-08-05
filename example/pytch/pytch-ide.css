@@ -145,3 +145,29 @@ body {
     margin: 0px;
     overflow-y: auto;
 }
+
+#tab-pane-tutorial .ToC p {
+    margin-left: 2em;
+    font-weight: bold;
+    font-size: 110%;
+}
+
+#tab-pane-tutorial .ToC ul {
+    list-style: none;
+    width: 14em;
+    padding: 0px;
+    margin: 0px 3em 0px 2em;
+}
+
+#tab-pane-tutorial .ToC li {
+    padding: 0.5ex 1em;
+    font-size: 110%;
+    line-height: 150%;
+    margin-top: 2ex;
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+#tab-pane-tutorial .ToC li.shown {
+    background-color: #cfc;
+}
