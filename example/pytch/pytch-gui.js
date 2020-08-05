@@ -112,6 +112,10 @@ $(document).ready(function() {
         chapter(chapter_index) {
             return this.chapters[chapter_index];
         }
+
+        get n_chapters() {
+            return this.chapters.length;
+        }
     }
 
 
