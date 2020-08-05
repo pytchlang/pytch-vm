@@ -415,7 +415,7 @@ $(document).ready(function() {
             (button
              .html("<p>BUILD</p>")
              .removeClass("greyed-out")
-             .click(visibly_build));
+             .click(() => visibly_build(false)));
         };
 
         const disable = () => {
