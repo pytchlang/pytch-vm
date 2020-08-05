@@ -90,3 +90,22 @@ body {
 #green-flag { background-color: green; }
 #red-stop { background-color: red; }
 #info-menu { background-color: #ff8; }
+
+
+/******************************************************************************/
+
+#info-panel-tabs p {
+    margin: 8px 16px 0px 16px;
+    padding: 8px;
+    background-color: #eee;
+    font-size: 120%;
+    color: #666;
+    cursor: pointer;
+    border-radius: 8px 8px 0px 0px;
+    user-select: none;
+}
+
+#info-panel-tabs p.current {
+    background-color: white;
+    color: #000;
+}
