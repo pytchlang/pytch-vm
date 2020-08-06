@@ -153,6 +153,11 @@ $(document).ready(function() {
             });
         }
 
+        leap_to_chapter_from_event(evt) {
+            let evt_data = evt.target.dataset;
+            this.leap_to_chapter(+evt_data.chapterIndex);
+        }
+
         leap_to_chapter(chapter_index) {
             this.chapter_index = chapter_index;
             this.refresh();
