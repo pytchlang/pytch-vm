@@ -140,6 +140,13 @@ $(document).ready(function() {
             this.toc_list_elt = pane_elt.querySelector(".ToC .entries");
             this.chapter_index = initial_chapter_index;
         }
+
+        refresh() {
+            this.chapter_elt.innerHTML = "";
+            this.chapter_elt.appendChild(this.tutorial.chapter(this.chapter_index));
+
+            this.chapter_elt.scrollTop = 0;
+        }
     }
 
 
