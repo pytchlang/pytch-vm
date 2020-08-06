@@ -453,6 +453,8 @@ var $builtinmodule = function (name) {
         get render_size() { return js_getattr(this.py_object, s_size); }
         get render_appearance() { return js_getattr(this.py_object, s_appearance); }
 
+        get layer_group() { return this.actor.layer_group; }
+
         rendering_instructions() {
             if (! this.render_shown)
                 return [];
