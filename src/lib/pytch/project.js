@@ -835,6 +835,21 @@ var $builtinmodule = function (name) {
         constructor() {
             this.instances = [];
         }
+
+        register(instance) {
+            // TODO: Allow specification of which instance to be 'just
+            // behind', for use with cloning.
+            this.instances.push(instance);
+        }
+
+        unregister(instance) {
+            this.instances = this.instances.filter(a => a !== instance);
+        }
+
+        unregister_nearly_all(actor, instance_to_keep) {
+            this.instances = this.instances.filter(
+                a => (a === instance_to_keep || a.actor !== actor));
+        }
     }
 
 
