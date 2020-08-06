@@ -62,3 +62,11 @@ describe("z-order operations", () => {
         });
     });
 });
+
+describe("z-order of clones with deletion", () => {
+    with_project("py/project/z_order_with_cloning.py", (import_project) => {
+        it("does not draw a deleted clone", async () => {
+            let project = await import_project();
+        });
+    });
+});
