@@ -407,30 +407,35 @@ $(document).ready(function() {
     //
     // Build user code
 
+    const build_button =
     (() => {
         const button = $("#build-button");
 
         const enable = () => {
             (button
-             .html("BUILD")
+             .html("<p>BUILD</p>")
              .removeClass("greyed-out")
-             .click(visibly_build));
+             .click(() => visibly_build(false)));
         };
 
         const disable = () => {
             (button
-             .html("<i>Working...</i>")
+             .html("<p><i>Working...</i></p>")
              .addClass("greyed-out")
              .off("click"));
         };
 
-        const build = async () => {
+        const build = async (then_green_flag) => {
             let code_text = ace_editor.getValue();
             try {
                 await Sk.pytchsupport.import_with_auto_configure(code_text);
             } catch (err) {
                 report_uncaught_exception(err);
             }
+
+            if (then_green_flag)
+                Sk.pytch.current_live_project.on_green_flag_clicked();
+
             stage_canvas.dom_elt.focus();
             enable();
         };
@@ -444,15 +449,19 @@ $(document).ready(function() {
         };
 
         // If the program is very short, it looks like nothing has happened
-        // unless we have a short flash of the "Working..."  message.  Split the
+        // unless we have a short flash of the "Working..." message.  Split the
         // behaviour into immediate / real work portions.
-        const visibly_build = () => {
+        const visibly_build = (then_green_flag) => {
             ensure_sound_manager();
             immediate_feedback();
-            window.setTimeout(build, 125);
+            window.setTimeout(() => build(then_green_flag), 125);
         };
 
         enable();
+
+        return {
+            visibly_build,
+        };
     })();
 
 
