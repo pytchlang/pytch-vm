@@ -90,6 +90,52 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Tutorials
+
+    class Tutorial {
+        constructor(html) {
+            let chapters_elt = document.createElement("div");
+            chapters_elt.innerHTML = html;
+
+            this.chapters = (chapters_elt
+                             .querySelectorAll("div.tutorial-bundle > div"));
+        }
+
+        static async async_create(project_root) {
+            let tutorial_url = `${project_root}/tutorial.html`;
+            let tutorial_response = await fetch(tutorial_url);
+            let tutorial_text = await tutorial_response.text();
+
+            return new Tutorial(tutorial_text);
+        }
+
+        chapter(chapter_index) {
+            return this.chapters[chapter_index];
+        }
+
+        chapter_title(chapter_index) {
+            let chapter_content = this.chapter(chapter_index);
+            let first_h1 = chapter_content.querySelector("h1");
+            if (first_h1 !== null)
+                return first_h1.innerHTML;
+
+            let first_h2 = chapter_content.querySelector("h2");
+            return first_h2.innerHTML;
+        }
+
+        get final_code() {
+            let front_matter = this.chapters[0];
+            return front_matter.dataset.completeCodeText;
+        }
+
+        get n_chapters() {
+            return this.chapters.length;
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Populate 'Examples' drop-down menu
 
     (() => {
