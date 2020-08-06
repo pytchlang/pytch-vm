@@ -320,6 +320,7 @@ var $builtinmodule = function (name) {
             if (instance_idx > 0) {
                 this.instances.splice(instance_idx, 1);
                 instance.py_object_is_registered = false;
+                this.parent_project.unregister_for_drawing(instance);
             }
         }
 
@@ -341,6 +342,8 @@ var $builtinmodule = function (name) {
 
         delete_all_clones() {
             this.instances.splice(1);
+            this.parent_project.unregister_nearly_all_for_drawing(this,
+                                                                  this.instances[0]);
         }
 
         shown_instances_back_to_front() {
