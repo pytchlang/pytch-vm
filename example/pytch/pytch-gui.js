@@ -133,6 +133,155 @@ $(document).ready(function() {
         }
     }
 
+    class TutorialPresentation {
+        constructor(tutorial, pane_elt, initial_chapter_index=0) {
+            this.tutorial = tutorial;
+            this.chapter_elt = pane_elt.querySelector(".chapter-container");
+            this.toc_list_elt = pane_elt.querySelector(".ToC .entries");
+            this.chapter_index = initial_chapter_index;
+            this.populate_toc();
+            this.refresh();
+        }
+
+        populate_toc() {
+            this.toc_list_elt.innerHTML = "";
+            this.tutorial.chapters.forEach((ch, i) => {
+                let toc_entry_elt = document.createElement("li");
+                toc_entry_elt.setAttribute("data-chapter-index", i);
+                toc_entry_elt.innerHTML = this.tutorial.chapter_title(i);
+                $(toc_entry_elt).click((evt) => this.leap_to_chapter_from_event(evt));
+                this.toc_list_elt.appendChild(toc_entry_elt);
+            });
+        }
+
+        leap_to_chapter_from_event(evt) {
+            let evt_data = evt.target.dataset;
+            this.leap_to_chapter(+evt_data.chapterIndex);
+        }
+
+        leap_to_chapter(chapter_index) {
+            this.chapter_index = chapter_index;
+            this.refresh();
+        }
+
+        refresh() {
+            this.chapter_elt.innerHTML = "";
+            this.chapter_elt.appendChild(this.tutorial.chapter(this.chapter_index));
+
+            if (this.chapter_index == 0)
+                this.maybe_augment_front_matter();
+            else
+                this.maybe_augment_patch_divs();
+
+            this.chapter_elt.scrollTop = 0;
+
+            $(this.toc_list_elt).find("li").removeClass("shown");
+            $($(this.toc_list_elt).find("li")[this.chapter_index]).addClass("shown");
+        }
+
+        run_final_project() {
+            ace_editor.setValue(this.tutorial.final_code);
+            ace_editor.clearSelection();
+            build_button.visibly_build(true);
+        }
+
+        augment_with_navigation(content_elt) {
+            let nav_buttons_elt = document.createElement("div");
+            $(nav_buttons_elt).addClass("navigation-buttons");
+
+            let on_first_chapter = (this.chapter_index == 0);
+            if (! on_first_chapter) {
+                let prev_elt = document.createElement("p");
+                $(prev_elt).addClass("navigation nav-prev");
+                prev_elt.innerHTML = `[back]`;
+                $(prev_elt).click(() => this.prev_chapter());
+                nav_buttons_elt.appendChild(prev_elt);
+            }
+
+            let on_last_chapter = (this.chapter_index == this.tutorial.n_chapters - 1);
+            if (! on_last_chapter) {
+                let next_elt = document.createElement("p");
+                $(next_elt).addClass("navigation nav-next");
+                let next_title = this.tutorial.chapter_title(this.chapter_index + 1);
+                let next_intro = (this.chapter_index == 0 ? "Let's begin" : "Next");
+                next_elt.innerHTML = `${next_intro}: ${next_title}`;
+                $(next_elt).click(() => this.next_chapter());
+                nav_buttons_elt.appendChild(next_elt);
+            }
+
+            content_elt.appendChild(nav_buttons_elt);
+        }
+
+        maybe_augment_front_matter() {
+            let content_elt = this.chapter_elt.querySelector("div.front-matter");
+
+            if ($(content_elt).hasClass("augmented"))
+                return;
+
+            let run_div = content_elt.querySelector("div.run-finished-project");
+            if (run_div !== null) {
+                let buttons_p = document.createElement("p");
+                buttons_p.innerHTML = "Try the project!";
+                // Bit of a cheat to re-use 'next page' styling:
+                $(buttons_p).addClass("navigation nav-next");
+                $(buttons_p).click(() => this.run_final_project());
+                run_div.appendChild(buttons_p);
+            }
+
+            this.augment_with_navigation(content_elt);
+
+            $(content_elt).addClass("augmented")
+        }
+
+        maybe_augment_patch_divs() {
+            let content_elt = this.chapter_elt.querySelector("div.chapter-content");
+
+            if ($(content_elt).hasClass("augmented"))
+                return;
+
+            let patch_containers = (content_elt
+                                    .querySelectorAll("div.patch-container"));
+
+            patch_containers.forEach(div => {
+                let patch_div = div.querySelector("div.patch");
+                let header_div = document.createElement("h1");
+                header_div.innerHTML = "Change the code like this:";
+                $(header_div).addClass("decoration");
+                div.insertBefore(header_div, patch_div);
+
+                let tbody_add_elts = (patch_div
+                                      .querySelectorAll("table > tbody.diff-add"));
+
+                tbody_add_elts.forEach(tbody => {
+                    let top_right_td = tbody.querySelector("tr > td:last-child");
+                    let copy_div = document.createElement("div");
+                    copy_div.innerHTML="<p>COPY</p>";
+                    $(copy_div).addClass("copy-button");
+                    $(copy_div).click(() => this.copy_added_content(tbody, copy_div));
+                    top_right_td.appendChild(copy_div);
+                });
+            });
+
+            this.augment_with_navigation(content_elt);
+
+            $(content_elt).addClass("augmented");
+        }
+
+        async copy_added_content(tbody_elt, copy_button_elt) {
+            await navigator.clipboard.writeText(tbody_elt.dataset.addedText);
+        }
+
+        next_chapter() {
+            this.chapter_index += 1;
+            this.refresh();
+        }
+
+        prev_chapter() {
+            this.chapter_index -= 1;
+            this.refresh();
+        }
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
