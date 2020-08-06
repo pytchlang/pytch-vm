@@ -5,6 +5,7 @@ const {
     with_project,
     assert,
     many_frames,
+    js_getattr,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -78,6 +79,18 @@ describe("z-order of clones with deletion", () => {
                 // Allow the message-receiver to run, and the newly-created
                 // clone to run also and get its id.
                 many_frames(project, 2);
+            }
+
+            // TODO: In due course we will have a guarantee that clones appear
+            // directly behind the instance they were cloned from.  When we have
+            // that, test it.  Until then we have to ignore order when testing we
+            // have the correct collection of bananas.
+            //
+            const assert_unordered_banana_ids = (exp_ids) => {
+                let bananas = project.draw_layer_groups[1].instances;
+                let got_ids = bananas.map(b => js_getattr(b.py_object, "id"));
+                got_ids.sort((a, b) => (a - b));
+                assert.deepStrictEqual(got_ids, exp_ids);
             }
         });
     });
