@@ -848,5 +848,24 @@ $(document).ready(function() {
         window.requestAnimationFrame(one_frame);
     };
 
-    window.requestAnimationFrame(one_frame);
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // Load example tutorial
+
+    let running_tutorial_presentation = null;
+
+    const launch_tutorial = async (project_root) => {
+        let tutorial = await Tutorial.async_create(project_root);
+
+        // TODO: When to change this back again?
+        Sk.pytch.project_root = project_root;
+
+        running_tutorial_presentation
+            = new TutorialPresentation(tutorial,
+                                       $("#tab-pane-tutorial")[0]);
+    };
+
+    launch_tutorial("tutorials/bunner/").then(
+        () => window.requestAnimationFrame(one_frame));
 });
