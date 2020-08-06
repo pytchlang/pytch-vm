@@ -29,6 +29,36 @@ describe("z-order operations", () => {
                 let got_class_names = got_instances.map(i => i.actor.class_name);
                 assert.deepStrictEqual(got_class_names, exp_class_names);
             }
+
+            assert_order_after_messages(["banana-front", "orange-front", "apple-front"],
+                                        ["Pear", "Banana", "Orange", "Apple"]);
+
+            assert_order_after_messages(["pear-forward-2"],
+                                        ["Banana", "Orange", "Pear", "Apple"]);
+
+            assert_order_after_messages(["pear-backward-1"],
+                                        ["Banana", "Pear", "Orange", "Apple"]);
+
+            assert_order_after_messages(["orange-back"],
+                                        ["Orange", "Banana", "Pear", "Apple"]);
+
+            assert_order_after_messages(["banana-back"],
+                                        ["Banana", "Orange", "Pear", "Apple"]);
+
+            assert_order_after_messages(["apple-back"],
+                                        ["Apple", "Banana", "Orange", "Pear"]);
+
+            assert_order_after_messages(["pear-backward-1"],
+                                        ["Apple", "Banana", "Pear", "Orange"]);
+
+            assert_order_after_messages(["pear-backward-1"],
+                                        ["Apple", "Pear", "Banana", "Orange"]);
+
+            assert_order_after_messages(["pear-forward-20"],
+                                        ["Apple", "Banana", "Orange", "Pear"]);
+
+            assert_order_after_messages(["pear-backward-10"],
+                                        ["Pear", "Apple", "Banana", "Orange"]);
         });
     });
 });
