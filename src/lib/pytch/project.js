@@ -354,11 +354,6 @@ var $builtinmodule = function (name) {
             let sound = this._sound_from_name[name];
             return sound.launch_new_performance();
         }
-
-        rendering_instructions() {
-            return map_concat(i => i.rendering_instructions(),
-                              this.instances);
-        }
     }
 
     class PytchSprite extends PytchActor {
