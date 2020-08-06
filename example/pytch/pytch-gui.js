@@ -153,6 +153,33 @@ $(document).ready(function() {
             this.chapter_elt.scrollTop = 0;
         }
 
+        augment_with_navigation(content_elt) {
+            let nav_buttons_elt = document.createElement("div");
+            $(nav_buttons_elt).addClass("navigation-buttons");
+
+            let on_first_chapter = (this.chapter_index == 0);
+            if (! on_first_chapter) {
+                let prev_elt = document.createElement("p");
+                $(prev_elt).addClass("navigation nav-prev");
+                prev_elt.innerHTML = `[back]`;
+                $(prev_elt).click(() => this.prev_chapter());
+                nav_buttons_elt.appendChild(prev_elt);
+            }
+
+            let on_last_chapter = (this.chapter_index == this.tutorial.n_chapters - 1);
+            if (! on_last_chapter) {
+                let next_elt = document.createElement("p");
+                $(next_elt).addClass("navigation nav-next");
+                let next_title = this.tutorial.chapter_title(this.chapter_index + 1);
+                let next_intro = (this.chapter_index == 0 ? "Let's begin" : "Next");
+                next_elt.innerHTML = `${next_intro}: ${next_title}`;
+                $(next_elt).click(() => this.next_chapter());
+                nav_buttons_elt.appendChild(next_elt);
+            }
+
+            content_elt.appendChild(nav_buttons_elt);
+        }
+
         next_chapter() {
             this.chapter_index += 1;
             this.refresh();
