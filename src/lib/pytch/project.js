@@ -832,6 +832,10 @@ var $builtinmodule = function (name) {
     // Layer group of things to draw
 
     class DrawLayerGroup {
+        static get STAGE() { return 0; }
+        static get SPRITES() { return 1; }
+        static get TEXT() { return 2; }  // One day.
+
         constructor() {
             this.instances = [];
         }
