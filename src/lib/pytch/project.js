@@ -1182,6 +1182,17 @@ var $builtinmodule = function (name) {
             self.js_project.unregister_actor_instance(py_obj);
         });
 
+        $loc.move_within_draw_layer_group = new Sk.builtin.func(
+            (self, py_instance, py_move_kind, py_index_or_offset) => {
+                let instance = py_instance.$pytchActorInstance;
+                let move_kind = Sk.ffi.remapToJs(py_move_kind);
+                let index_or_offset = Sk.ffi.remapToJs(py_index_or_offset);
+
+                self.js_project.move_within_draw_layer_group(instance,
+                                                             move_kind,
+                                                             index_or_offset);
+            });
+
         $loc.go_live = new Sk.builtin.func((self) => {
             Sk.pytch.current_live_project = self.js_project;
             return Sk.builtin.none.none$;
