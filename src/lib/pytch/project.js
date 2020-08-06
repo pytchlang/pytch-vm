@@ -942,6 +942,51 @@ var $builtinmodule = function (name) {
             layer_group.unregister_nearly_all(actor, instance_to_keep);
         }
 
+        /**
+         * Move the given instance within its draw-layer-group
+         *
+         * `instance` is the PytchActorInstance to move from its
+         * current location in its draw-layer-group.
+         *
+         * `move_kind` should be one of the string "absolute" or
+         * "relative"; this determines the interpretation of
+         * `index_or_offset`.
+         *
+         * If `move_kind` is "absolute", `index_or_offset` gives the
+         * desired index of the given `instance` in the new ordering
+         * of its draw-layer-group.  A given index of zero means that
+         * the instance will be drawn first, i.e., appear furthest
+         * from the viewer, within its draw-layer-group.  Negative
+         * indexes are interpreted as in Python, i.e., as (length of
+         * list) - |negative_index|.  So 'go to back' is
+         *
+         *     move_kind "absolute", index_or_offset (index) 0,
+         *
+         * and 'go to front' is
+         *
+         *     move_kind "absolute", index_or_offset (index) -1.
+         *
+         * If `move_kind` is "relative", `index_or_offset` gives an
+         * offset which should be added to the index where the given
+         * `instance` can currently be found in its draw-layer-group
+         * to arrive at the desired index in the new ordering.  So 'go
+         * forward 3 layers' is
+         *
+         *     move_kind "relative" index_or_offset (offset) 3,
+         *
+         * and 'go backward 2 layers' is
+         *
+         *     move_kind "relative" index_or_offset (offset) -2.
+         *
+         * In either case, if the desired index is less than zero or
+         * refers to a position beyond the end of the list, it is
+         * clamped.
+         */
+        move_within_draw_layer_group(instance, move_kind, index_or_offset) {
+            let layer_group = this.draw_layer_groups[instance.layer_group];
+            layer_group.move(instance, move_kind, index_or_offset);
+        }
+
         sprite_instances_are_touching(py_sprite_instance_0, py_sprite_instance_1) {
             let actor_instance_0 = py_sprite_instance_0.$pytchActorInstance;
             let actor_instance_1 = py_sprite_instance_1.$pytchActorInstance;
