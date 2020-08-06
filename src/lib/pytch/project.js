@@ -364,17 +364,11 @@ var $builtinmodule = function (name) {
             return sprite;
         }
 
-        get layer_group() {
-            return DrawLayerGroup.SPRITES;
-        }
+        get layer_group() { return DrawLayerGroup.SPRITES; }
 
-        get appearances_attr_name() {
-            return s_Costumes;
-        }
+        get appearances_attr_name() { return s_Costumes; }
 
-        get appearance_single_name() {
-            return "Costume";
-        }
+        get appearance_single_name() { return "Costume"; }
 
         validate_descriptor(descr) {
             if (descr.length !== 4)
@@ -403,17 +397,11 @@ var $builtinmodule = function (name) {
             return stage;
         }
 
-        get layer_group() {
-            return DrawLayerGroup.STAGE;
-        }
+        get layer_group() { return DrawLayerGroup.STAGE; }
 
-        get appearances_attr_name() {
-            return s_Backdrops;
-        }
+        get appearances_attr_name() { return s_Backdrops; }
 
-        get appearance_single_name() {
-            return "Backdrop";
-        }
+        get appearance_single_name() { return "Backdrop"; }
 
         validate_descriptor(descr) {
             if (descr.length !== 2)
