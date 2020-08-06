@@ -207,6 +207,40 @@ $(document).ready(function() {
             $(content_elt).addClass("augmented")
         }
 
+        maybe_augment_patch_divs() {
+            let content_elt = this.chapter_elt.querySelector("div.chapter-content");
+
+            if ($(content_elt).hasClass("augmented"))
+                return;
+
+            let patch_containers = (content_elt
+                                    .querySelectorAll("div.patch-container"));
+
+            patch_containers.forEach(div => {
+                let patch_div = div.querySelector("div.patch");
+                let header_div = document.createElement("h1");
+                header_div.innerHTML = "Change the code like this:";
+                $(header_div).addClass("decoration");
+                div.insertBefore(header_div, patch_div);
+
+                let tbody_add_elts = (patch_div
+                                      .querySelectorAll("table > tbody.diff-add"));
+
+                tbody_add_elts.forEach(tbody => {
+                    let top_right_td = tbody.querySelector("tr > td:last-child");
+                    let copy_div = document.createElement("div");
+                    copy_div.innerHTML="<p>COPY</p>";
+                    $(copy_div).addClass("copy-button");
+                    $(copy_div).click(() => this.copy_added_content(tbody, copy_div));
+                    top_right_td.appendChild(copy_div);
+                });
+            });
+
+            this.augment_with_navigation(content_elt);
+
+            $(content_elt).addClass("augmented");
+        }
+
         next_chapter() {
             this.chapter_index += 1;
             this.refresh();
