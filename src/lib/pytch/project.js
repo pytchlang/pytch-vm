@@ -1044,7 +1044,15 @@ var $builtinmodule = function (name) {
         }
 
         rendering_instructions() {
-            return map_concat(a => a.rendering_instructions(), this.actors);
+            let instructions = [];
+            this.draw_layer_groups.forEach(dlg => {
+                dlg.instances.forEach(instance => {
+                    instance.rendering_instructions().forEach(instr => {
+                        instructions.push(instr);
+                    });
+                });
+            });
+            return instructions;
         }
 
         do_synthetic_broadcast(js_msg) {
