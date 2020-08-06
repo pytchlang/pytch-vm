@@ -92,6 +92,22 @@ describe("z-order of clones with deletion", () => {
                 got_ids.sort((a, b) => (a - b));
                 assert.deepStrictEqual(got_ids, exp_ids);
             }
+
+            // At this point we should have the original plus 7 clones.
+            assert_unordered_banana_ids(
+                [1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007]);
+
+            // We request deletion of Banana 1003; it should then be gone from
+            // the draw-list.
+            project.do_synthetic_broadcast("delete-1003");
+            project.one_frame();
+            assert_unordered_banana_ids(
+                [1000, 1001, 1002, /* no 1003 */ 1004, 1005, 1006, 1007]);
+
+            // Red stop should delete all clones from the draw-list, leaving
+            // just the original Banana 1000.
+            project.on_red_stop_clicked();
+            assert_unordered_banana_ids([1000]);
         });
     });
 });
