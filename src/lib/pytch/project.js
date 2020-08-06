@@ -832,6 +832,9 @@ var $builtinmodule = function (name) {
     // Layer group of things to draw
 
     class DrawLayerGroup {
+        constructor() {
+            this.instances = [];
+        }
     }
 
 
