@@ -25,11 +25,11 @@ describe("Costume handling", () => {
             assert.strictEqual(alien.n_appearances, 2);
 
             assert_Appearance_equal(alien.appearance_from_name("marching"),
-                                    "library/images/marching-alien.png",
+                                    "project-assets/library/images/marching-alien.png",
                                     60, 20, 30, 10);
 
             assert_Appearance_equal(alien.appearance_from_name("firing"),
-                                    "library/images/firing-alien.png",
+                                    "project-assets/library/images/firing-alien.png",
                                     80, 30, 40, 15);
         })});
 
@@ -132,4 +132,27 @@ describe("Costume handling", () => {
             await assert.rejects(
                 import_project());
         })});
+});
+
+describe("Costume access within project-root", () => {
+    let original_project_root;
+
+    before(() => {
+        original_project_root = Sk.pytch.project_root;
+        Sk.pytch.project_root = "user-projects/1234";
+    });
+
+    with_project("py/project/some_costumes.py", (import_project) => {
+    it("loads costumes within base-url", async () => {
+        let project = await import_project();
+        let alien = project.actor_by_class_name("Alien");
+
+        assert_Appearance_equal(alien.appearance_from_name("marching"),
+                                "user-projects/1234/project-assets/library/images/marching-alien.png",
+                                60, 20, 30, 10);
+    })});
+
+    after(() => {
+        Sk.pytch.project_root = original_project_root;
+    });
 });

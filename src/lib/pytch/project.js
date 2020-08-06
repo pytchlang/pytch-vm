@@ -49,6 +49,12 @@ var $builtinmodule = function (name) {
         }
     })();
 
+    const within_project_root = (...tail_url_parts) => {
+        const maybe_parts = [Sk.pytch.project_root, ...tail_url_parts];
+        const parts = maybe_parts.filter(part => part !== "");
+        return parts.join("/");
+    };
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
@@ -62,7 +68,8 @@ var $builtinmodule = function (name) {
             this.centre_y = centre_y;
         }
 
-        static async async_create(url, centre_x, centre_y) {
+        static async async_create(url_tail, centre_x, centre_y) {
+            let url = within_project_root("project-assets", url_tail);
             let image = await Sk.pytch.async_load_image(url);
             return new Appearance(image, centre_x, centre_y);
         }
@@ -193,8 +200,10 @@ var $builtinmodule = function (name) {
             let sound_descriptors = js_getattr(this.py_cls, s_Sounds);
 
             let async_sounds = sound_descriptors.map(async d => {
+                let url_tail = d[1];
+                let url = within_project_root("project-assets", url_tail);
                 let sound = await (Sk.pytch.sound_manager
-                                   .async_load_sound(d[0], d[1]));
+                                   .async_load_sound(d[0], url));
                 return [d[0], sound];
             });
 

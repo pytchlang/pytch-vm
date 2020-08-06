@@ -13,7 +13,24 @@ configure_mocha();
 //
 // Sounds
 
-describe("waiting and non-waiting sounds", () => {
+const sound_test_cases = [
+    { tag: "empty project-root",
+      project_root: "",
+      durations: { trumpet: 20, violin: 10} },
+    { tag: "project-root of 'user-projects/1234'",
+      project_root: "user-projects/1234",
+      durations: { trumpet: 43, violin: 30} },
+];
+
+sound_test_cases.forEach(test_case => {
+describe(`waiting and non-waiting sounds (${test_case.tag})`, () => {
+    let original_project_root;
+
+    before(() => {
+        original_project_root = Sk.pytch.project_root;
+        Sk.pytch.project_root = test_case.project_root;
+    });
+
     let one_frame_fun = (project => () => {
         mock_sound_manager.one_frame();
         project.one_frame();
@@ -48,7 +65,8 @@ describe("waiting and non-waiting sounds", () => {
 
         // For the rest of the length of the 'trumpet' sound, it should stay
         // playing.
-        for (let i = 0; i != 18; ++i) {
+        let exp_remaining_trumpet_frames = test_case.durations.trumpet - 2;
+        for (let i = 0; i != exp_remaining_trumpet_frames; ++i) {
             one_frame();
             assert_running_performances(["trumpet"]);
         }
@@ -73,7 +91,8 @@ describe("waiting and non-waiting sounds", () => {
 
         // For the rest of the length of the 'violin' sound, it should stay
         // playing, and the thread should remain sleeping.
-        for (let i = 0; i != 9; ++i) {
+        let exp_remaining_violin_frames = test_case.durations.violin - 1;
+        for (let i = 0; i != exp_remaining_violin_frames; ++i) {
             one_frame();
             assert_running_performances(["violin"]);
             assert.strictEqual(orchestra.js_attr("played_violin"), "no")
@@ -136,7 +155,8 @@ describe("waiting and non-waiting sounds", () => {
 
         // For the rest of the length of the 'violin' sound, both sounds should
         // stay playing, and the thread should remain sleeping.
-        for (let i = 0; i != 9; ++i) {
+        let exp_remaining_violin_frames = test_case.durations.violin - 1;
+        for (let i = 0; i != exp_remaining_violin_frames; ++i) {
             one_frame();
             assert_running_performances(["trumpet", "violin"]);
             assert.strictEqual(orchestra.js_attr("played_both"), "nearly")
@@ -145,7 +165,10 @@ describe("waiting and non-waiting sounds", () => {
 
         // For the rest of the length of the 'trumpet' sound, it alone should
         // stay playing, with the thread having run to completion.
-        for (let i = 0; i != 9; ++i) {
+        let exp_remaining_trumpet_frames = (test_case.durations.trumpet
+                                            - test_case.durations.violin
+                                            - 1);
+        for (let i = 0; i != exp_remaining_trumpet_frames; ++i) {
             one_frame();
             assert_running_performances(["trumpet"]);
             assert.strictEqual(orchestra.js_attr("played_both"), "yes")
@@ -157,4 +180,8 @@ describe("waiting and non-waiting sounds", () => {
         assert_running_performances([]);
         assert.strictEqual(orchestra.js_attr("played_both"), "yes")
     })});
-});
+
+    after(() => {
+        Sk.pytch.project_root = original_project_root;
+    });
+})});

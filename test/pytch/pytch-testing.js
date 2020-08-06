@@ -203,16 +203,19 @@ const async_load_mock_image = (url) => {
 // properties.  Some of the images used in tests won't truly exist.
 
 const image_size_from_url = new Map([
-    ["library/images/question-mark.png", [32, 32]],
-    ["library/images/marching-alien.png", [60, 20]],
-    ["library/images/firing-alien.png", [80, 30]],
-    ["library/images/ball.png", [16, 16]],
-    ["library/images/square-80x80.png", [80, 80]],
-    ["library/images/rectangle-60x30.png", [60, 30]],
-    ["library/images/stage/solid-white.png", [480, 360]],
-    ["library/images/yellow-banana.png", [80, 30]],
-    ["library/images/balloon.png", [100, 200]],
-    ["library/images/stage/wooden.png", [480, 360]],
+    ["project-assets/library/images/question-mark.png", [32, 32]],
+    ["user-projects/1234/project-assets/library/images/question-mark.png", [32, 32]],
+    ["project-assets/library/images/marching-alien.png", [60, 20]],
+    ["user-projects/1234/project-assets/library/images/marching-alien.png", [60, 20]],
+    ["project-assets/library/images/firing-alien.png", [80, 30]],
+    ["user-projects/1234/project-assets/library/images/firing-alien.png", [80, 30]],
+    ["project-assets/library/images/ball.png", [16, 16]],
+    ["project-assets/library/images/square-80x80.png", [80, 80]],
+    ["project-assets/library/images/rectangle-60x30.png", [60, 30]],
+    ["project-assets/library/images/stage/solid-white.png", [480, 360]],
+    ["project-assets/library/images/yellow-banana.png", [80, 30]],
+    ["project-assets/library/images/balloon.png", [100, 200]],
+    ["project-assets/library/images/stage/wooden.png", [480, 360]],
 ]);
 
 class MockImage {
@@ -238,8 +241,10 @@ class MockImage {
 // properties.
 
 const sound_duration_from_url = new Map([
-    ["library/sounds/trumpet.mp3", 20],
-    ["library/sounds/violin.mp3", 10],
+    ["project-assets/library/sounds/trumpet.mp3", 20],
+    ["project-assets/library/sounds/violin.mp3", 10],
+    ["user-projects/1234/project-assets/library/sounds/trumpet.mp3", 43],
+    ["user-projects/1234/project-assets/library/sounds/violin.mp3", 30],
 ]);
 
 class MockSound {
