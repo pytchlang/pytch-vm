@@ -71,10 +71,10 @@ $(document).ready(function() {
 
         append_text(txt) {
             if (this.is_placeholder) {
-                this.content_elt.innerHTML = txt;
+                this.content_elt.innerText = txt;
                 this.is_placeholder = false;
             } else {
-                this.content_elt.innerHTML += txt;
+                this.content_elt.innerText += txt;
             }
         }
     }
@@ -596,7 +596,9 @@ $(document).ready(function() {
     // Report errors
 
     let report_uncaught_exception = (e => {
-        let msg = Sk.builtin.str(e).v;
+        let msg = ((e instanceof Error)
+                   ? `Error: ${e.message}`
+                   : Sk.builtin.str(e).v);
         stderr_info_pane.append_text(msg + "\n");
         make_tab_current("stderr");
     });
