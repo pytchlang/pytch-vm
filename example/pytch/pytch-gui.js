@@ -241,6 +241,10 @@ $(document).ready(function() {
             $(content_elt).addClass("augmented");
         }
 
+        async copy_added_content(tbody_elt, copy_button_elt) {
+            await navigator.clipboard.writeText(tbody_elt.dataset.addedText);
+        }
+
         next_chapter() {
             this.chapter_index += 1;
             this.refresh();
