@@ -141,6 +141,11 @@ $(document).ready(function() {
             this.chapter_index = initial_chapter_index;
         }
 
+        leap_to_chapter(chapter_index) {
+            this.chapter_index = chapter_index;
+            this.refresh();
+        }
+
         refresh() {
             this.chapter_elt.innerHTML = "";
             this.chapter_elt.appendChild(this.tutorial.chapter(this.chapter_index));
