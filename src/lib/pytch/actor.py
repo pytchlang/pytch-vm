@@ -115,6 +115,22 @@ class Sprite(Actor):
     def delete_this_clone(self):
         self._pytch_parent_project.unregister_actor_instance(self)
 
+    def move_to_front_layer(self):
+        (self._pytch_parent_project
+         .move_within_draw_layer_group(self, "absolute", -1))
+
+    def move_to_back_layer(self):
+        (self._pytch_parent_project
+         .move_within_draw_layer_group(self, "absolute", 0))
+
+    def move_forward_layers(self, n_layers):
+        (self._pytch_parent_project
+         .move_within_draw_layer_group(self, "relative", n_layers))
+
+    def move_backward_layers(self, n_layers):
+        (self._pytch_parent_project
+         .move_within_draw_layer_group(self, "relative", -n_layers))
+
 
 class Stage(Actor):
     Backdrops = [('solid-white', 'library/images/stage/solid-white.png')]
