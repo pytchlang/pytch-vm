@@ -22,3 +22,7 @@ src/internalpython.js
 Pipfile
 package-lock.json
 *~
+example/pytch/skulpt.js
+example/pytch/skulpt.min.js
+example/pytch/skulpt-stdlib.js
+example/pytch/tutorials/
