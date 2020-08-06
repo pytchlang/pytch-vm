@@ -844,6 +844,24 @@ var $builtinmodule = function (name) {
             this.py_project = py_project;
             this.actors = [];
             this.thread_groups = [];
+
+            // List of 'layer groups'.  Each layer-group is a list.
+            // The groups are drawn in order, so things in
+            // lower-indexed layer-groups are hidden by things in
+            // higher-indexed groups.  The layer groups are intended
+            // for stage, sprites, and text (when implemented), in
+            // that order.  See the constants defined in the
+            // DrawLayerGroup class.
+            //
+            // Within a layer-group list, things earlier in that list
+            // are drawn first, and so appear as further from the
+            // viewer.
+            //
+            this.draw_layer_groups = [
+                new DrawLayerGroup(),  // Stage
+                new DrawLayerGroup(),  // Sprites
+                new DrawLayerGroup(),  // Text (one day)
+            ];
         }
 
         actor_by_class_name(cls_name) {
