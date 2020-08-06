@@ -142,6 +142,17 @@ $(document).ready(function() {
             this.refresh();
         }
 
+        populate_toc() {
+            this.toc_list_elt.innerHTML = "";
+            this.tutorial.chapters.forEach((ch, i) => {
+                let toc_entry_elt = document.createElement("li");
+                toc_entry_elt.setAttribute("data-chapter-index", i);
+                toc_entry_elt.innerHTML = this.tutorial.chapter_title(i);
+                $(toc_entry_elt).click((evt) => this.leap_to_chapter_from_event(evt));
+                this.toc_list_elt.appendChild(toc_entry_elt);
+            });
+        }
+
         leap_to_chapter(chapter_index) {
             this.chapter_index = chapter_index;
             this.refresh();
