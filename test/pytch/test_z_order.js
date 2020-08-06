@@ -4,6 +4,7 @@ const {
     configure_mocha,
     with_project,
     assert,
+    many_frames,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -67,6 +68,17 @@ describe("z-order of clones with deletion", () => {
     with_project("py/project/z_order_with_cloning.py", (import_project) => {
         it("does not draw a deleted clone", async () => {
             let project = await import_project();
+
+            project.do_synthetic_broadcast("init");
+            project.one_frame();
+
+            // Create 7 clones; each broadcast clones all existing instances.
+            for (let i = 0; i != 3; ++i) {
+                project.do_synthetic_broadcast("create-clone");
+                // Allow the message-receiver to run, and the newly-created
+                // clone to run also and get its id.
+                many_frames(project, 2);
+            }
         });
     });
 });
