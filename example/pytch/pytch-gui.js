@@ -147,6 +147,16 @@ $(document).ready(function() {
 
             this.chapter_elt.scrollTop = 0;
         }
+
+        next_chapter() {
+            this.chapter_index += 1;
+            this.refresh();
+        }
+
+        prev_chapter() {
+            this.chapter_index -= 1;
+            this.refresh();
+        }
     }
 
 
