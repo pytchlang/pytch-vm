@@ -71,10 +71,10 @@ $(document).ready(function() {
 
         append_text(txt) {
             if (this.is_placeholder) {
-                this.content_elt.innerHTML = txt;
+                this.content_elt.innerText = txt;
                 this.is_placeholder = false;
             } else {
-                this.content_elt.innerHTML += txt;
+                this.content_elt.innerText += txt;
             }
         }
     }
