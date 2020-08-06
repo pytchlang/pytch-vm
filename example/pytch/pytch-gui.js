@@ -180,6 +180,27 @@ $(document).ready(function() {
             content_elt.appendChild(nav_buttons_elt);
         }
 
+        maybe_augment_front_matter() {
+            let content_elt = this.chapter_elt.querySelector("div.front-matter");
+
+            if ($(content_elt).hasClass("augmented"))
+                return;
+
+            let run_div = content_elt.querySelector("div.run-finished-project");
+            if (run_div !== null) {
+                let buttons_p = document.createElement("p");
+                buttons_p.innerHTML = "Try the project!";
+                // Bit of a cheat to re-use 'next page' styling:
+                $(buttons_p).addClass("navigation nav-next");
+                $(buttons_p).click(() => this.run_final_project());
+                run_div.appendChild(buttons_p);
+            }
+
+            this.augment_with_navigation(content_elt);
+
+            $(content_elt).addClass("augmented")
+        }
+
         next_chapter() {
             this.chapter_index += 1;
             this.refresh();
