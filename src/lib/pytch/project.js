@@ -928,6 +928,21 @@ var $builtinmodule = function (name) {
             this.actors.unshift(stage);
         }
 
+        register_for_drawing(actor_instance) {
+            let layer_group = this.draw_layer_groups[actor_instance.layer_group];
+            layer_group.register(actor_instance);
+        }
+
+        unregister_for_drawing(actor_instance) {
+            let layer_group = this.draw_layer_groups[actor_instance.layer_group];
+            layer_group.unregister(actor_instance);
+        }
+
+        unregister_nearly_all_for_drawing(actor, instance_to_keep) {
+            let layer_group = this.draw_layer_groups[actor.layer_group];
+            layer_group.unregister_nearly_all(actor, instance_to_keep);
+        }
+
         sprite_instances_are_touching(py_sprite_instance_0, py_sprite_instance_1) {
             let actor_instance_0 = py_sprite_instance_0.$pytchActorInstance;
             let actor_instance_1 = py_sprite_instance_1.$pytchActorInstance;
