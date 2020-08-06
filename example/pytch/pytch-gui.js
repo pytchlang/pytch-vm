@@ -150,6 +150,11 @@ $(document).ready(function() {
             this.chapter_elt.innerHTML = "";
             this.chapter_elt.appendChild(this.tutorial.chapter(this.chapter_index));
 
+            if (this.chapter_index == 0)
+                this.maybe_augment_front_matter();
+            else
+                this.maybe_augment_patch_divs();
+
             this.chapter_elt.scrollTop = 0;
         }
 
