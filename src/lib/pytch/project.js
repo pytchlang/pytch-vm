@@ -863,6 +863,40 @@ var $builtinmodule = function (name) {
             this.instances = this.instances.filter(
                 a => (a === instance_to_keep || a.actor !== actor));
         }
+
+        move(instance, move_kind, index_or_offset) {
+            let current_index = this.instances.indexOf(instance);
+            if (current_index === -1)
+                throw Error("could not find instance in draw-layer-group");
+
+            const n_instances = this.instances.length;
+            let new_index = null;
+
+            switch (move_kind) {
+            case "absolute": {
+                new_index = index_or_offset;
+                if (new_index < 0)
+                    new_index = n_instances + new_index;
+                break;
+            }
+            case "relative": {
+                new_index = current_index + index_or_offset;
+                break;
+            }
+            default:
+                throw Error(`unknown move-kind "${move_kind}"`);
+            }
+
+            if (new_index < 0)
+                new_index = 0;
+            if (new_index >= n_instances)
+                new_index = n_instances - 1;
+
+            // Try a simple-minded implementation first.  If performance becomes
+            // important, we can do something cleverer.
+            this.instances.splice(current_index, 1);
+            this.instances.splice(new_index, 0, instance);
+        }
     }
 
 
