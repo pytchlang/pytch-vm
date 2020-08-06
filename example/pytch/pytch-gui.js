@@ -174,6 +174,9 @@ $(document).ready(function() {
                 this.maybe_augment_patch_divs();
 
             this.chapter_elt.scrollTop = 0;
+
+            $(this.toc_list_elt).find("li").removeClass("shown");
+            $($(this.toc_list_elt).find("li")[this.chapter_index]).addClass("shown");
         }
 
         run_final_project() {
