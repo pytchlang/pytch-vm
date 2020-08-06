@@ -153,6 +153,12 @@ $(document).ready(function() {
             this.chapter_elt.scrollTop = 0;
         }
 
+        run_final_project() {
+            ace_editor.setValue(this.tutorial.final_code);
+            ace_editor.clearSelection();
+            build_button.visibly_build(true);
+        }
+
         augment_with_navigation(content_elt) {
             let nav_buttons_elt = document.createElement("div");
             $(nav_buttons_elt).addClass("navigation-buttons");
