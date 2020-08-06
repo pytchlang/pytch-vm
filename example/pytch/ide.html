@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pytch</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="//ajaxorg.github.io/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="skulpt.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="skulpt-stdlib.js" type="text/javascript" charset="utf-8"></script>
+    <script src="pytch-gui.js" type="text/javascript" charset="utf-8"></script>
+    <script src="jquery.dropdown.js" type="text/javascript" charset="utf-8"></script>
+    <link type="text/css" rel="stylesheet" media="screen" href="pytch-gui.css">
+    <link type="text/css" rel="stylesheet" href="jquery.dropdown.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap">
+  </head>
+  <body>
+    <div id="code-and-stage">
+      <div id="editor">
+      </div>
+      <div id="stage-with-buttons">
+        <div id="stage-controls">
+          <div id="build-button"><p>BUILD</p></div>
+          <div id="green-flag"><p>&nbsp;</p></div>
+          <div id="red-stop"><p>&nbsp;</p></div>
+          <div id="info-menu"><p>☰</p></div>
+        </div>
+        <canvas id="pytch-canvas" width="480" height="360"></canvas>
+      </div>
+    </div>
+
+    <div id="info-panel-tabs">
+      <p id="tab-header-tutorial" class="tab-link tutorial current" data-tab="tutorial">Tutorial</p>
+      <p id="tab-header-stdout" class="tab-link stdout" data-tab="stdout">Output</p>
+      <p id="tab-header-stderr" class="tab-link stderr" data-tab="stderr">Errors</p>
+    </div>
+    <div id="info-panel-content">
+      <div id="tab-pane-tutorial" class="tab-content current">
+        <div class="ToC"><p>Contents</p><ul class="entries"></ul></div>
+        <div class="chapter-container"></div></div>
+      <div id="tab-pane-stdout" class="tab-content">
+        <pre id="tab-content-stdout"></pre></div>
+      <div id="tab-pane-stderr" class="tab-content">
+        <pre id="tab-content-stderr"></pre></div>
+    </div>
+  </body>
+</html>

@@ -10,7 +10,11 @@ $(document).ready(function() {
 
     ace_editor.getSession().setUseWorker(false);
     ace_editor.getSession().setMode("ace/mode/python");
-    ace_editor.setValue("#\n# Write your Pytch code here!\n#\n");
+    ace_editor.setValue("import pytch\n"
+                        + "from pytch import (\n"
+                        + "    Stage,\n"
+                        + "    Sprite,\n"
+                        + ")\n\n");
     ace_editor.clearSelection();
 
     let show_code_changed_indicator = (evt => {
@@ -40,14 +44,14 @@ $(document).ready(function() {
     });
 
     let make_tab_current = (tab_nub => {
-        $("#info-panels-container ul.tabs li").removeClass("current");
-        $("#info-panels-container div.tab-content").removeClass("current");
+        $("#info-panel-tabs p").removeClass("current");
+        $("#info-panel-content div.tab-content").removeClass("current");
 
         $(`#tab-header-${tab_nub}`).addClass("current");
         $(`#tab-pane-${tab_nub}`).addClass("current");
     });
 
-    $("#info-panels-container ul.tabs li").click(make_tab_current_via_evt);
+    $("#info-panel-tabs p").click(make_tab_current_via_evt);
 
     ////////////////////////////////////////////////////////////////////////
     //
