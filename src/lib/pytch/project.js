@@ -365,6 +365,10 @@ var $builtinmodule = function (name) {
             return sprite;
         }
 
+        get layer_group() {
+            return DrawLayerGroup.SPRITES;
+        }
+
         get appearances_attr_name() {
             return s_Costumes;
         }
@@ -398,6 +402,10 @@ var $builtinmodule = function (name) {
             await stage.async_init();
             py_cls.$pytchActor = stage;
             return stage;
+        }
+
+        get layer_group() {
+            return DrawLayerGroup.STAGE;
         }
 
         get appearances_attr_name() {
