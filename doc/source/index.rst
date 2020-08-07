@@ -10,3 +10,4 @@ The Pytch VM and IDE
    :maxdepth: 2
    :caption: Contents:
 
+   internals/index
