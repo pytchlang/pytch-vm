@@ -503,7 +503,7 @@ var $builtinmodule = function (name) {
         }
 
         get info_label() {
-            return `${this.actor.class_name}-${this.numeric_id}`;
+            return `${this.class_name}-${this.numeric_id}`;
         }
 
         create_click_handlers_threads(thread_group) {
