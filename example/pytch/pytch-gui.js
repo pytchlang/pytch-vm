@@ -645,8 +645,9 @@ $(document).ready(function() {
             $(explanation_p).hide();
 
             let intro_div = document.createElement("div");
+            let intro_nub = error_intro_nub_for_context(context);
             intro_div.innerHTML = (
-                ("<p class=\"errors-intro\">Your project has stopped because:</p>"
+                (`<p class=\"errors-intro\">Your project ${intro_nub} because:</p>`
                  + "<ul></ul>"));
 
             container_div.innerHTML = "";
