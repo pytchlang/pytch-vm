@@ -596,10 +596,10 @@ $(document).ready(function() {
         let explanation_p = document.getElementById("exceptions-explanation");
         let container_div = document.getElementById("exceptions-container");
 
-        // Are we currently showing the rich list of errors?  If not, we are
-        // showing the explanatory text saying that any errors would appear in
-        // that tab.
-        let have_error_list = false;
+        // What 'context', if any, are we currently showing the rich list of
+        // errors for?  If none (represented as null), we are showing the
+        // explanatory text saying that any errors would appear in that tab.
+        let have_error_list_for_context = null;
 
         // Throw away any previous errors and ensure we are showing the
         // explanation for the tab instead.
