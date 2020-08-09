@@ -682,6 +682,7 @@ $(document).ready(function() {
             let span = document.createElement("span");
             span.innerText = `line ${lineno}`;
             $(span).addClass("error-loc");
+            span.setAttribute("data-lineno", lineno);
 
             let old_span = parent_elt.querySelector("span");
             parent_elt.replaceChild(span, old_span);
