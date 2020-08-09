@@ -640,6 +640,10 @@ $(document).ready(function() {
                 simple_str += ": " + err.args.v[0].v;
             return simple_str;
         });
+
+        const append_error = (err, thread_info) => {
+            ensure_have_error_list();
+        };
     })();
 
 
