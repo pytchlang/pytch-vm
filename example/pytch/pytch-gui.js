@@ -679,7 +679,8 @@ $(document).ready(function() {
         });
 
         const append_error = (err, thread_info) => {
-            ensure_have_error_list();
+            let context = (thread_info === null ? "build" : "run");
+            ensure_have_error_list(context);
 
             let err_li = document.createElement("li");
             $(err_li).addClass("one-error");
