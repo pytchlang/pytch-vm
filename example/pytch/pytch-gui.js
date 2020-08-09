@@ -83,10 +83,6 @@ $(document).ready(function() {
         "<span class=\"info\">Any output from your script will appear here.</span>",
         "stdout");
 
-    let stderr_info_pane = new TextPane(
-        "<span class=\"info\">Any errors from your script will appear here.</span>",
-        "stderr");
-
 
     ////////////////////////////////////////////////////////////////////////////////
     //
