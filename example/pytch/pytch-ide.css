@@ -144,6 +144,20 @@ body {
     margin-left: 2em;
 }
 
+#exceptions-container ul {
+    margin-left: 2em;
+    padding-left: 0em;
+    list-style: none;
+}
+
+#exceptions-container ul li.one-error {
+    margin: 3ex 0em;
+    border-radius: 6px;
+    padding: 16px;
+    width: 48em;
+    background-color: #faa;
+}
+
 
 /******************************************************************************/
 
