@@ -324,8 +324,9 @@ var $builtinmodule = function (name) {
             }
         }
 
-        create_threads_for_green_flag() {
-            return this.event_handlers.green_flag.create_threads(this.parent_project);
+        create_threads_for_green_flag(thread_group) {
+            this.event_handlers.green_flag.create_threads(thread_group,
+                                                          this.parent_project);
         }
 
         create_threads_for_broadcast(js_message) {
