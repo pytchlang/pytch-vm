@@ -669,6 +669,20 @@ $(document).ready(function() {
                 = (`A <i>${thread_info.target_class_kind}</i>`
                    + ` of class <i>${thread_info.target_class_name}</i>`);
 
+            let err_traceback_ul = err_li.querySelector("ul.err-traceback");
+            err.traceback.forEach((frame, idx) => {
+                let intro = (idx > 0) ? "called by" : "at";
+                append_err_li_html(
+                    err_traceback_ul,
+                    `${intro} <span class="error-loc">line ${frame.lineno}</span>`
+                    + " of your code");
+            });
+
+            append_err_li_html(err_traceback_ul,
+                               `in the method <code>${thread_info.callable_name}</code>`);
+            append_err_li_html(err_traceback_ul,
+                               `running because of <code>${thread_info.event_label}</code>`);
+
             let errors_ul = container_div.querySelector("ul");
             errors_ul.append(err_li);
         };
