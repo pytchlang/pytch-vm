@@ -682,6 +682,15 @@ $(document).ready(function() {
             let context = (thread_info === null ? "build" : "run");
             ensure_have_error_list(context);
 
+            switch (context) {
+            case "build": {
+                // TODO
+                break;
+            }
+            case "run": {
+
+            // TODO: Re-indent.
+
             let err_li = document.createElement("li");
             $(err_li).addClass("one-error");
             err_li.innerHTML = ("<p class=\"intro\"></p>"
@@ -716,6 +725,13 @@ $(document).ready(function() {
 
             let errors_ul = container_div.querySelector("ul");
             errors_ul.append(err_li);
+
+                break;
+            }
+
+            default:
+                throw Error(`unknown error context ${context}`);
+            }
         };
 
         return {
