@@ -26,3 +26,5 @@ example/pytch/skulpt.js
 example/pytch/skulpt.min.js
 example/pytch/skulpt-stdlib.js
 example/pytch/tutorials/
+doc/venv/
+doc/build/

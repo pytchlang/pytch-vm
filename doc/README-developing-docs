@@ -1,0 +1,11 @@
+To set up for writing docs:
+
+    virtualenv -p python3 venv
+    source venv/bin/activate
+    pip install sphinx sphinx-rtd-theme sphinx-autobuild
+
+Then
+
+    sphinx-autobuild --re-ignore '/\.#' source build/html
+
+will launch a live-reload server to view the results.
