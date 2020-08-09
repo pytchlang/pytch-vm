@@ -36,7 +36,7 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
-    // Info tabs (stdout, stderr)
+    // Info tabs (tutorial stdout, errors)
 
     let make_tab_current_via_evt = (evt => {
         let tab_nub = evt.target.dataset.tab;
@@ -53,9 +53,10 @@ $(document).ready(function() {
 
     $("#info-panel-tabs p").click(make_tab_current_via_evt);
 
+
     ////////////////////////////////////////////////////////////////////////
     //
-    // Contents of individual panes
+    // Contents of stdout pane
 
     class TextPane {
         constructor(initial_html, tab_nub) {
