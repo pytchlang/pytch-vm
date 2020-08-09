@@ -1112,6 +1112,9 @@ var $builtinmodule = function (name) {
                                                this.thread_groups);
 
             this.thread_groups = new_thread_groups;
+
+            if (this.thread_groups.some(tg => tg.raised_exception()))
+                this.thread_groups = [];
         }
 
         on_red_stop_clicked() {
