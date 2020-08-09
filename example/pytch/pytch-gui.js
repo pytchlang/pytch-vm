@@ -695,7 +695,24 @@ $(document).ready(function() {
 
             switch (context) {
             case "build": {
-                // TODO
+                let n_traceback_frames = err.traceback.length;
+                if (n_traceback_frames != 1)
+                    throw Error("expecting single-frame traceback for build error"
+                                + ` but got ${n_traceback_frame}-frame one`);
+                let frame = err.traceback[0];
+
+                err_li.querySelector("p.intro").innerHTML = "Your code";
+
+                let err_message_ul = err_li.querySelector("ul.err-message");
+                append_err_li_text(err_message_ul, msg);
+
+                let err_traceback_ul = err_li.querySelector("ul.err-traceback");
+                append_err_li_html(err_traceback_ul,
+                                   `at <span class="error-loc">line ${frame.lineno}</span>`);
+
+                let errors_ul = container_div.querySelector("ul");
+                errors_ul.append(err_li);
+
                 break;
             }
             case "run": {
