@@ -612,6 +612,27 @@ $(document).ready(function() {
 
             have_error_list = false;
         };
+
+        // Make sure we are showing the <div> containing the rich error reports
+        // rather than the explanatory para.  If are already showing the error
+        // list, do nothing because there will already be errors there.
+        const ensure_have_error_list = () => {
+            if (have_error_list)
+                return;
+
+            $(explanation_p).hide();
+
+            let intro_div = document.createElement("div");
+            intro_div.innerHTML = (
+                ("<p class=\"errors-intro\">Your project has stopped because:</p>"
+                 + "<ul></ul>"));
+
+            container_div.innerHTML = "";
+            container_div.appendChild(intro_div);
+            $(container_div).show();
+
+            have_error_list = true;
+        };
     })();
 
 
