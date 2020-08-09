@@ -868,6 +868,6 @@ $(document).ready(function() {
                                        $("#tab-pane-tutorial")[0]);
     };
 
-    launch_tutorial("tutorials/bunner/").then(
+    launch_tutorial("tutorials/bunner").then(
         () => window.requestAnimationFrame(one_frame));
 });
