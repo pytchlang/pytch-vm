@@ -716,8 +716,8 @@ $(document).ready(function() {
                 append_err_li_text(err_message_ul, msg);
 
                 let err_traceback_ul = err_li.querySelector("ul.err-traceback");
-                append_err_li_html(err_traceback_ul,
-                                   `at <span class="error-loc">line ${frame.lineno}</span>`);
+                let frame_li = append_err_li_html(err_traceback_ul, "at <span></span>");
+                punch_in_lineno_span(frame_li, frame.lineno);
 
                 let errors_ul = container_div.querySelector("ul");
                 errors_ul.append(err_li);
@@ -733,10 +733,9 @@ $(document).ready(function() {
                 let err_traceback_ul = err_li.querySelector("ul.err-traceback");
                 err.traceback.forEach((frame, idx) => {
                     let intro = (idx > 0) ? "called by" : "at";
-                    append_err_li_html(
-                        err_traceback_ul,
-                        `${intro} <span class="error-loc">line ${frame.lineno}</span>`
-                            + " of your code");
+                    let frame_li = append_err_li_html(
+                        err_traceback_ul, `${intro} <span></span> of your code`);
+                    punch_in_lineno_span(frame_li, frame.lineno);
                 });
 
                 append_err_li_html(err_traceback_ul,
