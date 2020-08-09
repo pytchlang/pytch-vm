@@ -702,11 +702,7 @@ $(document).ready(function() {
 
 
     let report_uncaught_exception = ((e, thread_info) => {
-        // TODO: Make use of 'thread_info'.
-        let msg = ((e instanceof Error)
-                   ? `Error: ${e.message}`
-                   : Sk.builtin.str(e).v);
-        stderr_info_pane.append_text(msg + "\n");
+        errors_info_pane.append_error(e, thread_info);
         make_tab_current("stderr");
     });
 
