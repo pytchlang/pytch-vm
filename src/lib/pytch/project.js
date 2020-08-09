@@ -836,8 +836,8 @@ var $builtinmodule = function (name) {
             return this.handlers.length;
         }
 
-        create_threads(parent_project) {
-            return map_concat(h => h.create_threads(parent_project), this.handlers);
+        create_threads(thread_group, parent_project) {
+            this.handlers.forEach(h => h.create_threads(thread_group, parent_project));
         }
     }
 
