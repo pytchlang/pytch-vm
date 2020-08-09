@@ -678,6 +678,15 @@ $(document).ready(function() {
             return simple_str;
         });
 
+        const punch_in_lineno_span = (parent_elt, lineno) => {
+            let span = document.createElement("span");
+            span.innerText = `line ${lineno}`;
+            $(span).addClass("error-loc");
+
+            let old_span = parent_elt.querySelector("span");
+            parent_elt.replaceChild(span, old_span);
+        };
+
         const append_error = (err, thread_info) => {
             let context = (thread_info === null ? "build" : "run");
             ensure_have_error_list(context);
