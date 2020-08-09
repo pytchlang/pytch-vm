@@ -758,6 +758,11 @@ $(document).ready(function() {
             }
         };
 
+        const go_to_error_location = (evt => {
+            let lineno = +evt.target.dataset.lineno;
+            ace_editor.gotoLine(lineno, 0, true);
+        });
+
         return {
             append_error,
             reset,
