@@ -688,12 +688,12 @@ var $builtinmodule = function (name) {
                     let actor = py_cls.$pytchActor;
                     actor.register_py_instance(py_instance);
 
-                    let threads = actor.clone_handlers.map(
-                        py_fun => new Thread(py_fun,
-                                             py_instance,
-                                             this.parent_project));
+                    let new_thread_group = new ThreadGroup("start-as-clone");
+                    actor.clone_handlers.forEach(
+                        py_fun => new_thread_group.create_thread(py_fun,
+                                                                 py_instance,
+                                                                 this.parent_project));
 
-                    let new_thread_group = new ThreadGroup("start-as-clone", threads);
                     return [new_thread_group];
                 }
 
