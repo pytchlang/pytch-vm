@@ -1055,8 +1055,8 @@ var $builtinmodule = function (name) {
             // Stop the world before re-launching anything.
             this.on_red_stop_clicked();
 
-            let threads = map_concat(a => a.create_threads_for_green_flag(), this.actors);
-            let thread_group = new ThreadGroup("green-flag", threads);
+            let thread_group = new ThreadGroup("green-flag");
+            this.actors.forEach(a => a.create_threads_for_green_flag(thread_group));
             this.thread_groups.push(thread_group);
         }
 
