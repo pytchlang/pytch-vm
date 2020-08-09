@@ -646,7 +646,6 @@ $(document).ready(function() {
             disable();
             stdout_info_pane.reset();
             stderr_info_pane.reset();
-            make_tab_current("stdout");
             hide_code_changed_indicator();
         };
 
