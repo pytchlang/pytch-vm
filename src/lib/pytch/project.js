@@ -716,6 +716,10 @@ var $builtinmodule = function (name) {
         info() {
             let instance = this.actor_instance;
             return {
+                event_label: this.thread_group.label,
+                target_class_kind: instance.actor.class_kind_name,
+                target_class_name: instance.class_name,
+                callable_name: this.callable_name,
                 target: `${instance.info_label} (${this.callable_name})`,
                 state: this.state,
                 wait: this.human_readable_sleeping_on,
