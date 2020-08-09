@@ -651,6 +651,10 @@ $(document).ready(function() {
                                 + "<p>had this problem:</p>"
                                 + "<ul class=\"err-message\"></ul>");
 
+            err_li.querySelector("p.intro").innerHTML
+                = (`A <i>${thread_info.target_class_kind}</i>`
+                   + ` of class <i>${thread_info.target_class_name}</i>`);
+
             let errors_ul = container_div.querySelector("ul");
             errors_ul.append(err_li);
         };
