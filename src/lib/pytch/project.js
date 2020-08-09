@@ -757,6 +757,10 @@ var $builtinmodule = function (name) {
             this.threads = [];
         }
 
+        create_thread(py_callable, py_arg, parent_project) {
+            this.threads.push(new Thread(py_callable, py_arg, parent_project));
+        }
+
         raised_exception() {
             return this.threads.some(t => t.raised_exception());
         }
