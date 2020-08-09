@@ -553,6 +553,8 @@ var $builtinmodule = function (name) {
                 return `performance of sound "${this.sleeping_on.tag}"`;
 
             default:
+                // We should never ask for a human-readable summary of what a
+                // thread in state ZOMBIE or RAISED_EXCEPTION is waiting for.
                 throw Error(`thread in bad state "${this.state}"`);
             }
         }
