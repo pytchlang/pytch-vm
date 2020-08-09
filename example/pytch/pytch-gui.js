@@ -592,6 +592,12 @@ $(document).ready(function() {
     //
     // Report errors
 
+    let errors_info_pane = (() => {
+        let explanation_p = document.getElementById("exceptions-explanation");
+        let container_div = document.getElementById("exceptions-container");
+    })();
+
+
     let report_uncaught_exception = ((e, thread_info) => {
         // TODO: Make use of 'thread_info'.
         let msg = ((e instanceof Error)
