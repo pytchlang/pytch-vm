@@ -610,7 +610,7 @@ $(document).ready(function() {
             container_div.innerHTML = "";
             $(container_div).hide();
 
-            have_error_list = false;
+            have_error_list_for_context = null;
         };
 
         // Make sure we are showing the <div> containing the rich error reports
