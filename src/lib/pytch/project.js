@@ -371,6 +371,8 @@ var $builtinmodule = function (name) {
 
         get appearance_single_name() { return "Costume"; }
 
+        get class_kind_name() { return "Sprite"; }
+
         validate_descriptor(descr) {
             if (descr.length !== 4)
                 this.reject_appearance_descriptor(
@@ -403,6 +405,8 @@ var $builtinmodule = function (name) {
         get appearances_attr_name() { return s_Backdrops; }
 
         get appearance_single_name() { return "Backdrop"; }
+
+        get class_kind_name() { return "Stage"; }
 
         validate_descriptor(descr) {
             if (descr.length !== 2)
