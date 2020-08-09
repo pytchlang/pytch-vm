@@ -6,6 +6,7 @@ const {
     assert,
     pytch_errors,
     js_getattr,
+    many_frames,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -40,6 +41,30 @@ describe("error handling", () => {
 
             const assert_n_ticks
                   = (exp_n_ticks) => assert.equal(n_ticks(), exp_n_ticks);
+
+            project.do_synthetic_broadcast("go");
+            project.one_frame();
+
+            // We should have done the first iteration of the 'while'.
+            assert_n_ticks(1);
+
+            let thrown_errors = [];
+            for (let i = 0; i != 50; ++i) {
+                project.one_frame();
+                thrown_errors = pytch_errors.drain_errors();
+                if (thrown_errors.length > 0)
+                    break;
+            }
+
+            assert.ok(thrown_errors.length == 3,
+                      "should have thrown 3 errors within 50 frames");
+
+            const n_ticks_when_errors_thrown = n_ticks();
+
+            many_frames(project, 20);
+
+            assert.equal(n_ticks(), n_ticks_when_errors_thrown,
+                         "Banana should stop ticking once errors thrown");
         });
     });
 });
