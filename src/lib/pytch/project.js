@@ -731,6 +731,9 @@ var $builtinmodule = function (name) {
         // ZOMBIE: The thread has terminated but has not yet been cleared from
         // the list of live threads.
         ZOMBIE: "zombie",
+
+        // RAISED_EXCEPTION: The thread raised an exception.
+        RAISED_EXCEPTION: "raised-exception",
     };
 
 
