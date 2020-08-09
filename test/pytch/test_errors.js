@@ -5,6 +5,7 @@ const {
     with_project,
     assert,
     pytch_errors,
+    js_getattr,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -34,6 +35,11 @@ describe("error handling", () => {
         it("stops everything on error", async () => {
             let project = await import_project();
             let banana = project.instance_0_by_class_name("Banana");
+
+            const n_ticks = () => js_getattr(banana.py_object, "n_ticks");
+
+            const assert_n_ticks
+                  = (exp_n_ticks) => assert.equal(n_ticks(), exp_n_ticks);
         });
     });
 });
