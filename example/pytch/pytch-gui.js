@@ -756,6 +756,8 @@ $(document).ready(function() {
             default:
                 throw Error(`unknown error context ${context}`);
             }
+
+            $(err_li).find(".error-loc").click(go_to_error_location);
         };
 
         const go_to_error_location = (evt => {
