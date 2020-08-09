@@ -28,7 +28,7 @@ describe("error handling", () => {
             errs = pytch_errors.drain_errors();
             assert.strictEqual(errs.length, 1);
 
-            let err_str = errs[0].toString();
+            let err_str = errs[0].err.toString();
             assert.ok(/Alien.*has no attribute.*boost_shields/.test(err_str));
         })});
 
