@@ -329,10 +329,10 @@ var $builtinmodule = function (name) {
                                                           this.parent_project);
         }
 
-        create_threads_for_broadcast(js_message) {
+        create_threads_for_broadcast(thread_group, js_message) {
             let event_handler_group = (this.event_handlers.message[js_message]
                                        || EventHandlerGroup.empty);
-            return event_handler_group.create_threads(this.parent_project);
+            event_handler_group.create_threads(thread_group, this.parent_project);
         }
 
         create_threads_for_keypress(keyname) {
