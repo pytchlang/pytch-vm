@@ -616,9 +616,20 @@ $(document).ready(function() {
         // Make sure we are showing the <div> containing the rich error reports
         // rather than the explanatory para.  If are already showing the error
         // list, do nothing because there will already be errors there.
-        const ensure_have_error_list = () => {
-            if (have_error_list)
+        const ensure_have_error_list = (context) => {
+            // Have we already set the error-info pane up?  We only want to do
+            // so once.
+            if (have_error_list_for_context !== null) {
+                // If we have already set it up, it should be for the same
+                // context (build or run) as we're now being asked for.
+                if (have_error_list_for_context !== context)
+                    throw Error("already have error info for "
+                                + have_error_list_for_context
+                                + " but was asked to set one up for "
+                                + context);
+
                 return;
+            }
 
             $(explanation_p).hide();
 
@@ -631,7 +642,7 @@ $(document).ready(function() {
             container_div.appendChild(intro_div);
             $(container_div).show();
 
-            have_error_list = true;
+            have_error_list_for_context = context;
         };
 
         const append_err_li_text = (ul, text) => {
