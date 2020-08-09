@@ -1061,9 +1061,10 @@ var $builtinmodule = function (name) {
         }
 
         thread_group_for_broadcast_receivers(js_message) {
-            let threads = map_concat(a => a.create_threads_for_broadcast(js_message),
-                                     this.actors);
-            return new ThreadGroup(`message "${js_message}"`, threads);
+            let thread_group = new ThreadGroup(`message "${js_message}"`);
+            this.actors.forEach(a => a.create_threads_for_broadcast(thread_group,
+                                                                    js_message));
+            return thread_group;
         }
 
         launch_keypress_handlers() {
