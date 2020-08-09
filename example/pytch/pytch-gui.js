@@ -682,18 +682,23 @@ $(document).ready(function() {
             let context = (thread_info === null ? "build" : "run");
             ensure_have_error_list(context);
 
+            let err_li = document.createElement("li");
+            $(err_li).addClass("one-error");
+            err_li.innerHTML = ("<p class=\"intro\"></p>"
+                                + "<ul class=\"err-traceback\"></ul>"
+                                + "<p>had this problem:</p>"
+                                + "<ul class=\"err-message\"></ul>");
+
+            let msg = ((err instanceof Error)
+                       ? `Error: ${err.message}`
+                       : simple_exception_str(err));
+
             switch (context) {
             case "build": {
                 // TODO
                 break;
             }
             case "run": {
-                let err_li = document.createElement("li");
-                $(err_li).addClass("one-error");
-                err_li.innerHTML = ("<p class=\"intro\"></p>"
-                                    + "<ul class=\"err-traceback\"></ul>"
-                                    + "<p>had this problem:</p>"
-                                    + "<ul class=\"err-message\"></ul>");
 
                 err_li.querySelector("p.intro").innerHTML
                     = (`A <i>${thread_info.target_class_kind}</i>`
@@ -712,10 +717,6 @@ $(document).ready(function() {
                                    `in the method <code>${thread_info.callable_name}</code>`);
                 append_err_li_html(err_traceback_ul,
                                    `running because of <code>${thread_info.event_label}</code>`);
-
-                let msg = ((err instanceof Error)
-                           ? `Error: ${err.message}`
-                           : simple_exception_str(err));
 
                 let err_message_ul = err_li.querySelector("ul.err-message");
                 append_err_li_text(err_message_ul, msg);
