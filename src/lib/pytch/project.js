@@ -525,7 +525,9 @@ var $builtinmodule = function (name) {
     // prepares to run the given Python callable with the single given argument.
 
     class Thread {
-        constructor(py_callable, py_arg, parent_project) {
+        constructor(thread_group, py_callable, py_arg, parent_project) {
+            this.thread_group = thread_group;
+
             // Fake a skulpt-suspension-like object so we can treat it the
             // same as any other suspension in the scheduler.
             this.skulpt_susp = {
@@ -767,7 +769,7 @@ var $builtinmodule = function (name) {
         }
 
         create_thread(py_callable, py_arg, parent_project) {
-            this.threads.push(new Thread(py_callable, py_arg, parent_project));
+            this.threads.push(new Thread(this, py_callable, py_arg, parent_project));
         }
 
         raised_exception() {
