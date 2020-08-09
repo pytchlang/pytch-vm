@@ -808,9 +808,11 @@ var $builtinmodule = function (name) {
             this.py_func = py_func;
         }
 
-        create_threads(parent_project) {
-            return this.pytch_actor.instances.map(
-                i => new Thread(this.py_func, i.py_object, parent_project));
+        create_threads(thread_group, parent_project) {
+            this.pytch_actor.instances.forEach(
+                i => thread_group.create_thread(this.py_func,
+                                                i.py_object,
+                                                parent_project));
         }
     }
 
