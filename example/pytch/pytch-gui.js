@@ -643,6 +643,16 @@ $(document).ready(function() {
 
         const append_error = (err, thread_info) => {
             ensure_have_error_list();
+
+            let err_li = document.createElement("li");
+            $(err_li).addClass("one-error");
+            err_li.innerHTML = ("<p class=\"intro\"></p>"
+                                + "<ul class=\"err-traceback\"></ul>"
+                                + "<p>had this problem:</p>"
+                                + "<ul class=\"err-message\"></ul>");
+
+            let errors_ul = container_div.querySelector("ul");
+            errors_ul.append(err_li);
         };
     })();
 
