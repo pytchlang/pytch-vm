@@ -575,8 +575,10 @@ var $builtinmodule = function (name) {
                 return false;
 
             default:
-                // This on purpose includes "RUNNING"; we should never ask
-                // if an already-RUNNING thread is ready to wake up.
+                // This on purpose includes "RUNNING" and "RAISED_EXCEPTION"; we
+                // should never ask if an already-RUNNING thread is ready to
+                // wake up.  And if a thread threw an exception, all threads
+                // should have been thrown away immediately.
                 throw Error(`thread in bad state "${this.state}"`);
             }
         }
