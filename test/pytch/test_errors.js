@@ -49,7 +49,12 @@ describe("error handling", () => {
             assert_n_ticks(1);
 
             let thrown_errors = [];
-            for (let i = 0; i != 50; ++i) {
+
+            // Include the one we just did, and the one we do in the loop before
+            // the "break":
+            let n_frames = 2;
+
+            for (; n_frames != 50; ++n_frames) {
                 project.one_frame();
                 thrown_errors = pytch_errors.drain_errors();
                 if (thrown_errors.length > 0)
@@ -58,6 +63,14 @@ describe("error handling", () => {
 
             assert.ok(thrown_errors.length == 3,
                       "should have thrown 3 errors within 50 frames");
+
+            // On the threads which raise an exception, it takes one frame to
+            // get into the wait_seconds(0.25) call.  The thread then spends 15
+            // frame-times inside the wait_seconds(), and on the one_frame()
+            // call after that, throws the error.  (The wait is how many
+            // frame-times it waits for, NOT how many one_frame() calls it does
+            // nothing.)
+            assert.equal(n_frames, 16);
 
             const n_ticks_when_errors_thrown = n_ticks();
 
