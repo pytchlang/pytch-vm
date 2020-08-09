@@ -174,6 +174,7 @@ var $builtinmodule = function (name) {
             let actor_instance = new PytchActorInstance(this, py_instance);
             py_instance.$pytchActorInstance = actor_instance;
             this.instances.push(actor_instance);
+            this.parent_project.register_for_drawing(actor_instance);
         }
 
         get class_name() {
@@ -319,6 +320,7 @@ var $builtinmodule = function (name) {
             if (instance_idx > 0) {
                 this.instances.splice(instance_idx, 1);
                 instance.py_object_is_registered = false;
+                this.parent_project.unregister_for_drawing(instance);
             }
         }
 
@@ -340,6 +342,8 @@ var $builtinmodule = function (name) {
 
         delete_all_clones() {
             this.instances.splice(1);
+            this.parent_project.unregister_nearly_all_for_drawing(this,
+                                                                  this.instances[0]);
         }
 
         shown_instances_back_to_front() {
@@ -349,11 +353,6 @@ var $builtinmodule = function (name) {
         launch_sound_performance(name) {
             let sound = this._sound_from_name[name];
             return sound.launch_new_performance();
-        }
-
-        rendering_instructions() {
-            return map_concat(i => i.rendering_instructions(),
-                              this.instances);
         }
     }
 
@@ -365,13 +364,11 @@ var $builtinmodule = function (name) {
             return sprite;
         }
 
-        get appearances_attr_name() {
-            return s_Costumes;
-        }
+        get layer_group() { return DrawLayerGroup.SPRITES; }
 
-        get appearance_single_name() {
-            return "Costume";
-        }
+        get appearances_attr_name() { return s_Costumes; }
+
+        get appearance_single_name() { return "Costume"; }
 
         validate_descriptor(descr) {
             if (descr.length !== 4)
@@ -400,13 +397,11 @@ var $builtinmodule = function (name) {
             return stage;
         }
 
-        get appearances_attr_name() {
-            return s_Backdrops;
-        }
+        get layer_group() { return DrawLayerGroup.STAGE; }
 
-        get appearance_single_name() {
-            return "Backdrop";
-        }
+        get appearances_attr_name() { return s_Backdrops; }
+
+        get appearance_single_name() { return "Backdrop"; }
 
         validate_descriptor(descr) {
             if (descr.length !== 2)
@@ -444,6 +439,8 @@ var $builtinmodule = function (name) {
         get render_y() { return js_getattr(this.py_object, s_y); }
         get render_size() { return js_getattr(this.py_object, s_size); }
         get render_appearance() { return js_getattr(this.py_object, s_appearance); }
+
+        get layer_group() { return this.actor.layer_group; }
 
         rendering_instructions() {
             if (! this.render_shown)
@@ -829,6 +826,70 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Layer group of things to draw
+
+    class DrawLayerGroup {
+        static get STAGE() { return 0; }
+        static get SPRITES() { return 1; }
+        static get TEXT() { return 2; }  // One day.
+
+        constructor() {
+            this.instances = [];
+        }
+
+        register(instance) {
+            // TODO: Allow specification of which instance to be 'just
+            // behind', for use with cloning.
+            this.instances.push(instance);
+        }
+
+        unregister(instance) {
+            this.instances = this.instances.filter(a => a !== instance);
+        }
+
+        unregister_nearly_all(actor, instance_to_keep) {
+            this.instances = this.instances.filter(
+                a => (a === instance_to_keep || a.actor !== actor));
+        }
+
+        move(instance, move_kind, index_or_offset) {
+            let current_index = this.instances.indexOf(instance);
+            if (current_index === -1)
+                throw Error("could not find instance in draw-layer-group");
+
+            const n_instances = this.instances.length;
+            let new_index = null;
+
+            switch (move_kind) {
+            case "absolute": {
+                new_index = index_or_offset;
+                if (new_index < 0)
+                    new_index = n_instances + new_index;
+                break;
+            }
+            case "relative": {
+                new_index = current_index + index_or_offset;
+                break;
+            }
+            default:
+                throw Error(`unknown move-kind "${move_kind}"`);
+            }
+
+            if (new_index < 0)
+                new_index = 0;
+            if (new_index >= n_instances)
+                new_index = n_instances - 1;
+
+            // Try a simple-minded implementation first.  If performance becomes
+            // important, we can do something cleverer.
+            this.instances.splice(current_index, 1);
+            this.instances.splice(new_index, 0, instance);
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Javascript-level "Project" class
 
     class Project {
@@ -836,6 +897,24 @@ var $builtinmodule = function (name) {
             this.py_project = py_project;
             this.actors = [];
             this.thread_groups = [];
+
+            // List of 'layer groups'.  Each layer-group is a list.
+            // The groups are drawn in order, so things in
+            // lower-indexed layer-groups are hidden by things in
+            // higher-indexed groups.  The layer groups are intended
+            // for stage, sprites, and text (when implemented), in
+            // that order.  See the constants defined in the
+            // DrawLayerGroup class.
+            //
+            // Within a layer-group list, things earlier in that list
+            // are drawn first, and so appear as further from the
+            // viewer.
+            //
+            this.draw_layer_groups = [
+                new DrawLayerGroup(),  // Stage
+                new DrawLayerGroup(),  // Sprites
+                new DrawLayerGroup(),  // Text (one day)
+            ];
         }
 
         actor_by_class_name(cls_name) {
@@ -868,6 +947,66 @@ var $builtinmodule = function (name) {
             // first, i.e., at the bottom.  This will be done differently once
             // z-order is implemented.
             this.actors.unshift(stage);
+        }
+
+        register_for_drawing(actor_instance) {
+            let layer_group = this.draw_layer_groups[actor_instance.layer_group];
+            layer_group.register(actor_instance);
+        }
+
+        unregister_for_drawing(actor_instance) {
+            let layer_group = this.draw_layer_groups[actor_instance.layer_group];
+            layer_group.unregister(actor_instance);
+        }
+
+        unregister_nearly_all_for_drawing(actor, instance_to_keep) {
+            let layer_group = this.draw_layer_groups[actor.layer_group];
+            layer_group.unregister_nearly_all(actor, instance_to_keep);
+        }
+
+        /**
+         * Move the given instance within its draw-layer-group
+         *
+         * `instance` is the PytchActorInstance to move from its
+         * current location in its draw-layer-group.
+         *
+         * `move_kind` should be one of the string "absolute" or
+         * "relative"; this determines the interpretation of
+         * `index_or_offset`.
+         *
+         * If `move_kind` is "absolute", `index_or_offset` gives the
+         * desired index of the given `instance` in the new ordering
+         * of its draw-layer-group.  A given index of zero means that
+         * the instance will be drawn first, i.e., appear furthest
+         * from the viewer, within its draw-layer-group.  Negative
+         * indexes are interpreted as in Python, i.e., as (length of
+         * list) - |negative_index|.  So 'go to back' is
+         *
+         *     move_kind "absolute", index_or_offset (index) 0,
+         *
+         * and 'go to front' is
+         *
+         *     move_kind "absolute", index_or_offset (index) -1.
+         *
+         * If `move_kind` is "relative", `index_or_offset` gives an
+         * offset which should be added to the index where the given
+         * `instance` can currently be found in its draw-layer-group
+         * to arrive at the desired index in the new ordering.  So 'go
+         * forward 3 layers' is
+         *
+         *     move_kind "relative" index_or_offset (offset) 3,
+         *
+         * and 'go backward 2 layers' is
+         *
+         *     move_kind "relative" index_or_offset (offset) -2.
+         *
+         * In either case, if the desired index is less than zero or
+         * refers to a position beyond the end of the list, it is
+         * clamped.
+         */
+        move_within_draw_layer_group(instance, move_kind, index_or_offset) {
+            let layer_group = this.draw_layer_groups[instance.layer_group];
+            layer_group.move(instance, move_kind, index_or_offset);
         }
 
         sprite_instances_are_touching(py_sprite_instance_0, py_sprite_instance_1) {
@@ -967,7 +1106,15 @@ var $builtinmodule = function (name) {
         }
 
         rendering_instructions() {
-            return map_concat(a => a.rendering_instructions(), this.actors);
+            let instructions = [];
+            this.draw_layer_groups.forEach(dlg => {
+                dlg.instances.forEach(instance => {
+                    instance.rendering_instructions().forEach(instr => {
+                        instructions.push(instr);
+                    });
+                });
+            });
+            return instructions;
         }
 
         do_synthetic_broadcast(js_msg) {
@@ -1022,6 +1169,17 @@ var $builtinmodule = function (name) {
         $loc.unregister_actor_instance = new Sk.builtin.func((self, py_obj) => {
             self.js_project.unregister_actor_instance(py_obj);
         });
+
+        $loc.move_within_draw_layer_group = new Sk.builtin.func(
+            (self, py_instance, py_move_kind, py_index_or_offset) => {
+                let instance = py_instance.$pytchActorInstance;
+                let move_kind = Sk.ffi.remapToJs(py_move_kind);
+                let index_or_offset = Sk.ffi.remapToJs(py_index_or_offset);
+
+                self.js_project.move_within_draw_layer_group(instance,
+                                                             move_kind,
+                                                             index_or_offset);
+            });
 
         $loc.go_live = new Sk.builtin.func((self) => {
             Sk.pytch.current_live_project = self.js_project;

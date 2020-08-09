@@ -109,7 +109,7 @@ Sk.pytchsupport.maybe_auto_configure_project = (async mod => {
 });
 
 
-/*
+/**
 * Import a module from code text, and auto-configure its project if it
 * doesn't explicitly define one already.
 */
