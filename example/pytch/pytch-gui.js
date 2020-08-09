@@ -595,6 +595,11 @@ $(document).ready(function() {
     let errors_info_pane = (() => {
         let explanation_p = document.getElementById("exceptions-explanation");
         let container_div = document.getElementById("exceptions-container");
+
+        // Are we currently showing the rich list of errors?  If not, we are
+        // showing the explanatory text saying that any errors would appear in
+        // that tab.
+        let have_error_list = false;
     })();
 
 
