@@ -613,6 +613,17 @@ $(document).ready(function() {
             have_error_list_for_context = null;
         };
 
+        const error_intro_nub_for_context = (context) => {
+            switch (context) {
+            case "build":
+                return "could not be built";
+            case "run":
+                return "has stopped";
+            default:
+                throw Error(`unknown error context ${context}`);
+            }
+        };
+
         // Make sure we are showing the <div> containing the rich error reports
         // rather than the explanatory para.  If are already showing the error
         // list, do nothing because there will already be errors there.
