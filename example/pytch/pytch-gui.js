@@ -747,7 +747,7 @@ $(document).ready(function() {
         const immediate_feedback = () => {
             disable();
             stdout_info_pane.reset();
-            stderr_info_pane.reset();
+            errors_info_pane.reset();
             hide_code_changed_indicator();
         };
 
