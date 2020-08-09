@@ -165,8 +165,8 @@ const mock_sound_manager = (() => {
 const pytch_errors = (() => {
     let uncollected_errors = [];
 
-    const append_error = (err => {
-        uncollected_errors.push(err);
+    const append_error = ((err, info) => {
+        uncollected_errors.push({err, info});
     });
 
     const drain_errors = (() => {
