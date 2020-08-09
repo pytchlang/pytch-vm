@@ -126,6 +126,21 @@ body {
     font-style: italic;
 }
 
+
+/******************************************************************************/
+
+#exceptions-explanation {
+    margin: 2ex 2em;
+}
+
+#exceptions-container {
+    /* Will be adjusted by JS if/when there are errors to show: */
+    display: none;
+}
+
+
+/******************************************************************************/
+
 #tab-pane-tutorial {
     display: flex;
     flex-direction: row;
