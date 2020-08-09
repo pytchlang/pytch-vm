@@ -600,6 +600,18 @@ $(document).ready(function() {
         // showing the explanatory text saying that any errors would appear in
         // that tab.
         let have_error_list = false;
+
+        // Throw away any previous errors and ensure we are showing the
+        // explanation for the tab instead.
+        const reset = () => {
+            explanation_p.innerHTML = "Any errors in your code will appear here.";
+            $(explanation_p).show();
+
+            container_div.innerHTML = "";
+            $(container_div).hide();
+
+            have_error_list = false;
+        };
     })();
 
 
