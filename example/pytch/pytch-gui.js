@@ -683,6 +683,13 @@ $(document).ready(function() {
             append_err_li_html(err_traceback_ul,
                                `running because of <code>${thread_info.event_label}</code>`);
 
+            let msg = ((err instanceof Error)
+                       ? `Error: ${err.message}`
+                       : simple_exception_str(err));
+
+            let err_message_ul = err_li.querySelector("ul.err-message");
+            append_err_li_text(err_message_ul, msg);
+
             let errors_ul = container_div.querySelector("ul");
             errors_ul.append(err_li);
         };
