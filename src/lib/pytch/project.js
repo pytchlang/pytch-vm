@@ -752,9 +752,9 @@ var $builtinmodule = function (name) {
     // being broadcast.
 
     class ThreadGroup {
-        constructor(label, threads) {
+        constructor(label) {
             this.label = label;
-            this.threads = threads;
+            this.threads = [];
         }
 
         raised_exception() {
