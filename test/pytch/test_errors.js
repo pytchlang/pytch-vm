@@ -29,4 +29,11 @@ describe("error handling", () => {
             let err_str = errs[0].toString();
             assert.ok(/Alien.*has no attribute.*boost_shields/.test(err_str));
         })});
+
+    with_project("py/project/multiple_errors.py", (import_project) => {
+        it("stops everything on error", async () => {
+            let project = await import_project();
+            let banana = project.instance_0_by_class_name("Banana");
+        });
+    });
 });
