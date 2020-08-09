@@ -757,6 +757,10 @@ var $builtinmodule = function (name) {
             this.threads = threads;
         }
 
+        raised_exception() {
+            return this.threads.some(t => t.raised_exception());
+        }
+
         has_live_threads() {
             return (this.threads.length > 0);
         }
