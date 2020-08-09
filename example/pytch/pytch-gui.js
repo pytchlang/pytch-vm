@@ -700,11 +700,10 @@ $(document).ready(function() {
         };
     })();
 
-
-    let report_uncaught_exception = ((e, thread_info) => {
+    let report_uncaught_exception = (e, thread_info) => {
         errors_info_pane.append_error(e, thread_info);
         make_tab_current("stderr");
-    });
+    };
 
 
     ////////////////////////////////////////////////////////////////////////////////
