@@ -693,6 +693,11 @@ $(document).ready(function() {
             let errors_ul = container_div.querySelector("ul");
             errors_ul.append(err_li);
         };
+
+        return {
+            append_error,
+            reset,
+        };
     })();
 
 
