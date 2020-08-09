@@ -498,6 +498,10 @@ var $builtinmodule = function (name) {
             actor.unregister_instance(this);
         }
 
+        get class_name() {
+            return this.actor.class_name;
+        }
+
         get info_label() {
             return `${this.actor.class_name}-${this.numeric_id}`;
         }
