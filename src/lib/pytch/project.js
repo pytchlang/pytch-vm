@@ -1094,9 +1094,8 @@ var $builtinmodule = function (name) {
             if (typeof hit_instance == "undefined")
                 return;  // TODO: Log a warning first?
 
-            let threads = hit_instance.create_click_handlers_threads();
-            let thread_group = new ThreadGroup(`click "${hit_instance.info_label}"`,
-                                               threads);
+            let thread_group = new ThreadGroup(`click "${hit_instance.info_label}"`);
+            hit_instance.create_click_handlers_threads(thread_group);
 
             this.thread_groups.push(thread_group);
         }
