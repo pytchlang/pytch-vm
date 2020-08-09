@@ -1070,9 +1070,9 @@ var $builtinmodule = function (name) {
         launch_keypress_handlers() {
             let new_keydowns = Sk.pytch.keyboard.drain_new_keydown_events();
             new_keydowns.forEach(keyname => {
-                let threads = map_concat(a => a.create_threads_for_keypress(keyname),
-                                         this.actors);
-                let thread_group = new ThreadGroup(`keypress "${keyname}"`, threads);
+                let thread_group = new ThreadGroup(`keypress "${keyname}"`);
+                this.actors.forEach(a => a.create_threads_for_keypress(thread_group,
+                                                                       keyname));
                 this.thread_groups.push(thread_group);
             });
         }
