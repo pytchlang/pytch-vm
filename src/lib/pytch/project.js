@@ -335,10 +335,10 @@ var $builtinmodule = function (name) {
             event_handler_group.create_threads(thread_group, this.parent_project);
         }
 
-        create_threads_for_keypress(keyname) {
+        create_threads_for_keypress(thread_group, keyname) {
             let event_handler_group = (this.event_handlers.keypress[keyname]
                                        || EventHandlerGroup.empty);
-            return event_handler_group.create_threads(this.parent_project);
+            event_handler_group.create_threads(thread_group, this.parent_project);
         }
 
         delete_all_clones() {
