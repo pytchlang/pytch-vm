@@ -615,9 +615,9 @@ var $builtinmodule = function (name) {
                 // thread (class and method names).
                 Sk.pytch.on_exception(err);
 
-                // Fudge susp_or_retval to look like the thread ran to
-                // completion; it will then be dealt with correctly below.
-                susp_or_retval = { "$isSuspension": false };
+                this.state = Thread.State.RAISED_EXCEPTION;
+                this.skulpt_susp = null;
+                return [];
             }
 
             if (! susp_or_retval.$isSuspension) {
