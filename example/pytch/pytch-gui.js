@@ -633,6 +633,13 @@ $(document).ready(function() {
 
             have_error_list = true;
         };
+
+        const simple_exception_str = (err => {
+            let simple_str = err.tp$name;
+            if (err.args && err.args.v.length > 0)
+                simple_str += ": " + err.args.v[0].v;
+            return simple_str;
+        });
     })();
 
 
