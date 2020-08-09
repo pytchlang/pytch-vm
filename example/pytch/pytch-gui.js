@@ -595,7 +595,8 @@ $(document).ready(function() {
     //
     // Report errors
 
-    let report_uncaught_exception = (e => {
+    let report_uncaught_exception = ((e, thread_info) => {
+        // TODO: Make use of 'thread_info'.
         let msg = ((e instanceof Error)
                    ? `Error: ${e.message}`
                    : Sk.builtin.str(e).v);
