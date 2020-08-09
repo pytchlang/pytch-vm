@@ -158,6 +158,22 @@ body {
     background-color: #faa;
 }
 
+#exceptions-container li.one-error ul {
+    list-style: circle;
+}
+
+#exceptions-container li.one-error ul li {
+    margin-left: 2em;
+}
+
+#exceptions-container li.one-error p {
+    margin: 1ex 1em;
+}
+
+.err-traceback li, .err-message li {
+    padding: 6px;
+}
+
 
 /******************************************************************************/
 
