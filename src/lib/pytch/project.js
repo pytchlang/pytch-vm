@@ -538,6 +538,10 @@ var $builtinmodule = function (name) {
             return this.state == Thread.State.ZOMBIE;
         }
 
+        raised_exception() {
+            return this.state == Thread.State.RAISED_EXCEPTION;
+        }
+
         get human_readable_sleeping_on() {
             switch (this.state) {
             case Thread.State.RUNNING:
@@ -553,6 +557,8 @@ var $builtinmodule = function (name) {
                 return `performance of sound "${this.sleeping_on.tag}"`;
 
             default:
+                // We should never ask for a human-readable summary of what a
+                // thread in state ZOMBIE or RAISED_EXCEPTION is waiting for.
                 throw Error(`thread in bad state "${this.state}"`);
             }
         }
@@ -573,8 +579,10 @@ var $builtinmodule = function (name) {
                 return false;
 
             default:
-                // This on purpose includes "RUNNING"; we should never ask
-                // if an already-RUNNING thread is ready to wake up.
+                // This on purpose includes "RUNNING" and "RAISED_EXCEPTION"; we
+                // should never ask if an already-RUNNING thread is ready to
+                // wake up.  And if a thread threw an exception, all threads
+                // should have been thrown away immediately.
                 throw Error(`thread in bad state "${this.state}"`);
             }
         }
@@ -607,9 +615,9 @@ var $builtinmodule = function (name) {
                 // thread (class and method names).
                 Sk.pytch.on_exception(err);
 
-                // Fudge susp_or_retval to look like the thread ran to
-                // completion; it will then be dealt with correctly below.
-                susp_or_retval = { "$isSuspension": false };
+                this.state = Thread.State.RAISED_EXCEPTION;
+                this.skulpt_susp = null;
+                return [];
             }
 
             if (! susp_or_retval.$isSuspension) {
@@ -731,6 +739,9 @@ var $builtinmodule = function (name) {
         // ZOMBIE: The thread has terminated but has not yet been cleared from
         // the list of live threads.
         ZOMBIE: "zombie",
+
+        // RAISED_EXCEPTION: The thread raised an exception.
+        RAISED_EXCEPTION: "raised-exception",
     };
 
 
@@ -744,6 +755,10 @@ var $builtinmodule = function (name) {
         constructor(label, threads) {
             this.label = label;
             this.threads = threads;
+        }
+
+        raised_exception() {
+            return this.threads.some(t => t.raised_exception());
         }
 
         has_live_threads() {
@@ -1097,6 +1112,9 @@ var $builtinmodule = function (name) {
                                                this.thread_groups);
 
             this.thread_groups = new_thread_groups;
+
+            if (this.thread_groups.some(tg => tg.raised_exception()))
+                this.thread_groups = [];
         }
 
         on_red_stop_clicked() {
