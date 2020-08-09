@@ -634,6 +634,20 @@ $(document).ready(function() {
             have_error_list = true;
         };
 
+        const append_err_li_text = (ul, text) => {
+            let li = document.createElement("li");
+            li.innerText = text;
+            ul.appendChild(li);
+            return li;
+        };
+
+        const append_err_li_html = (ul, html) => {
+            let li = document.createElement("li");
+            li.innerHTML = html;
+            ul.appendChild(li);
+            return li;
+        };
+
         const simple_exception_str = (err => {
             let simple_str = err.tp$name;
             if (err.args && err.args.v.length > 0)
