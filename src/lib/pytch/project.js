@@ -538,6 +538,10 @@ var $builtinmodule = function (name) {
             return this.state == Thread.State.ZOMBIE;
         }
 
+        raised_exception() {
+            return this.state == Thread.State.RAISED_EXCEPTION;
+        }
+
         get human_readable_sleeping_on() {
             switch (this.state) {
             case Thread.State.RUNNING:
