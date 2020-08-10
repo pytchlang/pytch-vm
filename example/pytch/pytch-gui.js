@@ -596,10 +596,10 @@ $(document).ready(function() {
         let explanation_p = document.getElementById("exceptions-explanation");
         let container_div = document.getElementById("exceptions-container");
 
-        // Are we currently showing the rich list of errors?  If not, we are
-        // showing the explanatory text saying that any errors would appear in
-        // that tab.
-        let have_error_list = false;
+        // What 'context', if any, are we currently showing the rich list of
+        // errors for?  If none (represented as null), we are showing the
+        // explanatory text saying that any errors would appear in that tab.
+        let have_error_list_for_context = null;
 
         // Throw away any previous errors and ensure we are showing the
         // explanation for the tab instead.
@@ -610,28 +610,51 @@ $(document).ready(function() {
             container_div.innerHTML = "";
             $(container_div).hide();
 
-            have_error_list = false;
+            have_error_list_for_context = null;
+        };
+
+        const error_intro_nub_for_context = (context) => {
+            switch (context) {
+            case "build":
+                return "could not be built";
+            case "run":
+                return "has stopped";
+            default:
+                throw Error(`unknown error context ${context}`);
+            }
         };
 
         // Make sure we are showing the <div> containing the rich error reports
         // rather than the explanatory para.  If are already showing the error
         // list, do nothing because there will already be errors there.
-        const ensure_have_error_list = () => {
-            if (have_error_list)
+        const ensure_have_error_list = (context) => {
+            // Have we already set the error-info pane up?  We only want to do
+            // so once.
+            if (have_error_list_for_context !== null) {
+                // If we have already set it up, it should be for the same
+                // context (build or run) as we're now being asked for.
+                if (have_error_list_for_context !== context)
+                    throw Error("already have error info for "
+                                + have_error_list_for_context
+                                + " but was asked to set one up for "
+                                + context);
+
                 return;
+            }
 
             $(explanation_p).hide();
 
             let intro_div = document.createElement("div");
+            let intro_nub = error_intro_nub_for_context(context);
             intro_div.innerHTML = (
-                ("<p class=\"errors-intro\">Your project has stopped because:</p>"
+                (`<p class=\"errors-intro\">Your project ${intro_nub} because:</p>`
                  + "<ul></ul>"));
 
             container_div.innerHTML = "";
             container_div.appendChild(intro_div);
             $(container_div).show();
 
-            have_error_list = true;
+            have_error_list_for_context = context;
         };
 
         const append_err_li_text = (ul, text) => {
@@ -656,7 +679,8 @@ $(document).ready(function() {
         });
 
         const append_error = (err, thread_info) => {
-            ensure_have_error_list();
+            let context = (thread_info === null ? "build" : "run");
+            ensure_have_error_list(context);
 
             let err_li = document.createElement("li");
             $(err_li).addClass("one-error");
@@ -665,33 +689,64 @@ $(document).ready(function() {
                                 + "<p>had this problem:</p>"
                                 + "<ul class=\"err-message\"></ul>");
 
-            err_li.querySelector("p.intro").innerHTML
-                = (`A <i>${thread_info.target_class_kind}</i>`
-                   + ` of class <i>${thread_info.target_class_name}</i>`);
-
-            let err_traceback_ul = err_li.querySelector("ul.err-traceback");
-            err.traceback.forEach((frame, idx) => {
-                let intro = (idx > 0) ? "called by" : "at";
-                append_err_li_html(
-                    err_traceback_ul,
-                    `${intro} <span class="error-loc">line ${frame.lineno}</span>`
-                    + " of your code");
-            });
-
-            append_err_li_html(err_traceback_ul,
-                               `in the method <code>${thread_info.callable_name}</code>`);
-            append_err_li_html(err_traceback_ul,
-                               `running because of <code>${thread_info.event_label}</code>`);
-
             let msg = ((err instanceof Error)
                        ? `Error: ${err.message}`
                        : simple_exception_str(err));
 
-            let err_message_ul = err_li.querySelector("ul.err-message");
-            append_err_li_text(err_message_ul, msg);
+            switch (context) {
+            case "build": {
+                let n_traceback_frames = err.traceback.length;
+                if (n_traceback_frames != 1)
+                    throw Error("expecting single-frame traceback for build error"
+                                + ` but got ${n_traceback_frame}-frame one`);
+                let frame = err.traceback[0];
 
-            let errors_ul = container_div.querySelector("ul");
-            errors_ul.append(err_li);
+                err_li.querySelector("p.intro").innerHTML = "Your code";
+
+                let err_message_ul = err_li.querySelector("ul.err-message");
+                append_err_li_text(err_message_ul, msg);
+
+                let err_traceback_ul = err_li.querySelector("ul.err-traceback");
+                append_err_li_html(err_traceback_ul,
+                                   `at <span class="error-loc">line ${frame.lineno}</span>`);
+
+                let errors_ul = container_div.querySelector("ul");
+                errors_ul.append(err_li);
+
+                break;
+            }
+            case "run": {
+
+                err_li.querySelector("p.intro").innerHTML
+                    = (`A <i>${thread_info.target_class_kind}</i>`
+                       + ` of class <i>${thread_info.target_class_name}</i>`);
+
+                let err_traceback_ul = err_li.querySelector("ul.err-traceback");
+                err.traceback.forEach((frame, idx) => {
+                    let intro = (idx > 0) ? "called by" : "at";
+                    append_err_li_html(
+                        err_traceback_ul,
+                        `${intro} <span class="error-loc">line ${frame.lineno}</span>`
+                            + " of your code");
+                });
+
+                append_err_li_html(err_traceback_ul,
+                                   `in the method <code>${thread_info.callable_name}</code>`);
+                append_err_li_html(err_traceback_ul,
+                                   `running because of <code>${thread_info.event_label}</code>`);
+
+                let err_message_ul = err_li.querySelector("ul.err-message");
+                append_err_li_text(err_message_ul, msg);
+
+                let errors_ul = container_div.querySelector("ul");
+                errors_ul.append(err_li);
+
+                break;
+            }
+
+            default:
+                throw Error(`unknown error context ${context}`);
+            }
         };
 
         return {
