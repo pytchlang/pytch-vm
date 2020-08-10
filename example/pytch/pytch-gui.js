@@ -115,6 +115,8 @@ $(document).ready(function() {
         };
     })();
 
+    ace_editor.setOptions({enableBasicAutocompletion: [pytch_ace_auto_completer]});
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
