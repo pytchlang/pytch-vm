@@ -89,6 +89,26 @@ $(document).ready(function() {
             "move_backward_layers",
             "switch_backdrop",
         ].map(candidate_from_symbol("Sprite/Stage method"));
+
+        const getCompletions = (editor, session, pos, prefix, callback) => {
+            const cursor_line = session.getLine(pos.row);
+            const line_head = cursor_line.substring(0, pos.column);
+
+            if (! line_head.endsWith(prefix)) {
+                // TODO: What's the right way to report this error to Ace?
+                callback(null, []);
+            }
+
+            const pre_prefix_length = line_head.length - prefix.length;
+            const pre_prefix = line_head.substring(0, pre_prefix_length);
+
+            const candidates = (
+                (pre_prefix.endsWith("pytch.") ? autocompletions_pytch_builtins
+                 : (pre_prefix.endsWith("self.") ? autocompletions_Actor_methods
+                    : [])));
+
+            callback(null, candidates);
+        };
     })();
 
 
