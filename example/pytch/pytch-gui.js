@@ -49,6 +49,46 @@ $(document).ready(function() {
                 meta: meta,
             };
         };
+
+        const autocompletions_pytch_builtins = [
+            "Sprite",
+            "Stage",
+            "when_green_flag_clicked",
+            "when_I_receive",
+            "when_key_pressed",
+            "when_I_start_as_a_clone",
+            "when_this_sprite_clicked",
+            "when_stage_clicked",
+            "create_clone_of",
+            "broadcast",
+            "broadcast_and_wait",
+            "stop_all_sounds",
+            "wait_seconds",
+            "key_is_pressed",
+        ].map(candidate_from_symbol("pytch built-in"));
+
+        const autocompletions_Actor_methods = [
+            "start_sound",
+            "play_sound_until_done",
+            "go_to_xy",
+            "get_x",
+            "set_x",
+            "change_x",
+            "get_y",
+            "set_y",
+            "change_y",
+            "set_size",
+            "show",
+            "hide",
+            "switch_costume",
+            "touching",
+            "delete_this_clone",
+            "move_to_front_layer",
+            "move_to_back_layer",
+            "move_forward_layers",
+            "move_backward_layers",
+            "switch_backdrop",
+        ].map(candidate_from_symbol("Sprite/Stage method"));
     })();
 
 
