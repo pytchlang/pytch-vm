@@ -595,7 +595,8 @@ $(document).ready(function() {
     //
     // Report errors
 
-    let report_uncaught_exception = (e => {
+    let report_uncaught_exception = ((e, thread_info) => {
+        // TODO: Make use of 'thread_info'.
         let msg = ((e instanceof Error)
                    ? `Error: ${e.message}`
                    : Sk.builtin.str(e).v);
@@ -631,7 +632,7 @@ $(document).ready(function() {
             try {
                 await Sk.pytchsupport.import_with_auto_configure(code_text);
             } catch (err) {
-                report_uncaught_exception(err);
+                report_uncaught_exception(err, null);
             }
 
             if (then_green_flag)

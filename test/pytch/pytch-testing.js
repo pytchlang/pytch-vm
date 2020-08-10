@@ -165,8 +165,8 @@ const mock_sound_manager = (() => {
 const pytch_errors = (() => {
     let uncollected_errors = [];
 
-    const append_error = (err => {
-        uncollected_errors.push(err);
+    const append_error = ((err, info) => {
+        uncollected_errors.push({err, info});
     });
 
     const drain_errors = (() => {
@@ -387,7 +387,7 @@ const configure_mocha = () => {
     afterEach(() => {
         const errors = pytch_errors.drain_errors();
 
-        const error_messages = errors.map(e => Sk.builtin.str(e).v);
+        const error_messages = errors.map(e => Sk.builtin.str(e.err).v);
 
         assert.strictEqual(errors.length, 0,
                            ("undrained errors at end of test:\n"

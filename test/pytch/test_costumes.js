@@ -90,7 +90,7 @@ describe("Costume handling", () => {
                 let errs = pytch_errors.drain_errors();
                 assert.strictEqual(errs.length, 1);
 
-                let err_str = errs[0].toString();
+                let err_str = errs[0].err.toString();
                 assert.ok(spec.err_test.test(err_str));
             })})});
 
@@ -123,7 +123,7 @@ describe("Costume handling", () => {
             let errs = pytch_errors.drain_errors();
             assert.strictEqual(errs.length, 1);
 
-            let err_str = errs[0].toString();
+            let err_str = errs[0].err.toString();
             assert.ok(/cannot show .* no Costumes/.test(err_str));
         })});
 

@@ -371,6 +371,8 @@ var $builtinmodule = function (name) {
 
         get appearance_single_name() { return "Costume"; }
 
+        get class_kind_name() { return "Sprite"; }
+
         validate_descriptor(descr) {
             if (descr.length !== 4)
                 this.reject_appearance_descriptor(
@@ -403,6 +405,8 @@ var $builtinmodule = function (name) {
         get appearances_attr_name() { return s_Backdrops; }
 
         get appearance_single_name() { return "Backdrop"; }
+
+        get class_kind_name() { return "Stage"; }
 
         validate_descriptor(descr) {
             if (descr.length !== 2)
@@ -498,8 +502,12 @@ var $builtinmodule = function (name) {
             actor.unregister_instance(this);
         }
 
+        get class_name() {
+            return this.actor.class_name;
+        }
+
         get info_label() {
-            return `${this.actor.class_name}-${this.numeric_id}`;
+            return `${this.class_name}-${this.numeric_id}`;
         }
 
         create_click_handlers_threads(thread_group) {
@@ -517,7 +525,9 @@ var $builtinmodule = function (name) {
     // prepares to run the given Python callable with the single given argument.
 
     class Thread {
-        constructor(py_callable, py_arg, parent_project) {
+        constructor(thread_group, py_callable, py_arg, parent_project) {
+            this.thread_group = thread_group;
+
             // Fake a skulpt-suspension-like object so we can treat it the
             // same as any other suspension in the scheduler.
             this.skulpt_susp = {
@@ -614,7 +624,7 @@ var $builtinmodule = function (name) {
                 // TODO: Richer information as to error context.  E.g., our
                 // 'label', and if possible what was the entry point for this
                 // thread (class and method names).
-                Sk.pytch.on_exception(err);
+                Sk.pytch.on_exception(err, this.info());
 
                 this.state = Thread.State.RAISED_EXCEPTION;
                 this.skulpt_susp = null;
@@ -706,6 +716,10 @@ var $builtinmodule = function (name) {
         info() {
             let instance = this.actor_instance;
             return {
+                event_label: this.thread_group.label,
+                target_class_kind: instance.actor.class_kind_name,
+                target_class_name: instance.class_name,
+                callable_name: this.callable_name,
                 target: `${instance.info_label} (${this.callable_name})`,
                 state: this.state,
                 wait: this.human_readable_sleeping_on,
@@ -759,7 +773,7 @@ var $builtinmodule = function (name) {
         }
 
         create_thread(py_callable, py_arg, parent_project) {
-            this.threads.push(new Thread(py_callable, py_arg, parent_project));
+            this.threads.push(new Thread(this, py_callable, py_arg, parent_project));
         }
 
         raised_exception() {
