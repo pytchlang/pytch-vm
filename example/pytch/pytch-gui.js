@@ -36,6 +36,17 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Very rudimentary auto-completion
+    //
+    // Only complete "pytch." and "self.", with hard-coded list of options based
+    // on the public module functions and base-class methods.
+
+    const pytch_ace_auto_completer = (() => {
+    })();
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Info tabs (tutorial stdout, errors)
 
     let make_tab_current_via_evt = (evt => {
