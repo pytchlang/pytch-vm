@@ -324,20 +324,21 @@ var $builtinmodule = function (name) {
             }
         }
 
-        create_threads_for_green_flag() {
-            return this.event_handlers.green_flag.create_threads(this.parent_project);
+        create_threads_for_green_flag(thread_group) {
+            this.event_handlers.green_flag.create_threads(thread_group,
+                                                          this.parent_project);
         }
 
-        create_threads_for_broadcast(js_message) {
+        create_threads_for_broadcast(thread_group, js_message) {
             let event_handler_group = (this.event_handlers.message[js_message]
                                        || EventHandlerGroup.empty);
-            return event_handler_group.create_threads(this.parent_project);
+            event_handler_group.create_threads(thread_group, this.parent_project);
         }
 
-        create_threads_for_keypress(keyname) {
+        create_threads_for_keypress(thread_group, keyname) {
             let event_handler_group = (this.event_handlers.keypress[keyname]
                                        || EventHandlerGroup.empty);
-            return event_handler_group.create_threads(this.parent_project);
+            event_handler_group.create_threads(thread_group, this.parent_project);
         }
 
         delete_all_clones() {
@@ -501,11 +502,11 @@ var $builtinmodule = function (name) {
             return `${this.actor.class_name}-${this.numeric_id}`;
         }
 
-        create_click_handlers_threads() {
-            return this.actor.click_handlers.map(
-                py_fun => new Thread(py_fun,
-                                     this.py_object,
-                                     this.actor.parent_project));
+        create_click_handlers_threads(thread_group) {
+            this.actor.click_handlers.forEach(
+                py_fun => thread_group.create_thread(py_fun,
+                                                     this.py_object,
+                                                     this.actor.parent_project));
         }
     }
 
@@ -687,13 +688,13 @@ var $builtinmodule = function (name) {
                     let actor = py_cls.$pytchActor;
                     actor.register_py_instance(py_instance);
 
-                    let threads = actor.clone_handlers.map(
-                        py_fun => new Thread(py_fun,
-                                             py_instance,
-                                             this.parent_project));
+                    let thread_group = new ThreadGroup("start-as-clone");
+                    actor.clone_handlers.forEach(
+                        py_fun => thread_group.create_thread(py_fun,
+                                                             py_instance,
+                                                             this.parent_project));
 
-                    let new_thread_group = new ThreadGroup("start-as-clone", threads);
-                    return [new_thread_group];
+                    return [thread_group];
                 }
 
                 default:
@@ -752,9 +753,13 @@ var $builtinmodule = function (name) {
     // being broadcast.
 
     class ThreadGroup {
-        constructor(label, threads) {
+        constructor(label) {
             this.label = label;
-            this.threads = threads;
+            this.threads = [];
+        }
+
+        create_thread(py_callable, py_arg, parent_project) {
+            this.threads.push(new Thread(py_callable, py_arg, parent_project));
         }
 
         raised_exception() {
@@ -804,9 +809,11 @@ var $builtinmodule = function (name) {
             this.py_func = py_func;
         }
 
-        create_threads(parent_project) {
-            return this.pytch_actor.instances.map(
-                i => new Thread(this.py_func, i.py_object, parent_project));
+        create_threads(thread_group, parent_project) {
+            this.pytch_actor.instances.forEach(
+                i => thread_group.create_thread(this.py_func,
+                                                i.py_object,
+                                                parent_project));
         }
     }
 
@@ -830,8 +837,8 @@ var $builtinmodule = function (name) {
             return this.handlers.length;
         }
 
-        create_threads(parent_project) {
-            return map_concat(h => h.create_threads(parent_project), this.handlers);
+        create_threads(thread_group, parent_project) {
+            this.handlers.forEach(h => h.create_threads(thread_group, parent_project));
         }
     }
 
@@ -1048,23 +1055,24 @@ var $builtinmodule = function (name) {
             // Stop the world before re-launching anything.
             this.on_red_stop_clicked();
 
-            let threads = map_concat(a => a.create_threads_for_green_flag(), this.actors);
-            let thread_group = new ThreadGroup("green-flag", threads);
+            let thread_group = new ThreadGroup("green-flag");
+            this.actors.forEach(a => a.create_threads_for_green_flag(thread_group));
             this.thread_groups.push(thread_group);
         }
 
         thread_group_for_broadcast_receivers(js_message) {
-            let threads = map_concat(a => a.create_threads_for_broadcast(js_message),
-                                     this.actors);
-            return new ThreadGroup(`message "${js_message}"`, threads);
+            let thread_group = new ThreadGroup(`message "${js_message}"`);
+            this.actors.forEach(a => a.create_threads_for_broadcast(thread_group,
+                                                                    js_message));
+            return thread_group;
         }
 
         launch_keypress_handlers() {
             let new_keydowns = Sk.pytch.keyboard.drain_new_keydown_events();
             new_keydowns.forEach(keyname => {
-                let threads = map_concat(a => a.create_threads_for_keypress(keyname),
-                                         this.actors);
-                let thread_group = new ThreadGroup(`keypress "${keyname}"`, threads);
+                let thread_group = new ThreadGroup(`keypress "${keyname}"`);
+                this.actors.forEach(a => a.create_threads_for_keypress(thread_group,
+                                                                       keyname));
                 this.thread_groups.push(thread_group);
             });
         }
@@ -1086,9 +1094,8 @@ var $builtinmodule = function (name) {
             if (typeof hit_instance == "undefined")
                 return;  // TODO: Log a warning first?
 
-            let threads = hit_instance.create_click_handlers_threads();
-            let thread_group = new ThreadGroup(`click "${hit_instance.info_label}"`,
-                                               threads);
+            let thread_group = new ThreadGroup(`click "${hit_instance.info_label}"`);
+            hit_instance.create_click_handlers_threads(thread_group);
 
             this.thread_groups.push(thread_group);
         }
