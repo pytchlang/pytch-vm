@@ -109,6 +109,10 @@ $(document).ready(function() {
 
             callback(null, candidates);
         };
+
+        return {
+            getCompletions,
+        };
     })();
 
 
