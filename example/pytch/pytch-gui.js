@@ -36,7 +36,7 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
-    // Info tabs (stdout, stderr)
+    // Info tabs (tutorial stdout, errors)
 
     let make_tab_current_via_evt = (evt => {
         let tab_nub = evt.target.dataset.tab;
@@ -53,9 +53,10 @@ $(document).ready(function() {
 
     $("#info-panel-tabs p").click(make_tab_current_via_evt);
 
+
     ////////////////////////////////////////////////////////////////////////
     //
-    // Contents of individual panes
+    // Contents of stdout pane
 
     class TextPane {
         constructor(initial_html, tab_nub) {
@@ -82,10 +83,6 @@ $(document).ready(function() {
     let stdout_info_pane = new TextPane(
         "<span class=\"info\">Any output from your script will appear here.</span>",
         "stdout");
-
-    let stderr_info_pane = new TextPane(
-        "<span class=\"info\">Any errors from your script will appear here.</span>",
-        "stderr");
 
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -595,14 +592,118 @@ $(document).ready(function() {
     //
     // Report errors
 
-    let report_uncaught_exception = ((e, thread_info) => {
-        // TODO: Make use of 'thread_info'.
-        let msg = ((e instanceof Error)
-                   ? `Error: ${e.message}`
-                   : Sk.builtin.str(e).v);
-        stderr_info_pane.append_text(msg + "\n");
+    let errors_info_pane = (() => {
+        let explanation_p = document.getElementById("exceptions-explanation");
+        let container_div = document.getElementById("exceptions-container");
+
+        // Are we currently showing the rich list of errors?  If not, we are
+        // showing the explanatory text saying that any errors would appear in
+        // that tab.
+        let have_error_list = false;
+
+        // Throw away any previous errors and ensure we are showing the
+        // explanation for the tab instead.
+        const reset = () => {
+            explanation_p.innerHTML = "Any errors in your code will appear here.";
+            $(explanation_p).show();
+
+            container_div.innerHTML = "";
+            $(container_div).hide();
+
+            have_error_list = false;
+        };
+
+        // Make sure we are showing the <div> containing the rich error reports
+        // rather than the explanatory para.  If are already showing the error
+        // list, do nothing because there will already be errors there.
+        const ensure_have_error_list = () => {
+            if (have_error_list)
+                return;
+
+            $(explanation_p).hide();
+
+            let intro_div = document.createElement("div");
+            intro_div.innerHTML = (
+                ("<p class=\"errors-intro\">Your project has stopped because:</p>"
+                 + "<ul></ul>"));
+
+            container_div.innerHTML = "";
+            container_div.appendChild(intro_div);
+            $(container_div).show();
+
+            have_error_list = true;
+        };
+
+        const append_err_li_text = (ul, text) => {
+            let li = document.createElement("li");
+            li.innerText = text;
+            ul.appendChild(li);
+            return li;
+        };
+
+        const append_err_li_html = (ul, html) => {
+            let li = document.createElement("li");
+            li.innerHTML = html;
+            ul.appendChild(li);
+            return li;
+        };
+
+        const simple_exception_str = (err => {
+            let simple_str = err.tp$name;
+            if (err.args && err.args.v.length > 0)
+                simple_str += ": " + err.args.v[0].v;
+            return simple_str;
+        });
+
+        const append_error = (err, thread_info) => {
+            ensure_have_error_list();
+
+            let err_li = document.createElement("li");
+            $(err_li).addClass("one-error");
+            err_li.innerHTML = ("<p class=\"intro\"></p>"
+                                + "<ul class=\"err-traceback\"></ul>"
+                                + "<p>had this problem:</p>"
+                                + "<ul class=\"err-message\"></ul>");
+
+            err_li.querySelector("p.intro").innerHTML
+                = (`A <i>${thread_info.target_class_kind}</i>`
+                   + ` of class <i>${thread_info.target_class_name}</i>`);
+
+            let err_traceback_ul = err_li.querySelector("ul.err-traceback");
+            err.traceback.forEach((frame, idx) => {
+                let intro = (idx > 0) ? "called by" : "at";
+                append_err_li_html(
+                    err_traceback_ul,
+                    `${intro} <span class="error-loc">line ${frame.lineno}</span>`
+                    + " of your code");
+            });
+
+            append_err_li_html(err_traceback_ul,
+                               `in the method <code>${thread_info.callable_name}</code>`);
+            append_err_li_html(err_traceback_ul,
+                               `running because of <code>${thread_info.event_label}</code>`);
+
+            let msg = ((err instanceof Error)
+                       ? `Error: ${err.message}`
+                       : simple_exception_str(err));
+
+            let err_message_ul = err_li.querySelector("ul.err-message");
+            append_err_li_text(err_message_ul, msg);
+
+            let errors_ul = container_div.querySelector("ul");
+            errors_ul.append(err_li);
+        };
+
+        return {
+            append_error,
+            reset,
+        };
+    })();
+
+    let report_uncaught_exception = (e, thread_info) => {
+        errors_info_pane.append_error(e, thread_info);
         make_tab_current("stderr");
-    });
+    };
 
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -645,8 +746,7 @@ $(document).ready(function() {
         const immediate_feedback = () => {
             disable();
             stdout_info_pane.reset();
-            stderr_info_pane.reset();
-            make_tab_current("stdout");
+            errors_info_pane.reset();
             hide_code_changed_indicator();
         };
 
@@ -869,6 +969,6 @@ $(document).ready(function() {
                                        $("#tab-pane-tutorial")[0]);
     };
 
-    launch_tutorial("tutorials/bunner/").then(
+    launch_tutorial("tutorials/bunner").then(
         () => window.requestAnimationFrame(one_frame));
 });
