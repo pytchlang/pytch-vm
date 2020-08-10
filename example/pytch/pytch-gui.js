@@ -42,6 +42,13 @@ $(document).ready(function() {
     // on the public module functions and base-class methods.
 
     const pytch_ace_auto_completer = (() => {
+        const candidate_from_symbol = (meta) => (symbol) => {
+            return {
+                name: symbol,
+                value: symbol,
+                meta: meta,
+            };
+        };
     })();
 
 
