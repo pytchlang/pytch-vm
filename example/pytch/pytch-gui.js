@@ -762,10 +762,11 @@ $(document).ready(function() {
             return simple_str;
         });
 
-        const punch_in_lineno_span = (parent_elt, lineno) => {
+        const punch_in_lineno_span = (parent_elt, lineno, give_class) => {
             let span = document.createElement("span");
             span.innerText = `line ${lineno}`;
-            $(span).addClass("error-loc");
+            if (give_class)
+                $(span).addClass("error-loc");
             span.setAttribute("data-lineno", lineno);
 
             let old_span = parent_elt.querySelector("span");
@@ -802,7 +803,7 @@ $(document).ready(function() {
 
                 let err_traceback_ul = err_li.querySelector("ul.err-traceback");
                 let frame_li = append_err_li_html(err_traceback_ul, "at <span></span>");
-                punch_in_lineno_span(frame_li, frame.lineno);
+                punch_in_lineno_span(frame_li, frame.lineno, true);
 
                 let errors_ul = container_div.querySelector("ul");
                 errors_ul.append(err_li);
@@ -810,7 +811,6 @@ $(document).ready(function() {
                 break;
             }
             case "run": {
-
                 err_li.querySelector("p.intro").innerHTML
                     = (`A <i>${thread_info.target_class_kind}</i>`
                        + ` of class <i>${thread_info.target_class_name}</i>`);
@@ -818,9 +818,13 @@ $(document).ready(function() {
                 let err_traceback_ul = err_li.querySelector("ul.err-traceback");
                 err.traceback.forEach((frame, idx) => {
                     let intro = (idx > 0) ? "called by" : "at";
+                    let code_origin = (frame.filename == "<stdin>.py"
+                                       ? "your code"
+                                       : `<em>${frame.filename}</em>`);
                     let frame_li = append_err_li_html(
-                        err_traceback_ul, `${intro} <span></span> of your code`);
-                    punch_in_lineno_span(frame_li, frame.lineno);
+                        err_traceback_ul, `${intro} <span></span> of ${code_origin}`);
+                    punch_in_lineno_span(frame_li, frame.lineno,
+                                         (code_origin == "your code"));
                 });
 
                 append_err_li_html(err_traceback_ul,
