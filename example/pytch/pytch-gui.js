@@ -64,6 +64,11 @@ $(document).ready(function() {
                 console.log("error from WebSocket");
                 active_ws = null;
             };
+
+            active_ws.onmessage = (event) => {
+                console.log("got message from server");
+                let msg = JSON.parse(event.data);
+            };
         };
 
         return {
