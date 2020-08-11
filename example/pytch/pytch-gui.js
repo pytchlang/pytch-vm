@@ -581,8 +581,7 @@ $(document).ready(function() {
                 // typed, possibly also with the context of the project-root.
 
                 let error_message = `could not load image "${url}"`;
-                let py_error = new Sk.pytchsupport.PytchAssetLoadError(
-                    error_message, "image", url);
+                let py_error = PytchAssetLoadError(error_message, "image", url);
 
                 reject(py_error);
             });
@@ -658,10 +657,11 @@ $(document).ready(function() {
                 err_detail = "network error";
             }
 
-            if (err_detail !== null)
-                throw new Sk.pytchsupport.PytchAssetLoadError(
-                    `could not load sound "${tag}" from "${url}" (${err_detail})`,
-                    "sound", url);
+            if (err_detail !== null) {
+                let error_message = (`could not load sound "${tag}"`
+                                     + ` from "${url}" (${err_detail})`);
+                throw PytchAssetLoadError(error_message, "sound", url);
+            }
 
             let raw_data = await response.arrayBuffer();
             let audio_buffer = await this.audio_context.decodeAudioData(raw_data);
