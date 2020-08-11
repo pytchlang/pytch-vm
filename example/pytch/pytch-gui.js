@@ -274,6 +274,11 @@ $(document).ready(function() {
             $($(this.toc_list_elt).find("li")[this.chapter_index]).addClass("shown");
         }
 
+        initialise_editor() {
+            ace_editor.setValue(this.tutorial.initial_code);
+            ace_editor.clearSelection();
+        }
+
         run_final_project() {
             ace_editor.setValue(this.tutorial.final_code);
             ace_editor.clearSelection();
