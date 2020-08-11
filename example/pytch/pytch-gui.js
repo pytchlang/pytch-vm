@@ -824,7 +824,8 @@ $(document).ready(function() {
                                        : `<em>${frame.filename}</em>`);
                     let frame_li = append_err_li_html(
                         err_traceback_ul, `${intro} <span></span> of ${code_origin}`);
-                    punch_in_lineno_span(frame_li, frame.lineno);
+                    punch_in_lineno_span(frame_li, frame.lineno,
+                                         (code_origin == "your code"));
                 });
 
                 append_err_li_html(err_traceback_ul,
