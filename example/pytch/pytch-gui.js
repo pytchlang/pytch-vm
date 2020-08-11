@@ -797,13 +797,13 @@ $(document).ready(function() {
 
             switch (context) {
             case "build": {
+                err_li.querySelector("p.intro").innerHTML = "Your code";
+
                 let n_traceback_frames = err.traceback.length;
                 if (n_traceback_frames != 1)
                     throw Error("expecting single-frame traceback for build error"
                                 + ` but got ${n_traceback_frame}-frame one`);
                 let frame = err.traceback[0];
-
-                err_li.querySelector("p.intro").innerHTML = "Your code";
 
                 let err_message_ul = err_li.querySelector("ul.err-message");
                 append_err_li_text(err_message_ul, msg);
