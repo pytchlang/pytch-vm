@@ -1285,6 +1285,8 @@ $(document).ready(function() {
         present_tutorial(tutorial);
     };
 
+    live_reload_client.connect_to_server();
+
     // Temporary while developing.  The idea is that the author will create a
     // symlink from DEFAULT to the actual tutorial they are working on.
     //
