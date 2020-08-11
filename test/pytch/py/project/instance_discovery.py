@@ -44,24 +44,23 @@ class Scanner(Sprite):
     def init(self):
         # Store the IDs rather than the actual Alien objects, because
         # Sk.ffi.remapToJs() does not know how to handle Alien instances.
-        self.got_alien_ids = 0
+        self.got_ids = 0
 
     @when_I_receive('get-original')
     def get_original(self):
-        self.got_alien_ids = Alien.the_original().id
+        self.got_ids = Alien.the_original().id
 
     @when_I_receive('get-clones')
     def get_clones(self):
-        self.got_alien_ids = sorted([a.id for a in Alien.all_clones()])
+        self.got_ids = sorted([a.id for a in Alien.all_clones()])
 
     @when_I_receive('get-instances')
     def get_instances(self):
-        self.got_alien_ids = sorted([a.id for a in Alien.all_instances()])
+        self.got_ids = sorted([a.id for a in Alien.all_instances()])
 
     @when_I_receive('get-stage')
     def get_stage(self):
-        # Quite a severe fudge to use 'got_alien_ids' for this; sorry.
-        self.got_alien_ids = WhiteSheet.the_only().id
+        self.got_ids = WhiteSheet.the_only().id
 
 
 # --cut-here-for-auto-config--

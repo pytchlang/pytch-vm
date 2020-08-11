@@ -29,7 +29,7 @@ describe("instance discovery", () => {
             project.one_frame();
 
             let scanner = project.instance_0_by_class_name("Scanner");
-            let got_ids = scanner.js_attr("got_alien_ids");
+            let got_ids = scanner.js_attr("got_ids");
             assert.deepEqual(got_ids, exp_ids);
         });
 
