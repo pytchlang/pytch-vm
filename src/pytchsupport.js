@@ -14,8 +14,8 @@ Sk.pytchsupport = Sk.pytchsupport || {};
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Return the imported "pytch" module from the given object (in usage,
- * this object will be a module).  Throw an error if no "pytch" found.
+ * Return the imported "pytch" module from the given object (in usage, this
+ * object will be a module).  Throw an error if no "pytch" found.
  *
  * TODO: Assert that "pytch" refers to a module?
  */
@@ -28,12 +28,12 @@ Sk.pytchsupport.pytch_in_module = (mod => {
 
 
 /**
-* Return a list of the actors (Sprites or Stages) in the given module.
-* Each entry in the list is an object of the form
-*
-* { cls: Python class object,
-*   kind: JS string "Sprite" or "Stage" }
-*/
+ * Return a list of the actors (Sprites or Stages) in the given module.  Each
+ * entry in the list is an object of the form
+ *
+ * { cls: Python class object,
+ *   kind: JS string "Sprite" or "Stage" }
+ */
 Sk.pytchsupport.actors_of_module = (mod => {
     const pytch = Sk.pytchsupport.pytch_in_module(mod);
     const pytch_Sprite = pytch.$d.Sprite;
@@ -56,11 +56,11 @@ Sk.pytchsupport.actors_of_module = (mod => {
 
 
 /**
-* Predicate testing whether a given object has an attribute which is
-* an instance of the Pytch class Project.
-*
-* Assumes the given object has done "import pytch".
-*/
+ * Predicate testing whether a given object has an attribute which is an
+ * instance of the Pytch class Project.
+ *
+ * Assumes the given object has done "import pytch".
+ */
 Sk.pytchsupport.module_has_Project_instance = (mod => {
     const pytch = Sk.pytchsupport.pytch_in_module(mod);
     const cls_Project = pytch.$d.Project;
@@ -73,10 +73,10 @@ Sk.pytchsupport.module_has_Project_instance = (mod => {
 
 
 /**
-* If the given module lacks a Project instance, create one inside it,
-* and register all Sprite and Stage subclasses found in the module
-* with that Project.  Then make that project the 'current live' one.
-*/
+ * If the given module lacks a Project instance, create one inside it, and
+ * register all Sprite and Stage subclasses found in the module with that
+ * Project.  Then make that project the 'current live' one.
+ */
 Sk.pytchsupport.maybe_auto_configure_project = (async mod => {
     // If the user has already made their own Project, leave it alone.
     if (Sk.pytchsupport.module_has_Project_instance(mod))
@@ -110,9 +110,9 @@ Sk.pytchsupport.maybe_auto_configure_project = (async mod => {
 
 
 /**
-* Import a module from code text, and auto-configure its project if it
-* doesn't explicitly define one already.
-*/
+ * Import a module from code text, and auto-configure its project if it doesn't
+ * explicitly define one already.
+ */
 Sk.pytchsupport.import_with_auto_configure = (async code_text => {
     let module = await Sk.misceval.asyncToPromise(
         () => Sk.importMainWithBody("<stdin>", false, code_text, true));

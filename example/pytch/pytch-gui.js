@@ -811,7 +811,6 @@ $(document).ready(function() {
                 break;
             }
             case "run": {
-
                 err_li.querySelector("p.intro").innerHTML
                     = (`A <i>${thread_info.target_class_kind}</i>`
                        + ` of class <i>${thread_info.target_class_name}</i>`);
