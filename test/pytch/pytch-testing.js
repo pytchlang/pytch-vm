@@ -255,6 +255,12 @@ class MockSound {
         this.duration = sound_duration_from_url.get(url);
     }
 
+    static maybe_create(parent_sound_manager, tag, url) {
+        return (sound_duration_from_url.has(url)
+                ? new MockSound(parent_sound_manager, tag, url)
+                : null);
+    }
+
     launch_new_performance() {
         let performance = new MockSoundPerformance(this.tag, this.duration);
         this.parent_sound_manager.register_running_performance(performance);
