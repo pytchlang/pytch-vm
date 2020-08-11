@@ -635,7 +635,25 @@ $(document).ready(function() {
         }
 
         async async_load_sound(tag, url) {
-            let response = await fetch(url);
+            let err_detail = null;
+            let response = null;
+
+            try {
+                response = await fetch(url);
+                if (! response.ok) {
+                    // 404s or similar end up here.
+                    err_detail = `status ${response.status} ${response.statusText}`;
+                }
+            } catch (err) {
+                // Network errors end up here.
+                err_detail = "network error";
+            }
+
+            if (err_detail !== null)
+                throw new Sk.pytchsupport.PytchAssetLoadError(
+                    `could not load sound "${tag}" from "${url}" (${err_detail})`,
+                    "sound", url);
+
             let raw_data = await response.arrayBuffer();
             let audio_buffer = await this.audio_context.decodeAudioData(raw_data);
             return new BrowserSound(this, tag, audio_buffer);
