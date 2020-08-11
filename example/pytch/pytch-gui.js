@@ -4,6 +4,15 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Bring some functions into main scope
+
+    const PytchAssetLoadError = (...args) => {
+        return new Sk.pytchsupport.PytchAssetLoadError(...args);
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Editor interaction
 
     let ace_editor = ace.edit("editor");

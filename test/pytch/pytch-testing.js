@@ -61,6 +61,13 @@ const import_project = async (code_text) => {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+const PytchAssetLoadError = (...args) => {
+    return new Sk.pytchsupport.PytchAssetLoadError(...args);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 const mock_keyboard = (() => {
     let undrained_keydown_events = [];
     let key_is_down = {};
