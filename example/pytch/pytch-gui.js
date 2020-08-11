@@ -799,6 +799,7 @@ $(document).ready(function() {
             case "build": {
                 err_li.querySelector("p.intro").innerHTML = "Your code";
 
+                let err_traceback_ul = err_li.querySelector("ul.err-traceback");
                 let n_traceback_frames = err.traceback.length;
                 switch (n_traceback_frames) {
                 case 0: {
@@ -820,7 +821,6 @@ $(document).ready(function() {
                 let err_message_ul = err_li.querySelector("ul.err-message");
                 append_err_li_text(err_message_ul, msg);
 
-                let err_traceback_ul = err_li.querySelector("ul.err-traceback");
                 let frame_li = append_err_li_html(err_traceback_ul, "at <span></span>");
                 punch_in_lineno_span(frame_li, frame.lineno, true);
 
