@@ -818,8 +818,11 @@ $(document).ready(function() {
                 let err_traceback_ul = err_li.querySelector("ul.err-traceback");
                 err.traceback.forEach((frame, idx) => {
                     let intro = (idx > 0) ? "called by" : "at";
+                    let code_origin = (frame.filename == "<stdin>.py"
+                                       ? "your code"
+                                       : `<em>${frame.filename}</em>`);
                     let frame_li = append_err_li_html(
-                        err_traceback_ul, `${intro} <span></span> of your code`);
+                        err_traceback_ul, `${intro} <span></span> of ${code_origin}`);
                     punch_in_lineno_span(frame_li, frame.lineno);
                 });
 
