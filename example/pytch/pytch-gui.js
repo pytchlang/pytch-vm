@@ -4,6 +4,15 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Bring some functions into main scope
+
+    const PytchAssetLoadError = (...args) => {
+        return new Sk.pytchsupport.PytchAssetLoadError(...args);
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Editor interaction
 
     let ace_editor = ace.edit("editor");
@@ -566,8 +575,14 @@ $(document).ready(function() {
             img.onload = (() => resolve(img));
             img.onerror = (ignored_error_event => {
                 // TODO: Can we tell WHY we couldn't load that image?
+
+                // TODO: This will reveal the within-project-root URL; it would
+                // be a better user experience to report just what the user
+                // typed, possibly also with the context of the project-root.
+
                 let error_message = `could not load image "${url}"`;
-                let py_error = new Sk.builtin.RuntimeError(error_message);
+                let py_error = PytchAssetLoadError(error_message, "image", url);
+
                 reject(py_error);
             });
             img.src = url;
@@ -628,7 +643,26 @@ $(document).ready(function() {
         }
 
         async async_load_sound(tag, url) {
-            let response = await fetch(url);
+            let err_detail = null;
+            let response = null;
+
+            try {
+                response = await fetch(url);
+                if (! response.ok) {
+                    // 404s or similar end up here.
+                    err_detail = `status ${response.status} ${response.statusText}`;
+                }
+            } catch (err) {
+                // Network errors end up here.
+                err_detail = "network error";
+            }
+
+            if (err_detail !== null) {
+                let error_message = (`could not load sound "${tag}"`
+                                     + ` from "${url}" (${err_detail})`);
+                throw PytchAssetLoadError(error_message, "sound", url);
+            }
+
             let raw_data = await response.arrayBuffer();
             let audio_buffer = await this.audio_context.decodeAudioData(raw_data);
             return new BrowserSound(this, tag, audio_buffer);
@@ -790,20 +824,32 @@ $(document).ready(function() {
 
             switch (context) {
             case "build": {
-                let n_traceback_frames = err.traceback.length;
-                if (n_traceback_frames != 1)
-                    throw Error("expecting single-frame traceback for build error"
-                                + ` but got ${n_traceback_frame}-frame one`);
-                let frame = err.traceback[0];
-
                 err_li.querySelector("p.intro").innerHTML = "Your code";
+
+                let err_traceback_ul = err_li.querySelector("ul.err-traceback");
+                let n_traceback_frames = err.traceback.length;
+                switch (n_traceback_frames) {
+                case 0: {
+                    // TODO: Can we get some context through to here about
+                    // whether we were trying to load images or sounds, or doing
+                    // something else?
+                    append_err_li_html(err_traceback_ul, "while loading images/sounds");
+                    break;
+                }
+                case 1: {
+                    let frame_li = append_err_li_html(err_traceback_ul, "at <span></span>");
+                    let frame = err.traceback[0];
+                    punch_in_lineno_span(frame_li, frame.lineno, true);
+                    break;
+                }
+                default:
+                    throw Error("expecting empty or single-frame traceback"
+                                + " for build error"
+                                + ` but got ${n_traceback_frames}-frame one`);
+                }
 
                 let err_message_ul = err_li.querySelector("ul.err-message");
                 append_err_li_text(err_message_ul, msg);
-
-                let err_traceback_ul = err_li.querySelector("ul.err-traceback");
-                let frame_li = append_err_li_html(err_traceback_ul, "at <span></span>");
-                punch_in_lineno_span(frame_li, frame.lineno, true);
 
                 let errors_ul = container_div.querySelector("ul");
                 errors_ul.append(err_li);

@@ -120,6 +120,37 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
     return module;
 });
 
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Pytch-specific errors.
+ */
+
+/**
+ * Exception subclass representing the failure to load a project asset.
+ *
+ * Construct with three arguments:
+ *
+ *     (error_message, asset_kind, asset_path)
+ *
+ * where 'asset_kind' should be "image" or "sound".
+ */
+Sk.pytchsupport.PytchAssetLoadError = function (args) {
+    var o;
+    if (! (this instanceof Sk.pytchsupport.PytchAssetLoadError)) {
+        o = Object.create(Sk.pytchsupport.PytchAssetLoadError.prototype);
+        o.constructor.apply(o, arguments);
+        return o;
+    }
+    Sk.builtin.StandardError.apply(this, arguments);
+
+    // Undo the traceback-seeding done in Sk.builtin.BaseException().
+    this.traceback = [];
+};
+Sk.abstr.setUpInheritance("PytchAssetLoadError",
+                          Sk.pytchsupport.PytchAssetLoadError,
+                          Sk.builtin.StandardError);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -128,6 +159,8 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
     "actors_of_module",
     "module_has_Project_instance",
     "maybe_auto_configure_project",
+    //
+    "PytchAssetLoadError",
 ].forEach(
     fun_name => {
         Sk.exportSymbol(`Sk.pytchsupport.${fun_name}`, Sk.pytchsupport[fun_name]);

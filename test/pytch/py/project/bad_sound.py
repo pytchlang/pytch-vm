@@ -2,7 +2,7 @@ from pytch import Project, Sprite
 
 
 class Alien(Sprite):
-    Costumes = [('angry', 'library/images/no-such-angry-alien.png', 25, 25)]
+    Sounds = [('xylophone', 'library/sounds/no-such-instrument.mp3')]
 
 
 project = Project()

@@ -61,6 +61,13 @@ const import_project = async (code_text) => {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+const PytchAssetLoadError = (...args) => {
+    return new Sk.pytchsupport.PytchAssetLoadError(...args);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 const mock_keyboard = (() => {
     let undrained_keydown_events = [];
     let key_is_down = {};
@@ -128,7 +135,13 @@ const mock_sound_manager = (() => {
     let running_performances = () => running_performances_;
 
     let async_load_sound = ((tag, url) => {
-        return Promise.resolve(new MockSound(mock_sound_manager, tag, url));
+        let maybe_sound = MockSound.maybe_create(mock_sound_manager, tag, url);
+        if (maybe_sound === null) {
+            let error_message = `could not load sound "${url}"`;
+            let py_error = PytchAssetLoadError(error_message, "sound", url);
+            return Promise.reject(py_error);
+        } else
+            return Promise.resolve(maybe_sound);
     });
 
     let register_running_performance = (performance => {
@@ -189,7 +202,7 @@ const async_load_mock_image = (url) => {
     let maybe_image = MockImage.maybe_create(url);
     if (maybe_image === null) {
         let error_message = `could not load image "${url}"`;
-        let py_error = new Sk.builtin.RuntimeError(error_message);
+        let py_error = PytchAssetLoadError(error_message, "image", url);
         return Promise.reject(py_error);
     } else
         return Promise.resolve(maybe_image);
@@ -252,6 +265,12 @@ class MockSound {
         this.parent_sound_manager = parent_sound_manager;
         this.tag = tag;
         this.duration = sound_duration_from_url.get(url);
+    }
+
+    static maybe_create(parent_sound_manager, tag, url) {
+        return (sound_duration_from_url.has(url)
+                ? new MockSound(parent_sound_manager, tag, url)
+                : null);
     }
 
     launch_new_performance() {

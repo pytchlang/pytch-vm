@@ -39,6 +39,7 @@ describe("Costume handling", () => {
             let caught_exception = module.$d.caught_exception;
             let err_msg = Sk.builtin.str(caught_exception).v;
             assert.ok(/could not load image/.test(err_msg));
+            assert.equal(caught_exception.args.v[1].v, "image");
         })});
 
     with_module("py/project/bad_appearance_spec.py", (import_module) => {

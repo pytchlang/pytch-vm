@@ -3,6 +3,7 @@
 const {
     configure_mocha,
     with_project,
+    with_module,
     assert,
     mock_sound_manager,
 } = require("./pytch-testing.js");
@@ -185,3 +186,16 @@ describe(`waiting and non-waiting sounds (${test_case.tag})`, () => {
         Sk.pytch.project_root = original_project_root;
     });
 })});
+
+describe("bad sounds", () => {
+    with_module("py/project/bad_sound.py", (import_module) => {
+        it("throws Python error if sound not found", async () => {
+            let module = await import_module();
+            let caught_exception = module.$d.caught_exception;
+            let err_msg = Sk.builtin.str(caught_exception).v;
+            assert.ok(/could not load sound/.test(err_msg));
+            assert.equal(caught_exception.args.v[1].v, "sound");
+        });
+    });
+});
+
