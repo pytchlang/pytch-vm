@@ -235,6 +235,7 @@ $(document).ready(function() {
             this.toc_list_elt = pane_elt.querySelector(".ToC .entries");
             this.chapter_index = initial_chapter_index;
             this.populate_toc();
+            this.initialise_editor();
             this.refresh();
         }
 
