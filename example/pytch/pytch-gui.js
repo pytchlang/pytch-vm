@@ -762,10 +762,11 @@ $(document).ready(function() {
             return simple_str;
         });
 
-        const punch_in_lineno_span = (parent_elt, lineno) => {
+        const punch_in_lineno_span = (parent_elt, lineno, give_class) => {
             let span = document.createElement("span");
             span.innerText = `line ${lineno}`;
-            $(span).addClass("error-loc");
+            if (give_class)
+                $(span).addClass("error-loc");
             span.setAttribute("data-lineno", lineno);
 
             let old_span = parent_elt.querySelector("span");
