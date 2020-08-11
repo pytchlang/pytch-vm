@@ -59,6 +59,11 @@ $(document).ready(function() {
             }
 
             active_ws = new WebSocket("ws://127.0.0.1:4111/");
+
+            active_ws.onerror = (event) => {
+                console.log("error from WebSocket");
+                active_ws = null;
+            };
         };
 
         return {
