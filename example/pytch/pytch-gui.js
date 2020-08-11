@@ -213,6 +213,11 @@ $(document).ready(function() {
             return first_h2.innerHTML;
         }
 
+        get initial_code() {
+            let front_matter = this.chapters[0];
+            return front_matter.dataset.initialCodeText;
+        }
+
         get final_code() {
             let front_matter = this.chapters[0];
             return front_matter.dataset.completeCodeText;
