@@ -566,8 +566,15 @@ $(document).ready(function() {
             img.onload = (() => resolve(img));
             img.onerror = (ignored_error_event => {
                 // TODO: Can we tell WHY we couldn't load that image?
+
+                // TODO: This will reveal the within-project-root URL; it would
+                // be a better user experience to report just what the user
+                // typed, possibly also with the context of the project-root.
+
                 let error_message = `could not load image "${url}"`;
-                let py_error = new Sk.builtin.RuntimeError(error_message);
+                let py_error = new Sk.pytchsupport.PytchAssetLoadError(
+                    error_message, "image", url);
+
                 reject(py_error);
             });
             img.src = url;
