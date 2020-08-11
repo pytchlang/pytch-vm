@@ -48,6 +48,8 @@ $(document).ready(function() {
     // Live-reload client
 
     const live_reload_client = (() => {
+        let active_ws = null;
+
         return {
         };
     })();
