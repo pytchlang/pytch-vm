@@ -213,6 +213,11 @@ $(document).ready(function() {
             return first_h2.innerHTML;
         }
 
+        get initial_code() {
+            let front_matter = this.chapters[0];
+            return front_matter.dataset.initialCodeText;
+        }
+
         get final_code() {
             let front_matter = this.chapters[0];
             return front_matter.dataset.completeCodeText;
@@ -230,6 +235,7 @@ $(document).ready(function() {
             this.toc_list_elt = pane_elt.querySelector(".ToC .entries");
             this.chapter_index = initial_chapter_index;
             this.populate_toc();
+            this.initialise_editor();
             this.refresh();
         }
 
@@ -267,6 +273,11 @@ $(document).ready(function() {
 
             $(this.toc_list_elt).find("li").removeClass("shown");
             $($(this.toc_list_elt).find("li")[this.chapter_index]).addClass("shown");
+        }
+
+        initialise_editor() {
+            ace_editor.setValue(this.tutorial.initial_code);
+            ace_editor.clearSelection();
         }
 
         run_final_project() {
@@ -1174,6 +1185,8 @@ $(document).ready(function() {
                                        $("#tab-pane-tutorial")[0]);
     };
 
-    launch_tutorial("tutorials/bunner").then(
+    // Temporary while developing.  The idea is that the author will create a
+    // symlink from DEFAULT to the actual tutorial they are working on.
+    launch_tutorial("tutorials/DEFAULT").then(
         () => window.requestAnimationFrame(one_frame));
 });
