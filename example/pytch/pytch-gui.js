@@ -803,7 +803,10 @@ $(document).ready(function() {
                 let n_traceback_frames = err.traceback.length;
                 switch (n_traceback_frames) {
                 case 0: {
-                    // TODO
+                    // TODO: Can we get some context through to here about
+                    // whether we were trying to load images or sounds, or doing
+                    // something else?
+                    append_err_li_html(err_traceback_ul, "while loading images/sounds");
                     break;
                 }
                 case 1: {
