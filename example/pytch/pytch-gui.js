@@ -807,7 +807,9 @@ $(document).ready(function() {
                     break;
                 }
                 case 1: {
-                    // TODO
+                    let frame_li = append_err_li_html(err_traceback_ul, "at <span></span>");
+                    let frame = err.traceback[0];
+                    punch_in_lineno_span(frame_li, frame.lineno, true);
                     break;
                 }
                 default:
@@ -816,13 +818,8 @@ $(document).ready(function() {
                                 + ` but got ${n_traceback_frames}-frame one`);
                 }
 
-                let frame = err.traceback[0];
-
                 let err_message_ul = err_li.querySelector("ul.err-message");
                 append_err_li_text(err_message_ul, msg);
-
-                let frame_li = append_err_li_html(err_traceback_ul, "at <span></span>");
-                punch_in_lineno_span(frame_li, frame.lineno, true);
 
                 let errors_ul = container_div.querySelector("ul");
                 errors_ul.append(err_li);
