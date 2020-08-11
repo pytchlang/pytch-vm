@@ -58,6 +58,11 @@ class Scanner(Sprite):
     def get_instances(self):
         self.got_alien_ids = sorted([a.id for a in Alien.all_instances()])
 
+    @when_I_receive('get-stage')
+    def get_stage(self):
+        # Quite a severe fudge to use 'got_alien_ids' for this; sorry.
+        self.got_alien_ids = WhiteSheet.the_only().id
+
 
 # --cut-here-for-auto-config--
 
