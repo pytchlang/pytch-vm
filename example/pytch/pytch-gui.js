@@ -803,7 +803,7 @@ $(document).ready(function() {
 
                 let err_traceback_ul = err_li.querySelector("ul.err-traceback");
                 let frame_li = append_err_li_html(err_traceback_ul, "at <span></span>");
-                punch_in_lineno_span(frame_li, frame.lineno);
+                punch_in_lineno_span(frame_li, frame.lineno, true);
 
                 let errors_ul = container_div.querySelector("ul");
                 errors_ul.append(err_li);
