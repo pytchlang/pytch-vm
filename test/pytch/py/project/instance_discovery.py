@@ -1,6 +1,7 @@
 import pytch
 from pytch import (
     Sprite,
+    Stage,
     Project,
     when_green_flag_clicked,
     when_I_start_as_a_clone,
@@ -13,6 +14,13 @@ def next_global_id():
     global G_next_global_id
     G_next_global_id += 1
     return G_next_global_id
+
+
+class WhiteSheet(Stage):
+    @when_green_flag_clicked
+    def init(self):
+        # Special value which will never be returned by next_global_id()
+        self.id = 42
 
 
 class Alien(Sprite):
@@ -54,5 +62,6 @@ class Scanner(Sprite):
 # --cut-here-for-auto-config--
 
 project = Project()
+project.register_stage_class(WhiteSheet)
 project.register_sprite_class(Alien)
 project.register_sprite_class(Scanner)
