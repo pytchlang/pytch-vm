@@ -60,5 +60,6 @@ describe("instance discovery", () => {
             let project = await prepare_project();
             launch_clones(project);
             assert_result(project, 'get-instances', [100, 101, 102, 103]);
-        })});
+        })
+    });
 });
