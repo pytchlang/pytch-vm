@@ -72,6 +72,7 @@ $(document).ready(function() {
         };
 
         return {
+            connect_to_server,
         };
     })();
 
