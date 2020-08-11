@@ -128,7 +128,14 @@ const mock_sound_manager = (() => {
     let running_performances = () => running_performances_;
 
     let async_load_sound = ((tag, url) => {
-        return Promise.resolve(new MockSound(mock_sound_manager, tag, url));
+        let maybe_sound = MockSound.maybe_create(mock_sound_manager, tag, url);
+        if (maybe_sound === null) {
+            let error_message = `could not load sound "${url}"`;
+            let py_error = new Sk.pytchsupport.PytchAssetLoadError(
+                error_message, "sound", url);
+            return Promise.reject(py_error);
+        } else
+            return Promise.resolve(maybe_sound);
     });
 
     let register_running_performance = (performance => {
