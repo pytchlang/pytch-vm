@@ -45,6 +45,16 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Live-reload client
+
+    const live_reload_client = (() => {
+        return {
+        };
+    })();
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Very rudimentary auto-completion
     //
     // Only complete "pytch." and "self.", with hard-coded list of options based
