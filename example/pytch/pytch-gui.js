@@ -800,9 +800,21 @@ $(document).ready(function() {
                 err_li.querySelector("p.intro").innerHTML = "Your code";
 
                 let n_traceback_frames = err.traceback.length;
-                if (n_traceback_frames != 1)
-                    throw Error("expecting single-frame traceback for build error"
-                                + ` but got ${n_traceback_frame}-frame one`);
+                switch (n_traceback_frames) {
+                case 0: {
+                    // TODO
+                    break;
+                }
+                case 1: {
+                    // TODO
+                    break;
+                }
+                default:
+                    throw Error("expecting empty or single-frame traceback"
+                                + " for build error"
+                                + ` but got ${n_traceback_frames}-frame one`);
+                }
+
                 let frame = err.traceback[0];
 
                 let err_message_ul = err_li.querySelector("ul.err-message");
