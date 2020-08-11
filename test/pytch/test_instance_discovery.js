@@ -29,7 +29,7 @@ describe("instance discovery", () => {
             project.one_frame();
 
             let scanner = project.instance_0_by_class_name("Scanner");
-            let got_ids = scanner.js_attr("got_alien_ids");
+            let got_ids = scanner.js_attr("got_ids");
             assert.deepEqual(got_ids, exp_ids);
         });
 
@@ -60,5 +60,11 @@ describe("instance discovery", () => {
             let project = await prepare_project();
             launch_clones(project);
             assert_result(project, 'get-instances', [100, 101, 102, 103]);
-        })});
+        })
+
+        it("can retrieve the Stage", async () => {
+            let project = await prepare_project();
+            assert_result(project, 'get-stage', 42);
+        });
+    });
 });

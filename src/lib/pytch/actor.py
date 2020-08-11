@@ -154,5 +154,9 @@ class Stage(Actor):
 
         self.switch_backdrop(self.Backdrops[0][0])
 
+    @classmethod
+    def the_only(cls):
+        return registered_instances(cls)[0]
+
     def switch_backdrop(self, backdrop_name):
         self.switch_appearance(backdrop_name)
