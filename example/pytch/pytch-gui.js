@@ -45,6 +45,60 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Live-reload client
+
+    const live_reload_client = (() => {
+        let active_ws = null;
+
+        const connect_to_server = (evt) => {
+            console.log("connect_to_server(): entering");
+
+            if (active_ws !== null) {
+                console.log("already connected");
+                return;
+            }
+
+            active_ws = new WebSocket("ws://127.0.0.1:4111/");
+
+            active_ws.onerror = (event) => {
+                console.log("error from WebSocket");
+                active_ws = null;
+            };
+
+            active_ws.onmessage = (event) => {
+                console.log("got message from server");
+                let msg = JSON.parse(event.data);
+
+                switch (msg.kind) {
+                case "code": {
+                    console.log("code update",
+                                msg.tutorial_name, 'len', msg.text.length);
+                    Sk.pytch.project_root = `tutorials/${msg.tutorial_name}`;
+                    ace_editor.setValue(msg.text);
+                    ace_editor.clearSelection();
+                    build_button.visibly_build(true);
+                    break;
+                }
+                case "tutorial": {
+                    console.log("tutorial update",
+                                msg.tutorial_name, 'len', msg.text.length);
+                    present_tutorial(new Tutorial(msg.tutorial_name, msg.text));
+                    break;
+                }
+                default:
+                    console.log("UNKNOWN update kind", msg.kind);
+                }
+            };
+        };
+
+        return {
+            connect_to_server,
+        };
+    })();
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Very rudimentary auto-completion
     //
     // Only complete "pytch." and "self.", with hard-coded list of options based
@@ -1230,6 +1284,8 @@ $(document).ready(function() {
         let tutorial = await Tutorial.async_create(name);
         present_tutorial(tutorial);
     };
+
+    live_reload_client.connect_to_server();
 
     // Temporary while developing.  The idea is that the author will create a
     // symlink from DEFAULT to the actual tutorial they are working on.
