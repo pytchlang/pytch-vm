@@ -1211,11 +1211,9 @@ $(document).ready(function() {
 
     let running_tutorial_presentation = null;
 
-    const launch_tutorial = async (project_root) => {
-        let tutorial = await Tutorial.async_create(project_root);
-
+    const present_tutorial = (tutorial) => {
         // TODO: When to change this back again?
-        Sk.pytch.project_root = project_root;
+        Sk.pytch.project_root = `tutorials/${tutorial.name}`;
 
         running_tutorial_presentation
             = new TutorialPresentation(tutorial,
