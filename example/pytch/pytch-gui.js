@@ -1237,6 +1237,6 @@ $(document).ready(function() {
     // In due course we will have a clickable list which takes the user to the
     // chosen tutorial.
     //
-    launch_tutorial("tutorials/DEFAULT").then(
+    present_tutorial_by_name("DEFAULT").then(
         () => window.requestAnimationFrame(one_frame));
 });
