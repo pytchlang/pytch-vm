@@ -183,7 +183,9 @@ $(document).ready(function() {
     // Tutorials
 
     class Tutorial {
-        constructor(html) {
+        constructor(name, html) {
+            this.name = name;
+
             let chapters_elt = document.createElement("div");
             chapters_elt.innerHTML = html;
 
