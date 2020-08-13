@@ -1218,6 +1218,12 @@ $(document).ready(function() {
         running_tutorial_presentation
             = new TutorialPresentation(tutorial,
                                        $("#tab-pane-tutorial")[0]);
+
+        let shown_chapter_index = running_tutorial_presentation.chapter_index;
+        let code_just_before = tutorial.code_just_before_chapter(shown_chapter_index);
+        ace_editor.setValue(code_just_before);
+        ace_editor.clearSelection();
+        build_button.visibly_build(false);
     };
 
     // Temporary while developing.  The idea is that the author will create a
