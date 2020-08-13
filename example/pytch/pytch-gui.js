@@ -209,6 +209,10 @@ $(document).ready(function() {
             return this.chapter(0);
         }
 
+        get maybe_seek_chapter_index() {
+            return (+this.front_matter.dataset.seekToChapter) || null;
+        }
+
         chapter_title(chapter_index) {
             let chapter_content = this.chapter(chapter_index);
             let first_h1 = chapter_content.querySelector("h1");
