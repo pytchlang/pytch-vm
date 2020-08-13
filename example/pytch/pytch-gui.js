@@ -1222,6 +1222,10 @@ $(document).ready(function() {
 
     // Temporary while developing.  The idea is that the author will create a
     // symlink from DEFAULT to the actual tutorial they are working on.
+    //
+    // In due course we will have a clickable list which takes the user to the
+    // chosen tutorial.
+    //
     launch_tutorial("tutorials/DEFAULT").then(
         () => window.requestAnimationFrame(one_frame));
 });
