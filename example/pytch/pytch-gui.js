@@ -203,6 +203,10 @@ $(document).ready(function() {
             return this.chapters[chapter_index];
         }
 
+        get front_matter() {
+            return this.chapter(0);
+        }
+
         chapter_title(chapter_index) {
             let chapter_content = this.chapter(chapter_index);
             let first_h1 = chapter_content.querySelector("h1");
