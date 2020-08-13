@@ -260,6 +260,16 @@ $(document).ready(function() {
             });
         }
 
+        /**
+          * Value is the one embedded in the tutorial HTML, or 0 if there is no
+          * such seek-to-chapter information present.
+          */
+        get initial_chapter_index() {
+            if (this.tutorial.maybe_seek_chapter_index !== null)
+                return this.tutorial.maybe_seek_chapter_index;
+            return 0;
+        }
+
         leap_to_chapter_from_event(evt) {
             let evt_data = evt.target.dataset;
             this.leap_to_chapter(+evt_data.chapterIndex);
