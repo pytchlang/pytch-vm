@@ -183,7 +183,9 @@ $(document).ready(function() {
     // Tutorials
 
     class Tutorial {
-        constructor(html) {
+        constructor(name, html) {
+            this.name = name;
+
             let chapters_elt = document.createElement("div");
             chapters_elt.innerHTML = html;
 
@@ -191,16 +193,41 @@ $(document).ready(function() {
                              .querySelectorAll("div.tutorial-bundle > div"));
         }
 
-        static async async_create(project_root) {
-            let tutorial_url = `${project_root}/tutorial.html`;
-            let tutorial_response = await fetch(tutorial_url);
-            let tutorial_text = await tutorial_response.text();
+        static async async_create(name) {
+            let url = `tutorials/${name}/tutorial.html`;
+            let response = await fetch(url);
+            let html = await response.text();
 
-            return new Tutorial(tutorial_text);
+            return new Tutorial(name, html);
         }
 
         chapter(chapter_index) {
             return this.chapters[chapter_index];
+        }
+
+        get front_matter() {
+            return this.chapter(0);
+        }
+
+        get maybe_seek_chapter_index() {
+            return (+this.front_matter.dataset.seekToChapter) || null;
+        }
+
+        code_just_before_chapter(chapter_index) {
+            if (chapter_index <= 1)
+                return this.initial_code;
+
+            for (let probe_idx = chapter_index - 1;
+                 probe_idx > 0;
+                 probe_idx -= 1)
+            {
+                let probe_chapter = this.chapter(probe_idx);
+                let patches = probe_chapter.querySelectorAll(".patch-container");
+                if (patches.length > 0)
+                    return patches[patches.length - 1].dataset.codeAsOfCommit;
+            }
+
+            return "import pytch\n";
         }
 
         chapter_title(chapter_index) {
@@ -229,11 +256,11 @@ $(document).ready(function() {
     }
 
     class TutorialPresentation {
-        constructor(tutorial, pane_elt, initial_chapter_index=0) {
+        constructor(tutorial, pane_elt) {
             this.tutorial = tutorial;
             this.chapter_elt = pane_elt.querySelector(".chapter-container");
             this.toc_list_elt = pane_elt.querySelector(".ToC .entries");
-            this.chapter_index = initial_chapter_index;
+            this.chapter_index = this.initial_chapter_index;
             this.populate_toc();
             this.initialise_editor();
             this.refresh();
@@ -248,6 +275,16 @@ $(document).ready(function() {
                 $(toc_entry_elt).click((evt) => this.leap_to_chapter_from_event(evt));
                 this.toc_list_elt.appendChild(toc_entry_elt);
             });
+        }
+
+        /**
+          * Value is the one embedded in the tutorial HTML, or 0 if there is no
+          * such seek-to-chapter information present.
+          */
+        get initial_chapter_index() {
+            if (this.tutorial.maybe_seek_chapter_index !== null)
+                return this.tutorial.maybe_seek_chapter_index;
+            return 0;
         }
 
         leap_to_chapter_from_event(evt) {
@@ -1174,19 +1211,32 @@ $(document).ready(function() {
 
     let running_tutorial_presentation = null;
 
-    const launch_tutorial = async (project_root) => {
-        let tutorial = await Tutorial.async_create(project_root);
-
+    const present_tutorial = (tutorial) => {
         // TODO: When to change this back again?
-        Sk.pytch.project_root = project_root;
+        Sk.pytch.project_root = `tutorials/${tutorial.name}`;
 
         running_tutorial_presentation
             = new TutorialPresentation(tutorial,
                                        $("#tab-pane-tutorial")[0]);
+
+        let shown_chapter_index = running_tutorial_presentation.chapter_index;
+        let code_just_before = tutorial.code_just_before_chapter(shown_chapter_index);
+        ace_editor.setValue(code_just_before);
+        ace_editor.clearSelection();
+        build_button.visibly_build(false);
+    };
+
+    const present_tutorial_by_name = async (name) => {
+        let tutorial = await Tutorial.async_create(name);
+        present_tutorial(tutorial);
     };
 
     // Temporary while developing.  The idea is that the author will create a
     // symlink from DEFAULT to the actual tutorial they are working on.
-    launch_tutorial("tutorials/DEFAULT").then(
+    //
+    // In due course we will have a clickable list which takes the user to the
+    // chosen tutorial.
+    //
+    present_tutorial_by_name("DEFAULT").then(
         () => window.requestAnimationFrame(one_frame));
 });
