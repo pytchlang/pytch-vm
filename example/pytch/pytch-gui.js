@@ -1226,6 +1226,11 @@ $(document).ready(function() {
         build_button.visibly_build(false);
     };
 
+    const present_tutorial_by_name = async (name) => {
+        let tutorial = await Tutorial.async_create(name);
+        present_tutorial(tutorial);
+    };
+
     // Temporary while developing.  The idea is that the author will create a
     // symlink from DEFAULT to the actual tutorial they are working on.
     //
