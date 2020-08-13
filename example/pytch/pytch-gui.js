@@ -68,6 +68,26 @@ $(document).ready(function() {
             active_ws.onmessage = (event) => {
                 console.log("got message from server");
                 let msg = JSON.parse(event.data);
+
+                switch (msg.kind) {
+                case "code": {
+                    console.log("code update",
+                                msg.tutorial_name, 'len', msg.text.length);
+                    Sk.pytch.project_root = `tutorials/${msg.tutorial_name}`;
+                    ace_editor.setValue(msg.text);
+                    ace_editor.clearSelection();
+                    build_button.visibly_build(true);
+                    break;
+                }
+                case "tutorial": {
+                    console.log("tutorial update",
+                                msg.tutorial_name, 'len', msg.text.length);
+                    present_tutorial(new Tutorial(msg.tutorial_name, msg.text));
+                    break;
+                }
+                default:
+                    console.log("UNKNOWN update kind", msg.kind);
+                }
             };
         };
 
