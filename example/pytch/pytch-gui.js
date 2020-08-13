@@ -213,6 +213,23 @@ $(document).ready(function() {
             return (+this.front_matter.dataset.seekToChapter) || null;
         }
 
+        code_just_before_chapter(chapter_index) {
+            if (chapter_index <= 1)
+                return this.initial_code;
+
+            for (let probe_idx = chapter_index - 1;
+                 probe_idx > 0;
+                 probe_idx -= 1)
+            {
+                let probe_chapter = this.chapter(probe_idx);
+                let patches = probe_chapter.querySelectorAll(".patch-container");
+                if (patches.length > 0)
+                    return patches[patches.length - 1].dataset.codeAsOfCommit;
+            }
+
+            return "import pytch\n";
+        }
+
         chapter_title(chapter_index) {
             let chapter_content = this.chapter(chapter_index);
             let first_h1 = chapter_content.querySelector("h1");
