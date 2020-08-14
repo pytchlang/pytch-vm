@@ -1303,6 +1303,11 @@ $(document).ready(function() {
             = new TutorialPresentation(tutorial,
                                        $("#tab-pane-tutorial")[0]);
 
+        $("#tab-pane-tutorial .placeholder-until-one-chosen").hide();
+        $("#tab-pane-tutorial .ToC").show();
+        $("#tab-pane-tutorial .chapter-container").show();
+        make_tab_current("tutorial");
+
         let shown_chapter_index = running_tutorial_presentation.chapter_index;
         let code_just_before = tutorial.code_just_before_chapter(shown_chapter_index);
         ace_editor.setValue(code_just_before);
