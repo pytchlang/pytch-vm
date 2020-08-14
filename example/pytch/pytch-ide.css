@@ -266,6 +266,7 @@ body {
     justify-content: space-between;
 }
 
+#tab-pane-tutorial-list .navigation,
 #tab-pane-tutorial .navigation {
     cursor: pointer;
     user-select: none;
@@ -279,6 +280,7 @@ body {
     border: 1px solid #888;
 }
 
+#tab-pane-tutorial-list .nav-next,
 #tab-pane-tutorial .nav-next {
     width: 12em;
     background-color: #6d7;
