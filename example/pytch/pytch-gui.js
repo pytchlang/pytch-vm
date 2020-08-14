@@ -1322,12 +1322,6 @@ $(document).ready(function() {
 
     live_reload_client.connect_to_server();
 
-    // Temporary while developing.  The idea is that the author will create a
-    // symlink from DEFAULT to the actual tutorial they are working on.
-    //
-    // In due course we will have a clickable list which takes the user to the
-    // chosen tutorial.
-    //
-    present_tutorial_by_name("DEFAULT").then(
+    tutorials_index.populate().then(
         () => window.requestAnimationFrame(one_frame));
 });
