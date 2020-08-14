@@ -287,13 +287,12 @@ body {
 /******************************************************************************/
 
 div.patch-container {
-    margin-left: 3em;
-    width: 56em;
+    margin-left: 1em;
 }
 
 div.patch-container > h1.decoration {
     padding: 1.5ex 1em;
-    margin: 0px 3em;
+    margin: 0px;
     background-color: #f7f7f7;
     text-align: left;
     font-size: 100%;
@@ -303,7 +302,7 @@ div.patch-container > h1.decoration {
 div.patch, div.patch > table {
     background-color: #f7f7f7;
     border-spacing: 0px;
-    margin: 0px 3em;
+    margin: 0px;
 }
 
 div.patch > table {
