@@ -199,6 +199,40 @@ body {
     flex-direction: row;
 }
 
+#tab-pane-tutorial-list .tutorial-list-container {
+    width: 100%;
+}
+
+#tab-pane-tutorial-list .tutorial-summary {
+    overflow: auto;
+    padding: 16px 24px;
+    max-width: 48em;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 3ex;
+    background-color: #cec;
+    border-radius: 6px;
+}
+
+#tab-pane-tutorial-list .tutorial-summary h1 {
+    font-size: 133%;
+}
+
+#tab-pane-tutorial-list .tutorial-summary .image-container {
+    float: right;
+    margin-left: 2em;
+    margin-right: 1em;
+}
+
+#tab-pane-tutorial-list .tutorial-summary .image-container img {
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+#tab-pane-tutorial-list .tutorial-summary .navigation {
+    margin-top: 3ex;
+}
+
 #tab-pane-tutorial .ToC {
     display: none;
     flex-grow: 0;
