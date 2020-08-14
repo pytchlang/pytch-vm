@@ -233,6 +233,10 @@ body {
     margin-top: 3ex;
 }
 
+#tab-pane-tutorial .placeholder-until-one-chosen {
+    margin: 3ex 3em;
+}
+
 #tab-pane-tutorial .ToC {
     display: none;
     flex-grow: 0;
