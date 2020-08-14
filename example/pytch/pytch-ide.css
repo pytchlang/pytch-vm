@@ -200,6 +200,7 @@ body {
 }
 
 #tab-pane-tutorial .ToC {
+    display: none;
     flex-grow: 0;
     flex-shrink: 0;
     margin: 0px;
@@ -207,6 +208,7 @@ body {
 }
 
 #tab-pane-tutorial .chapter-container {
+    display: none;
     flex-grow: 1;
     flex-shrink: 1;
     height: 100%;
