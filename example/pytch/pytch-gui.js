@@ -286,12 +286,12 @@ $(document).ready(function() {
 
         chapter_title(chapter_index) {
             let chapter_content = this.chapter(chapter_index);
-            let first_h1 = chapter_content.querySelector("h1");
+            let first_h1 = chapter_content.querySelector("div.front-matter > h1");
             if (first_h1 !== null)
-                return first_h1.innerHTML;
+                return first_h1.innerText;
 
-            let first_h2 = chapter_content.querySelector("h2");
-            return first_h2.innerHTML;
+            let first_h2 = chapter_content.querySelector("div.chapter-content > h2");
+            return first_h2.innerText;
         }
 
         get initial_code() {
