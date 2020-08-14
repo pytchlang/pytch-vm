@@ -475,7 +475,32 @@ $(document).ready(function() {
     }
 
     const tutorials_index = (() => {
+        const populate = async () => {
+            const index_div = $(".tutorial-list-container")[0];
+
+            const raw_resp = await fetch("tutorials/tutorial-index.html")
+            const raw_html = await raw_resp.text();
+            index_div.innerHTML = raw_html;
+
+            index_div.querySelectorAll("div.tutorial-summary").forEach(div => {
+                const name = div.dataset.tutorialName;
+
+                const screenshot_img = div.querySelector("p.image-container > img");
+                const raw_src = screenshot_img.getAttribute("src");
+                screenshot_img.src = `tutorials/${name}/tutorial-assets/${raw_src}`;
+                $(screenshot_img).click(() => present_tutorial_by_name(name));
+
+                let try_it_p = document.createElement("p");
+                try_it_p.innerText = "Try this tutorial!";
+                $(try_it_p).addClass("navigation nav-next");  // Hem hem.
+                $(try_it_p).click(() => present_tutorial_by_name(name));
+
+                div.appendChild(try_it_p);
+            });
+        };
+
         return {
+            populate,
         };
     })();
 
