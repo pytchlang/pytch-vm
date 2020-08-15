@@ -484,16 +484,17 @@ $(document).ready(function() {
 
             index_div.querySelectorAll("div.tutorial-summary").forEach(div => {
                 const name = div.dataset.tutorialName;
+                const present_fun = () => present_tutorial_by_name(name);
 
                 const screenshot_img = div.querySelector("p.image-container > img");
                 const raw_src = screenshot_img.getAttribute("src");
                 screenshot_img.src = `tutorials/${name}/tutorial-assets/${raw_src}`;
-                $(screenshot_img).click(() => present_tutorial_by_name(name));
+                $(screenshot_img).click(present_fun);
 
                 let try_it_p = document.createElement("p");
                 try_it_p.innerText = "Try this tutorial!";
                 $(try_it_p).addClass("navigation nav-next");  // Hem hem.
-                $(try_it_p).click(() => present_tutorial_by_name(name));
+                $(try_it_p).click(present_fun);
 
                 div.appendChild(try_it_p);
             });
