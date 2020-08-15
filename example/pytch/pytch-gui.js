@@ -286,12 +286,12 @@ $(document).ready(function() {
 
         chapter_title(chapter_index) {
             let chapter_content = this.chapter(chapter_index);
-            let first_h1 = chapter_content.querySelector("h1");
+            let first_h1 = chapter_content.querySelector("div.front-matter > h1");
             if (first_h1 !== null)
-                return first_h1.innerHTML;
+                return first_h1.innerText;
 
-            let first_h2 = chapter_content.querySelector("h2");
-            return first_h2.innerHTML;
+            let first_h2 = chapter_content.querySelector("div.chapter-content > h2");
+            return first_h2.innerText;
         }
 
         get initial_code() {
@@ -473,6 +473,39 @@ $(document).ready(function() {
             this.refresh();
         }
     }
+
+    const tutorials_index = (() => {
+        const populate = async () => {
+            const index_div = $(".tutorial-list-container")[0];
+
+            const raw_resp = await fetch("tutorials/tutorial-index.html")
+            const raw_html = await raw_resp.text();
+            index_div.innerHTML = raw_html;
+
+            index_div.querySelectorAll("div.tutorial-summary").forEach(div => {
+                const name = div.dataset.tutorialName;
+                const present_fun = () => present_tutorial_by_name(name);
+
+                const screenshot_img = div.querySelector("p.image-container > img");
+                const raw_src = screenshot_img.getAttribute("src");
+                screenshot_img.src = `tutorials/${name}/tutorial-assets/${raw_src}`;
+                $(screenshot_img).click(present_fun);
+
+                let try_it_p = document.createElement("p");
+                try_it_p.innerText = "Try this tutorial!";
+                $(try_it_p).addClass("navigation nav-next");  // Hem hem.
+                $(try_it_p).click(present_fun);
+
+                $(div).find("h1").addClass("click-target").click(present_fun);
+
+                div.appendChild(try_it_p);
+            });
+        };
+
+        return {
+            populate,
+        };
+    })();
 
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -1273,6 +1306,11 @@ $(document).ready(function() {
             = new TutorialPresentation(tutorial,
                                        $("#tab-pane-tutorial")[0]);
 
+        $("#tab-pane-tutorial .placeholder-until-one-chosen").hide();
+        $("#tab-pane-tutorial .ToC").show();
+        $("#tab-pane-tutorial .chapter-container").show();
+        make_tab_current("tutorial");
+
         let shown_chapter_index = running_tutorial_presentation.chapter_index;
         let code_just_before = tutorial.code_just_before_chapter(shown_chapter_index);
         ace_editor.setValue(code_just_before);
@@ -1287,12 +1325,6 @@ $(document).ready(function() {
 
     live_reload_client.connect_to_server();
 
-    // Temporary while developing.  The idea is that the author will create a
-    // symlink from DEFAULT to the actual tutorial they are working on.
-    //
-    // In due course we will have a clickable list which takes the user to the
-    // chosen tutorial.
-    //
-    present_tutorial_by_name("DEFAULT").then(
+    tutorials_index.populate().then(
         () => window.requestAnimationFrame(one_frame));
 });

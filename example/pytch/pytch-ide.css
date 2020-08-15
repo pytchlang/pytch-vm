@@ -194,12 +194,57 @@ body {
 
 /******************************************************************************/
 
+/* TODO: Use this more generally? */
+.click-target {
+    cursor: pointer;
+    user-select: none;
+}
+
 #tab-pane-tutorial {
     display: flex;
     flex-direction: row;
 }
 
+#tab-pane-tutorial-list .tutorial-list-container {
+    width: 100%;
+}
+
+#tab-pane-tutorial-list .tutorial-summary {
+    overflow: auto;
+    padding: 16px 24px;
+    max-width: 48em;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 3ex;
+    background-color: #cec;
+    border-radius: 6px;
+}
+
+#tab-pane-tutorial-list .tutorial-summary h1 {
+    font-size: 133%;
+}
+
+#tab-pane-tutorial-list .tutorial-summary .image-container {
+    float: right;
+    margin-left: 2em;
+    margin-right: 1em;
+}
+
+#tab-pane-tutorial-list .tutorial-summary .image-container img {
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+#tab-pane-tutorial-list .tutorial-summary .navigation {
+    margin-top: 3ex;
+}
+
+#tab-pane-tutorial .placeholder-until-one-chosen {
+    margin: 3ex 3em;
+}
+
 #tab-pane-tutorial .ToC {
+    display: none;
     flex-grow: 0;
     flex-shrink: 0;
     margin: 0px;
@@ -207,6 +252,7 @@ body {
 }
 
 #tab-pane-tutorial .chapter-container {
+    display: none;
     flex-grow: 1;
     flex-shrink: 1;
     height: 100%;
@@ -264,6 +310,7 @@ body {
     justify-content: space-between;
 }
 
+#tab-pane-tutorial-list .navigation,
 #tab-pane-tutorial .navigation {
     cursor: pointer;
     user-select: none;
@@ -277,6 +324,7 @@ body {
     border: 1px solid #888;
 }
 
+#tab-pane-tutorial-list .nav-next,
 #tab-pane-tutorial .nav-next {
     width: 12em;
     background-color: #6d7;
@@ -287,13 +335,12 @@ body {
 /******************************************************************************/
 
 div.patch-container {
-    margin-left: 3em;
-    width: 56em;
+    margin-left: 1em;
 }
 
 div.patch-container > h1.decoration {
     padding: 1.5ex 1em;
-    margin: 0px 3em;
+    margin: 0px;
     background-color: #f7f7f7;
     text-align: left;
     font-size: 100%;
@@ -303,7 +350,7 @@ div.patch-container > h1.decoration {
 div.patch, div.patch > table {
     background-color: #f7f7f7;
     border-spacing: 0px;
-    margin: 0px 3em;
+    margin: 0px;
 }
 
 div.patch > table {
