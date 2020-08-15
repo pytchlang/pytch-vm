@@ -194,6 +194,12 @@ body {
 
 /******************************************************************************/
 
+/* TODO: Use this more generally? */
+.click-target {
+    cursor: pointer;
+    user-select: none;
+}
+
 #tab-pane-tutorial {
     display: flex;
     flex-direction: row;

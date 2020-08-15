@@ -496,6 +496,8 @@ $(document).ready(function() {
                 $(try_it_p).addClass("navigation nav-next");  // Hem hem.
                 $(try_it_p).click(present_fun);
 
+                $(div).find("h1").addClass("click-target").click(present_fun);
+
                 div.appendChild(try_it_p);
             });
         };
