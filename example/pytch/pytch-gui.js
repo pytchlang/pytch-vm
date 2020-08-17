@@ -45,6 +45,60 @@ $(document).ready(function() {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Live-reload client
+
+    const live_reload_client = (() => {
+        let active_ws = null;
+
+        const connect_to_server = (evt) => {
+            console.log("connect_to_server(): entering");
+
+            if (active_ws !== null) {
+                console.log("already connected");
+                return;
+            }
+
+            active_ws = new WebSocket("ws://127.0.0.1:4111/");
+
+            active_ws.onerror = (event) => {
+                console.log("error from WebSocket");
+                active_ws = null;
+            };
+
+            active_ws.onmessage = (event) => {
+                console.log("got message from server");
+                let msg = JSON.parse(event.data);
+
+                switch (msg.kind) {
+                case "code": {
+                    console.log("code update",
+                                msg.tutorial_name, 'len', msg.text.length);
+                    Sk.pytch.project_root = `tutorials/${msg.tutorial_name}`;
+                    ace_editor.setValue(msg.text);
+                    ace_editor.clearSelection();
+                    build_button.visibly_build(true);
+                    break;
+                }
+                case "tutorial": {
+                    console.log("tutorial update",
+                                msg.tutorial_name, 'len', msg.text.length);
+                    present_tutorial(new Tutorial(msg.tutorial_name, msg.text));
+                    break;
+                }
+                default:
+                    console.log("UNKNOWN update kind", msg.kind);
+                }
+            };
+        };
+
+        return {
+            connect_to_server,
+        };
+    })();
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Very rudimentary auto-completion
     //
     // Only complete "pytch." and "self.", with hard-coded list of options based
@@ -183,7 +237,9 @@ $(document).ready(function() {
     // Tutorials
 
     class Tutorial {
-        constructor(html) {
+        constructor(name, html) {
+            this.name = name;
+
             let chapters_elt = document.createElement("div");
             chapters_elt.innerHTML = html;
 
@@ -191,26 +247,51 @@ $(document).ready(function() {
                              .querySelectorAll("div.tutorial-bundle > div"));
         }
 
-        static async async_create(project_root) {
-            let tutorial_url = `${project_root}/tutorial.html`;
-            let tutorial_response = await fetch(tutorial_url);
-            let tutorial_text = await tutorial_response.text();
+        static async async_create(name) {
+            let url = `tutorials/${name}/tutorial.html`;
+            let response = await fetch(url);
+            let html = await response.text();
 
-            return new Tutorial(tutorial_text);
+            return new Tutorial(name, html);
         }
 
         chapter(chapter_index) {
             return this.chapters[chapter_index];
         }
 
+        get front_matter() {
+            return this.chapter(0);
+        }
+
+        get maybe_seek_chapter_index() {
+            return (+this.front_matter.dataset.seekToChapter) || null;
+        }
+
+        code_just_before_chapter(chapter_index) {
+            if (chapter_index <= 1)
+                return this.initial_code;
+
+            for (let probe_idx = chapter_index - 1;
+                 probe_idx > 0;
+                 probe_idx -= 1)
+            {
+                let probe_chapter = this.chapter(probe_idx);
+                let patches = probe_chapter.querySelectorAll(".patch-container");
+                if (patches.length > 0)
+                    return patches[patches.length - 1].dataset.codeAsOfCommit;
+            }
+
+            return "import pytch\n";
+        }
+
         chapter_title(chapter_index) {
             let chapter_content = this.chapter(chapter_index);
-            let first_h1 = chapter_content.querySelector("h1");
+            let first_h1 = chapter_content.querySelector("div.front-matter > h1");
             if (first_h1 !== null)
-                return first_h1.innerHTML;
+                return first_h1.innerText;
 
-            let first_h2 = chapter_content.querySelector("h2");
-            return first_h2.innerHTML;
+            let first_h2 = chapter_content.querySelector("div.chapter-content > h2");
+            return first_h2.innerText;
         }
 
         get initial_code() {
@@ -229,11 +310,11 @@ $(document).ready(function() {
     }
 
     class TutorialPresentation {
-        constructor(tutorial, pane_elt, initial_chapter_index=0) {
+        constructor(tutorial, pane_elt) {
             this.tutorial = tutorial;
             this.chapter_elt = pane_elt.querySelector(".chapter-container");
             this.toc_list_elt = pane_elt.querySelector(".ToC .entries");
-            this.chapter_index = initial_chapter_index;
+            this.chapter_index = this.initial_chapter_index;
             this.populate_toc();
             this.initialise_editor();
             this.refresh();
@@ -248,6 +329,16 @@ $(document).ready(function() {
                 $(toc_entry_elt).click((evt) => this.leap_to_chapter_from_event(evt));
                 this.toc_list_elt.appendChild(toc_entry_elt);
             });
+        }
+
+        /**
+          * Value is the one embedded in the tutorial HTML, or 0 if there is no
+          * such seek-to-chapter information present.
+          */
+        get initial_chapter_index() {
+            if (this.tutorial.maybe_seek_chapter_index !== null)
+                return this.tutorial.maybe_seek_chapter_index;
+            return 0;
         }
 
         leap_to_chapter_from_event(evt) {
@@ -382,6 +473,39 @@ $(document).ready(function() {
             this.refresh();
         }
     }
+
+    const tutorials_index = (() => {
+        const populate = async () => {
+            const index_div = $(".tutorial-list-container")[0];
+
+            const raw_resp = await fetch("tutorials/tutorial-index.html")
+            const raw_html = await raw_resp.text();
+            index_div.innerHTML = raw_html;
+
+            index_div.querySelectorAll("div.tutorial-summary").forEach(div => {
+                const name = div.dataset.tutorialName;
+                const present_fun = () => present_tutorial_by_name(name);
+
+                const screenshot_img = div.querySelector("p.image-container > img");
+                const raw_src = screenshot_img.getAttribute("src");
+                screenshot_img.src = `tutorials/${name}/tutorial-assets/${raw_src}`;
+                $(screenshot_img).click(present_fun);
+
+                let try_it_p = document.createElement("p");
+                try_it_p.innerText = "Try this tutorial!";
+                $(try_it_p).addClass("navigation nav-next");  // Hem hem.
+                $(try_it_p).click(present_fun);
+
+                $(div).find("h1").addClass("click-target").click(present_fun);
+
+                div.appendChild(try_it_p);
+            });
+        };
+
+        return {
+            populate,
+        };
+    })();
 
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -1174,19 +1298,33 @@ $(document).ready(function() {
 
     let running_tutorial_presentation = null;
 
-    const launch_tutorial = async (project_root) => {
-        let tutorial = await Tutorial.async_create(project_root);
-
+    const present_tutorial = (tutorial) => {
         // TODO: When to change this back again?
-        Sk.pytch.project_root = project_root;
+        Sk.pytch.project_root = `tutorials/${tutorial.name}`;
 
         running_tutorial_presentation
             = new TutorialPresentation(tutorial,
                                        $("#tab-pane-tutorial")[0]);
+
+        $("#tab-pane-tutorial .placeholder-until-one-chosen").hide();
+        $("#tab-pane-tutorial .ToC").show();
+        $("#tab-pane-tutorial .chapter-container").show();
+        make_tab_current("tutorial");
+
+        let shown_chapter_index = running_tutorial_presentation.chapter_index;
+        let code_just_before = tutorial.code_just_before_chapter(shown_chapter_index);
+        ace_editor.setValue(code_just_before);
+        ace_editor.clearSelection();
+        build_button.visibly_build(false);
     };
 
-    // Temporary while developing.  The idea is that the author will create a
-    // symlink from DEFAULT to the actual tutorial they are working on.
-    launch_tutorial("tutorials/DEFAULT").then(
+    const present_tutorial_by_name = async (name) => {
+        let tutorial = await Tutorial.async_create(name);
+        present_tutorial(tutorial);
+    };
+
+    live_reload_client.connect_to_server();
+
+    tutorials_index.populate().then(
         () => window.requestAnimationFrame(one_frame));
 });
