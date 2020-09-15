@@ -140,6 +140,25 @@ describe("clicking choose top sprite by z-order", () => {
                 project.one_frame();
                 click();
             };
+
+            summon_to_front_and_click("ball");
+            assert_clicks(["Ball"]);
+            click();
+            assert_clicks(["Ball", "Ball"]);
+
+            summon_to_front_and_click("ship");
+            assert_clicks(["Ball", "Ball", "Ship"]);
+            click();
+            assert_clicks(["Ball", "Ball", "Ship", "Ship"]);
+
+            summon_to_front_and_click("ball");
+            assert_clicks(["Ball", "Ball", "Ship", "Ship", "Ball"]);
+
+            hide_and_click("ball");
+            assert_clicks(["Ball", "Ball", "Ship", "Ship", "Ball", "Ship"]);
+
+            hide_and_click("ship");
+            assert_clicks(["Ball", "Ball", "Ship", "Ship", "Ball", "Ship"]);
         });
     });
 });
