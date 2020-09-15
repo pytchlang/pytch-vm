@@ -111,3 +111,11 @@ describe("z-order of clones with deletion", () => {
         });
     });
 });
+
+describe("clicking choose top sprite by z-order", () => {
+    with_project("py/project/z_order_with_clicking.py", (import_project) => {
+        it("gives click to front-layer sprite when overlap", async () => {
+            let project = await import_project();
+        });
+    });
+});
