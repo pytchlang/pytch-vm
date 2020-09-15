@@ -1158,21 +1158,15 @@ var $builtinmodule = function (name) {
             this.thread_groups.push(new_thread_group);
         }
 
-        shown_instances_back_to_front () {
+        shown_instances_front_to_back() {
             let instances = [];
             this.draw_layer_groups.forEach(dlg => {
                 dlg.instances.forEach(instance => {
                     if (instance.render_shown)
-                        instances.push(instance);
+                        instances.unshift(instance);
                 });
             });
             return instances;
-        }
-
-        shown_instances_front_to_back () {
-            let shown_instances = this.shown_instances_back_to_front();
-            shown_instances.reverse();
-            return shown_instances;
         }
 
         threads_info() {
