@@ -347,10 +347,6 @@ var $builtinmodule = function (name) {
                                                                   this.instances[0]);
         }
 
-        shown_instances_back_to_front() {
-            return this.instances.filter(i => i.render_shown);
-        }
-
         launch_sound_performance(name) {
             let sound = this._sound_from_name[name];
             return sound.launch_new_performance();
