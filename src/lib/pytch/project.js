@@ -1158,6 +1158,9 @@ var $builtinmodule = function (name) {
             this.thread_groups.push(new_thread_group);
         }
 
+        // TODO: Does a click pass through a text (speech or thought
+        // bubble), when they exist?  See what Scratch does.
+        //
         shown_instances_front_to_back() {
             let instances = [];
             this.draw_layer_groups.forEach(dlg => {
