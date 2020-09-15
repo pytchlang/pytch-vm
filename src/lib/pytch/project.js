@@ -1163,8 +1163,14 @@ var $builtinmodule = function (name) {
         }
 
         shown_instances_back_to_front () {
-            return map_concat(a => a.shown_instances_back_to_front(),
-                              this.actors);
+            let instances = [];
+            this.draw_layer_groups.forEach(dlg => {
+                dlg.instances.forEach(instance => {
+                    if (instance.render_shown)
+                        instances.push(instance);
+                });
+            });
+            return instances;
         }
 
         shown_instances_front_to_back () {
