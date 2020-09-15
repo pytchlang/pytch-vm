@@ -347,10 +347,6 @@ var $builtinmodule = function (name) {
                                                                   this.instances[0]);
         }
 
-        shown_instances_back_to_front() {
-            return this.instances.filter(i => i.render_shown);
-        }
-
         launch_sound_performance(name) {
             let sound = this._sound_from_name[name];
             return sound.launch_new_performance();
@@ -1162,15 +1158,18 @@ var $builtinmodule = function (name) {
             this.thread_groups.push(new_thread_group);
         }
 
-        shown_instances_back_to_front () {
-            return map_concat(a => a.shown_instances_back_to_front(),
-                              this.actors);
-        }
-
-        shown_instances_front_to_back () {
-            let shown_instances = this.shown_instances_back_to_front();
-            shown_instances.reverse();
-            return shown_instances;
+        // TODO: Does a click pass through a text (speech or thought
+        // bubble), when they exist?  See what Scratch does.
+        //
+        shown_instances_front_to_back() {
+            let instances = [];
+            this.draw_layer_groups.forEach(dlg => {
+                dlg.instances.forEach(instance => {
+                    if (instance.render_shown)
+                        instances.unshift(instance);
+                });
+            });
+            return instances;
         }
 
         threads_info() {

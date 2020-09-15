@@ -6,6 +6,7 @@ const {
     assert,
     many_frames,
     js_getattr,
+    mock_mouse,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -108,6 +109,56 @@ describe("z-order of clones with deletion", () => {
             // just the original Banana 1000.
             project.on_red_stop_clicked();
             assert_unordered_banana_ids([1000]);
+        });
+    });
+});
+
+describe("clicking choose top sprite by z-order", () => {
+    with_project("py/project/z_order_with_clicking.py", (import_project) => {
+        it("gives click to front-layer sprite when overlap", async () => {
+            let project = await import_project();
+
+            const py_monitor = project.actor_by_class_name("Monitor").py_cls;
+            const assert_clicks = (exp_clicks) => {
+                const got_clicks = js_getattr(py_monitor, "clicks");
+                assert.deepStrictEqual(got_clicks, exp_clicks);
+            };
+
+            const click = () => {
+                mock_mouse.click_at(0, 0);
+                project.one_frame();
+            };
+
+            const summon_to_front_and_click = (sprite_tag) => {
+                project.do_synthetic_broadcast(`${sprite_tag}-front`);
+                project.one_frame();
+                click();
+            };
+
+            const hide_and_click = (sprite_tag) => {
+                project.do_synthetic_broadcast(`${sprite_tag}-hide`);
+                project.one_frame();
+                click();
+            };
+
+            summon_to_front_and_click("ball");
+            assert_clicks(["Ball"]);
+            click();
+            assert_clicks(["Ball", "Ball"]);
+
+            summon_to_front_and_click("ship");
+            assert_clicks(["Ball", "Ball", "Ship"]);
+            click();
+            assert_clicks(["Ball", "Ball", "Ship", "Ship"]);
+
+            summon_to_front_and_click("ball");
+            assert_clicks(["Ball", "Ball", "Ship", "Ship", "Ball"]);
+
+            hide_and_click("ball");
+            assert_clicks(["Ball", "Ball", "Ship", "Ship", "Ball", "Ship"]);
+
+            hide_and_click("ship");
+            assert_clicks(["Ball", "Ball", "Ship", "Ship", "Ball", "Ship"]);
         });
     });
 });
