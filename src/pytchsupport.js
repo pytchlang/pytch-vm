@@ -114,8 +114,21 @@ Sk.pytchsupport.maybe_auto_configure_project = (async mod => {
  * explicitly define one already.
  */
 Sk.pytchsupport.import_with_auto_configure = (async code_text => {
-    let module = await Sk.misceval.asyncToPromise(
-        () => Sk.importMainWithBody("<stdin>", false, code_text, true));
+    let module;
+    try {
+        module = await Sk.misceval.asyncToPromise(
+            () => Sk.importMainWithBody("<stdin>", false, code_text, true));
+
+        // Throw error during "import" phase if code does not "import pytch".
+        const ignoredResult = Sk.pytchsupport.pytch_in_module(module);
+    } catch (err) {
+        throw new Sk.pytchsupport.PytchBuildError({
+            phase: "import",
+            phaseDetail: null,
+            innerError: err,
+        });
+    }
+
     await Sk.pytchsupport.maybe_auto_configure_project(module);
 
     return module;
