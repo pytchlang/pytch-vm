@@ -117,6 +117,7 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
     let module = await Sk.misceval.asyncToPromise(
         () => Sk.importMainWithBody("<stdin>", false, code_text, true));
     await Sk.pytchsupport.maybe_auto_configure_project(module);
+
     return module;
 });
 
@@ -125,6 +126,7 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
 /**
  * Pytch-specific errors.
  */
+
 
 /**
  * Exception subclass representing the failure to load a project asset.
