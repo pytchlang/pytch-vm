@@ -1134,6 +1134,13 @@ var $builtinmodule = function (name) {
                 this.thread_groups = [];
         }
 
+        kill_all_threads_and_sounds() {
+            // TODO: Also the live 'ask requests' queue, when that exists, at
+            // which point this method should have a different name.
+            this.thread_groups = [];
+            Sk.pytch.sound_manager.stop_all_performances();
+        }
+
         on_red_stop_clicked() {
             this.thread_groups = [];
             this.actors.forEach(a => a.delete_all_clones());
