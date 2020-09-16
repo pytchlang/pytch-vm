@@ -92,16 +92,16 @@ Sk.pytchsupport.maybe_auto_configure_project = (async mod => {
     // Register all Sprite/Stage subclasses we find.
     for (const {cls, kind} of Sk.pytchsupport.actors_of_module(mod)) {
         try {
-        switch (kind) {
-        case "Sprite":
-            await js_project.register_sprite_class(cls);
-            break;
-        case "Stage":
-            await js_project.register_stage_class(cls);
-            break;
-        default:
-            throw Error(`unknown kind "${kind}" of actor`);
-        }
+            switch (kind) {
+            case "Sprite":
+                await js_project.register_sprite_class(cls);
+                break;
+            case "Stage":
+                await js_project.register_stage_class(cls);
+                break;
+            default:
+                throw Error(`unknown kind "${kind}" of actor`);
+            }
         } catch (err) {
             throw new Sk.pytchsupport.PytchBuildError({
                 phase: "register-actor",
