@@ -150,6 +150,8 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
         });
     }
 
+    // Other sorts of PytchBuildError might be thrown by the following; let them
+    // propagate to our caller if so.
     await Sk.pytchsupport.maybe_auto_configure_project(module);
 
     return module;
