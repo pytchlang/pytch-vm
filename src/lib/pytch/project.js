@@ -1149,7 +1149,7 @@ var $builtinmodule = function (name) {
         /** Return a list of rendering instructions for the current
          * state of the project.  If an error occurs while trying to
          * construct that list, report the error via "on_exception()",
-         * and return null. */
+         * halt all threads and sounds, and return null. */
         rendering_instructions() {
             try {
                 let instructions = [];
@@ -1165,6 +1165,7 @@ var $builtinmodule = function (name) {
                 // TODO: Provide a pseudo-thread-info object instead of null.
                 // Also for BUILD errors?
                 Sk.pytch.on_exception(err, null);
+                this.kill_all_threads_and_sounds();
                 return null;
             }
         }
