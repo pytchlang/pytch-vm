@@ -24,6 +24,8 @@ Sk.pytchsupport.pytch_in_module = (mod => {
         return mod.$d.pytch;
     else
         throw new Sk.builtin.SyntaxError('module does not do "import pytch"');
+
+    // TODO: Would an ImportError be better here?
 });
 
 
@@ -173,6 +175,9 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
  *
  * where 'asset_kind' should be "image" or "sound".
  */
+//
+// TODO Use "...args" in signature and "args" instead of "arguments" in body?
+//
 Sk.pytchsupport.PytchAssetLoadError = function (args) {
     var o;
     if (! (this instanceof Sk.pytchsupport.PytchAssetLoadError)) {
