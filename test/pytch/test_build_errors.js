@@ -43,4 +43,18 @@ describe("build-error handling", () => {
             );
         });
     });
+
+    with_project("py/project/bad_costume_for_auto_configure.py", (import_project) => {
+        it("raises error if missing costume", async () => {
+            await assert.rejects(
+                import_project(),
+                (err) => {
+                    assertBuildError(err,
+                                     "register-actor",
+                                     /^PytchAssetLoadError.*angry-alien/);
+                    return true;
+                }
+            );
+        });
+    });
 });
