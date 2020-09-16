@@ -1131,25 +1131,43 @@ var $builtinmodule = function (name) {
             this.thread_groups = new_thread_groups;
 
             if (this.thread_groups.some(tg => tg.raised_exception()))
-                this.thread_groups = [];
+                this.kill_all_threads_and_sounds();
         }
 
-        on_red_stop_clicked() {
+        kill_all_threads_and_sounds() {
+            // TODO: Also the live 'ask requests' queue, when that exists, at
+            // which point this method should have a different name.
             this.thread_groups = [];
-            this.actors.forEach(a => a.delete_all_clones());
             Sk.pytch.sound_manager.stop_all_performances();
         }
 
+        on_red_stop_clicked() {
+            this.kill_all_threads_and_sounds();
+            this.actors.forEach(a => a.delete_all_clones());
+        }
+
+        /** Return a list of rendering instructions for the current
+         * state of the project.  If an error occurs while trying to
+         * construct that list, report the error via "on_exception()",
+         * halt all threads and sounds, and return null. */
         rendering_instructions() {
-            let instructions = [];
-            this.draw_layer_groups.forEach(dlg => {
-                dlg.instances.forEach(instance => {
-                    instance.rendering_instructions().forEach(instr => {
-                        instructions.push(instr);
+            try {
+                let instructions = [];
+                this.draw_layer_groups.forEach(dlg => {
+                    dlg.instances.forEach(instance => {
+                        instance.rendering_instructions().forEach(instr => {
+                            instructions.push(instr);
+                        });
                     });
                 });
-            });
-            return instructions;
+                return instructions;
+            } catch (err) {
+                // TODO: Provide a pseudo-thread-info object instead of null.
+                // Also for BUILD errors?
+                Sk.pytch.on_exception(err, null);
+                this.kill_all_threads_and_sounds();
+                return null;
+            }
         }
 
         do_synthetic_broadcast(js_msg) {
