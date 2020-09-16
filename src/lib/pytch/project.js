@@ -1142,9 +1142,8 @@ var $builtinmodule = function (name) {
         }
 
         on_red_stop_clicked() {
-            this.thread_groups = [];
+            this.kill_all_threads_and_sounds();
             this.actors.forEach(a => a.delete_all_clones());
-            Sk.pytch.sound_manager.stop_all_performances();
         }
 
         /** Return a list of rendering instructions for the current
