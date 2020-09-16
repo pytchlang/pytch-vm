@@ -1140,6 +1140,10 @@ var $builtinmodule = function (name) {
             Sk.pytch.sound_manager.stop_all_performances();
         }
 
+        /** Return a list of rendering instructions for the current
+         * state of the project.  If an error occurs while trying to
+         * construct that list, report the error via "on_exception()",
+         * and return null. */
         rendering_instructions() {
             try {
                 let instructions = [];
