@@ -57,4 +57,16 @@ describe("build-error handling", () => {
             );
         });
     });
+
+    with_project("py/project/bad_project_class.py", (import_project) => {
+        it("raises error from instantiating Project", async () => {
+            await assert.rejects(
+                import_project(),
+                (err) => {
+                    assertBuildError(err, "create-project");
+                    return true;
+                }
+            );
+        });
+    });
 });
