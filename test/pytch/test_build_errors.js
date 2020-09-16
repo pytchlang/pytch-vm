@@ -30,4 +30,17 @@ const assertBuildError = (err, exp_phase, innerMsgRegExp) => {
 };
 
 describe("build-error handling", () => {
+    with_project("py/project/no_import_pytch.py", (import_project) => {
+        it("raises error if no import pytch", async () => {
+            // The import_project function returns a promise, so we
+            // can directly use it as the first arg to assert.rejects().
+            await assert.rejects(
+                import_project(),
+                (err) => {
+                    assertBuildError(err, "import", /^SyntaxError.*import pytch/);
+                    return true;
+                }
+            );
+        });
+    });
 });
