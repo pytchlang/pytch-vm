@@ -1161,23 +1161,31 @@ var $builtinmodule = function (name) {
          * construct that list, report the error via "on_exception()",
          * halt all threads and sounds, and return null. */
         rendering_instructions() {
-            try {
-                let instructions = [];
-                this.draw_layer_groups.forEach(dlg => {
-                    dlg.instances.forEach(instance => {
+            let instructions = [];
+            let errors = [];
+            this.draw_layer_groups.forEach(dlg => {
+                dlg.instances.forEach(instance => {
+                    try {
                         instance.rendering_instructions().forEach(instr => {
                             instructions.push(instr);
                         });
-                    });
+                    } catch (err) {
+                        const context = {
+                            kind: "render",
+                            target_class_kind: instance.actor.class_kind_name,
+                            target_class_name: instance.class_name,
+                        };
+                        errors.push({err, context});
+                    }
                 });
+            });
+
+            if (errors.length === 0)
                 return instructions;
-            } catch (err) {
-                // TODO: Provide a pseudo-thread-info object instead of null.
-                // Also for BUILD errors?
-                Sk.pytch.on_exception(err, null);
-                this.kill_all_threads_and_sounds();
-                return null;
-            }
+
+            errors.forEach(({err, context}) => Sk.pytch.on_exception(err, context));
+            this.kill_all_threads_and_sounds();
+            return null;
         }
 
         do_synthetic_broadcast(js_msg) {
