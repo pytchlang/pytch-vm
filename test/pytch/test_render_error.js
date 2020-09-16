@@ -26,7 +26,7 @@ describe("rendering error-handler", () => {
             const thrown_errors = pytch_errors.drain_errors();
 
             let failing_sprites = thrown_errors.map(
-                err => err.info.target_class_name);
+                err => err.ctx.target_class_name);
             failing_sprites.sort();
             assert.deepEqual(failing_sprites, ["OtherProblem", "Problem"]);
 
@@ -35,7 +35,7 @@ describe("rendering error-handler", () => {
                 assert.ok(/'(Other)?Problem' object has no attribute/.test(msg));
                 assert.equal(rich_error.err.traceback.length, 0);
 
-                assert.equal(rich_error.info.kind, "render");
+                assert.equal(rich_error.ctx.kind, "render");
             });
         });
     });
@@ -56,7 +56,7 @@ describe("rendering error-handler", () => {
             const thrown_errors = pytch_errors.drain_errors();
             assert.equal(thrown_errors.length, 1);
 
-            const error_ctx = thrown_errors[0].info;
+            const error_ctx = thrown_errors[0].ctx;
             assert.equal(error_ctx.kind, "render");
             assert.equal(error_ctx.target_class_name, "Problem");
 
