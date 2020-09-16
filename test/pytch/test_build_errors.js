@@ -29,6 +29,13 @@ const assertBuildError = (err, exp_phase, innerMsgRegExp) => {
     }
 };
 
+const assertBuildErrorFun = (...args) => {
+    return (err) => {
+        assertBuildError(err, ...args);
+        return true;
+    };
+};
+
 describe("build-error handling", () => {
     with_project("py/project/no_import_pytch.py", (import_project) => {
         it("raises error if no import pytch", async () => {
