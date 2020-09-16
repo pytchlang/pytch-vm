@@ -620,7 +620,17 @@ var $builtinmodule = function (name) {
                 // TODO: Richer information as to error context.  E.g., our
                 // 'label', and if possible what was the entry point for this
                 // thread (class and method names).
-                Sk.pytch.on_exception(err, this.info());
+                const instance = this.actor_instance;
+                Sk.pytch.on_exception(
+                    err,
+                    {
+                        kind: "one_frame",
+                        event_label: this.thread_group.label,
+                        target_class_kind: instance.actor.class_kind_name,
+                        target_class_name: instance.class_name,
+                        callable_name: this.callable_name,
+                    }
+                );
 
                 this.state = Thread.State.RAISED_EXCEPTION;
                 this.skulpt_susp = null;
