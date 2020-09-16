@@ -86,7 +86,17 @@ Sk.pytchsupport.maybe_auto_configure_project = (async mod => {
     const pytch_Project = pytch.$d.Project;
 
     // Create a Project instance by calling the class object.
-    const py_project = Sk.misceval.callsim(pytch_Project);
+    let py_project;
+    try {
+        py_project = Sk.misceval.callsim(pytch_Project);
+    } catch (err) {
+        throw new Sk.pytchsupport.PytchBuildError({
+            phase: "create-project",
+            phaseDetail: null,
+            innerError: err,
+        });
+    }
+
     const js_project = py_project.js_project;
 
     // Register all Sprite/Stage subclasses we find.
