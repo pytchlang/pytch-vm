@@ -1141,15 +1141,22 @@ var $builtinmodule = function (name) {
         }
 
         rendering_instructions() {
-            let instructions = [];
-            this.draw_layer_groups.forEach(dlg => {
-                dlg.instances.forEach(instance => {
-                    instance.rendering_instructions().forEach(instr => {
-                        instructions.push(instr);
+            try {
+                let instructions = [];
+                this.draw_layer_groups.forEach(dlg => {
+                    dlg.instances.forEach(instance => {
+                        instance.rendering_instructions().forEach(instr => {
+                            instructions.push(instr);
+                        });
                     });
                 });
-            });
-            return instructions;
+                return instructions;
+            } catch (err) {
+                // TODO: Provide a pseudo-thread-info object instead of null.
+                // Also for BUILD errors?
+                Sk.pytch.on_exception(err, null);
+                return null;
+            }
         }
 
         do_synthetic_broadcast(js_msg) {
