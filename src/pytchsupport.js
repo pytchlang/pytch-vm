@@ -24,6 +24,8 @@ Sk.pytchsupport.pytch_in_module = (mod => {
         return mod.$d.pytch;
     else
         throw new Sk.builtin.SyntaxError('module does not do "import pytch"');
+
+    // TODO: Would an ImportError be better here?
 });
 
 
@@ -86,20 +88,41 @@ Sk.pytchsupport.maybe_auto_configure_project = (async mod => {
     const pytch_Project = pytch.$d.Project;
 
     // Create a Project instance by calling the class object.
-    const py_project = Sk.misceval.callsim(pytch_Project);
+    let py_project;
+    try {
+        py_project = Sk.misceval.callsim(pytch_Project);
+    } catch (err) {
+        throw new Sk.pytchsupport.PytchBuildError({
+            phase: "create-project",
+            phaseDetail: null,
+            innerError: err,
+        });
+    }
+
     const js_project = py_project.js_project;
 
     // Register all Sprite/Stage subclasses we find.
     for (const {cls, kind} of Sk.pytchsupport.actors_of_module(mod)) {
-        switch (kind) {
-        case "Sprite":
-            await js_project.register_sprite_class(cls);
-            break;
-        case "Stage":
-            await js_project.register_stage_class(cls);
-            break;
-        default:
-            throw Error(`unknown kind "${kind}" of actor`);
+        try {
+            switch (kind) {
+            case "Sprite":
+                await js_project.register_sprite_class(cls);
+                break;
+            case "Stage":
+                await js_project.register_stage_class(cls);
+                break;
+            default:
+                throw Error(`unknown kind "${kind}" of actor`);
+            }
+        } catch (err) {
+            throw new Sk.pytchsupport.PytchBuildError({
+                phase: "register-actor",
+                phaseDetail: {
+                    kind,
+                    className: Sk.ffi.remapToJs(Sk.builtin.getattr(cls, Sk.builtin.str("__name__"))),
+                },
+                innerError: err,
+            });
         }
     }
 
@@ -114,9 +137,25 @@ Sk.pytchsupport.maybe_auto_configure_project = (async mod => {
  * explicitly define one already.
  */
 Sk.pytchsupport.import_with_auto_configure = (async code_text => {
-    let module = await Sk.misceval.asyncToPromise(
-        () => Sk.importMainWithBody("<stdin>", false, code_text, true));
+    let module;
+    try {
+        module = await Sk.misceval.asyncToPromise(
+            () => Sk.importMainWithBody("<stdin>", false, code_text, true));
+
+        // Throw error during "import" phase if code does not "import pytch".
+        const ignoredResult = Sk.pytchsupport.pytch_in_module(module);
+    } catch (err) {
+        throw new Sk.pytchsupport.PytchBuildError({
+            phase: "import",
+            phaseDetail: null,
+            innerError: err,
+        });
+    }
+
+    // Other sorts of PytchBuildError might be thrown by the following; let them
+    // propagate to our caller if so.
     await Sk.pytchsupport.maybe_auto_configure_project(module);
+
     return module;
 });
 
@@ -125,6 +164,7 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
 /**
  * Pytch-specific errors.
  */
+
 
 /**
  * Exception subclass representing the failure to load a project asset.
@@ -135,6 +175,9 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
  *
  * where 'asset_kind' should be "image" or "sound".
  */
+//
+// TODO Use "...args" in signature and "args" instead of "arguments" in body?
+//
 Sk.pytchsupport.PytchAssetLoadError = function (args) {
     var o;
     if (! (this instanceof Sk.pytchsupport.PytchAssetLoadError)) {
@@ -152,6 +195,36 @@ Sk.abstr.setUpInheritance("PytchAssetLoadError",
                           Sk.builtin.StandardError);
 
 
+/**
+ * Exception subclass representing an error while building a project.
+ *
+ * 'Building' here covers the compilation and import of the module and
+ * also, if performed, the automatic creation of a Project object and
+ * the registration with that project of the Sprite and Stage
+ * subclasses found.
+ *
+ * The first arg args should be an object with fields "phase" (e.g.,
+ * "import" or "register/register-actor"), "phaseDetail" (which can be
+ * null), and "innerError".
+ */
+Sk.pytchsupport.PytchBuildError = function(...args) {
+    // Convert args into form expected by StandardError.
+    const details = args[0];
+    args[0] = "Could not build project";
+
+    if (! (this instanceof Sk.pytchsupport.PytchBuildError)) {
+        let o = Object.create(Sk.pytchsupport.PytchBuildError.prototype);
+        o.constructor.apply(o, args);
+        return o;
+    }
+    Sk.builtin.StandardError.apply(this, args);
+    Object.assign(this, details);
+}
+Sk.abstr.setUpInheritance("PytchBuildError",
+                          Sk.pytchsupport.PytchBuildError,
+                          Sk.builtin.StandardError);
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
 [
@@ -161,6 +234,7 @@ Sk.abstr.setUpInheritance("PytchAssetLoadError",
     "maybe_auto_configure_project",
     //
     "PytchAssetLoadError",
+    "PytchBuildError",
 ].forEach(
     fun_name => {
         Sk.exportSymbol(`Sk.pytchsupport.${fun_name}`, Sk.pytchsupport[fun_name]);

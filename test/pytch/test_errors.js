@@ -30,6 +30,10 @@ describe("error handling", () => {
 
             let err_str = errs[0].err.toString();
             assert.ok(/Alien.*has no attribute.*boost_shields/.test(err_str));
+
+            let err_ctx = errs[0].info;
+            assert.equal(err_ctx.callable_name, "do_something_bad");
+            assert.equal(err_ctx.event_label, 'message "launch-invasion"');
         })});
 
     with_project("py/project/multiple_errors.py", (import_project) => {

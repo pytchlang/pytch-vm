@@ -24,9 +24,19 @@ describe("rendering error-handler", () => {
             project.one_frame();
             assert.strictEqual(project.rendering_instructions(), null);
             const thrown_errors = pytch_errors.drain_errors();
-            assert.equal(thrown_errors.length, 1);
-            const error_str = thrown_errors[0].err.toString();
-            assert.ok(/'Problem' object has no attribute/.test(error_str));
+
+            let failing_sprites = thrown_errors.map(
+                err => err.info.target_class_name);
+            failing_sprites.sort();
+            assert.deepEqual(failing_sprites, ["OtherProblem", "Problem"]);
+
+            thrown_errors.forEach((rich_error) => {
+                const msg = rich_error.err.toString();
+                assert.ok(/'(Other)?Problem' object has no attribute/.test(msg));
+                assert.equal(rich_error.err.traceback.length, 0);
+
+                assert.equal(rich_error.info.kind, "render");
+            });
         });
     });
 
@@ -45,6 +55,10 @@ describe("rendering error-handler", () => {
             assert.strictEqual(project.rendering_instructions(), null);
             const thrown_errors = pytch_errors.drain_errors();
             assert.equal(thrown_errors.length, 1);
+
+            const error_ctx = thrown_errors[0].info;
+            assert.equal(error_ctx.kind, "render");
+            assert.equal(error_ctx.target_class_name, "Problem");
 
             many_frames(project, 10);
             assert.equal(counter_value(), 11);
