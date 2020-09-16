@@ -154,6 +154,36 @@ Sk.abstr.setUpInheritance("PytchAssetLoadError",
                           Sk.builtin.StandardError);
 
 
+/**
+ * Exception subclass representing an error while building a project.
+ *
+ * 'Building' here covers the compilation and import of the module and
+ * also, if performed, the automatic creation of a Project object and
+ * the registration with that project of the Sprite and Stage
+ * subclasses found.
+ *
+ * The first arg args should be an object with fields "phase" (e.g.,
+ * "import" or "register/register-actor"), "phaseDetail" (which can be
+ * null), and "innerError".
+ */
+Sk.pytchsupport.PytchBuildError = function(...args) {
+    // Convert args into form expected by StandardError.
+    const details = args[0];
+    args[0] = "Could not build project";
+
+    if (! (this instanceof Sk.pytchsupport.PytchBuildError)) {
+        let o = Object.create(Sk.pytchsupport.PytchBuildError.prototype);
+        o.constructor.apply(o, args);
+        return o;
+    }
+    Sk.builtin.StandardError.apply(this, args);
+    Object.assign(this, details);
+}
+Sk.abstr.setUpInheritance("PytchBuildError",
+                          Sk.pytchsupport.PytchBuildError,
+                          Sk.builtin.StandardError);
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
 [
@@ -163,6 +193,7 @@ Sk.abstr.setUpInheritance("PytchAssetLoadError",
     "maybe_auto_configure_project",
     //
     "PytchAssetLoadError",
+    "PytchBuildError",
 ].forEach(
     fun_name => {
         Sk.exportSymbol(`Sk.pytchsupport.${fun_name}`, Sk.pytchsupport[fun_name]);
