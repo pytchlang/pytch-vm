@@ -56,6 +56,10 @@ describe("rendering error-handler", () => {
             const thrown_errors = pytch_errors.drain_errors();
             assert.equal(thrown_errors.length, 1);
 
+            const error_ctx = thrown_errors[0].info;
+            assert.equal(error_ctx.kind, "render");
+            assert.equal(error_ctx.target_class_name, "Problem");
+
             many_frames(project, 10);
             assert.equal(counter_value(), 11);
         });
