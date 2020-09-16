@@ -8,3 +8,8 @@ class Problem(pytch.Sprite):
     Costumes = []
     def __init__(self):
         pass
+
+class OtherProblem(pytch.Sprite):
+    Costumes = []
+    def __init__(self):
+        pass
