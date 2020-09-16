@@ -69,4 +69,18 @@ describe("build-error handling", () => {
             );
         });
     });
+
+    with_project("py/project/bad_actor_init.py", (import_project) => {
+        it("raises error from instantiating sprite", async () => {
+            await assert.rejects(
+                import_project(),
+                (err) => {
+                    assertBuildError(err, "register-actor");
+                    assert.equal(err.phaseDetail.kind, "Sprite");
+                    assert.equal(err.phaseDetail.className, "Problem");
+                    return true;
+                }
+            );
+        });
+    });
 });
