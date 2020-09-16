@@ -43,10 +43,7 @@ describe("build-error handling", () => {
             // can directly use it as the first arg to assert.rejects().
             await assert.rejects(
                 import_project(),
-                (err) => {
-                    assertBuildError(err, "import", /^SyntaxError.*import pytch/);
-                    return true;
-                }
+                assertBuildErrorFun("import", /^SyntaxError.*import pytch/)
             );
         });
     });
@@ -55,12 +52,8 @@ describe("build-error handling", () => {
         it("raises error if missing costume", async () => {
             await assert.rejects(
                 import_project(),
-                (err) => {
-                    assertBuildError(err,
-                                     "register-actor",
-                                     /^PytchAssetLoadError.*angry-alien/);
-                    return true;
-                }
+                assertBuildErrorFun("register-actor",
+                                    /^PytchAssetLoadError.*angry-alien/)
             );
         });
     });
@@ -69,10 +62,7 @@ describe("build-error handling", () => {
         it("raises error from instantiating Project", async () => {
             await assert.rejects(
                 import_project(),
-                (err) => {
-                    assertBuildError(err, "create-project");
-                    return true;
-                }
+                assertBuildErrorFun("create-project")
             );
         });
     });
