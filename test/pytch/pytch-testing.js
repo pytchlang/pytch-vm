@@ -236,11 +236,8 @@ const async_load_mock_image = (url) => {
 
 const image_size_from_url = new Map([
     ["project-assets/library/images/question-mark.png", [32, 32]],
-    ["user-projects/1234/project-assets/library/images/question-mark.png", [32, 32]],
     ["project-assets/library/images/marching-alien.png", [60, 20]],
-    ["user-projects/1234/project-assets/library/images/marching-alien.png", [60, 20]],
     ["project-assets/library/images/firing-alien.png", [80, 30]],
-    ["user-projects/1234/project-assets/library/images/firing-alien.png", [80, 30]],
     ["project-assets/library/images/ball.png", [16, 16]],
     ["project-assets/library/images/square-80x80.png", [80, 80]],
     ["project-assets/library/images/rectangle-60x30.png", [60, 30]],
