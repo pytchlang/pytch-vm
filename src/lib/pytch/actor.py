@@ -35,7 +35,7 @@ class Actor:
 class Sprite(Actor):
     Costumes = [
         ('question-mark',
-         'library/images/question-mark.png', 16, 16),
+         'question-mark.png', 16, 16),
     ]
 
     _appearance_hyponym = 'Costume'
