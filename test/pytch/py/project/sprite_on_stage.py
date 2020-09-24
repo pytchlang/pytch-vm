@@ -9,7 +9,7 @@ from pytch import (
 
 
 class Banana(Sprite):
-    Costumes = [('yellow', 'library/images/yellow-banana.png', 50, 30)]
+    Costumes = [('yellow', 'yellow-banana.png', 50, 30)]
 
     @when_this_sprite_clicked
     def say_hello_banana(self):
@@ -17,7 +17,7 @@ class Banana(Sprite):
 
 
 class Table(Stage):
-    Backdrops = [('wooden', 'library/images/stage/wooden.png')]
+    Backdrops = [('wooden', 'wooden-stage.png')]
 
     @when_stage_clicked
     def say_hello_table(self):

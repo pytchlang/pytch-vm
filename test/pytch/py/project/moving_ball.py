@@ -10,7 +10,7 @@ from pytch import (
 
 
 class Ball(Sprite):
-    Costumes = [('yellow-ball', 'library/images/ball.png', 8, 8)]
+    Costumes = [('yellow-ball', 'ball.png', 8, 8)]
 
     def __init__(self):
         Sprite.__init__(self)

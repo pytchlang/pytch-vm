@@ -3,8 +3,8 @@ from pytch import Project, Sprite
 
 
 class Alien(Sprite):
-    Costumes = [['marching', 'library/images/marching-alien.png', 30, 10],
-                ['firing', 'library/images/firing-alien.png', 40, 15]]
+    Costumes = [['marching', 'marching-alien.png', 30, 10],
+                ['firing', 'firing-alien.png', 40, 15]]
 
     @pytch.when_I_receive("print-costume-info")
     def print_costume_info(self):

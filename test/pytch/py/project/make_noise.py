@@ -7,8 +7,8 @@ from pytch import (
 
 
 class Orchestra(Sprite):
-    Sounds = [('trumpet', 'library/sounds/trumpet.mp3'),
-              ('violin', 'library/sounds/violin.mp3')]
+    Sounds = [('trumpet', 'trumpet.mp3'),
+              ('violin', 'violin.mp3')]
 
     @when_I_receive('play-trumpet')
     def play_trumpet(self):

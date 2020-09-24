@@ -2,7 +2,7 @@ from pytch import Project, Sprite
 
 
 class Alien(Sprite):
-    Sounds = [('xylophone', 'library/sounds/no-such-instrument.mp3')]
+    Sounds = [('xylophone', 'no-such-instrument.mp3')]
 
 
 project = Project()
