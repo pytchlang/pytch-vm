@@ -27,12 +27,12 @@ describe("Costume handling", () => {
 
             assert_Appearance_equal(alien.appearance_from_name("marching"),
                                     "marching",
-                                    "project-assets/library/images/marching-alien.png",
+                                    "marching-alien.png",
                                     60, 20, 30, 10);
 
             assert_Appearance_equal(alien.appearance_from_name("firing"),
                                     "firing",
-                                    "project-assets/library/images/firing-alien.png",
+                                    "firing-alien.png",
                                     80, 30, 40, 15);
         });
 
