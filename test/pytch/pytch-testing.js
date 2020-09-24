@@ -235,16 +235,16 @@ const async_load_mock_image = (url) => {
 // properties.  Some of the images used in tests won't truly exist.
 
 const image_size_from_url = new Map([
-    ["project-assets/library/images/question-mark.png", [32, 32]],
-    ["project-assets/library/images/marching-alien.png", [60, 20]],
-    ["project-assets/library/images/firing-alien.png", [80, 30]],
-    ["project-assets/library/images/ball.png", [16, 16]],
-    ["project-assets/library/images/square-80x80.png", [80, 80]],
-    ["project-assets/library/images/rectangle-60x30.png", [60, 30]],
-    ["project-assets/library/images/stage/solid-white.png", [480, 360]],
-    ["project-assets/library/images/yellow-banana.png", [80, 30]],
-    ["project-assets/library/images/balloon.png", [100, 200]],
-    ["project-assets/library/images/stage/wooden.png", [480, 360]],
+    ["question-mark.png", [32, 32]],
+    ["marching-alien.png", [60, 20]],
+    ["firing-alien.png", [80, 30]],
+    ["ball.png", [16, 16]],
+    ["square-80x80.png", [80, 80]],
+    ["rectangle-60x30.png", [60, 30]],
+    ["solid-white-stage.png", [480, 360]],
+    ["yellow-banana.png", [80, 30]],
+    ["balloon.png", [100, 200]],
+    ["wooden-stage.png", [480, 360]],
 ]);
 
 class MockImage {
@@ -270,8 +270,8 @@ class MockImage {
 // properties.
 
 const sound_duration_from_url = new Map([
-    ["project-assets/library/sounds/trumpet.mp3", 20],
-    ["project-assets/library/sounds/violin.mp3", 10],
+    ["trumpet.mp3", 20],
+    ["violin.mp3", 10],
 ]);
 
 class MockSound {
