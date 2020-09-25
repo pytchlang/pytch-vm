@@ -21,7 +21,15 @@ var $builtinmodule = function (name) {
     const s_y = Sk.builtin.str("_y");
     const s_size = Sk.builtin.str("_size");
     const s_appearance = Sk.builtin.str("_appearance");
+    const s_Appearances = Sk.builtin.str("_Appearances");
+
     const s_pytch_parent_project = Sk.builtin.str("_pytch_parent_project");
+
+    // Attributes of Python-side Appearance object:
+    const s_Label = Sk.builtin.str("label");
+    const s_Filename = Sk.builtin.str("filename");
+    const s_Size = Sk.builtin.str("size");
+    const s_Centre = Sk.builtin.str("centre");
 
     const name_of_py_class
           = (py_cls =>
@@ -62,18 +70,52 @@ var $builtinmodule = function (name) {
     // of either of these things as an "Appearance".
 
     class Appearance {
-        constructor(image, centre_x, centre_y) {
+        constructor(label, filename, image, centre_x, centre_y) {
+            this.label = label;
+            this.filename = filename;
             this.image = image;
             this.centre_x = centre_x;
             this.centre_y = centre_y;
         }
 
-        static async async_create(url_tail, centre_x, centre_y) {
+        static async async_create(label, url_tail, centre_x, centre_y) {
             let url = within_project_root("project-assets", url_tail);
             let image = await Sk.pytch.async_load_image(url);
-            return new Appearance(image, centre_x, centre_y);
+            return new Appearance(label, url_tail, image, centre_x, centre_y);
         }
     }
+
+    // Not sure this is the best way of doing this.  In some ways, it would be
+    // cleaner to keep the JS-side object as the only source of truth, and
+    // create Python-side strings, integers, etc., on demand when the
+    // Python-side attribute is accessed.  Setting the attributes once-off like
+    // this should be OK because the attributes on the JS side do not change
+    // once created.
+
+    // Do-nothing wrapper around object to give the class a name.
+    const appearance_cls = ($gbl, $loc) => {};
+    mod.Appearance = Sk.misceval.buildClass(mod, appearance_cls, "Appearance", []);
+
+    const new_Appearance = (js_appearance) => {
+        const pyAppearance = Sk.misceval.callsim(mod.Appearance);
+
+        Sk.builtin.setattr(pyAppearance, s_Label,
+                           Sk.builtin.str(js_appearance.label));
+        Sk.builtin.setattr(pyAppearance, s_Filename,
+                           Sk.builtin.str(js_appearance.filename));
+
+        const pyWidth = Sk.builtin.int_(js_appearance.image.width);
+        const pyHeight = Sk.builtin.int_(js_appearance.image.height);
+        const pySize = Sk.builtin.tuple([pyWidth, pyHeight]);
+        Sk.builtin.setattr(pyAppearance, s_Size, pySize);
+
+        const pyCentreX = Sk.builtin.int_(js_appearance.centre_x);
+        const pyCentreY = Sk.builtin.int_(js_appearance.centre_y);
+        const pyCentre = Sk.builtin.tuple([pyCentreX, pyCentreY]);
+        Sk.builtin.setattr(pyAppearance, s_Centre, pyCentre);
+
+        return pyAppearance;
+    };
 
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -146,9 +188,6 @@ var $builtinmodule = function (name) {
             this.parent_project = parent_project;
             this.instances = [];
 
-            let py_instance = Sk.misceval.callsim(py_cls);
-            this.register_py_instance(py_instance);
-
             this.event_handlers = {
                 green_flag: new EventHandlerGroup(),
                 keypress: {},
@@ -159,6 +198,11 @@ var $builtinmodule = function (name) {
             this.click_handlers = [];
 
             this.register_event_handlers();
+        }
+
+        create_original_instance() {
+            let py_instance = Sk.misceval.callsim(this.py_cls);
+            this.register_py_instance(py_instance);
         }
 
         reject_appearance_descriptor(descriptor, error_message_nub) {
@@ -189,12 +233,13 @@ var $builtinmodule = function (name) {
 
             let async_appearances = appearance_descriptors.map(async d => {
                 let [url, cx, cy] = this.url_centre_from_descriptor(d);
-                let appearance = await Appearance.async_create(url, cx, cy);
+                let appearance = await Appearance.async_create(d[0], url, cx, cy);
                 return [d[0], appearance];
             });
 
-            let appearances = await Promise.all(async_appearances);
-            this._appearance_from_name = new Map(appearances);
+            const labels_with_appearances = await Promise.all(async_appearances);
+            this._appearances = labels_with_appearances.map(x => x[1]);
+            this._appearance_from_name = new Map(labels_with_appearances);
         }
 
         async async_load_sounds() {
@@ -237,6 +282,12 @@ var $builtinmodule = function (name) {
 
         get n_appearances() {
             return this._appearance_from_name.size;
+        }
+
+        static set_Appearances_attr(py_cls, js_actor) {
+            const py_appearances = js_actor._appearances.map(new_Appearance);
+            const py_appearances_list = Sk.builtin.list(py_appearances)
+            Sk.builtin.setattr(py_cls, s_Appearances, py_appearances_list);
         }
 
         register_handler(event_descr, handler_py_func) {
@@ -358,6 +409,8 @@ var $builtinmodule = function (name) {
             let sprite = new PytchSprite(py_cls, parent_project);
             await sprite.async_init();
             py_cls.$pytchActor = sprite;
+            PytchActor.set_Appearances_attr(py_cls, sprite);
+            sprite.create_original_instance();
             return sprite;
         }
 
@@ -393,6 +446,8 @@ var $builtinmodule = function (name) {
             let stage = new PytchStage(py_cls, parent_project);
             await stage.async_init();
             py_cls.$pytchActor = stage;
+            PytchActor.set_Appearances_attr(py_cls, stage);
+            stage.create_original_instance();
             return stage;
         }
 

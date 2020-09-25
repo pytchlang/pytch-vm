@@ -18,7 +18,7 @@ class Actor:
     def ensure_have_appearance_names(cls):
         if cls._appearance_names is None:
             cls._appearance_names = set(
-                appearance[0] for appearance in cls._appearances())
+                appearance.label for appearance in cls._Appearances)
 
     def switch_appearance(self, appearance_name):
         self.ensure_have_appearance_names()
@@ -39,10 +39,6 @@ class Sprite(Actor):
     ]
 
     _appearance_hyponym = 'Costume'
-
-    @classmethod
-    def _appearances(cls):
-        return cls.Costumes
 
     def __init__(self):
         self._x = 0
@@ -139,10 +135,6 @@ class Stage(Actor):
     _size = 1.0
     _shown = True
     _appearance = 'solid-white'
-
-    @classmethod
-    def _appearances(cls):
-        return cls.Backdrops
 
     _appearance_hyponym = 'Backdrop'
 
