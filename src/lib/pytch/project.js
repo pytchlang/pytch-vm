@@ -440,17 +440,40 @@ var $builtinmodule = function (name) {
         get class_kind_name() { return "Sprite"; }
 
         validate_descriptor(descr) {
-            if (descr.length !== 4)
-                this.reject_appearance_descriptor(
-                    descr,
-                    ("descriptor must have 4 elements:"
-                    + " (name, url, centre-x, centre-y"));
+            if (descr instanceof Array) {
+                const n_elts = descr.length;
+                switch (n_elts) {
+                case 4: { // (label, filename, x0, y0)
+                    return descr;
+                }
+                case 3: { // (filename, x0, y0), infer label
+                    const filename = descr[0];
+                    const label = path_stem(filename);
+                    return [label, ...descr];
+                }
+                case 2: { // (label, filename), infer centre (when we can)
+                    return [...descr, "auto", "auto"];
+                }
+                case 1: { // (filename,), infer label, centre (when we can)
+                    const filename = descr[0];
+                    const label = path_stem(filename);
+                    return [label, filename, "auto", "auto"];
+                }
+                default:
+                    this.reject_appearance_descriptor(
+                        descr,
+                        "tuple descriptor must have 1, 2, 3, or 4 elements");
+                }
+            }
 
-            if ((typeof descr[2] != "number") || (typeof descr[3] != "number"))
-                this.reject_appearance_descriptor(
-                    descr,
-                    ("third and fourth elements of descriptor"
-                     + " (centre-x and centre-y) must be numbers"));
+            if (typeof descr === "string") { // bare filename
+                const label = path_stem(descr);
+                return [label, descr, "auto", "auto"];
+            }
+
+            this.reject_appearance_descriptor(
+                descr,
+                "descriptor must be tuple or string");
         }
 
         url_centre_from_descriptor(descr) {
