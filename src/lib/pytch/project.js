@@ -83,6 +83,12 @@ var $builtinmodule = function (name) {
         }
     }
 
+    // Not sure this is the best way of doing this.  In some ways, it would be
+    // cleaner to keep the JS-side object as the only source of truth, and
+    // create Python-side strings, integers, etc., on demand when the
+    // Python-side attribute is accessed.  Setting the attributes once-off like
+    // this should be OK because the attributes on the JS side do not change
+    // once created.
 
     // Do-nothing wrapper around object to give the class a name.
     const appearance_cls = ($gbl, $loc) => {};
