@@ -27,12 +27,12 @@ describe("Costume handling", () => {
 
             assert_Appearance_equal(alien.appearance_from_name("marching"),
                                     "marching",
-                                    "project-assets/library/images/marching-alien.png",
+                                    "marching-alien.png",
                                     60, 20, 30, 10);
 
             assert_Appearance_equal(alien.appearance_from_name("firing"),
                                     "firing",
-                                    "project-assets/library/images/firing-alien.png",
+                                    "firing-alien.png",
                                     80, 30, 40, 15);
         });
 
@@ -46,8 +46,8 @@ describe("Costume handling", () => {
             const stdout = pytch_stdout.drain_stdout();
             assert.equal(
                 stdout,
-                ("0, marching, library/images/marching-alien.png, (60, 20), (30, 10)\n"
-                 + "1, firing, library/images/firing-alien.png, (80, 30), (40, 15)\n"));
+                ("0, marching, marching-alien.png, (60, 20), (30, 10)\n"
+                 + "1, firing, firing-alien.png, (80, 30), (40, 15)\n"));
         })});
 
     with_module("py/project/bad_costume.py", (import_module) => {
@@ -153,28 +153,4 @@ describe("Costume handling", () => {
             await assert.rejects(
                 import_project());
         })});
-});
-
-describe("Costume access within project-root", () => {
-    let original_project_root;
-
-    before(() => {
-        original_project_root = Sk.pytch.project_root;
-        Sk.pytch.project_root = "user-projects/1234";
-    });
-
-    with_project("py/project/some_costumes.py", (import_project) => {
-    it("loads costumes within base-url", async () => {
-        let project = await import_project();
-        let alien = project.actor_by_class_name("Alien");
-
-        assert_Appearance_equal(alien.appearance_from_name("marching"),
-                                "marching",
-                                "user-projects/1234/project-assets/library/images/marching-alien.png",
-                                60, 20, 30, 10);
-    })});
-
-    after(() => {
-        Sk.pytch.project_root = original_project_root;
-    });
 });

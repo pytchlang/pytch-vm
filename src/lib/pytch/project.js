@@ -66,13 +66,6 @@ var $builtinmodule = function (name) {
         }
     })();
 
-    const within_project_root = (...tail_url_parts) => {
-        const maybe_parts = [Sk.pytch.project_root, ...tail_url_parts];
-        const parts = maybe_parts.filter(part => part !== "");
-        return parts.join("/");
-    };
-
-
     ////////////////////////////////////////////////////////////////////////////////
     //
     // Appearance: A Sprite has Costumes; a Stage has Backdrops.  Refer to one
@@ -95,16 +88,15 @@ var $builtinmodule = function (name) {
             return [this.image.width, this.image.height];
         }
 
-        static async async_create(label, url_tail, centre_x, centre_y) {
-            let url = within_project_root("project-assets", url_tail);
-            let image = await Sk.pytch.async_load_image(url);
+        static async async_create(label, filename, centre_x, centre_y) {
+            let image = await Sk.pytch.async_load_image(filename);
 
             if (centre_x == "auto" && centre_y == "auto") {
                 centre_x = image.width / 2;
                 centre_y = image.height / 2;
             }
 
-            return new Appearance(label, url_tail, image, centre_x, centre_y);
+            return new Appearance(label, filename, image, centre_x, centre_y);
         }
     }
 
@@ -269,10 +261,8 @@ var $builtinmodule = function (name) {
             let sound_descriptors = js_getattr(this.py_cls, s_Sounds);
 
             let async_sounds = sound_descriptors.map(async d => {
-                let url_tail = d[1];
-                let url = within_project_root("project-assets", url_tail);
                 let sound = await (Sk.pytch.sound_manager
-                                   .async_load_sound(d[0], url));
+                                   .async_load_sound(...d));
                 return [d[0], sound];
             });
 

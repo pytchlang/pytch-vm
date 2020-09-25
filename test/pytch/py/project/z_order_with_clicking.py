@@ -12,7 +12,7 @@ class Monitor(pytch.Sprite):
 
 class Ship(pytch.Sprite):
     # Costume image is 80 x 30.
-    Costumes = [('yellow', 'library/images/yellow-banana.png', 40, 15)]
+    Costumes = [('yellow', 'yellow-banana.png', 40, 15)]
 
     @pytch.when_I_receive("ship-front")
     def go_to_front(self):
@@ -31,7 +31,7 @@ class Ship(pytch.Sprite):
 
 class Ball(pytch.Sprite):
     # Costume image is 100 x 200.
-    Costumes = [('balloon', 'library/images/balloon.png', 50, 100)]
+    Costumes = [('balloon', 'balloon.png', 50, 100)]
 
     @pytch.when_I_receive("ball-front")
     def go_to_front(self):

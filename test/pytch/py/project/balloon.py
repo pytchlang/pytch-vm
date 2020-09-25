@@ -14,7 +14,7 @@ class Stage(Stage):
 
 
 class Balloon(Sprite):
-    Costumes = [('balloon', 'library/images/balloon.png', 25, 25)]
+    Costumes = [('balloon', 'balloon.png', 25, 25)]
 
     def __init__(self):
         Sprite.__init__(self)

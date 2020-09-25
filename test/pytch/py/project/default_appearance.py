@@ -7,12 +7,12 @@ from pytch import (
 
 
 class Ball(Sprite):
-    Costumes = [('yellow-ball', 'library/images/ball.png', 8, 8)]
+    Costumes = [('yellow-ball', 'ball.png', 8, 8)]
 
 
 class Table(Stage):
-    Backdrops = [('wooden', 'library/images/stage/wooden.png'),
-                 ('white', 'library/images/stage/solid-white.png')]
+    Backdrops = [('wooden', 'wooden-stage.png'),
+                 ('white', 'solid-white-stage.png')]
 
 
 project = Project()
