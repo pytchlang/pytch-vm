@@ -21,6 +21,8 @@ var $builtinmodule = function (name) {
     const s_y = Sk.builtin.str("_y");
     const s_size = Sk.builtin.str("_size");
     const s_appearance = Sk.builtin.str("_appearance");
+    const s_Appearances = Sk.builtin.str("_Appearances");
+
     const s_pytch_parent_project = Sk.builtin.str("_pytch_parent_project");
 
     // Attributes of Python-side Appearance object:
@@ -278,6 +280,12 @@ var $builtinmodule = function (name) {
 
         get n_appearances() {
             return this._appearance_from_name.size;
+        }
+
+        static set_Appearances_attr(py_cls, js_actor) {
+            const py_appearances = js_actor._appearances.map(new_Appearance);
+            const py_appearances_list = Sk.builtin.list(py_appearances)
+            Sk.builtin.setattr(py_cls, s_Appearances, py_appearances_list);
         }
 
         register_handler(event_descr, handler_py_func) {
