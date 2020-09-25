@@ -96,7 +96,7 @@ var $builtinmodule = function (name) {
         }
 
         static async async_create(label, url_tail, centre_x, centre_y) {
-            let url = within_project_root("project-assets", url_tail);
+            let url = url_tail;  // TODO: Rename to "filename"
             let image = await Sk.pytch.async_load_image(url);
 
             if (centre_x == "auto" && centre_y == "auto") {
@@ -270,7 +270,7 @@ var $builtinmodule = function (name) {
 
             let async_sounds = sound_descriptors.map(async d => {
                 let url_tail = d[1];
-                let url = within_project_root("project-assets", url_tail);
+                let url = url_tail;  // TODO: Rename to 'filename'
                 let sound = await (Sk.pytch.sound_manager
                                    .async_load_sound(d[0], url));
                 return [d[0], sound];
