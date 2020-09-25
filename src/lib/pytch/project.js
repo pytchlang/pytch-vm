@@ -70,10 +70,10 @@ var $builtinmodule = function (name) {
             this.centre_y = centre_y;
         }
 
-        static async async_create(url_tail, centre_x, centre_y) {
+        static async async_create(label, url_tail, centre_x, centre_y) {
             let url = within_project_root("project-assets", url_tail);
             let image = await Sk.pytch.async_load_image(url);
-            return new Appearance(image, centre_x, centre_y);
+            return new Appearance(label, url_tail, image, centre_x, centre_y);
         }
     }
 
