@@ -46,6 +46,15 @@ var $builtinmodule = function (name) {
     const js_getattr = (py_obj, py_attr_name) => (
         Sk.ffi.remapToJs(Sk.builtin.getattr(py_obj, py_attr_name)));
 
+    const path_stem = (path) => {
+        const pieces = path.split("/");
+        const basename = pieces[pieces.length - 1];
+        const components = basename.split(".");
+        const n_components = components.length;
+        const n_keep = (n_components == 1) ? 1 : (n_components - 1);
+        return components.slice(0, n_keep).join(".");
+    }
+
     const map_concat
           = (fun, xs) => Array.prototype.concat.apply([], xs.map(fun));
 
