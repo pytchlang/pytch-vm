@@ -257,12 +257,12 @@ var $builtinmodule = function (name) {
 
             let async_appearances = appearance_descriptors.map(async d => {
                 let appearance = await Appearance.async_create(...d);
-                return [d[0], appearance];
+                return appearance;
             });
 
-            const labels_with_appearances = await Promise.all(async_appearances);
-            this._appearances = labels_with_appearances.map(x => x[1]);
-            this._appearance_from_name = new Map(labels_with_appearances);
+            this._appearances = await Promise.all(async_appearances);
+            this._appearance_from_name = new Map(
+                this._appearances.map(a => [a.label, a]));
         }
 
         async async_load_sounds() {
