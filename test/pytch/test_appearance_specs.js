@@ -17,50 +17,50 @@ describe("Costume spec parsing", () => {
     const test_cases = [
         {
             label: "full four-component",
-            fragment: '("yellow", "library/images/yellow-banana.png", 25, 20)',
+            fragment: '("yellow", "yellow-banana.png", 25, 20)',
             exp_info: [
                 "yellow",
-                "project-assets/library/images/yellow-banana.png",
+                "yellow-banana.png",
                 80, 30,
                 25, 20,
             ],
         },
         {
             label: "label and filename; infer centre",
-            fragment: '("yellow", "library/images/yellow-banana.png")',
+            fragment: '("yellow", "yellow-banana.png")',
             exp_info: [
                 "yellow",
-                "project-assets/library/images/yellow-banana.png",
+                "yellow-banana.png",
                 80, 30,
                 40, 15,
             ],
         },
         {
             label: "filename and centre; infer label",
-            fragment: '("library/images/yellow-banana.png", 11, 12)',
+            fragment: '("yellow-banana.png", 11, 12)',
             exp_info: [
                 "yellow-banana",
-                "project-assets/library/images/yellow-banana.png",
+                "yellow-banana.png",
                 80, 30,
                 11, 12,
             ],
         },
         {
             label: "filename as 1-elt tuple; infer label and centre",
-            fragment: '("library/images/yellow-banana.png",)',
+            fragment: '("yellow-banana.png",)',
             exp_info: [
                 "yellow-banana",
-                "project-assets/library/images/yellow-banana.png",
+                "yellow-banana.png",
                 80, 30,
                 40, 15,
             ],
         },
         {
             label: "filename as bare string; infer label and centre",
-            fragment: '"library/images/yellow-banana.png"',
+            fragment: '"yellow-banana.png"',
             exp_info: [
                 "yellow-banana",
-                "project-assets/library/images/yellow-banana.png",
+                "yellow-banana.png",
                 80, 30,
                 40, 15,
             ],
@@ -88,26 +88,26 @@ describe("Backdrop spec parsing", () => {
     const test_cases = [
         {
             label: "full two-component",
-            fragment: '("timber", "library/images/stage/wooden.png")',
+            fragment: '("timber", "wooden-stage.png")',
             exp_info: [
                 "timber",
-                "project-assets/library/images/stage/wooden.png",
+                "wooden-stage.png",
             ],
         },
         {
             label: "filename as 1-elt tuple; infer label",
-            fragment: '("library/images/stage/wooden.png",)',
+            fragment: '("wooden-stage.png",)',
             exp_info: [
-                "wooden",
-                "project-assets/library/images/stage/wooden.png",
+                "wooden-stage",
+                "wooden-stage.png",
             ],
         },
         {
             label: "filename as bare string; infer label",
-            fragment: '"library/images/stage/wooden.png"',
+            fragment: '"wooden-stage.png"',
             exp_info: [
-                "wooden",
-                "project-assets/library/images/stage/wooden.png",
+                "wooden-stage",
+                "wooden-stage.png",
             ],
         },
     ];
