@@ -462,6 +462,7 @@ module.exports = {
     mock_mouse,
     mock_keyboard,
     mock_sound_manager,
+    pytch_stdout,
     pytch_errors,
     assert_Appearance_equal,
     assert_renders_as,
