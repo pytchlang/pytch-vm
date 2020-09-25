@@ -526,6 +526,7 @@ var $builtinmodule = function (name) {
                     descr,
                     ("descriptor must have 2 elements:"
                      + " (name, url)"));
+            return [...descr, STAGE_WIDTH / 2, STAGE_HEIGHT / 2];
         }
 
         url_centre_from_descriptor(descr) {
