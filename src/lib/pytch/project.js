@@ -409,6 +409,7 @@ var $builtinmodule = function (name) {
             let sprite = new PytchSprite(py_cls, parent_project);
             await sprite.async_init();
             py_cls.$pytchActor = sprite;
+            PytchActor.set_Appearances_attr(py_cls, sprite);
             sprite.create_original_instance();
             return sprite;
         }
@@ -445,6 +446,7 @@ var $builtinmodule = function (name) {
             let stage = new PytchStage(py_cls, parent_project);
             await stage.async_init();
             py_cls.$pytchActor = stage;
+            PytchActor.set_Appearances_attr(py_cls, stage);
             stage.create_original_instance();
             return stage;
         }
