@@ -66,13 +66,6 @@ var $builtinmodule = function (name) {
         }
     })();
 
-    const within_project_root = (...tail_url_parts) => {
-        const maybe_parts = [Sk.pytch.project_root, ...tail_url_parts];
-        const parts = maybe_parts.filter(part => part !== "");
-        return parts.join("/");
-    };
-
-
     ////////////////////////////////////////////////////////////////////////////////
     //
     // Appearance: A Sprite has Costumes; a Stage has Backdrops.  Refer to one
