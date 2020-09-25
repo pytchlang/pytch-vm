@@ -496,10 +496,6 @@ var $builtinmodule = function (name) {
                 descr,
                 "descriptor must be tuple or string");
         }
-
-        url_centre_from_descriptor(descr) {
-            return [descr[1], descr[2], descr[3]];
-        }
     }
 
     class PytchStage extends PytchActor {
@@ -527,10 +523,6 @@ var $builtinmodule = function (name) {
                     ("descriptor must have 2 elements:"
                      + " (name, url)"));
             return [...descr, STAGE_WIDTH / 2, STAGE_HEIGHT / 2];
-        }
-
-        url_centre_from_descriptor(descr) {
-            return [descr[1], STAGE_WIDTH / 2, STAGE_HEIGHT / 2];
         }
     }
 
