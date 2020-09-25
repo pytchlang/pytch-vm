@@ -26,4 +26,15 @@ describe("Automatic switch-costume/show", () => {
         assert_renders_as("startup", project,
                           [["RenderImage", -40, 15, 1, "yellow-banana"]]);
     });
+
+    it("starts off not showing a Sprite with no Costume", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            class Monitor(pytch.Sprite):
+                Costumes = []
+        `);
+
+        assert_renders_as("startup", project, []);
+    });
 });
