@@ -88,16 +88,15 @@ var $builtinmodule = function (name) {
             return [this.image.width, this.image.height];
         }
 
-        static async async_create(label, url_tail, centre_x, centre_y) {
-            let url = url_tail;  // TODO: Rename to "filename"
-            let image = await Sk.pytch.async_load_image(url);
+        static async async_create(label, filename, centre_x, centre_y) {
+            let image = await Sk.pytch.async_load_image(filename);
 
             if (centre_x == "auto" && centre_y == "auto") {
                 centre_x = image.width / 2;
                 centre_y = image.height / 2;
             }
 
-            return new Appearance(label, url_tail, image, centre_x, centre_y);
+            return new Appearance(label, filename, image, centre_x, centre_y);
         }
     }
 
