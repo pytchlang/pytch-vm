@@ -84,6 +84,11 @@ var $builtinmodule = function (name) {
     }
 
 
+    // Do-nothing wrapper around object to give the class a name.
+    const appearance_cls = ($gbl, $loc) => {};
+    mod.Appearance = Sk.misceval.buildClass(mod, appearance_cls, "Appearance", []);
+
+
     ////////////////////////////////////////////////////////////////////////////////
     //
     // Rendering instructions.  To ease testing, there is no interaction here
