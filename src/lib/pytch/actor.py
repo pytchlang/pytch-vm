@@ -144,7 +144,7 @@ class Stage(Actor):
             # must have at least one Backdrop.
             raise ValueError('no Backdrops in Stage')
 
-        self.switch_backdrop(self.Backdrops[0][0])
+        self.switch_backdrop(self._Appearances[0].label)
 
     @classmethod
     def the_only(cls):
