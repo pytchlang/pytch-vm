@@ -46,6 +46,15 @@ var $builtinmodule = function (name) {
     const js_getattr = (py_obj, py_attr_name) => (
         Sk.ffi.remapToJs(Sk.builtin.getattr(py_obj, py_attr_name)));
 
+    const path_stem = (path) => {
+        const pieces = path.split("/");
+        const basename = pieces[pieces.length - 1];
+        const components = basename.split(".");
+        const n_components = components.length;
+        const n_keep = (n_components == 1) ? 1 : (n_components - 1);
+        return components.slice(0, n_keep).join(".");
+    }
+
     const map_concat
           = (fun, xs) => Array.prototype.concat.apply([], xs.map(fun));
 
@@ -78,9 +87,23 @@ var $builtinmodule = function (name) {
             this.centre_y = centre_y;
         }
 
+        get centre() {
+            return [this.centre_x, this.centre_y];
+        }
+
+        get size() {
+            return [this.image.width, this.image.height];
+        }
+
         static async async_create(label, url_tail, centre_x, centre_y) {
             let url = within_project_root("project-assets", url_tail);
             let image = await Sk.pytch.async_load_image(url);
+
+            if (centre_x == "auto" && centre_y == "auto") {
+                centre_x = image.width / 2;
+                centre_y = image.height / 2;
+            }
+
             return new Appearance(label, url_tail, image, centre_x, centre_y);
         }
     }
@@ -227,19 +250,19 @@ var $builtinmodule = function (name) {
 
         async async_load_appearances() {
             let attr_name = this.appearances_attr_name;
-            let appearance_descriptors = js_getattr(this.py_cls, attr_name);
+            let raw_descriptors = js_getattr(this.py_cls, attr_name);
 
-            appearance_descriptors.forEach(d => this.validate_descriptor(d));
+            let appearance_descriptors
+                = raw_descriptors.map(d => this.validate_descriptor(d));
 
             let async_appearances = appearance_descriptors.map(async d => {
-                let [url, cx, cy] = this.url_centre_from_descriptor(d);
-                let appearance = await Appearance.async_create(d[0], url, cx, cy);
-                return [d[0], appearance];
+                let appearance = await Appearance.async_create(...d);
+                return appearance;
             });
 
-            const labels_with_appearances = await Promise.all(async_appearances);
-            this._appearances = labels_with_appearances.map(x => x[1]);
-            this._appearance_from_name = new Map(labels_with_appearances);
+            this._appearances = await Promise.all(async_appearances);
+            this._appearance_from_name = new Map(
+                this._appearances.map(a => [a.label, a]));
         }
 
         async async_load_sounds() {
@@ -422,22 +445,56 @@ var $builtinmodule = function (name) {
 
         get class_kind_name() { return "Sprite"; }
 
-        validate_descriptor(descr) {
-            if (descr.length !== 4)
+        validate_centre_elements(descr, index_x, message_intro) {
+            if ((typeof descr[index_x] != "number")
+                || (typeof descr[index_x + 1] != "number"))
                 this.reject_appearance_descriptor(
                     descr,
-                    ("descriptor must have 4 elements:"
-                    + " (name, url, centre-x, centre-y"));
-
-            if ((typeof descr[2] != "number") || (typeof descr[3] != "number"))
-                this.reject_appearance_descriptor(
-                    descr,
-                    ("third and fourth elements of descriptor"
+                    (message_intro
                      + " (centre-x and centre-y) must be numbers"));
         }
 
-        url_centre_from_descriptor(descr) {
-            return [descr[1], descr[2], descr[3]];
+        validate_descriptor(descr) {
+            if (descr instanceof Array) {
+                const n_elts = descr.length;
+                switch (n_elts) {
+                case 4: { // (label, filename, x0, y0)
+                    this.validate_centre_elements(
+                        descr, 2,
+                        "third and fourth elements of four-element descriptor");
+                    return descr;
+                }
+                case 3: { // (filename, x0, y0), infer label
+                    this.validate_centre_elements(
+                        descr, 1,
+                        "second and third elements of three-element descriptor");
+                    const filename = descr[0];
+                    const label = path_stem(filename);
+                    return [label, ...descr];
+                }
+                case 2: { // (label, filename), infer centre (when we can)
+                    return [...descr, "auto", "auto"];
+                }
+                case 1: { // (filename,), infer label, centre (when we can)
+                    const filename = descr[0];
+                    const label = path_stem(filename);
+                    return [label, filename, "auto", "auto"];
+                }
+                default:
+                    this.reject_appearance_descriptor(
+                        descr,
+                        "tuple descriptor must have 1, 2, 3, or 4 elements");
+                }
+            }
+
+            if (typeof descr === "string") { // bare filename
+                const label = path_stem(descr);
+                return [label, descr, "auto", "auto"];
+            }
+
+            this.reject_appearance_descriptor(
+                descr,
+                "descriptor must be tuple or string");
         }
     }
 
@@ -460,15 +517,35 @@ var $builtinmodule = function (name) {
         get class_kind_name() { return "Stage"; }
 
         validate_descriptor(descr) {
-            if (descr.length !== 2)
-                this.reject_appearance_descriptor(
-                    descr,
-                    ("descriptor must have 2 elements:"
-                     + " (name, url)"));
-        }
+            const centre_x = STAGE_WIDTH / 2;
+            const centre_y = STAGE_HEIGHT / 2;
 
-        url_centre_from_descriptor(descr) {
-            return [descr[1], STAGE_WIDTH / 2, STAGE_HEIGHT / 2];
+            if (descr instanceof Array) {
+                const n_elts = descr.length;
+                switch (n_elts) {
+                case 2: { // (label, filename)
+                    return [...descr, centre_x, centre_y];
+                }
+                case 1: { // (filename,), infer label
+                    const filename = descr[0];
+                    const label = path_stem(filename);
+                    return [label, filename, centre_x, centre_y];
+                }
+                default:
+                    this.reject_appearance_descriptor(
+                        descr,
+                        "tuple descriptor must have 1 or 2 elements");
+                }
+            }
+
+            if (typeof descr === "string") { // bare filename
+                const label = path_stem(descr);
+                return [label, descr, centre_x, centre_y];
+            }
+
+            this.reject_appearance_descriptor(
+                descr,
+                "descriptor must be tuple or string");
         }
     }
 

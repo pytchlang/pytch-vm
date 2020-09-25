@@ -314,17 +314,17 @@ class MockSoundPerformance {
 
 const assert_Appearance_equal = (
     got_appearance,
+    exp_label,
     exp_img_url,
     exp_img_wd,
     exp_img_ht,
     exp_centre_x,
     exp_centre_y
 ) => {
+    assert.equal(got_appearance.label, exp_label);
     assert.equal(got_appearance.image.url, exp_img_url);
-    assert.equal(got_appearance.image.width, exp_img_wd);
-    assert.equal(got_appearance.image.height, exp_img_ht);
-    assert.strictEqual(got_appearance.centre_x, exp_centre_x)
-    assert.strictEqual(got_appearance.centre_y, exp_centre_y);
+    assert.deepStrictEqual(got_appearance.size, [exp_img_wd, exp_img_ht]);
+    assert.deepStrictEqual(got_appearance.centre, [exp_centre_x, exp_centre_y]);
 };
 
 const assert_renders_as = (label, project, exp_render_instrns) => {

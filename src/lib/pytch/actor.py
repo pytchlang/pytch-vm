@@ -46,7 +46,7 @@ class Sprite(Actor):
         self._size = 1.0
         self._shown = False
         if self.Costumes:
-            self.switch_costume(self.Costumes[0][0])
+            self.switch_costume(self._Appearances[0].label)
         else:
             # It is not necessarily an error to have no Costumes, as
             # long as the Sprite always remains hidden.  It might, for
@@ -144,7 +144,7 @@ class Stage(Actor):
             # must have at least one Backdrop.
             raise ValueError('no Backdrops in Stage')
 
-        self.switch_backdrop(self.Backdrops[0][0])
+        self.switch_backdrop(self._Appearances[0].label)
 
     @classmethod
     def the_only(cls):

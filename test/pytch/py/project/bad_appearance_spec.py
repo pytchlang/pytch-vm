@@ -6,10 +6,16 @@ class StarrySky(Stage):
     Backdrops = [('night', 'some-url', 'extra', 'elements')]
 
 
+class FootballPitch(Stage):
+    # The following spec is malformed because it is neither a tuple
+    # nor a string:
+    Backdrops = [42];
+
+
 class Alien(Sprite):
-    # The following spec is malformed because it omits the 'centre-x'
-    # and 'centre-y' values:
-    Costumes = [('marching', 'some-url')]
+    # The following spec is malformed because it is neither a tuple
+    # nor a string:
+    Costumes = [42]
 
 
 class Spaceship(Sprite):
@@ -25,6 +31,12 @@ try:
     project.register_stage_class(StarrySky)
 except ValueError as value_error:
     caught_exception_StarrySky = value_error
+
+caught_exception_FootballPitch = None
+try:
+    project.register_stage_class(FootballPitch)
+except ValueError as value_error:
+    caught_exception_FootballPitch = value_error
 
 caught_exception_Alien = None
 try:
