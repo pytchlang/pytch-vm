@@ -188,9 +188,6 @@ var $builtinmodule = function (name) {
             this.parent_project = parent_project;
             this.instances = [];
 
-            let py_instance = Sk.misceval.callsim(py_cls);
-            this.register_py_instance(py_instance);
-
             this.event_handlers = {
                 green_flag: new EventHandlerGroup(),
                 keypress: {},
@@ -201,6 +198,11 @@ var $builtinmodule = function (name) {
             this.click_handlers = [];
 
             this.register_event_handlers();
+        }
+
+        create_original_instance() {
+            let py_instance = Sk.misceval.callsim(this.py_cls);
+            this.register_py_instance(py_instance);
         }
 
         reject_appearance_descriptor(descriptor, error_message_nub) {
@@ -407,6 +409,7 @@ var $builtinmodule = function (name) {
             let sprite = new PytchSprite(py_cls, parent_project);
             await sprite.async_init();
             py_cls.$pytchActor = sprite;
+            sprite.create_original_instance();
             return sprite;
         }
 
@@ -442,6 +445,7 @@ var $builtinmodule = function (name) {
             let stage = new PytchStage(py_cls, parent_project);
             await stage.async_init();
             py_cls.$pytchActor = stage;
+            stage.create_original_instance();
             return stage;
         }
 
