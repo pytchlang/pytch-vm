@@ -191,7 +191,7 @@ var $builtinmodule = function (name) {
 
             let async_appearances = appearance_descriptors.map(async d => {
                 let [url, cx, cy] = this.url_centre_from_descriptor(d);
-                let appearance = await Appearance.async_create(url, cx, cy);
+                let appearance = await Appearance.async_create(d[0], url, cx, cy);
                 return [d[0], appearance];
             });
 
