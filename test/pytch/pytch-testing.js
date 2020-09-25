@@ -442,7 +442,7 @@ require("../../support/run/require-skulpt").requireSkulpt(false, false);
 
 Sk.configure({
     read: (fname => fs.readFileSync(fname, { encoding: "utf8" })),
-    output: (args) => { process.stdout.write(args); },
+    output: (args) => { pytch_stdout.append_stdout(args); },
     pytch: {
         async_load_image: async_load_mock_image,
         keyboard: mock_keyboard,
