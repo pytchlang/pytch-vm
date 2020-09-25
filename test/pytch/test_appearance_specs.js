@@ -25,6 +25,46 @@ describe("Costume spec parsing", () => {
                 25, 20,
             ],
         },
+        {
+            label: "label and filename; infer centre",
+            fragment: '("yellow", "library/images/yellow-banana.png")',
+            exp_info: [
+                "yellow",
+                "project-assets/library/images/yellow-banana.png",
+                80, 30,
+                40, 15,
+            ],
+        },
+        {
+            label: "filename and centre; infer label",
+            fragment: '("library/images/yellow-banana.png", 11, 12)',
+            exp_info: [
+                "yellow-banana",
+                "project-assets/library/images/yellow-banana.png",
+                80, 30,
+                11, 12,
+            ],
+        },
+        {
+            label: "filename as 1-elt tuple; infer label and centre",
+            fragment: '("library/images/yellow-banana.png",)',
+            exp_info: [
+                "yellow-banana",
+                "project-assets/library/images/yellow-banana.png",
+                80, 30,
+                40, 15,
+            ],
+        },
+        {
+            label: "filename as bare string; infer label and centre",
+            fragment: '"library/images/yellow-banana.png"',
+            exp_info: [
+                "yellow-banana",
+                "project-assets/library/images/yellow-banana.png",
+                80, 30,
+                40, 15,
+            ],
+        },
     ];
 
     test_cases.forEach(spec => {
