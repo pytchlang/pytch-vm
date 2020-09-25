@@ -7,9 +7,9 @@ class StarrySky(Stage):
 
 
 class Alien(Sprite):
-    # The following spec is malformed because it omits the 'centre-x'
-    # and 'centre-y' values:
-    Costumes = [('marching', 'some-url')]
+    # The following spec is malformed because it is neither a tuple
+    # nor a string:
+    Costumes = [42]
 
 
 class Spaceship(Sprite):
