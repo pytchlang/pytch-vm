@@ -440,6 +440,40 @@ const configure_mocha = () => {
 
 ////////////////////////////////////////////////////////////////////////////////
 //
+// Support literal code in JS test files
+//
+// The following copy-n-pasted, with minor modifications, from a WebApp test
+// support file; is there a good way to only have this logic in one place?
+
+const allSpaces = new RegExp("^ *$");
+const leadWS = new RegExp("^ *");
+const deIndent = (rawCode) => {
+  const allLines = rawCode.split("\n");
+
+  if (allLines[0] !== "")
+    throw Error("need empty first line of code");
+
+  const nLines = allLines.length;
+  if (!allSpaces.test(allLines[nLines - 1]))
+    throw Error("need all-spaces last line of code");
+
+  const lines = allLines.slice(1, nLines - 1);
+
+  const nonBlankLines = lines.filter((line) => !allSpaces.test(line));
+  const nonBlankIndents = nonBlankLines.map(x => leadWS.exec(x)[0].length);
+  const minNonBlankIndent = Math.min(...nonBlankIndents);
+
+  const strippedLines = lines.map(x => x.substring(minNonBlankIndent));
+  return strippedLines.join("\n") + "\n";
+};
+
+const import_deindented = (raw_code_text) => {
+    return import_project(deIndent(raw_code_text));
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
 // Load and configure Skulpt.
 
 require("../../support/run/require-skulpt").requireSkulpt(false, false);
@@ -463,6 +497,7 @@ module.exports = {
     assert,
     with_project,
     with_module,
+    import_deindented,
     mock_mouse,
     mock_keyboard,
     mock_sound_manager,
