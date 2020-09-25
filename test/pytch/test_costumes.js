@@ -8,6 +8,7 @@ const {
     assert_Appearance_equal,
     many_frames,
     pytch_errors,
+    pytch_stdout,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -31,6 +32,20 @@ describe("Costume handling", () => {
             assert_Appearance_equal(alien.appearance_from_name("firing"),
                                     "project-assets/library/images/firing-alien.png",
                                     80, 30, 40, 15);
+        });
+
+        it("can access costume info from Python side", async () => {
+            let project = await import_project();
+
+            // We print costumes in a loop so need multiple frames to do so:
+            project.do_synthetic_broadcast("print-costume-info");
+            many_frames(project, 2);
+
+            const stdout = pytch_stdout.drain_stdout();
+            assert.equal(
+                stdout,
+                ("0, marching, library/images/marching-alien.png, (60, 20), (30, 10)\n"
+                 + "1, firing, library/images/firing-alien.png, (80, 30), (40, 15)\n"));
         })});
 
     with_module("py/project/bad_costume.py", (import_module) => {
