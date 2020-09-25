@@ -46,8 +46,8 @@ describe("Costume handling", () => {
             const stdout = pytch_stdout.drain_stdout();
             assert.equal(
                 stdout,
-                ("0, marching, library/images/marching-alien.png, (60, 20), (30, 10)\n"
-                 + "1, firing, library/images/firing-alien.png, (80, 30), (40, 15)\n"));
+                ("0, marching, marching-alien.png, (60, 20), (30, 10)\n"
+                 + "1, firing, firing-alien.png, (80, 30), (40, 15)\n"));
         })});
 
     with_module("py/project/bad_costume.py", (import_module) => {
