@@ -517,12 +517,35 @@ var $builtinmodule = function (name) {
         get class_kind_name() { return "Stage"; }
 
         validate_descriptor(descr) {
-            if (descr.length !== 2)
-                this.reject_appearance_descriptor(
-                    descr,
-                    ("descriptor must have 2 elements:"
-                     + " (name, url)"));
-            return [...descr, STAGE_WIDTH / 2, STAGE_HEIGHT / 2];
+            const centre_x = STAGE_WIDTH / 2;
+            const centre_y = STAGE_HEIGHT / 2;
+
+            if (descr instanceof Array) {
+                const n_elts = descr.length;
+                switch (n_elts) {
+                case 2: { // (label, filename)
+                    return [...descr, centre_x, centre_y];
+                }
+                case 1: { // (filename,), infer label
+                    const filename = descr[0];
+                    const label = path_stem(filename);
+                    return [label, filename, centre_x, centre_y];
+                }
+                default:
+                    this.reject_appearance_descriptor(
+                        descr,
+                        "tuple descriptor must have 1 or 2 elements");
+                }
+            }
+
+            if (typeof descr === "string") { // bare filename
+                const label = path_stem(descr);
+                return [label, descr, centre_x, centre_y];
+            }
+
+            this.reject_appearance_descriptor(
+                descr,
+                "descriptor must be tuple or string");
         }
     }
 
