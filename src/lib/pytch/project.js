@@ -439,6 +439,15 @@ var $builtinmodule = function (name) {
 
         get class_kind_name() { return "Sprite"; }
 
+        validate_centre_elements(descr, index_x, message_intro) {
+            if ((typeof descr[index_x] != "number")
+                || (typeof descr[index_x + 1] != "number"))
+                this.reject_appearance_descriptor(
+                    descr,
+                    (message_intro
+                     + " (centre-x and centre-y) must be numbers"));
+        }
+
         validate_descriptor(descr) {
             if (descr instanceof Array) {
                 const n_elts = descr.length;
