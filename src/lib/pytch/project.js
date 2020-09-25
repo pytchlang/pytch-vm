@@ -195,8 +195,9 @@ var $builtinmodule = function (name) {
                 return [d[0], appearance];
             });
 
-            let appearances = await Promise.all(async_appearances);
-            this._appearance_from_name = new Map(appearances);
+            const labels_with_appearances = await Promise.all(async_appearances);
+            this._appearances = labels_with_appearances.map(x => x[1]);
+            this._appearance_from_name = new Map(labels_with_appearances);
         }
 
         async async_load_sounds() {
