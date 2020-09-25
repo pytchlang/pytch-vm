@@ -83,3 +83,32 @@ describe("Costume spec parsing", () => {
     });
     });
 });
+
+describe("Backdrop spec parsing", () => {
+    const test_cases = [
+        {
+            label: "full two-component",
+            fragment: '("timber", "library/images/stage/wooden.png")',
+            exp_info: [
+                "timber",
+                "project-assets/library/images/stage/wooden.png",
+            ],
+        },
+        {
+            label: "filename as 1-elt tuple; infer label",
+            fragment: '("library/images/stage/wooden.png",)',
+            exp_info: [
+                "wooden",
+                "project-assets/library/images/stage/wooden.png",
+            ],
+        },
+        {
+            label: "filename as bare string; infer label",
+            fragment: '"library/images/stage/wooden.png"',
+            exp_info: [
+                "wooden",
+                "project-assets/library/images/stage/wooden.png",
+            ],
+        },
+    ];
+});
