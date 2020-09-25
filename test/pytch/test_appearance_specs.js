@@ -111,4 +111,24 @@ describe("Backdrop spec parsing", () => {
             ],
         },
     ];
+
+    test_cases.forEach(spec => {
+    it(`parses spec (${spec.label}) correctly`, async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            class MyStage(pytch.Stage):
+                Backdrops = [${spec.fragment}]
+        `);
+
+        const stage = project.actor_by_class_name("MyStage");
+        const appearances = stage._appearances;
+        assert.equal(appearances.length, 1);
+
+        // All stages should be 480x360 with centre (240, 180).
+        const full_spec = [...spec.exp_info, 480, 360, 240, 180];
+
+        assert_Appearance_equal(appearances[0], ...full_spec);
+    });
+    });
 });
