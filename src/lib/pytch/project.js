@@ -62,7 +62,9 @@ var $builtinmodule = function (name) {
     // of either of these things as an "Appearance".
 
     class Appearance {
-        constructor(image, centre_x, centre_y) {
+        constructor(label, filename, image, centre_x, centre_y) {
+            this.label = label;
+            this.filename = filename;
             this.image = image;
             this.centre_x = centre_x;
             this.centre_y = centre_y;
