@@ -175,6 +175,25 @@ const mock_sound_manager = (() => {
     };
 })();
 
+const pytch_stdout = (() => {
+    let uncollected_stdout = "";
+
+    const append_stdout = (text) => {
+        uncollected_stdout += text;
+    };
+
+    const drain_stdout = () => {
+        const stdout = uncollected_stdout;
+        uncollected_stdout = "";
+        return stdout;
+    };
+
+    return {
+        append_stdout,
+        drain_stdout,
+    };
+})();
+
 const pytch_errors = (() => {
     let uncollected_errors = [];
 
@@ -411,7 +430,45 @@ const configure_mocha = () => {
         assert.strictEqual(errors.length, 0,
                            ("undrained errors at end of test:\n"
                             + error_messages.join("\n")));
+
+        const stdout = pytch_stdout.drain_stdout();
+        assert.strictEqual(stdout.length, 0,
+                           `undrained stdout at end of test:\n${stdout}`);
     });
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// Support literal code in JS test files
+//
+// The following copy-n-pasted, with minor modifications, from a WebApp test
+// support file; is there a good way to only have this logic in one place?
+
+const allSpaces = new RegExp("^ *$");
+const leadWS = new RegExp("^ *");
+const deIndent = (rawCode) => {
+  const allLines = rawCode.split("\n");
+
+  if (allLines[0] !== "")
+    throw Error("need empty first line of code");
+
+  const nLines = allLines.length;
+  if (!allSpaces.test(allLines[nLines - 1]))
+    throw Error("need all-spaces last line of code");
+
+  const lines = allLines.slice(1, nLines - 1);
+
+  const nonBlankLines = lines.filter((line) => !allSpaces.test(line));
+  const nonBlankIndents = nonBlankLines.map(x => leadWS.exec(x)[0].length);
+  const minNonBlankIndent = Math.min(...nonBlankIndents);
+
+  const strippedLines = lines.map(x => x.substring(minNonBlankIndent));
+  return strippedLines.join("\n") + "\n";
+};
+
+const import_deindented = (raw_code_text) => {
+    return import_project(deIndent(raw_code_text));
 };
 
 
@@ -423,7 +480,7 @@ require("../../support/run/require-skulpt").requireSkulpt(false, false);
 
 Sk.configure({
     read: (fname => fs.readFileSync(fname, { encoding: "utf8" })),
-    output: (args) => { process.stdout.write(args); },
+    output: (args) => { pytch_stdout.append_stdout(args); },
     pytch: {
         async_load_image: async_load_mock_image,
         keyboard: mock_keyboard,
@@ -440,9 +497,11 @@ module.exports = {
     assert,
     with_project,
     with_module,
+    import_deindented,
     mock_mouse,
     mock_keyboard,
     mock_sound_manager,
+    pytch_stdout,
     pytch_errors,
     assert_Appearance_equal,
     assert_renders_as,
