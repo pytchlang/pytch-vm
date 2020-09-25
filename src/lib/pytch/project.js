@@ -261,10 +261,8 @@ var $builtinmodule = function (name) {
             let sound_descriptors = js_getattr(this.py_cls, s_Sounds);
 
             let async_sounds = sound_descriptors.map(async d => {
-                let url_tail = d[1];
-                let url = url_tail;  // TODO: Rename to 'filename'
                 let sound = await (Sk.pytch.sound_manager
-                                   .async_load_sound(d[0], url));
+                                   .async_load_sound(...d));
                 return [d[0], sound];
             });
 
