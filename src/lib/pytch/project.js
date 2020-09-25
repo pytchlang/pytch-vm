@@ -23,6 +23,12 @@ var $builtinmodule = function (name) {
     const s_appearance = Sk.builtin.str("_appearance");
     const s_pytch_parent_project = Sk.builtin.str("_pytch_parent_project");
 
+    // Attributes of Python-side Appearance object:
+    const s_Label = Sk.builtin.str("label");
+    const s_Filename = Sk.builtin.str("filename");
+    const s_Size = Sk.builtin.str("size");
+    const s_Centre = Sk.builtin.str("centre");
+
     const name_of_py_class
           = (py_cls =>
              Sk.ffi.remapToJs(Sk.builtin.getattr(py_cls, s_dunder_name)));
