@@ -70,7 +70,7 @@ describe("Costume handling", () => {
             }
 
             assert_exception_matches("caught_exception_StarrySky",
-                                     /Backdrop.*must have 2 elements/);
+                                     /Backdrop.*must have 1 or 2 elements/);
 
             assert_exception_matches("caught_exception_Alien",
                                      /Costume.*must be tuple or string/);
