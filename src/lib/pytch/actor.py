@@ -40,10 +40,6 @@ class Sprite(Actor):
 
     _appearance_hyponym = 'Costume'
 
-    @classmethod
-    def _appearances(cls):
-        return cls.Costumes
-
     def __init__(self):
         self._x = 0
         self._y = 0
@@ -139,10 +135,6 @@ class Stage(Actor):
     _size = 1.0
     _shown = True
     _appearance = 'solid-white'
-
-    @classmethod
-    def _appearances(cls):
-        return cls.Backdrops
 
     _appearance_hyponym = 'Backdrop'
 
