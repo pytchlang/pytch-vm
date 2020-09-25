@@ -453,9 +453,15 @@ var $builtinmodule = function (name) {
                 const n_elts = descr.length;
                 switch (n_elts) {
                 case 4: { // (label, filename, x0, y0)
+                    this.validate_centre_elements(
+                        descr, 2,
+                        "third and fourth elements of four-element descriptor");
                     return descr;
                 }
                 case 3: { // (filename, x0, y0), infer label
+                    this.validate_centre_elements(
+                        descr, 1,
+                        "second and third elements of three-element descriptor");
                     const filename = descr[0];
                     const label = path_stem(filename);
                     return [label, ...descr];
