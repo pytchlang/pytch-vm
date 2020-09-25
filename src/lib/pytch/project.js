@@ -88,6 +88,27 @@ var $builtinmodule = function (name) {
     const appearance_cls = ($gbl, $loc) => {};
     mod.Appearance = Sk.misceval.buildClass(mod, appearance_cls, "Appearance", []);
 
+    const new_Appearance = (js_appearance) => {
+        const pyAppearance = Sk.misceval.callsim(mod.Appearance);
+
+        Sk.builtin.setattr(pyAppearance, s_Label,
+                           Sk.builtin.str(js_appearance.label));
+        Sk.builtin.setattr(pyAppearance, s_Filename,
+                           Sk.builtin.str(js_appearance.filename));
+
+        const pyWidth = Sk.builtin.int_(js_appearance.image.width);
+        const pyHeight = Sk.builtin.int_(js_appearance.image.height);
+        const pySize = Sk.builtin.tuple([pyWidth, pyHeight]);
+        Sk.builtin.setattr(pyAppearance, s_Size, pySize);
+
+        const pyCentreX = Sk.builtin.int_(js_appearance.centre_x);
+        const pyCentreY = Sk.builtin.int_(js_appearance.centre_y);
+        const pyCentre = Sk.builtin.tuple([pyCentreX, pyCentreY]);
+        Sk.builtin.setattr(pyAppearance, s_Centre, pyCentre);
+
+        return pyAppearance;
+    };
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
