@@ -430,6 +430,10 @@ const configure_mocha = () => {
         assert.strictEqual(errors.length, 0,
                            ("undrained errors at end of test:\n"
                             + error_messages.join("\n")));
+
+        const stdout = pytch_stdout.drain_stdout();
+        assert.strictEqual(stdout.length, 0,
+                           `undrained stdout at end of test:\n${stdout}`);
     });
 };
 
