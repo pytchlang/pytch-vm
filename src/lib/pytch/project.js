@@ -78,6 +78,14 @@ var $builtinmodule = function (name) {
             this.centre_y = centre_y;
         }
 
+        get centre() {
+            return [this.centre_x, this.centre_y];
+        }
+
+        get size() {
+            return [this.image.width, this.image.height];
+        }
+
         static async async_create(label, url_tail, centre_x, centre_y) {
             let url = within_project_root("project-assets", url_tail);
             let image = await Sk.pytch.async_load_image(url);
