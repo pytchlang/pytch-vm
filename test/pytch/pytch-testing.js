@@ -175,6 +175,25 @@ const mock_sound_manager = (() => {
     };
 })();
 
+const pytch_stdout = (() => {
+    let uncollected_stdout = "";
+
+    const append_stdout = (text) => {
+        uncollected_stdout += text;
+    };
+
+    const drain_stdout = () => {
+        const stdout = uncollected_stdout;
+        uncollected_stdout = "";
+        return stdout;
+    };
+
+    return {
+        append_stdout,
+        drain_stdout,
+    };
+})();
+
 const pytch_errors = (() => {
     let uncollected_errors = [];
 
