@@ -2,7 +2,9 @@
 
 const {
     configure_mocha,
+    import_deindented,
     assert,
+    assert_Appearance_equal,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -24,4 +26,20 @@ describe("Costume spec parsing", () => {
             ],
         },
     ];
+
+    test_cases.forEach(spec => {
+    it(`parses spec (${spec.label}) correctly`, async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            class Banana(pytch.Sprite):
+                Costumes = [${spec.fragment}]
+        `);
+
+        const banana = project.actor_by_class_name("Banana");
+        const appearances = banana._appearances;
+        assert.equal(appearances.length, 1);
+        assert_Appearance_equal(appearances[0], ...spec.exp_info);
+    });
+    });
 });
