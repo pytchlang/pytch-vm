@@ -537,12 +537,21 @@ var $builtinmodule = function (name) {
                 const n_elts = descr.length;
                 switch (n_elts) {
                 case 4: { // (label, filename, x0, y0)
+                    this.validate_appearance_label(
+                        descr, 0,
+                        "first element of four-element descriptor");
+                    this.validate_appearance_filename(
+                        descr, 1,
+                        "second element of four-element descriptor");
                     this.validate_appearance_centre(
                         descr, 2,
                         "third and fourth elements of four-element descriptor");
                     return descr;
                 }
                 case 3: { // (filename, x0, y0), infer label
+                    this.validate_appearance_filename(
+                        descr, 0,
+                        "first element of three-element descriptor");
                     this.validate_appearance_centre(
                         descr, 1,
                         "second and third elements of three-element descriptor");
@@ -551,9 +560,18 @@ var $builtinmodule = function (name) {
                     return [label, ...descr];
                 }
                 case 2: { // (label, filename), infer centre (when we can)
+                    this.validate_appearance_label(
+                        descr, 0,
+                        "first element of two-element descriptor");
+                    this.validate_appearance_filename(
+                        descr, 1,
+                        "second element of two-element descriptor");
                     return [...descr, "auto", "auto"];
                 }
                 case 1: { // (filename,), infer label, centre (when we can)
+                    this.validate_appearance_filename(
+                        descr, 0,
+                        "sole element of one-element descriptor");
                     const filename = descr[0];
                     const label = path_stem(filename);
                     return [label, filename, "auto", "auto"];
