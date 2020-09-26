@@ -246,6 +246,11 @@ var $builtinmodule = function (name) {
             throw new Sk.builtin.ValueError(error_message);
         }
 
+        reject_sound_descriptor(descr, error_message_nub) {
+            throw new Sk.builtin.ValueError(
+                `problem with specification for Sound: ${error_message_nub}`);
+        }
+
         register_py_instance(py_instance) {
             let actor_instance = new PytchActorInstance(this, py_instance);
             py_instance.$pytchActorInstance = actor_instance;
