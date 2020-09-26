@@ -637,7 +637,7 @@ var $builtinmodule = function (name) {
                 }
             }
 
-            return [...costume_instructions];
+            return [...costume_instructions, ...speech_instructions];
         }
 
         bounding_box() {
