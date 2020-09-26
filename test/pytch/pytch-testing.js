@@ -340,7 +340,7 @@ const assert_renders_as = (label, project, exp_render_instrns) => {
                            + ` kind "${exp_instr[0]}"`);
 
         switch(got_instr.kind) {
-        case "RenderImage":
+        case "RenderImage": {
             let pfx = `in RenderImage at index ${idx} of ${label}`;
             assert.ok(((got_instr.x == exp_instr[1])
                        && (got_instr.y == exp_instr[2])),
@@ -353,6 +353,7 @@ const assert_renders_as = (label, project, exp_render_instrns) => {
                       `${pfx}, got image-label "${got_instr.image_label}"`
                       + ` but expected "${exp_instr[4]}"`);
             break;
+        }
         default:
             assert.ok(null,
                       `unknown instruction kind "${got_instr.kind}"`);
