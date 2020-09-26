@@ -64,6 +64,21 @@ describe("Sound spec parsing", () => {
             fragment: '42',
             error_regexp: /tuple or string/,
         },
+        {
+            label: "label non-string",
+            fragment: '(42, "shriek.mp3")',
+            error_regexp: /label \(first.*of two.*\) must be a string/,
+        },
+        {
+            label: "filename of 2-elt tuple non-string",
+            fragment: '("shriek", 3.141)',
+            error_regexp: /filename \(second.*of two.*\) must be a string/,
+        },
+        {
+            label: "filename of 1-elt tuple non-string",
+            fragment: '(3.141,)',
+            error_regexp: /filename \(sole.*of one.*\) must be a string/,
+        },
     ];
 
     bad_cases.forEach(spec => {
