@@ -278,6 +278,7 @@ class MockSound {
     constructor(parent_sound_manager, tag, url) {
         this.parent_sound_manager = parent_sound_manager;
         this.tag = tag;
+        this.filename = url;
         this.duration = sound_duration_from_url.get(url);
     }
 
@@ -395,6 +396,39 @@ const assert_has_bbox = (
     assert_prop_eq("y_max", exp_ymax);
 };
 
+////////////////////////////////////////////////////////////////////////////////
+//
+// Assert that a particular kind of build error was thrown.
+
+const assertBuildError = (err, exp_phase, innerMsgRegExp) => {
+    const msg = Sk.builtin.str(err).v;
+    assert.ok(
+        /^PytchBuildError/.test(msg),
+        `did not get PytchBuildError: ${msg}`
+    );
+    assert.equal(err.phase, exp_phase);
+
+    if (innerMsgRegExp != null) {
+        const innerMsg = Sk.builtin.str(err.innerError).v;
+        assert.ok(
+            innerMsgRegExp.test(innerMsg),
+            (`innerError message "${innerMsg}"`
+             + ` did not match /${innerMsgRegExp.source}/`)
+        );
+    }
+};
+
+const assertBuildErrorFun = (...args) => {
+    return (err) => {
+        assertBuildError(err, ...args);
+        return true;
+    };
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// Convenience methods for access into Python world.
 
 const py_getattr = (py_obj, js_attr_name) =>
     Sk.builtin.getattr(py_obj, Sk.builtin.str(js_attr_name));
@@ -513,6 +547,8 @@ module.exports = {
     assert_Appearance_equal,
     assert_renders_as,
     assert_has_bbox,
+    assertBuildError,
+    assertBuildErrorFun,
     py_getattr,
     js_getattr,
     call_method,

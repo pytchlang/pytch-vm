@@ -246,6 +246,23 @@ var $builtinmodule = function (name) {
             throw new Sk.builtin.ValueError(error_message);
         }
 
+        validate_sound_label(descr, index, location) {
+            if (typeof descr[index] !== "string")
+                this.reject_sound_descriptor(
+                    descr, `label (${location}) must be a string`);
+        }
+
+        validate_sound_filename(descr, index, location) {
+            if (typeof descr[index] !== "string")
+                this.reject_sound_descriptor(
+                    descr, `filename (${location}) must be a string`);
+        }
+
+        reject_sound_descriptor(descr, error_message_nub) {
+            throw new Sk.builtin.ValueError(
+                `problem with specification for Sound: ${error_message_nub}`);
+        }
+
         register_py_instance(py_instance) {
             let actor_instance = new PytchActorInstance(this, py_instance);
             py_instance.$pytchActorInstance = actor_instance;
@@ -274,8 +291,49 @@ var $builtinmodule = function (name) {
                 this._appearances.map(a => [a.label, a]));
         }
 
+        validate_sound_descriptor(descr) {
+            if (descr instanceof Array) {
+                const n_elts = descr.length;
+                switch (n_elts) {
+                case 2: { // (label, filename)
+                    this.validate_sound_label(
+                        descr, 0,
+                        "first element of two-element descriptor");
+                    this.validate_sound_filename(
+                        descr, 1,
+                        "second element of two-element descriptor");
+                    return descr;
+                }
+                case 1: { // (filename,), infer label
+                    this.validate_sound_filename(
+                        descr, 0,
+                        "sole element of one-element descriptor");
+                    const filename = descr[0];
+                    const label = path_stem(filename);
+                    return [label, filename];
+                }
+                default:
+                    this.reject_sound_descriptor(
+                        descr,
+                        "tuple descriptor must have 1 or 2 elements");
+                }
+            }
+
+            if (typeof descr === "string") { // bare filename
+                const label = path_stem(descr);
+                return [label, descr];
+            }
+
+            this.reject_sound_descriptor(
+                descr,
+                "descriptor must be tuple or string");
+        }
+
         async async_load_sounds() {
-            let sound_descriptors = js_getattr(this.py_cls, s_Sounds);
+            let raw_descriptors = js_getattr(this.py_cls, s_Sounds);
+
+            let sound_descriptors
+                = raw_descriptors.map(d => this.validate_sound_descriptor(d));
 
             let async_sounds = sound_descriptors.map(async d => {
                 let sound = await (Sk.pytch.sound_manager
