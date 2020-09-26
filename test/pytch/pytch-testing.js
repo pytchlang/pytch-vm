@@ -354,6 +354,17 @@ const assert_renders_as = (label, project, exp_render_instrns) => {
                       + ` but expected "${exp_instr[4]}"`);
             break;
         }
+        case "RenderSpeechBubble": {
+            let pfx = `in RenderSpeechBubble at index ${idx} of ${label}`;
+            assert.ok((got_instr.content == exp_instr[1]),
+                      (`${pfx}, got content "${got_instr.content}"`
+                       + ` but expected "${exp_instr[1]}"`));
+            assert.ok(((got_instr.tip_x == exp_instr[2])
+                       && (got_instr.tip_y == exp_instr[3])),
+                      (`${pfx}, got tip coords (${got_instr.tip_x}, ${got_instr.tip_y})`
+                       + ` but expected (${exp_instr[2]}, ${exp_instr[3]})`));
+            break;
+        }
         default:
             assert.ok(null,
                       `unknown instruction kind "${got_instr.kind}"`);
