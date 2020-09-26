@@ -280,7 +280,32 @@ var $builtinmodule = function (name) {
         }
 
         validate_sound_descriptor(descr) {
-            return descr;
+            if (descr instanceof Array) {
+                const n_elts = descr.length;
+                switch (n_elts) {
+                case 2: { // (label, filename)
+                    return descr;
+                }
+                case 1: { // (filename,), infer label
+                    const filename = descr[0];
+                    const label = path_stem(filename);
+                    return [label, filename];
+                }
+                default:
+                    this.reject_sound_descriptor(
+                        descr,
+                        "tuple descriptor must have 1 or 2 elements");
+                }
+            }
+
+            if (typeof descr === "string") { // bare filename
+                const label = path_stem(descr);
+                return [label, descr];
+            }
+
+            this.reject_sound_descriptor(
+                descr,
+                "descriptor must be tuple or string");
         }
 
         async async_load_sounds() {
