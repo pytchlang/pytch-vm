@@ -32,5 +32,19 @@ describe("Speech bubbles", () => {
                 def talk_briefly(self):
                     self.say_for_seconds("Mumble", 0.5)
         `);
+
+        const exp_speech = (content, tip_x, tip_y) =>
+              ["RenderSpeechBubble", content, tip_x, tip_y];
+
+        const assert_speech = (label, exp_speech_instructions) => {
+            assert_renders_as(
+                label,
+                project,
+                [
+                    ["RenderImage", -40, 15, 1, "yellow-banana"],
+                    ...exp_speech_instructions,
+                ]
+            );
+        };
     });
 });
