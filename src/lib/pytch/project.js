@@ -165,6 +165,22 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // RenderSpeechBubble: A request that a speech bubble be drawn with given
+    // content, such that the tip of
+    // its arrow at a particular location.
+
+    class RenderSpeechBubble {
+        constructor(content, tip_x, tip_y) {
+            this.kind = "RenderSpeechBubble";
+            this.content = content;
+            this.tip_x = tip_x;
+            this.tip_y = tip_y;
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // BoundingBox: A rectangle which tightly encloses an image.
 
     class BoundingBox {
