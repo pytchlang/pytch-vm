@@ -511,7 +511,7 @@ var $builtinmodule = function (name) {
 
         get class_kind_name() { return "Sprite"; }
 
-        validate_centre_elements(descr, index_x, message_intro) {
+        validate_appearance_centre(descr, index_x, message_intro) {
             if ((typeof descr[index_x] != "number")
                 || (typeof descr[index_x + 1] != "number"))
                 this.reject_appearance_descriptor(
@@ -525,13 +525,13 @@ var $builtinmodule = function (name) {
                 const n_elts = descr.length;
                 switch (n_elts) {
                 case 4: { // (label, filename, x0, y0)
-                    this.validate_centre_elements(
+                    this.validate_appearance_centre(
                         descr, 2,
                         "third and fourth elements of four-element descriptor");
                     return descr;
                 }
                 case 3: { // (filename, x0, y0), infer label
-                    this.validate_centre_elements(
+                    this.validate_appearance_centre(
                         descr, 1,
                         "second and third elements of three-element descriptor");
                     const filename = descr[0];
