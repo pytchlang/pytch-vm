@@ -65,4 +65,31 @@ describe("Sound spec parsing", () => {
             error_regexp: /tuple or string/,
         },
     ];
+
+    bad_cases.forEach(spec => {
+    it(`rejects spec (${spec.label})`, async () => {
+        const assertExpectedError = (err) => {
+            const msg = Sk.builtin.str(err).v;
+            assert.ok(
+                /^PytchBuildError/.test(msg),
+                `did not get PytchBuildError: ${msg}`
+            );
+
+            const inner_msg = Sk.builtin.str(err.innerError).v;
+            assert.ok(spec.error_regexp.test(inner_msg),
+                      (`inner error message "${inner_msg}" did not`
+                       + ` match /${spec.error_regexp.source}/`));
+
+            return true;
+        }
+
+        await assert.rejects(import_deindented(`
+
+            import pytch
+            class Banana(pytch.Sprite):
+                Sounds = [${spec.fragment}]
+        `),
+                             assertExpectedError);
+    });
+    });
 });
