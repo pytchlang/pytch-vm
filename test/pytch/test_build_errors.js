@@ -4,37 +4,14 @@ const {
     configure_mocha,
     with_project,
     assert,
+    assertBuildError,
+    assertBuildErrorFun,
 } = require("./pytch-testing.js");
 configure_mocha();
 
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Build-error handling.
-
-const assertBuildError = (err, exp_phase, innerMsgRegExp) => {
-    const msg = Sk.builtin.str(err).v;
-    assert.ok(
-        /^PytchBuildError/.test(msg),
-        `did not get PytchBuildError: ${msg}`
-    );
-    assert.equal(err.phase, exp_phase);
-
-    if (innerMsgRegExp != null) {
-        const innerMsg = Sk.builtin.str(err.innerError).v;
-        assert.ok(
-            innerMsgRegExp.test(innerMsg),
-            (`innerError message "${innerMsg}"`
-             + ` did not match /${innerMsgRegExp.source}/`)
-        );
-    }
-};
-
-const assertBuildErrorFun = (...args) => {
-    return (err) => {
-        assertBuildError(err, ...args);
-        return true;
-    };
-};
 
 describe("build-error handling", () => {
     with_project("py/project/no_import_pytch.py", (import_project) => {
