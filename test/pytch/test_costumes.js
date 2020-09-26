@@ -4,8 +4,10 @@ const {
     configure_mocha,
     with_module,
     with_project,
+    import_deindented,
     assert,
     assert_Appearance_equal,
+    assertBuildErrorFun,
     many_frames,
     pytch_errors,
     pytch_stdout,
@@ -58,6 +60,56 @@ describe("Costume handling", () => {
             assert.ok(/could not load image/.test(err_msg));
             assert.equal(caught_exception.args.v[1].v, "image");
         })});
+
+    const bad_Backdrop_cases = [
+        {
+            label: "four-element tuple",
+            fragment: "('night', 'some-url', 'extra', 'elements')",
+            error_regexp: /Backdrop.*must have 1 or 2 elements/,
+        },
+        {
+            label: "neither tuple nor string",
+            fragment: "42",
+            error_regexp: /Backdrop.*must be tuple or string/,
+        },
+    ];
+
+    bad_Backdrop_cases.forEach(spec => {
+    it(`throws Python error if Backdrop spec malformed (${spec.label})`, async () => {
+        await assert.rejects(
+            import_deindented(`
+
+                import pytch
+                class Sky(pytch.Stage):
+                    Backdrops = [${spec.fragment}]
+            `),
+            assertBuildErrorFun("register-actor", spec.error_regexp));
+    })});
+
+    const bad_Costume_cases = [
+        {
+            label: "neither tuple nor string",
+            fragment: "42",
+            error_regexp: /Costume.*must be tuple or string/,
+        },
+        {
+            label: "centre-x not a number",
+            fragment: "('square', 'square.png', 'banana', 42)",
+            error_regexp: /Costume.*must be numbers/,
+        },
+    ];
+
+    bad_Costume_cases.forEach(spec => {
+    it(`throws Python error if Costume spec malformed (${spec.label})`, async () => {
+        await assert.rejects(
+            import_deindented(`
+
+                import pytch
+                class Alien(pytch.Sprite):
+                    Costumes = [${spec.fragment}]
+            `),
+            assertBuildErrorFun("register-actor", spec.error_regexp));
+    })});
 
     with_module("py/project/bad_appearance_spec.py", (import_module) => {
         it("throws Python error if appearance-spec malformed", async () => {
