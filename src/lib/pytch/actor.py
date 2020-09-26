@@ -1,6 +1,7 @@
 from pytch.syscalls import (
     play_sound,
     registered_instances,
+    wait_seconds,
 )
 
 
@@ -44,6 +45,7 @@ class Sprite(Actor):
         self._x = 0
         self._y = 0
         self._size = 1.0
+        self._speech = None
         self._shown = len(self._Appearances) != 0
         if self._shown:
             self.switch_costume(self._Appearances[0].label)
@@ -126,6 +128,17 @@ class Sprite(Actor):
     def move_backward_layers(self, n_layers):
         (self._pytch_parent_project
          .move_within_draw_layer_group(self, "relative", -n_layers))
+
+    def say(self, content):
+        self._speech = ("say", content)
+
+    def say_nothing(self):
+        self._speech = None
+
+    def say_for_seconds(self, content, seconds):
+        self.say(content)
+        wait_seconds(seconds)
+        self.say_nothing()
 
 
 class Stage(Actor):

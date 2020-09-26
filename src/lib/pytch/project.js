@@ -22,6 +22,7 @@ var $builtinmodule = function (name) {
     const s_size = Sk.builtin.str("_size");
     const s_appearance = Sk.builtin.str("_appearance");
     const s_Appearances = Sk.builtin.str("_Appearances");
+    const s_speech = Sk.builtin.str("_speech");
 
     const s_pytch_parent_project = Sk.builtin.str("_pytch_parent_project");
 
@@ -158,6 +159,22 @@ var $builtinmodule = function (name) {
             this.scale = scale;
             this.image = image;
             this.image_label = image_label;
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
+    // RenderSpeechBubble: A request that a speech bubble be drawn with given
+    // content, such that the tip of
+    // its arrow at a particular location.
+
+    class RenderSpeechBubble {
+        constructor(content, tip_x, tip_y) {
+            this.kind = "RenderSpeechBubble";
+            this.content = content;
+            this.tip_x = tip_x;
+            this.tip_y = tip_y;
         }
     }
 
@@ -562,6 +579,7 @@ var $builtinmodule = function (name) {
         get render_y() { return js_getattr(this.py_object, s_y); }
         get render_size() { return js_getattr(this.py_object, s_size); }
         get render_appearance() { return js_getattr(this.py_object, s_appearance); }
+        get render_speech() { return js_getattr(this.py_object, s_speech); }
 
         get layer_group() { return this.actor.layer_group; }
 
@@ -573,6 +591,9 @@ var $builtinmodule = function (name) {
             let appearance_name = this.render_appearance;
             let appearance = this.actor.appearance_from_name(appearance_name);
 
+            const render_x = this.render_x;
+            const render_y = this.render_y;
+
             // The 'centre' of the image must end up at Stage coordinates
             // (this.render_x, this.render_y).  The strange arithmetic here is
             // because the centre-(x, y) coords of the image are most naturally
@@ -580,11 +601,43 @@ var $builtinmodule = function (name) {
             // left, x increases rightwards, and y increases downwards.  We must
             // remap this into the Stage frame, where y increases upwards.
             //
-            return [new RenderImage(this.render_x - size * appearance.centre_x,
-                                    this.render_y + size * appearance.centre_y,
-                                    size,
-                                    appearance.image,
-                                    appearance_name)];
+            const offset_x = -(size * appearance.centre_x);
+            const offset_y = size * appearance.centre_y;
+            let costume_instructions = [
+                new RenderImage(render_x + offset_x,
+                                render_y + offset_y,
+                                size,
+                                appearance.image,
+                                appearance_name),
+            ];
+
+            // Don't really like this 'initialise then overwrite' approach but
+            // otherwise we have to either pass x, y, size, appearance down or
+            // re-extract them.
+            //
+            let speech_instructions = [];
+            const speech = this.render_speech;
+            if (speech != null) {
+                let kind = speech[0];
+
+                // Position the tip of the speech-bubble's arrow in the centre
+                // of the top edge of the image.
+                let tip_x = render_x;
+                let tip_y = render_y + offset_y;
+
+                switch (kind) {
+                case "say": {
+                    speech_instructions = [
+                        new RenderSpeechBubble(speech[1], tip_x, tip_y),
+                    ];
+                    break;
+                }
+                default:
+                    throw Error(`unknown speech kind "${kind}"`);
+                }
+            }
+
+            return [...costume_instructions, ...speech_instructions];
         }
 
         bounding_box() {
