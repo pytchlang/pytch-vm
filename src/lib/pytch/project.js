@@ -237,9 +237,21 @@ var $builtinmodule = function (name) {
             this.register_py_instance(py_instance);
         }
 
+        validate_appearance_label(descr, index, location) {
+            if (typeof descr[index] !== "string")
+                this.reject_appearance_descriptor(
+                    descr, `label (${location}) must be a string`);
+        }
+
+        validate_appearance_filename(descr, index, location) {
+            if (typeof descr[index] !== "string")
+                this.reject_appearance_descriptor(
+                    descr, `filename (${location}) must be a string`);
+        }
+
         reject_appearance_descriptor(descriptor, error_message_nub) {
             let kind_name = this.appearance_single_name;
-            let descriptor_tag = descriptor[0];
+            let descriptor_tag = descriptor[0] || "???";
             let error_message = ("problem with specification"
                                  + ` for ${kind_name} "${descriptor_tag}":`
                                  + ` ${error_message_nub}`);
@@ -279,7 +291,8 @@ var $builtinmodule = function (name) {
             let raw_descriptors = js_getattr(this.py_cls, attr_name);
 
             let appearance_descriptors
-                = raw_descriptors.map(d => this.validate_descriptor(d));
+                = raw_descriptors.map(
+                    d => this.validate_appearance_descriptor(d));
 
             let async_appearances = appearance_descriptors.map(async d => {
                 let appearance = await Appearance.async_create(...d);
@@ -510,7 +523,7 @@ var $builtinmodule = function (name) {
 
         get class_kind_name() { return "Sprite"; }
 
-        validate_centre_elements(descr, index_x, message_intro) {
+        validate_appearance_centre(descr, index_x, message_intro) {
             if ((typeof descr[index_x] != "number")
                 || (typeof descr[index_x + 1] != "number"))
                 this.reject_appearance_descriptor(
@@ -519,18 +532,27 @@ var $builtinmodule = function (name) {
                      + " (centre-x and centre-y) must be numbers"));
         }
 
-        validate_descriptor(descr) {
+        validate_appearance_descriptor(descr) {
             if (descr instanceof Array) {
                 const n_elts = descr.length;
                 switch (n_elts) {
                 case 4: { // (label, filename, x0, y0)
-                    this.validate_centre_elements(
+                    this.validate_appearance_label(
+                        descr, 0,
+                        "first element of four-element descriptor");
+                    this.validate_appearance_filename(
+                        descr, 1,
+                        "second element of four-element descriptor");
+                    this.validate_appearance_centre(
                         descr, 2,
                         "third and fourth elements of four-element descriptor");
                     return descr;
                 }
                 case 3: { // (filename, x0, y0), infer label
-                    this.validate_centre_elements(
+                    this.validate_appearance_filename(
+                        descr, 0,
+                        "first element of three-element descriptor");
+                    this.validate_appearance_centre(
                         descr, 1,
                         "second and third elements of three-element descriptor");
                     const filename = descr[0];
@@ -538,9 +560,18 @@ var $builtinmodule = function (name) {
                     return [label, ...descr];
                 }
                 case 2: { // (label, filename), infer centre (when we can)
+                    this.validate_appearance_label(
+                        descr, 0,
+                        "first element of two-element descriptor");
+                    this.validate_appearance_filename(
+                        descr, 1,
+                        "second element of two-element descriptor");
                     return [...descr, "auto", "auto"];
                 }
                 case 1: { // (filename,), infer label, centre (when we can)
+                    this.validate_appearance_filename(
+                        descr, 0,
+                        "sole element of one-element descriptor");
                     const filename = descr[0];
                     const label = path_stem(filename);
                     return [label, filename, "auto", "auto"];
@@ -581,7 +612,7 @@ var $builtinmodule = function (name) {
 
         get class_kind_name() { return "Stage"; }
 
-        validate_descriptor(descr) {
+        validate_appearance_descriptor(descr) {
             const centre_x = STAGE_WIDTH / 2;
             const centre_y = STAGE_HEIGHT / 2;
 

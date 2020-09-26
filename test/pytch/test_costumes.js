@@ -4,8 +4,10 @@ const {
     configure_mocha,
     with_module,
     with_project,
+    import_deindented,
     assert,
     assert_Appearance_equal,
+    assertBuildErrorFun,
     many_frames,
     pytch_errors,
     pytch_stdout,
@@ -59,28 +61,85 @@ describe("Costume handling", () => {
             assert.equal(caught_exception.args.v[1].v, "image");
         })});
 
-    with_module("py/project/bad_appearance_spec.py", (import_module) => {
-        it("throws Python error if appearance-spec malformed", async () => {
-            let module = await import_module();
+    const bad_Backdrop_cases = [
+        {
+            label: "four-element tuple",
+            fragment: "('night', 'some-url', 'extra', 'elements')",
+            error_regexp: /Backdrop.*must have 1 or 2 elements/,
+        },
+        {
+            label: "neither tuple nor string",
+            fragment: "42",
+            error_regexp: /Backdrop.*must be tuple or string/,
+        },
+    ];
 
-            const assert_exception_matches = (obj_name, expected_regexp) => {
-                let caught_exception = module.$d[obj_name];
-                let err_msg = Sk.builtin.str(caught_exception).v;
-                assert.ok(expected_regexp.test(err_msg));
-            }
+    bad_Backdrop_cases.forEach(spec => {
+    it(`throws Python error if Backdrop spec malformed (${spec.label})`, async () => {
+        await assert.rejects(
+            import_deindented(`
 
-            assert_exception_matches("caught_exception_StarrySky",
-                                     /Backdrop.*must have 1 or 2 elements/);
+                import pytch
+                class Sky(pytch.Stage):
+                    Backdrops = [${spec.fragment}]
+            `),
+            assertBuildErrorFun("register-actor", spec.error_regexp));
+    })});
 
-            assert_exception_matches("caught_exception_FootballPitch",
-                                     /Backdrop.*must be tuple or string/);
+    const bad_Costume_cases = [
+        {
+            label: "neither tuple nor string",
+            fragment: "42",
+            error_regexp: /Costume.*must be tuple or string/,
+        },
+        {
+            label: "centre-x not a number",
+            fragment: "('square', 'square.png', 'banana', 42)",
+            error_regexp: /Costume.*must be numbers/,
+        },
+        {
+            label: "label (4-tuple) not a string",
+            fragment: "(42, 'square.png', 10, 10)",
+            error_regexp: /Costume.*label.*\(first.*of four.*\).*must be a string/,
+        },
+        {
+            label: "filename (4-tuple) not a string",
+            fragment: "('square', 3.141, 10, 10)",
+            error_regexp: /Costume.*filename.*\(second.*of four.*\).*must be a string/,
+        },
+        {
+            label: "filename (3-tuple) not a string",
+            fragment: "(3.141, 10, 10)",
+            error_regexp: /Costume.*filename.*\(first.*of three.*\).*must be a string/,
+        },
+        {
+            label: "label (2-tuple) not a string",
+            fragment: "(3.141, 'square.png')",
+            error_regexp: /Costume.*label.*\(first.*of two.*\).*must be a string/,
+        },
+        {
+            label: "filename (2-tuple) not a string",
+            fragment: "('square', 1.0)",
+            error_regexp: /Costume.*filename.*\(second.*of two.*\).*must be a string/,
+        },
+        {
+            label: "filename (1-tuple) not a string",
+            fragment: "(1.0,)",
+            error_regexp: /Costume.*filename.*\(sole.*of one.*\).*must be a string/,
+        },
+    ];
 
-            assert_exception_matches("caught_exception_Alien",
-                                     /Costume.*must be tuple or string/);
+    bad_Costume_cases.forEach(spec => {
+    it(`throws Python error if Costume spec malformed (${spec.label})`, async () => {
+        await assert.rejects(
+            import_deindented(`
 
-            assert_exception_matches("caught_exception_Spaceship",
-                                     /Costume.*must be numbers/);
-        })});
+                import pytch
+                class Alien(pytch.Sprite):
+                    Costumes = [${spec.fragment}]
+            `),
+            assertBuildErrorFun("register-actor", spec.error_regexp));
+    })});
 
     with_project("py/project/some_costumes.py", (import_project) => {
         it("rejects unknown costume on direct look-up attempt", async () => {
