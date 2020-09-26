@@ -246,6 +246,18 @@ var $builtinmodule = function (name) {
             throw new Sk.builtin.ValueError(error_message);
         }
 
+        validate_sound_label(descr, index, location) {
+            if (typeof descr[index] !== "string")
+                this.reject_sound_descriptor(
+                    descr, `label (${location}) must be a string`);
+        }
+
+        validate_sound_filename(descr, index, location) {
+            if (typeof descr[index] !== "string")
+                this.reject_sound_descriptor(
+                    descr, `filename (${location}) must be a string`);
+        }
+
         reject_sound_descriptor(descr, error_message_nub) {
             throw new Sk.builtin.ValueError(
                 `problem with specification for Sound: ${error_message_nub}`);
