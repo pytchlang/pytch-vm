@@ -237,6 +237,18 @@ var $builtinmodule = function (name) {
             this.register_py_instance(py_instance);
         }
 
+        validate_appearance_label(descr, index, location) {
+            if (typeof descr[index] !== "string")
+                this.reject_appearance_descriptor(
+                    descr, `label (${location}) must be a string`);
+        }
+
+        validate_appearance_filename(descr, index, location) {
+            if (typeof descr[index] !== "string")
+                this.reject_appearance_descriptor(
+                    descr, `filename (${location}) must be a string`);
+        }
+
         reject_appearance_descriptor(descriptor, error_message_nub) {
             let kind_name = this.appearance_single_name;
             let descriptor_tag = descriptor[0];
