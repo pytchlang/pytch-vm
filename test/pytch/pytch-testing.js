@@ -278,6 +278,7 @@ class MockSound {
     constructor(parent_sound_manager, tag, url) {
         this.parent_sound_manager = parent_sound_manager;
         this.tag = tag;
+        this.filename = url;
         this.duration = sound_duration_from_url.get(url);
     }
 
