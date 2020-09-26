@@ -47,4 +47,22 @@ describe("Sound spec parsing", () => {
         assert.equal(sounds[0][1].filename, spec.exp_info[1]);
     });
     });
+
+    const bad_cases = [
+        {
+            label: "0-length tuple",
+            fragment: 'tuple()',
+            error_regexp: /1 or 2 elements/,
+        },
+        {
+            label: "3-length tuple",
+            fragment: '(1, 2, 3)',
+            error_regexp: /1 or 2 elements/,
+        },
+        {
+            label: "number",
+            fragment: '42',
+            error_regexp: /tuple or string/,
+        },
+    ];
 });
