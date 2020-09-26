@@ -591,6 +591,9 @@ var $builtinmodule = function (name) {
             let appearance_name = this.render_appearance;
             let appearance = this.actor.appearance_from_name(appearance_name);
 
+            const render_x = this.render_x;
+            const render_y = this.render_y;
+
             // The 'centre' of the image must end up at Stage coordinates
             // (this.render_x, this.render_y).  The strange arithmetic here is
             // because the centre-(x, y) coords of the image are most naturally
@@ -598,9 +601,11 @@ var $builtinmodule = function (name) {
             // left, x increases rightwards, and y increases downwards.  We must
             // remap this into the Stage frame, where y increases upwards.
             //
+            const offset_x = -(size * appearance.centre_x);
+            const offset_y = size * appearance.centre_y;
             let costume_instructions = [
-                new RenderImage(this.render_x - size * appearance.centre_x,
-                                this.render_y + size * appearance.centre_y,
+                new RenderImage(render_x + offset_x,
+                                render_y + offset_y,
                                 size,
                                 appearance.image,
                                 appearance_name),
