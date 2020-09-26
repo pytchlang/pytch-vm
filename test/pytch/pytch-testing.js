@@ -396,6 +396,9 @@ const assert_has_bbox = (
     assert_prop_eq("y_max", exp_ymax);
 };
 
+////////////////////////////////////////////////////////////////////////////////
+//
+// Convenience methods for access into Python world.
 
 const py_getattr = (py_obj, js_attr_name) =>
     Sk.builtin.getattr(py_obj, Sk.builtin.str(js_attr_name));
