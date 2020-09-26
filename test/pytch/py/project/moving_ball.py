@@ -16,8 +16,6 @@ class Ball(Sprite):
         Sprite.__init__(self)
         self.keys_pressed = ''
         self.go_to_xy(100, 50)
-        self.switch_costume('yellow-ball')
-        self.show()
 
     @when_green_flag_clicked
     def move(self):

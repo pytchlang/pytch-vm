@@ -25,7 +25,6 @@ class Alien(Sprite):
     def __init__(self):
         Sprite.__init__(self)
         self.generated_id = next_global_id()
-        self.show()
 
     @when_I_start_as_a_clone
     def get_fresh_id(self):

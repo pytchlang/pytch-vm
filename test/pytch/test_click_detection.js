@@ -63,7 +63,7 @@ describe("click detection", () => {
                 assert.strictEqual(balloon_score(), exp_score);
             };
 
-            assert_state_after_next_frame(false, 0);
+            assert_state_after_next_frame(true, 0);
 
             project.on_green_flag_clicked();
             assert_state_after_next_frame(true, 0);

@@ -44,8 +44,8 @@ class Sprite(Actor):
         self._x = 0
         self._y = 0
         self._size = 1.0
-        self._shown = False
-        if self.Costumes:
+        self._shown = len(self._Appearances) != 0
+        if self._shown:
             self.switch_costume(self._Appearances[0].label)
         else:
             # It is not necessarily an error to have no Costumes, as

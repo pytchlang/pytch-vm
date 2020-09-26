@@ -16,8 +16,6 @@ class Square(Sprite, SetVis):
     def __init__(self):
         Sprite.__init__(self)
         self.go_to_xy(-50, -90)
-        self.switch_costume('square')
-        self.show()
 
 
 class Rectangle(Sprite, SetVis):
@@ -26,8 +24,6 @@ class Rectangle(Sprite, SetVis):
     def __init__(self):
         Sprite.__init__(self)
         self.go_to_xy(10, -90)
-        self.switch_costume('rectangle')
-        self.show()
 
 
 # --cut-here-for-auto-config--
