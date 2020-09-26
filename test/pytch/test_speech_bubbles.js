@@ -77,4 +77,29 @@ describe("Speech bubbles", () => {
             assert_speech("after-talk-briefly", []);
         }
     });
+
+    it("moves speech-bubble with sprite", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            class Banana(pytch.Sprite):
+                Costumes = ["yellow-banana.png"]
+
+                @pytch.when_I_receive("move-and-talk")
+                def move_and_talk(self):
+                    self.go_to_xy(40, 20)
+                    self.say("Hello world")
+        `);
+
+        project.do_synthetic_broadcast("move-and-talk");
+        project.one_frame();
+        assert_renders_as(
+            "startup",
+            project,
+            [
+                ["RenderImage", 0, 35, 1, "yellow-banana"],
+                ["RenderSpeechBubble", "Hello world", 40, 35],
+            ]
+        );
+    });
 });
