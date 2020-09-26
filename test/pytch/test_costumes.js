@@ -97,6 +97,36 @@ describe("Costume handling", () => {
             fragment: "('square', 'square.png', 'banana', 42)",
             error_regexp: /Costume.*must be numbers/,
         },
+        {
+            label: "label (4-tuple) not a string",
+            fragment: "(42, 'square.png', 10, 10)",
+            error_regexp: /Costume.*label.*\(first.*of four.*\).*must be a string/,
+        },
+        {
+            label: "filename (4-tuple) not a string",
+            fragment: "('square', 3.141, 10, 10)",
+            error_regexp: /Costume.*filename.*\(second.*of four.*\).*must be a string/,
+        },
+        {
+            label: "filename (3-tuple) not a string",
+            fragment: "(3.141, 10, 10)",
+            error_regexp: /Costume.*filename.*\(first.*of three.*\).*must be a string/,
+        },
+        {
+            label: "label (2-tuple) not a string",
+            fragment: "(3.141, 'square.png')",
+            error_regexp: /Costume.*label.*\(first.*of two.*\).*must be a string/,
+        },
+        {
+            label: "filename (2-tuple) not a string",
+            fragment: "('square', 1.0)",
+            error_regexp: /Costume.*filename.*\(second.*of two.*\).*must be a string/,
+        },
+        {
+            label: "filename (1-tuple) not a string",
+            fragment: "(1.0,)",
+            error_regexp: /Costume.*filename.*\(sole.*of one.*\).*must be a string/,
+        },
     ];
 
     bad_Costume_cases.forEach(spec => {
