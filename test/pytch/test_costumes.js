@@ -111,29 +111,6 @@ describe("Costume handling", () => {
             assertBuildErrorFun("register-actor", spec.error_regexp));
     })});
 
-    with_module("py/project/bad_appearance_spec.py", (import_module) => {
-        it("throws Python error if appearance-spec malformed", async () => {
-            let module = await import_module();
-
-            const assert_exception_matches = (obj_name, expected_regexp) => {
-                let caught_exception = module.$d[obj_name];
-                let err_msg = Sk.builtin.str(caught_exception).v;
-                assert.ok(expected_regexp.test(err_msg));
-            }
-
-            assert_exception_matches("caught_exception_StarrySky",
-                                     /Backdrop.*must have 1 or 2 elements/);
-
-            assert_exception_matches("caught_exception_FootballPitch",
-                                     /Backdrop.*must be tuple or string/);
-
-            assert_exception_matches("caught_exception_Alien",
-                                     /Costume.*must be tuple or string/);
-
-            assert_exception_matches("caught_exception_Spaceship",
-                                     /Costume.*must be numbers/);
-        })});
-
     with_project("py/project/some_costumes.py", (import_project) => {
         it("rejects unknown costume on direct look-up attempt", async () => {
             let project = await import_project();
