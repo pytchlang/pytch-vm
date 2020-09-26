@@ -84,13 +84,14 @@ describe("Sound spec parsing", () => {
 
     bad_cases.forEach(spec => {
     it(`rejects spec (${spec.label})`, async () => {
-        await assert.rejects(import_deindented(`
+        await assert.rejects(
+            import_deindented(`
 
-            import pytch
-            class Banana(pytch.Sprite):
-                Sounds = [${spec.fragment}]
-        `),
-                             assertBuildErrorFun("register-actor", spec.error_regexp));
+                import pytch
+                class Banana(pytch.Sprite):
+                    Sounds = [${spec.fragment}]
+            `),
+            assertBuildErrorFun("register-actor", spec.error_regexp));
     });
     });
 });
