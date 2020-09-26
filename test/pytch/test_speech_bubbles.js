@@ -46,5 +46,35 @@ describe("Speech bubbles", () => {
                 ]
             );
         };
+
+        assert_speech("startup", []);
+
+        // The effects of the say() and say_nothing() methods should persist
+        // until changed, so run for a few frames after each one.
+
+        project.do_synthetic_broadcast("talk")
+        for (let i = 0; i < 10; ++i) {
+            project.one_frame()
+            assert_speech("after-talk", [exp_speech("Hello world", 0, 15)]);
+        }
+
+        project.do_synthetic_broadcast("silence")
+        for (let i = 0; i < 10; ++i) {
+            project.one_frame()
+            assert_speech("after-silence", []);
+        }
+
+        // But say_for_seconds(), with seconds = 0.5, should give exactly 30
+        // frames of speech.
+
+        project.do_synthetic_broadcast("talk-briefly")
+        for (let i = 0; i < 30; ++i) {
+            project.one_frame()
+            assert_speech("after-talk-briefly", [exp_speech("Mumble", 0, 15)]);
+        }
+        for (let i = 0; i < 30; ++i) {
+            project.one_frame()
+            assert_speech("after-talk-briefly", []);
+        }
     });
 });
