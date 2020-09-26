@@ -30,4 +30,21 @@ describe("Sound spec parsing", () => {
             exp_info: ["trumpet", "trumpet.mp3"],
         },
     ];
+
+    good_cases.forEach(spec => {
+    it(`parses spec (${spec.label}) correctly`, async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            class Banana(pytch.Sprite):
+                Sounds = [${spec.fragment}]
+        `);
+
+        const banana = project.actor_by_class_name("Banana");
+        const sounds = banana._sounds;
+        assert.equal(sounds.length, 1);
+        assert.equal(sounds[0][1].tag, spec.exp_info[0]);
+        assert.equal(sounds[0][1].filename, spec.exp_info[1]);
+    });
+    });
 });
