@@ -611,6 +611,32 @@ var $builtinmodule = function (name) {
                                 appearance_name),
             ];
 
+            // Don't really like this 'initialise then overwrite' approach but
+            // otherwise we have to either pass x, y, size, appearance down or
+            // re-extract them.
+            //
+            let speech_instructions = [];
+            const speech = this.render_speech;
+            if (speech != null) {
+                let kind = speech[0];
+
+                // Position the tip of the speech-bubble's arrow in the centre
+                // of the top edge of the image.
+                let tip_x = render_x;
+                let tip_y = render_y + offset_y;
+
+                switch (kind) {
+                case "say": {
+                    speech_instructions = [
+                        new RenderSpeechBubble(speech[1], tip_x, tip_y),
+                    ];
+                    break;
+                }
+                default:
+                    throw Error(`unknown speech kind "${kind}"`);
+                }
+            }
+
             return [...costume_instructions];
         }
 
