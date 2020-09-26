@@ -296,9 +296,18 @@ var $builtinmodule = function (name) {
                 const n_elts = descr.length;
                 switch (n_elts) {
                 case 2: { // (label, filename)
+                    this.validate_sound_label(
+                        descr, 0,
+                        "first element of two-element descriptor");
+                    this.validate_sound_filename(
+                        descr, 1,
+                        "second element of two-element descriptor");
                     return descr;
                 }
                 case 1: { // (filename,), infer label
+                    this.validate_sound_filename(
+                        descr, 0,
+                        "sole element of one-element descriptor");
                     const filename = descr[0];
                     const label = path_stem(filename);
                     return [label, filename];
