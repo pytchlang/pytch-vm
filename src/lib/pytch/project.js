@@ -274,8 +274,15 @@ var $builtinmodule = function (name) {
                 this._appearances.map(a => [a.label, a]));
         }
 
+        validate_sound_descriptor(descr) {
+            return descr;
+        }
+
         async async_load_sounds() {
-            let sound_descriptors = js_getattr(this.py_cls, s_Sounds);
+            let raw_descriptors = js_getattr(this.py_cls, s_Sounds);
+
+            let sound_descriptors
+                = raw_descriptors.map(d => this.validate_sound_descriptor(d));
 
             let async_sounds = sound_descriptors.map(async d => {
                 let sound = await (Sk.pytch.sound_manager
