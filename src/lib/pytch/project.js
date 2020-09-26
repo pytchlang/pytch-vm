@@ -279,7 +279,8 @@ var $builtinmodule = function (name) {
             let raw_descriptors = js_getattr(this.py_cls, attr_name);
 
             let appearance_descriptors
-                = raw_descriptors.map(d => this.validate_descriptor(d));
+                = raw_descriptors.map(
+                    d => this.validate_appearance_descriptor(d));
 
             let async_appearances = appearance_descriptors.map(async d => {
                 let appearance = await Appearance.async_create(...d);
@@ -519,7 +520,7 @@ var $builtinmodule = function (name) {
                      + " (centre-x and centre-y) must be numbers"));
         }
 
-        validate_descriptor(descr) {
+        validate_appearance_descriptor(descr) {
             if (descr instanceof Array) {
                 const n_elts = descr.length;
                 switch (n_elts) {
@@ -581,7 +582,7 @@ var $builtinmodule = function (name) {
 
         get class_kind_name() { return "Stage"; }
 
-        validate_descriptor(descr) {
+        validate_appearance_descriptor(descr) {
             const centre_x = STAGE_WIDTH / 2;
             const centre_y = STAGE_HEIGHT / 2;
 
