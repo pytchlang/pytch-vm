@@ -251,7 +251,7 @@ var $builtinmodule = function (name) {
 
         reject_appearance_descriptor(descriptor, error_message_nub) {
             let kind_name = this.appearance_single_name;
-            let descriptor_tag = descriptor[0];
+            let descriptor_tag = descriptor[0] || "???";
             let error_message = ("problem with specification"
                                  + ` for ${kind_name} "${descriptor_tag}":`
                                  + ` ${error_message_nub}`);
