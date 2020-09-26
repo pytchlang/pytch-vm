@@ -598,11 +598,15 @@ var $builtinmodule = function (name) {
             // left, x increases rightwards, and y increases downwards.  We must
             // remap this into the Stage frame, where y increases upwards.
             //
-            return [new RenderImage(this.render_x - size * appearance.centre_x,
-                                    this.render_y + size * appearance.centre_y,
-                                    size,
-                                    appearance.image,
-                                    appearance_name)];
+            let costume_instructions = [
+                new RenderImage(this.render_x - size * appearance.centre_x,
+                                this.render_y + size * appearance.centre_y,
+                                size,
+                                appearance.image,
+                                appearance_name),
+            ];
+
+            return [...costume_instructions];
         }
 
         bounding_box() {
