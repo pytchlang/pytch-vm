@@ -373,6 +373,16 @@ const assert_renders_as = (label, project, exp_render_instrns) => {
     });
 };
 
+const assert_n_speaker_ids = (project, exp_n_speakers) => {
+    const speech_instructions = (project
+                                 .rendering_instructions()
+                                 .filter(i => i.kind === "RenderSpeechBubble"));
+    const speaker_ids = new Set(speech_instructions.map(i => i.speaker_id));
+    const n_speakers = speaker_ids.size;
+    assert.equal(n_speakers, exp_n_speakers,
+                 `expected ${exp_n_speakers} speakers but got ${n_speakers}`);
+};
+
 const assert_has_bbox = (
     label,
     actor_instance,
@@ -546,6 +556,7 @@ module.exports = {
     pytch_errors,
     assert_Appearance_equal,
     assert_renders_as,
+    assert_n_speaker_ids,
     assert_has_bbox,
     assertBuildError,
     assertBuildErrorFun,
