@@ -4,6 +4,8 @@ const {
     configure_mocha,
     import_deindented,
     assert_renders_as,
+    many_frames,
+    assert_n_speaker_ids,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -101,5 +103,33 @@ describe("Speech bubbles", () => {
                 ["RenderSpeechBubble", "Hello world", 40, 35],
             ]
         );
+    });
+
+    it("identifies the speaker of each bubble", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Banana(pytch.Sprite):
+              Costumes = ["yellow-banana.png"]
+
+              @pytch.when_I_receive("clone")
+              def spawn_another(self):
+                self.go_to_xy(-100, 0)
+                self.say("I am the original")
+                pytch.create_clone_of(self)
+
+              @pytch.when_I_start_as_a_clone
+              def become_clone(self):
+                self.go_to_xy(100, 0)
+                self.say("I am the only clone")
+        `);
+
+        project.do_synthetic_broadcast("clone");
+
+        // Allow spawn_another() to run and then also become_clone():
+        many_frames(project, 2);
+
+        assert_n_speaker_ids(project, 2);
     });
 });
