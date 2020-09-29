@@ -718,7 +718,10 @@ var $builtinmodule = function (name) {
                 switch (kind) {
                 case "say": {
                     speech_instructions = [
-                        new RenderSpeechBubble(speech[1], tip_x, tip_y),
+                        new RenderSpeechBubble(this.numeric_id,
+                                               speech[1],
+                                               tip_x,
+                                               tip_y),
                     ];
                     break;
                 }
