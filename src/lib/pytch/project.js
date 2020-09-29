@@ -170,8 +170,9 @@ var $builtinmodule = function (name) {
     // its arrow at a particular location.
 
     class RenderSpeechBubble {
-        constructor(content, tip_x, tip_y) {
+        constructor(speaker_id, content, tip_x, tip_y) {
             this.kind = "RenderSpeechBubble";
+            this.speaker_id = speaker_id;
             this.content = content;
             this.tip_x = tip_x;
             this.tip_y = tip_y;
@@ -717,7 +718,10 @@ var $builtinmodule = function (name) {
                 switch (kind) {
                 case "say": {
                     speech_instructions = [
-                        new RenderSpeechBubble(speech[1], tip_x, tip_y),
+                        new RenderSpeechBubble(this.numeric_id,
+                                               speech[1],
+                                               tip_x,
+                                               tip_y),
                     ];
                     break;
                 }
