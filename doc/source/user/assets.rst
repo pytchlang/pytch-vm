@@ -27,7 +27,8 @@ Advanced Costume specifications
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Sometimes you need more control over how Pytch uses your image as a
-costume.
+costume.  You can use the following variations independently for each
+costume of a sprite.
 
 Specifying the origin of the costume
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
