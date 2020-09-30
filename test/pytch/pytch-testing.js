@@ -475,6 +475,8 @@ const many_frames = (project, n, options = {}) => {
     }
 };
 
+const one_frame = (project, options = {}) => many_frames(project, 1, options);
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -576,5 +578,6 @@ module.exports = {
     js_getattr,
     call_method,
     many_frames,
+    one_frame,
     configure_mocha,
 }
