@@ -7,6 +7,7 @@ const {
     pytch_errors,
     js_getattr,
     many_frames,
+    one_frame,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -23,7 +24,7 @@ describe("error handling", () => {
 
             let errs = pytch_errors.drain_errors();
             assert.strictEqual(errs.length, 0);
-            project.one_frame();
+            one_frame(project);
 
             errs = pytch_errors.drain_errors();
             assert.strictEqual(errs.length, 1);
@@ -47,7 +48,7 @@ describe("error handling", () => {
                   = (exp_n_ticks) => assert.equal(n_ticks(), exp_n_ticks);
 
             project.do_synthetic_broadcast("go");
-            project.one_frame();
+            one_frame(project);
 
             // We should have done the first iteration of the 'while'.
             assert_n_ticks(1);
@@ -59,7 +60,7 @@ describe("error handling", () => {
             let n_frames = 2;
 
             for (; n_frames != 50; ++n_frames) {
-                project.one_frame();
+                one_frame(project);
                 thrown_errors = pytch_errors.drain_errors();
                 if (thrown_errors.length > 0)
                     break;

@@ -3,6 +3,7 @@
 const {
     configure_mocha,
     with_project,
+    one_frame,
     assert,
     assert_renders_as,
     mock_keyboard,
@@ -31,19 +32,19 @@ describe("moving ball example", () => {
 
             // On the next rendered frame, it should have moved right
             // by 50.
-            project.one_frame();
+            one_frame(project);
             assert_renders_as("green-flag", project, ball_at(142, 58));
 
             // For 30 frames (the half-second sleep), it should not
             // move.  We have already done one of those 30, so for the
             // next 29 frames it should not move.
             for (let i = 0; i < 29; ++i) {
-                project.one_frame();
+                one_frame(project);
                 assert_renders_as(`frame-${i}`, project, ball_at(142, 58));
             }
 
             // And now it should move another 60.
-            project.one_frame();
+            one_frame(project);
             assert_renders_as("frame-29", project, ball_at(202, 58));
 
             // Everything should have finished.
@@ -56,12 +57,12 @@ describe("moving ball example", () => {
             assert_renders_as("start", project, ball_at(92, 58));
 
             mock_keyboard.press_key('w')
-            project.one_frame()
+            one_frame(project)
             assert_renders_as("frame-1", project, ball_at(92, 68));
 
             // Key 'w' is still down, but it is not freshly pressed, so
             // nothing should change.
-            project.one_frame()
+            one_frame(project)
             assert_renders_as("frame-2", project, ball_at(92, 68));
 
             // Release 'w'.
@@ -75,7 +76,7 @@ describe("moving ball example", () => {
             mock_keyboard.release_key('w')
             mock_keyboard.press_key('s')
             mock_keyboard.release_key('s')
-            project.one_frame()
+            one_frame(project)
             assert_renders_as("frame-3", project, ball_at(92, 68 + 10 + 10 - 100));
         });
 
@@ -85,7 +86,7 @@ describe("moving ball example", () => {
 
             const assert_keys = (exp_keys => {
                 project.do_synthetic_broadcast("check-keys");
-                project.one_frame();
+                one_frame(project);
                 assert.strictEqual(ball.js_attr("keys_pressed"), exp_keys);
             });
 

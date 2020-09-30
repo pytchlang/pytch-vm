@@ -5,6 +5,7 @@ const {
     with_project,
     assert,
     many_frames,
+    one_frame,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -19,14 +20,14 @@ describe("instance discovery", () => {
             let project = await import_project();
 
             project.on_green_flag_clicked();
-            project.one_frame();
+            one_frame(project);
 
             return project;
         };
 
         const assert_result = ((project, message, exp_ids) => {
             project.do_synthetic_broadcast(message);
-            project.one_frame();
+            one_frame(project);
 
             let scanner = project.instance_0_by_class_name("Scanner");
             let got_ids = scanner.js_attr("got_ids");
