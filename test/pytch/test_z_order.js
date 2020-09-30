@@ -5,6 +5,7 @@ const {
     with_project,
     assert,
     many_frames,
+    one_frame,
     js_getattr,
     mock_mouse,
 } = require("./pytch-testing.js");
@@ -23,7 +24,7 @@ describe("z-order operations", () => {
             let assert_order_after_messages = (messages, exp_class_names) => {
                 for (const message of messages) {
                     project.do_synthetic_broadcast(message);
-                    project.one_frame();
+                    one_frame(project);
                 }
 
                 // TODO: Can we get at DrawLayerGroup.SPRITES here, and
@@ -72,7 +73,7 @@ describe("z-order of clones with deletion", () => {
             let project = await import_project();
 
             project.do_synthetic_broadcast("init");
-            project.one_frame();
+            one_frame(project);
 
             // Create 7 clones; each broadcast clones all existing instances.
             for (let i = 0; i != 3; ++i) {
@@ -101,7 +102,7 @@ describe("z-order of clones with deletion", () => {
             // We request deletion of Banana 1003; it should then be gone from
             // the draw-list.
             project.do_synthetic_broadcast("delete-1003");
-            project.one_frame();
+            one_frame(project);
             assert_unordered_banana_ids(
                 [1000, 1001, 1002, /* no 1003 */ 1004, 1005, 1006, 1007]);
 
@@ -126,18 +127,18 @@ describe("clicking choose top sprite by z-order", () => {
 
             const click = () => {
                 mock_mouse.click_at(0, 0);
-                project.one_frame();
+                one_frame(project);
             };
 
             const summon_to_front_and_click = (sprite_tag) => {
                 project.do_synthetic_broadcast(`${sprite_tag}-front`);
-                project.one_frame();
+                one_frame(project);
                 click();
             };
 
             const hide_and_click = (sprite_tag) => {
                 project.do_synthetic_broadcast(`${sprite_tag}-hide`);
-                project.one_frame();
+                one_frame(project);
                 click();
             };
 

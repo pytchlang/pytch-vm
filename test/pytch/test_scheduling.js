@@ -5,6 +5,7 @@ const {
     with_project,
     assert,
     many_frames,
+    one_frame,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -22,10 +23,10 @@ describe("scheduling", () => {
             project.on_green_flag_clicked();
             assert.strictEqual(instance_0.js_attr("n_clicks"), 0);
 
-            project.one_frame();
+            one_frame(project);
             assert.strictEqual(instance_0.js_attr("n_clicks"), 1);
 
-            project.one_frame();
+            one_frame(project);
             assert.strictEqual(instance_0.js_attr("n_clicks"), 2);
 
             // And now the thread-group should have finished, and so there
@@ -53,7 +54,7 @@ describe("scheduling", () => {
             assert_counters_both(0);
 
             project.on_green_flag_clicked();
-            project.one_frame();
+            one_frame(project);
 
             // After one frame both threads should have had a chance to run.
             assert_counters_both(1);
@@ -61,7 +62,7 @@ describe("scheduling", () => {
             // After each further frame, both threads should have gone another time
             // round their 'while' loops.
             for (let i = 0; i < 10; ++i) {
-                project.one_frame();
+                one_frame(project);
                 assert_counters_both(2 + i);
             }
         });
@@ -123,12 +124,12 @@ describe("scheduling", () => {
             // Broadcasting the message only places a newly-created thread
             // on the receiver in the run queue.  The receiver thread has
             // not yet run.
-            project.one_frame();
+            one_frame(project);
             actors.assert_has_steps_and_events(1, 0);
 
             // Next pass through does give the receiver thread a go; and the
             // sender continues to run.
-            project.one_frame();
+            one_frame(project);
             actors.assert_has_steps_and_events(2, 1);
         })});
 
@@ -150,23 +151,23 @@ describe("scheduling", () => {
             // Broadcasting the message only places a newly-created thread
             // on the receiver in the run queue.  The receiver thread has
             // not yet run.
-            project.one_frame();
+            one_frame(project);
             actors.assert_has_steps_and_events(1, 0);
 
             // Next frame does give the receiver thread a go; it runs
             // until its yield-until-next-frame syscall.  The sender is
             // sleeping.
-            project.one_frame();
+            one_frame(project);
             actors.assert_has_steps_and_events(1, 1);
 
             // Next frame: Receiver resumes after its yield and runs to
             // completion.  Sender is still sleeping.
-            project.one_frame();
+            one_frame(project);
             actors.assert_has_steps_and_events(1, 2);
 
             // Next frame: Sender wakes up as the thread-group it was
             // sleeping on has finished.
-            project.one_frame();
+            one_frame(project);
             actors.assert_has_steps_and_events(2, 2);
         })});
 
@@ -185,19 +186,19 @@ describe("scheduling", () => {
             project.on_green_flag_clicked();
             assert_n_steps(0);
 
-            project.one_frame();
+            one_frame(project);
             assert_n_steps(1);
 
             // The thread is now waiting.  For the next 14 one_frame()
             // calls it should not be runnable and so nothing should
             // change.
             for (let i = 0; i != 14; ++i) {
-                project.one_frame();
+                one_frame(project);
                 assert_n_steps(1);
             }
 
             // But now it runs again, to completion.
-            project.one_frame();
+            one_frame(project);
             assert_n_steps(2);
             assert.strictEqual(project.thread_groups.length, 0);
         })});
@@ -226,7 +227,7 @@ describe("scheduling", () => {
             exp_xs = [1, 1, 1, 1, 1];
 
             for (let i = 0; i != 5; ++i) {
-                project.one_frame();
+                one_frame(project);
                 // Only one element should be updated per frame.
                 exp_xs[i] = 2;
                 assert_xs(exp_xs);
@@ -238,7 +239,7 @@ describe("scheduling", () => {
             exp_xs = [3, 3, 3, 3, 3];
 
             for (let i = 0; i != 5; ++i) {
-                project.one_frame();
+                one_frame(project);
                 exp_xs[i] = 4;
                 assert_xs(exp_xs);
             }

@@ -3,6 +3,7 @@
 const {
     configure_mocha,
     with_project,
+    one_frame,
     assert,
     mock_mouse,
 } = require("./pytch-testing.js");
@@ -33,17 +34,17 @@ describe("click detection", () => {
             assert_all_ids([42, 100]);
 
             project.do_synthetic_broadcast("clone-self");
-            project.one_frame();
+            one_frame(project);
             project.do_synthetic_broadcast("clone-self");
-            project.one_frame();
+            one_frame(project);
 
             // Extra frame to let all when-I'm-cloned handlers run:
-            project.one_frame();
+            one_frame(project);
 
             assert_all_ids([42, 100, 101, 102, 103]);
 
             project.do_synthetic_broadcast("hide-if-lt-102");
-            project.one_frame();
+            one_frame(project);
             assert_all_ids([42, 102, 103]);
         })});
 
@@ -58,7 +59,7 @@ describe("click detection", () => {
             let balloon_score = () => the_Balloon.js_attr("score");
 
             let assert_state_after_next_frame = (exp_visible, exp_score) => {
-                project.one_frame();
+                one_frame(project);
                 assert.strictEqual(balloon_visible(), exp_visible);
                 assert.strictEqual(balloon_score(), exp_score);
             };

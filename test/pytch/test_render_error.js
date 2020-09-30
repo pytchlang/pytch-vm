@@ -7,6 +7,7 @@ const {
     pytch_errors,
     js_getattr,
     many_frames,
+    one_frame,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -21,7 +22,7 @@ describe("rendering error-handler", () => {
         it("passes error to callback", async () => {
             const project = await import_project();
             project.on_green_flag_clicked();
-            project.one_frame();
+            one_frame(project, { call_rendering_instructions: false });
             assert.strictEqual(project.rendering_instructions(), null);
             const thrown_errors = pytch_errors.drain_errors();
 
@@ -47,11 +48,11 @@ describe("rendering error-handler", () => {
             const counter_value = () => js_getattr(counter, "n");
 
             project.do_synthetic_broadcast("go");
-            many_frames(project, 10);
+            many_frames(project, 10, { call_rendering_instructions: false });
             assert.equal(counter_value(), 10);
 
             project.do_synthetic_broadcast("trouble");
-            project.one_frame();
+            one_frame(project, { call_rendering_instructions: false });
             assert.strictEqual(project.rendering_instructions(), null);
             const thrown_errors = pytch_errors.drain_errors();
             assert.equal(thrown_errors.length, 1);
@@ -60,7 +61,7 @@ describe("rendering error-handler", () => {
             assert.equal(error_ctx.kind, "render");
             assert.equal(error_ctx.target_class_name, "Problem");
 
-            many_frames(project, 10);
+            many_frames(project, 10, { call_rendering_instructions: false });
             assert.equal(counter_value(), 11);
         });
     });

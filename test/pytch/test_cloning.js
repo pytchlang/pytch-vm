@@ -5,6 +5,7 @@ const {
     with_project,
     assert,
     many_frames,
+    one_frame,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -37,12 +38,12 @@ describe("cloning", () => {
 
             // On the next frame the clones are created with the same state
             // as what they were cloned from.
-            project.one_frame();
+            one_frame(project);
             assert_all_attrs("copied_id", [42, 42]);
             assert_all_attrs("generated_id", [100, 100]);
 
             // On the next frame they do their 'when start as clone' stuff:
-            project.one_frame();
+            one_frame(project);
             assert_all_attrs("copied_id", [42, 43]);
             assert_all_attrs("generated_id", [100, 101]);
 
@@ -54,12 +55,12 @@ describe("cloning", () => {
 
             // On the next frame, clones are created, but their 'when start as
             // clone' handlers do not yet run.
-            project.one_frame();
+            one_frame(project);
             assert_all_attrs("copied_id", [42, 42, 43, 43]);
             assert_all_attrs("generated_id", [100, 100, 101, 101]);
 
             // On this frame the 'when start as clone' handlers run.
-            project.one_frame();
+            one_frame(project);
             assert_all_attrs("copied_id", [42, 43, 43, 44]);
             assert_all_attrs("generated_id", [100, 101, 102, 103]);
         });
@@ -78,7 +79,7 @@ describe("cloning", () => {
             };
 
             const frame_then_assert_all_IDs = exp_values => {
-                project.one_frame();
+                one_frame(project);
                 assert_all_IDs(exp_values);
             };
 
@@ -123,7 +124,7 @@ describe("cloning", () => {
             };
 
             const frame_then_assert_all_IDs = exp_values => {
-                project.one_frame();
+                one_frame(project);
                 assert_all_IDs(exp_values);
             };
 
@@ -153,7 +154,7 @@ describe("cloning", () => {
             }
 
             const frame_then_assert_state = (exp_n_clone_reqs, exp_n_pings) => {
-                project.one_frame();
+                one_frame(project);
                 assert_state(exp_n_clone_reqs, exp_n_pings);
             }
 

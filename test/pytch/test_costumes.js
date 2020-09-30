@@ -9,6 +9,7 @@ const {
     assert_Appearance_equal,
     assertBuildErrorFun,
     many_frames,
+    one_frame,
     pytch_errors,
     pytch_stdout,
 } = require("./pytch-testing.js");
@@ -165,7 +166,7 @@ describe("Costume handling", () => {
                 let project = await import_project();
 
                 project.do_synthetic_broadcast(spec.message);
-                project.one_frame();
+                one_frame(project);
 
                 let errs = pytch_errors.drain_errors();
                 assert.strictEqual(errs.length, 1);
@@ -198,7 +199,7 @@ describe("Costume handling", () => {
             // But asking the costume-less sprite to show itself should produce an
             // error.
             project.do_synthetic_broadcast("show-yourself");
-            project.one_frame();
+            one_frame(project);
 
             let errs = pytch_errors.drain_errors();
             assert.strictEqual(errs.length, 1);

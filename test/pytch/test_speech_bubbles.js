@@ -5,6 +5,7 @@ const {
     import_deindented,
     assert_renders_as,
     many_frames,
+    one_frame,
     assert_n_speaker_ids,
 } = require("./pytch-testing.js");
 configure_mocha();
@@ -56,13 +57,13 @@ describe("Speech bubbles", () => {
 
         project.do_synthetic_broadcast("talk")
         for (let i = 0; i < 10; ++i) {
-            project.one_frame()
+            one_frame(project)
             assert_speech("after-talk", [exp_speech("Hello world", 0, 15)]);
         }
 
         project.do_synthetic_broadcast("silence")
         for (let i = 0; i < 10; ++i) {
-            project.one_frame()
+            one_frame(project)
             assert_speech("after-silence", []);
         }
 
@@ -71,11 +72,11 @@ describe("Speech bubbles", () => {
 
         project.do_synthetic_broadcast("talk-briefly")
         for (let i = 0; i < 30; ++i) {
-            project.one_frame()
+            one_frame(project)
             assert_speech("after-talk-briefly", [exp_speech("Mumble", 0, 15)]);
         }
         for (let i = 0; i < 30; ++i) {
-            project.one_frame()
+            one_frame(project)
             assert_speech("after-talk-briefly", []);
         }
     });
@@ -94,7 +95,7 @@ describe("Speech bubbles", () => {
         `);
 
         project.do_synthetic_broadcast("move-and-talk");
-        project.one_frame();
+        one_frame(project);
         assert_renders_as(
             "startup",
             project,
