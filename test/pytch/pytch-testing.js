@@ -458,9 +458,21 @@ const call_method = (py_obj, js_methodname, js_args) => {
 //
 // Small utilities.
 
-const many_frames = (project, n) => {
+const many_frames = (project, n, options = {}) => {
     for (let i = 0; i < n; ++i)
         project.one_frame();
+
+    // The default behaviour is to do the call, so check for either
+    // absent "call_rendering_instructions" property or truthy
+    // "call_rendering_instructions" property.
+    if (
+      options.call_rendering_instructions == null ||
+      options.call_rendering_instructions
+    ) {
+      // Discard return value; this call is just to make sure it doesn't
+      // give an error.
+      project.rendering_instructions();
+    }
 };
 
 
