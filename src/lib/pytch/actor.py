@@ -46,7 +46,15 @@ class Sprite(Actor):
         self._y = 0
         self._size = 1.0
         self._speech = None
-        self._shown = len(self._Appearances) != 0
+
+        if hasattr(self, "start_shown"):
+            if self.start_shown and len(self._Appearances) == 0:
+                raise ValueError("start_shown is set,"
+                                 " but there are no Costumes")
+            self._shown = self.start_shown
+        else:
+            self._shown = len(self._Appearances) != 0
+
         if self._shown:
             self.switch_costume(self._Appearances[0].label)
         else:
