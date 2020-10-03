@@ -7,6 +7,7 @@ const {
     import_deindented,
     assert,
     assert_Appearance_equal,
+    assert_renders_as,
     assertBuildErrorFun,
     many_frames,
     one_frame,
@@ -220,4 +221,27 @@ describe("Costume handling", () => {
              start_shown = ${start_shown ? "True" : "False"}
              Costumes = [${include_costume ? '"firing-alien.png"' : ""}]
     `;
+
+    it("obeys start_shown True when has Costumes", async () => {
+        const project = await import_deindented(alien_code(true, true));
+        assert_renders_as("start", project,
+                          [["RenderImage", -40, 15, 1, "firing-alien"]]);
+    });
+
+    it("obeys start_shown False when has Costumes", async () => {
+        const project = await import_deindented(alien_code(false, true));
+        assert_renders_as("start", project, []);
+    });
+
+    it("rejects start_shown True when no Costumes", async () => {
+        await assert.rejects(
+            import_deindented(alien_code(true, false)),
+            assertBuildErrorFun("register-actor", /start_shown.*but.*Costumes/));
+    });
+
+    it("obeys start_shown False when no Costumes", async () => {
+        const project = await import_deindented(alien_code(false, false));
+        assert_renders_as("start", project, []);
+    });
+
 });
