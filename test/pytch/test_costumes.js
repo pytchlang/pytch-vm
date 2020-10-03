@@ -244,4 +244,19 @@ describe("Costume handling", () => {
         assert_renders_as("start", project, []);
     });
 
+    it("sets costume under start-not-shown", async () => {
+        const base_code = alien_code(false, true);
+        const complete_code = base_code + `
+             @pytch.when_green_flag_clicked
+             def reveal(self):
+                 self.show()
+        `;
+        const project = await import_deindented(complete_code);
+        assert_renders_as("start", project, []);
+        project.on_green_flag_clicked()
+        one_frame(project)
+        assert_renders_as("after-green-flag", project,
+                          [["RenderImage", -40, 15, 1, "firing-alien"]]);
+    });
+
 });
