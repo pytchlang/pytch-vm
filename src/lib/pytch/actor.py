@@ -56,7 +56,7 @@ class Sprite(Actor):
         else:
             self._shown = at_least_one_Costume
 
-        if self._shown:
+        if at_least_one_Costume:
             self.switch_costume(self._Appearances[0].label)
         else:
             # It is not necessarily an error to have no Costumes, as
