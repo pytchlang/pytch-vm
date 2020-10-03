@@ -213,4 +213,11 @@ describe("Costume handling", () => {
             await assert.rejects(
                 import_project());
         })});
+
+    const alien_code = (start_shown, include_costume) => `
+        import pytch
+        class Alien(pytch.Sprite):
+             start_shown = ${start_shown ? "True" : "False"}
+             Costumes = [${include_costume ? '"firing-alien.png"' : ""}]
+    `;
 });
