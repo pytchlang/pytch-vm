@@ -889,6 +889,9 @@ var $builtinmodule = function (name) {
             if (! this.is_running())
                 return [];
 
+            try {
+            Sk.pytch.executing_thread = this;
+
             let susp_or_retval = null;
 
             try {
@@ -990,6 +993,9 @@ var $builtinmodule = function (name) {
                 default:
                     throw Error(`unknown Pytch syscall "${susp.data.subtype}"`);
                 }
+            }
+            } finally {
+                Sk.pytch.executing_thread = null;
             }
         }
 
