@@ -894,9 +894,6 @@ var $builtinmodule = function (name) {
             try {
                 susp_or_retval = this.skulpt_susp.resume();
             } catch (err) {
-                // TODO: Richer information as to error context.  E.g., our
-                // 'label', and if possible what was the entry point for this
-                // thread (class and method names).
                 const instance = this.actor_instance;
                 Sk.pytch.on_exception(
                     err,
