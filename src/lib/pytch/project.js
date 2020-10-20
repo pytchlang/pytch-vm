@@ -890,110 +890,110 @@ var $builtinmodule = function (name) {
                 return [];
 
             try {
-            Sk.pytch.executing_thread = this;
+                Sk.pytch.executing_thread = this;
 
-            let susp_or_retval = null;
+                let susp_or_retval = null;
 
-            try {
-                susp_or_retval = this.skulpt_susp.resume();
-            } catch (err) {
-                const instance = this.actor_instance;
-                Sk.pytch.on_exception(
-                    err,
-                    {
-                        kind: "one_frame",
-                        event_label: this.thread_group.label,
-                        target_class_kind: instance.actor.class_kind_name,
-                        target_class_name: instance.class_name,
-                        callable_name: this.callable_name,
-                    }
-                );
+                try {
+                    susp_or_retval = this.skulpt_susp.resume();
+                } catch (err) {
+                    const instance = this.actor_instance;
+                    Sk.pytch.on_exception(
+                        err,
+                        {
+                            kind: "one_frame",
+                            event_label: this.thread_group.label,
+                            target_class_kind: instance.actor.class_kind_name,
+                            target_class_name: instance.class_name,
+                            callable_name: this.callable_name,
+                        }
+                    );
 
-                this.state = Thread.State.RAISED_EXCEPTION;
-                this.skulpt_susp = null;
-                return [];
-            }
-
-            if (! susp_or_retval.$isSuspension) {
-                // Python-land code ran to completion; thread is finished.
-                this.skulpt_susp = null;
-                this.state = Thread.State.ZOMBIE;
-                return [];
-            } else {
-                // Python-land code invoked a syscall.
-
-                let susp = susp_or_retval;
-                if (susp.data.type !== "Pytch")
-                    throw Error("cannot handle non-Pytch suspensions");
-
-                let syscall_args = susp.data.subtype_data;
-
-                // When the thread next runs, which might be on the next frame for some
-                // syscalls, we want it to resume the new suspension:
-                this.skulpt_susp = susp;
-
-                switch (susp.data.subtype) {
-                case "next-frame": {
+                    this.state = Thread.State.RAISED_EXCEPTION;
+                    this.skulpt_susp = null;
                     return [];
                 }
 
-                case "broadcast": {
-                    let message = syscall_args.message;
-                    let new_thread_group
-                        = (this.parent_project
-                           .thread_group_for_broadcast_receivers(message));
+                if (! susp_or_retval.$isSuspension) {
+                    // Python-land code ran to completion; thread is finished.
+                    this.skulpt_susp = null;
+                    this.state = Thread.State.ZOMBIE;
+                    return [];
+                } else {
+                    // Python-land code invoked a syscall.
 
-                    if (syscall_args.wait) {
-                        this.state = Thread.State.AWAITING_THREAD_GROUP_COMPLETION;
-                        this.sleeping_on = new_thread_group;
+                    let susp = susp_or_retval;
+                    if (susp.data.type !== "Pytch")
+                        throw Error("cannot handle non-Pytch suspensions");
+
+                    let syscall_args = susp.data.subtype_data;
+
+                    // When the thread next runs, which might be on the next frame for some
+                    // syscalls, we want it to resume the new suspension:
+                    this.skulpt_susp = susp;
+
+                    switch (susp.data.subtype) {
+                    case "next-frame": {
+                        return [];
                     }
 
-                    return [new_thread_group];
-                }
+                    case "broadcast": {
+                        let message = syscall_args.message;
+                        let new_thread_group
+                            = (this.parent_project
+                               .thread_group_for_broadcast_receivers(message));
 
-                case "play-sound": {
-                    let sound_name = syscall_args.sound_name;
-                    let actor = syscall_args.py_obj.$pytchActorInstance.actor;
-                    let performance = actor.launch_sound_performance(sound_name);
+                        if (syscall_args.wait) {
+                            this.state = Thread.State.AWAITING_THREAD_GROUP_COMPLETION;
+                            this.sleeping_on = new_thread_group;
+                        }
 
-                    if (syscall_args.wait) {
-                        this.state = Thread.State.AWAITING_SOUND_COMPLETION;
-                        this.sleeping_on = performance;
+                        return [new_thread_group];
                     }
 
-                    return [];
+                    case "play-sound": {
+                        let sound_name = syscall_args.sound_name;
+                        let actor = syscall_args.py_obj.$pytchActorInstance.actor;
+                        let performance = actor.launch_sound_performance(sound_name);
+
+                        if (syscall_args.wait) {
+                            this.state = Thread.State.AWAITING_SOUND_COMPLETION;
+                            this.sleeping_on = performance;
+                        }
+
+                        return [];
+                    }
+
+                    case "wait-seconds": {
+                        let n_seconds = syscall_args.n_seconds;
+                        let raw_n_frames = Math.ceil(n_seconds * FRAMES_PER_SECOND);
+                        let n_frames = (raw_n_frames < 1 ? 1 : raw_n_frames);
+
+                        this.state = Thread.State.AWAITING_PASSAGE_OF_TIME;
+                        this.sleeping_on = n_frames;
+
+                        return [];
+                    }
+
+                    case "register-instance": {
+                        let py_instance = syscall_args.py_instance;
+                        let py_cls = Sk.builtin.getattr(py_instance, s_dunder_class);
+                        let actor = py_cls.$pytchActor;
+                        actor.register_py_instance(py_instance);
+
+                        let thread_group = new ThreadGroup("start-as-clone");
+                        actor.clone_handlers.forEach(
+                            py_fun => thread_group.create_thread(py_fun,
+                                                                 py_instance,
+                                                                 this.parent_project));
+
+                        return [thread_group];
+                    }
+
+                    default:
+                        throw Error(`unknown Pytch syscall "${susp.data.subtype}"`);
+                    }
                 }
-
-                case "wait-seconds": {
-                    let n_seconds = syscall_args.n_seconds;
-                    let raw_n_frames = Math.ceil(n_seconds * FRAMES_PER_SECOND);
-                    let n_frames = (raw_n_frames < 1 ? 1 : raw_n_frames);
-
-                    this.state = Thread.State.AWAITING_PASSAGE_OF_TIME;
-                    this.sleeping_on = n_frames;
-
-                    return [];
-                }
-
-                case "register-instance": {
-                    let py_instance = syscall_args.py_instance;
-                    let py_cls = Sk.builtin.getattr(py_instance, s_dunder_class);
-                    let actor = py_cls.$pytchActor;
-                    actor.register_py_instance(py_instance);
-
-                    let thread_group = new ThreadGroup("start-as-clone");
-                    actor.clone_handlers.forEach(
-                        py_fun => thread_group.create_thread(py_fun,
-                                                             py_instance,
-                                                             this.parent_project));
-
-                    return [thread_group];
-                }
-
-                default:
-                    throw Error(`unknown Pytch syscall "${susp.data.subtype}"`);
-                }
-            }
             } finally {
                 Sk.pytch.executing_thread = null;
             }
