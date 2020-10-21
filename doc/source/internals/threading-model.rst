@@ -31,11 +31,14 @@ Automatically-inserted cede-control points
 
 To give semi-automatic ceding of control, in support of familiar Scratch
 idioms like ``forever: do-once-per-frame-stuff``, we want to have the
-Skulpt compiler insert ‘yield-until-next-frame’ (‘YNF’) calls at the end
-of loop bodies, but only for ‘Pytch programs’. A ‘Pytch program’ is
-detected by the presence of an ``import pytch`` statement; after seeing
-such an import, all for and while loops have YNF calls appended to their
-bodies.
+Skulpt compiler insert ‘yield-until-next-frame’ (‘YNF’) calls into loop
+bodies, but only for ‘Pytch programs’. A ‘Pytch program’ is detected by
+the presence of an ``import pytch`` statement; after seeing such an
+import, all for and while loops have YNF calls inserted as the first
+statement of their bodies.  The effect of this is that there is a yield
+point *before* each run of a loop body.  Inserting the YNF call at the
+end of the loop body would have the undesired effect that ``continue``
+statements would bypass the yield.
 
 There is precedent for this behaviour, whereby a magic import changes
 the language’s semantics, in Python’s various
