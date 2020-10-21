@@ -15,6 +15,28 @@ configure_mocha();
 // Use of "continue" in for and while loops
 
 describe("Use of 'continue' in loops", () => {
+    const method_using_for = `# Use 'for'
+                    @pytch.when_I_receive("count")
+                    def count(self):
+                        self.n = 0
+                        for i in range(10):
+                            self.n += 1
+                            continue
+                            self.n += 1000  # Should not happen
+    `;
+
+    const method_using_while = `# Use 'while'
+                    @pytch.when_I_receive("count")
+                    def count(self):
+                        self.n = 0
+                        i = 0
+                        while i < 10:
+                            i += 1
+                            self.n += 1
+                            continue
+                            self.n += 1000  # Should not happen
+    `;
+
     [
         //
         // TODO: Specs with 'label' and 'method_code' properties.
