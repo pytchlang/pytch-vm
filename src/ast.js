@@ -962,7 +962,8 @@ function astForForStmt (c, n) {
 
     var body = astForSuite(c, CHILD(n, 5));
     if (Sk.pytchThreading) {
-        // Add the yield-until-next-frame wait for a Pytch program.
+        // Add the yield-until-next-frame wait for a Pytch program, as
+        // the first statement of the loop body.
         body.unshift(astForPytchYield(n));
     }
 
@@ -2042,7 +2043,8 @@ function astForWhileStmt (c, n) {
 
     var body = astForSuite(c, CHILD(n, 3));
     if (Sk.pytchThreading) {
-        // Add the yield-until-next-frame wait for a Pytch program.
+        // Add the yield-until-next-frame wait for a Pytch program, as
+        // the first statement of the loop body.
         body.unshift(astForPytchYield(n));
     }
 
