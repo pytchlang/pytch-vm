@@ -963,7 +963,7 @@ function astForForStmt (c, n) {
     var body = astForSuite(c, CHILD(n, 5));
     if (Sk.pytchThreading) {
         // Add the yield-until-next-frame wait for a Pytch program.
-        body.push(astForPytchYield(n));
+        body.unshift(astForPytchYield(n));
     }
 
     return new Sk.astnodes.For(target,
@@ -2043,7 +2043,7 @@ function astForWhileStmt (c, n) {
     var body = astForSuite(c, CHILD(n, 3));
     if (Sk.pytchThreading) {
         // Add the yield-until-next-frame wait for a Pytch program.
-        body.push(astForPytchYield(n));
+        body.unshift(astForPytchYield(n));
     }
 
     if (NCH(n) === 4) {
