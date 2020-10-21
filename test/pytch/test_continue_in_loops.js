@@ -38,9 +38,8 @@ describe("Use of 'continue' in loops", () => {
     `;
 
     [
-        //
-        // TODO: Specs with 'label' and 'method_code' properties.
-        //
+        { label: 'for loop', method_code: method_using_for },
+        { label: 'while loop', method_code: method_using_while },
     ].forEach(spec =>
         it(`yields when loop does 'continue' (${spec.label})`, async () => {
             const project = await import_deindented(`
