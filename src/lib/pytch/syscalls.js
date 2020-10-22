@@ -23,6 +23,13 @@ var $builtinmodule = function (name) {
                 : Sk.builtin.none.none$);
     });
 
+    mod.push_loop_iterations_per_frame = new Sk.builtin.func(
+        (py_iterations_per_frame) => {
+            const thread = Sk.pytch.executing_thread;
+            thread.push_loop_iterations_per_frame(py_iterations_per_frame.v);
+        }
+    );
+
     const broadcast_maybe_wait = (py_message, wait) => {
         let message = Sk.ffi.remapToJs(py_message);
         return new_pytch_suspension("broadcast", {message, wait});
