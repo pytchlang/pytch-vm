@@ -803,6 +803,10 @@ var $builtinmodule = function (name) {
     // ready for when it resumes.
 
     class LoopIterationBatchingState {
+        constructor(iterations_per_frame) {
+            this.iterations_per_frame = iterations_per_frame;
+            this.credits = iterations_per_frame;
+        }
     }
 
 
