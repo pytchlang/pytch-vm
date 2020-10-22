@@ -154,9 +154,36 @@ describe("Multiple loop iterations per frame", () => {
     );
 
     [
-        //
-        // TODO: Specs with properties 'label', 'code_suffix', 'exp_ns'.
-        //
+        {
+            label: "directly",
+            code_suffix: "",
+            exp_ns: [1, 2, 3, 4, 15, 16, 17, 18, 19, 20, 20, 20, 20, 20, 20],
+        },
+        {
+            label: "two-phase with 5",
+            code_suffix: "(5)",
+            exp_ns: [1, 2, 3, 4, 10, 15, 16, 17, 18, 19, 20, 20, 20, 20, 20],
+        },
+        {
+            label: "two-phase with 8",
+            code_suffix: "(8)",
+            exp_ns: [1, 2, 3, 4, 13, 15, 16, 17, 18, 19, 20, 20, 20, 20, 20],
+        },
+        {
+            label: "two-phase with 9",
+            code_suffix: "(9)",
+            exp_ns: [1, 2, 3, 4, 14, 15, 16, 17, 18, 19, 20, 20, 20, 20, 20],
+        },
+        {
+            label: "two-phase with 10",
+            code_suffix: "(10)",
+            exp_ns: [1, 2, 3, 4, 15, 16, 17, 18, 19, 20, 20, 20, 20, 20, 20],
+        },
+        {
+            label: "two-phase with 50",
+            code_suffix: "(50)",
+            exp_ns: [1, 2, 3, 4, 15, 16, 17, 18, 19, 20, 20, 20, 20, 20, 20],
+        },
     ].forEach(spec => {
         it(`can push/pop via context manager (${spec.label})`, async () => {
             const project = await import_deindented(`
