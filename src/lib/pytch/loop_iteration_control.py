@@ -27,3 +27,10 @@ def multiple_loop_iterations_decorator(n_iters):
 
 # A reasonable default might be one second's worth, i.e., 60 frames.
 default_n_iters_decorator = multiple_loop_iterations_decorator(60)
+
+
+def non_yielding_loops(n_iters_or_function):
+    if isinstance(n_iters_or_function, int):
+        return multiple_loop_iterations_decorator(n_iters_or_function)
+    else:
+        return default_n_iters_decorator(n_iters_or_function)
