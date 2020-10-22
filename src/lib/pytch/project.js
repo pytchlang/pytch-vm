@@ -794,6 +794,35 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // LoopIterationBatchingState: How to handle yield_until_next_frame() calls
+    // in a loop.  We allow control of how many loop iterations can happen in a
+    // single call to one_frame().  This is managed by a system of credits.
+    // While a thread has a positive number of credits, it "spends" one per
+    // loop-body iteration it runs.  If it has no credits when about to start a
+    // loop-body iteration, it yields, and is given a new supply of credits
+    // ready for when it resumes.
+
+    class LoopIterationBatchingState {
+        constructor(iterations_per_frame) {
+            this.iterations_per_frame = iterations_per_frame;
+            this.credits = iterations_per_frame;
+        }
+
+        should_yield() {
+            const should_yield = this.credits === 0;
+
+            if (this.credits == 0)
+                this.credits = this.iterations_per_frame
+
+            this.credits -= 1;
+
+            return should_yield;
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Thread: One particular thread of execution.  Creating a new Thread
     // prepares to run the given Python callable with the single given argument.
 
@@ -812,6 +841,8 @@ var $builtinmodule = function (name) {
 
             this.actor_instance = py_arg.$pytchActorInstance;
             this.callable_name = js_getattr(py_callable, s_dunder_name);
+
+            this.loop_iteration_batching_states = [new LoopIterationBatchingState(1)];
         }
 
         is_running() {
@@ -997,6 +1028,14 @@ var $builtinmodule = function (name) {
             } finally {
                 Sk.pytch.executing_thread = null;
             }
+        }
+
+        should_yield() {
+            let active_loop_yield_state
+                = this.loop_iteration_batching_states[
+                    this.loop_iteration_batching_states.length - 1];
+
+            return active_loop_yield_state.should_yield();
         }
 
         info() {

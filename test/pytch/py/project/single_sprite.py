@@ -16,7 +16,7 @@ class FlagClickCounter(Sprite):
     @when_green_flag_clicked
     def note_click(self):
         self.n_clicks += 1
-        pytch.yield_until_next_frame()
+        pytch.wait_seconds(0)
         self.n_clicks += 1
 
     @when_I_receive('reset')

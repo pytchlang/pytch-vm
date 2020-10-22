@@ -283,8 +283,8 @@ function new_identifier(n, c) {
   parameter 'n' is the tokeniser object for the outer loop.
 */
 function astForPytchYield(n) {
-    var l = `'(auto-added yield at end of loop started on line ${n.lineno})'`;
-    var c = `'(auto-added yield at end of loop started on column ${n.col_offset})'`;
+    var l = `'(auto-added yield in loop started on line ${n.lineno})'`;
+    var c = `'(auto-added yield in loop started on column ${n.col_offset})'`;
     var attr = new Sk.astnodes.Attribute(new Sk.astnodes.Name(Sk.builtin.str("pytch"),
                                                               Sk.astnodes.Load,
                                                               l, c),
@@ -962,8 +962,9 @@ function astForForStmt (c, n) {
 
     var body = astForSuite(c, CHILD(n, 5));
     if (Sk.pytchThreading) {
-        // Add the yield-until-next-frame wait for a Pytch program.
-        body.push(astForPytchYield(n));
+        // Add the yield-until-next-frame wait for a Pytch program, as
+        // the first statement of the loop body.
+        body.unshift(astForPytchYield(n));
     }
 
     return new Sk.astnodes.For(target,
@@ -2042,8 +2043,9 @@ function astForWhileStmt (c, n) {
 
     var body = astForSuite(c, CHILD(n, 3));
     if (Sk.pytchThreading) {
-        // Add the yield-until-next-frame wait for a Pytch program.
-        body.push(astForPytchYield(n));
+        // Add the yield-until-next-frame wait for a Pytch program, as
+        // the first statement of the loop body.
+        body.unshift(astForPytchYield(n));
     }
 
     if (NCH(n) === 4) {

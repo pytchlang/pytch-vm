@@ -11,12 +11,16 @@ var $builtinmodule = function (name) {
     };
 
     mod.yield_until_next_frame = new Sk.builtin.func(() => {
+        const executing_thread = Sk.pytch.executing_thread;
+
         // Handle case of no executing Pytch Thread, which happens if we're
         // called at the top level of a module.  Be a no-op in this case.
-        if (Sk.pytch.executing_thread == null)
+        if (executing_thread == null)
             return Sk.builtin.none.none$;
 
-        return new_pytch_suspension("next-frame", {});
+        return (executing_thread.should_yield()
+                ? new_pytch_suspension("next-frame", {})
+                : Sk.builtin.none.none$);
     });
 
     const broadcast_maybe_wait = (py_message, wait) => {
