@@ -841,6 +841,8 @@ var $builtinmodule = function (name) {
 
             this.actor_instance = py_arg.$pytchActorInstance;
             this.callable_name = js_getattr(py_callable, s_dunder_name);
+
+            this.loop_iteration_batching_states = [new LoopIterationBatchingState(1)];
         }
 
         is_running() {
