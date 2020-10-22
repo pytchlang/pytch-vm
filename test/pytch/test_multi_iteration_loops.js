@@ -64,6 +64,35 @@ describe("Multiple loop iterations per frame", () => {
         });
     });
 
+    it("rejects invalid pop_loop_iterations_per_frame() calls", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            from pytch.syscalls import (
+                push_loop_iterations_per_frame,
+                pop_loop_iterations_per_frame,
+            )
+
+            class Counter(pytch.Sprite):
+                Costumes = []
+
+                @pytch.when_I_receive("trouble")
+                def run(self):
+                    push_loop_iterations_per_frame(30)
+                    pop_loop_iterations_per_frame()
+                    pop_loop_iterations_per_frame()
+        `);
+
+        project.do_synthetic_broadcast("trouble");
+        one_frame(project);
+
+        const errs = pytch_errors.drain_errors();
+        assert.strictEqual(errs.length, 1);
+
+        const err_str = errs[0].err.toString();
+        assert.ok(/cannot pop the base/.test(err_str));
+    });
+
     [
         { label: "string", code_fragment: '"banana"' },
         { label: "non-integer", code_fragment: "3.25" },
