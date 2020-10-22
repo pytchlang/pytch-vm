@@ -152,4 +152,49 @@ describe("Multiple loop iterations per frame", () => {
                                        build_error_match));
            })
     );
+
+    [
+        //
+        // TODO: Specs with properties 'label', 'code_suffix', 'exp_ns'.
+        //
+    ].forEach(spec => {
+        it(`can push/pop via context manager (${spec.label})`, async () => {
+            const project = await import_deindented(`
+
+                import pytch
+
+                class Counter(pytch.Sprite):
+                    Costumes = []
+
+                    @pytch.non_yielding_loops${spec.code_suffix}
+                    def count_up_by_ten(self):
+                        for i in range(10):
+                            self.n += 1
+
+                    def count_up_by_five(self):
+                        for i in range(5):
+                            self.n += 1
+
+                    @pytch.when_I_receive("run")
+                    def run(self):
+                        self.n = 0
+                        self.count_up_by_five()
+                        self.count_up_by_ten()
+                        self.count_up_by_five()
+            `);
+
+            const counter_0 = project.instance_0_by_class_name("Counter");
+            const current_n = () => js_getattr(counter_0.py_object, "n");
+
+            project.do_synthetic_broadcast("run")
+
+            let got_ns = [];
+            for (let i = 0; i < 15; ++i) {
+                one_frame(project);
+                got_ns.push(current_n());
+            }
+
+            assert.deepEqual(got_ns, spec.exp_ns);
+        });
+    });
 });
