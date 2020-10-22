@@ -27,7 +27,7 @@ class Receiver(Sprite):
     @when_I_receive('something-happened')
     def note_event(self):
         self.n_events += 1
-        pytch.yield_until_next_frame()
+        pytch.wait_seconds(0)
         self.n_events += 1
 
 
