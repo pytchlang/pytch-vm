@@ -794,6 +794,20 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // LoopIterationBatchingState: How to handle yield_until_next_frame() calls
+    // in a loop.  We allow control of how many loop iterations can happen in a
+    // single call to one_frame().  This is managed by a system of credits.
+    // While a thread has a positive number of credits, it "spends" one per
+    // loop-body iteration it runs.  If it has no credits when about to start a
+    // loop-body iteration, it yields, and is given a new supply of credits
+    // ready for when it resumes.
+
+    class LoopIterationBatchingState {
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Thread: One particular thread of execution.  Creating a new Thread
     // prepares to run the given Python callable with the single given argument.
 
