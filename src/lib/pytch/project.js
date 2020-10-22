@@ -807,6 +807,17 @@ var $builtinmodule = function (name) {
             this.iterations_per_frame = iterations_per_frame;
             this.credits = iterations_per_frame;
         }
+
+        should_yield() {
+            const should_yield = this.credits === 0;
+
+            if (this.credits == 0)
+                this.credits = this.iterations_per_frame
+
+            this.credits -= 1;
+
+            return should_yield;
+        }
     }
 
 
