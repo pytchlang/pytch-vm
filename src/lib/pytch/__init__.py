@@ -22,6 +22,11 @@ from .clone import (
     create_clone_of,
 )
 
+from .loop_iteration_control import (
+    LoopIterationsPerFrame,
+    non_yielding_loops,
+)
+
 from .syscalls import (
     yield_until_next_frame,
     broadcast,
