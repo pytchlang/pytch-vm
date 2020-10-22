@@ -98,9 +98,8 @@ describe("Multiple loop iterations per frame", () => {
     );
 
     [
-        //
-        // TODO: Specs with properties 'call_nub', 'code'.
-        //
+        { call_nub: "push", code: "push_loop_iterations_per_frame(3)" },
+        { call_nub: "pop", code: "pop_loop_iterations_per_frame()" },
     ].forEach(spec =>
         it(`rejects loop-yield-strategy call at top level (${spec.call_nub})`,
            async () => {
