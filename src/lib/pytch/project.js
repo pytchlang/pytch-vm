@@ -1030,6 +1030,14 @@ var $builtinmodule = function (name) {
             }
         }
 
+        should_yield() {
+            let active_loop_yield_state
+                = this.loop_iteration_batching_states[
+                    this.loop_iteration_batching_states.length - 1];
+
+            return active_loop_yield_state.should_yield();
+        }
+
         info() {
             let instance = this.actor_instance;
             return {
