@@ -1043,6 +1043,10 @@ var $builtinmodule = function (name) {
                 new LoopIterationBatchingState(iterations_per_frame));
         }
 
+        pop_loop_iterations_per_frame() {
+            this.loop_iteration_batching_states.pop();
+        }
+
         info() {
             let instance = this.actor_instance;
             return {
