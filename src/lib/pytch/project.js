@@ -804,6 +804,11 @@ var $builtinmodule = function (name) {
 
     class LoopIterationBatchingState {
         constructor(iterations_per_frame) {
+            if (typeof iterations_per_frame !== "number"
+                    || iterations_per_frame != (iterations_per_frame | 0)
+                    || iterations_per_frame <= 0)
+                throw Error("LoopIterationBatchingState(): positive integer required");
+
             this.iterations_per_frame = iterations_per_frame;
             this.credits = iterations_per_frame;
         }
