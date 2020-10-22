@@ -26,12 +26,20 @@ var $builtinmodule = function (name) {
     mod.push_loop_iterations_per_frame = new Sk.builtin.func(
         (py_iterations_per_frame) => {
             const thread = Sk.pytch.executing_thread;
+            if (thread == null)
+                throw new Sk.builtin.RuntimeError(
+                    "cannot push loop-iterations-per-frame outside a Thread");
+
             thread.push_loop_iterations_per_frame(py_iterations_per_frame.v);
         }
     );
 
     mod.pop_loop_iterations_per_frame = new Sk.builtin.func(() => {
         const thread = Sk.pytch.executing_thread;
+        if (thread == null)
+            throw new Sk.builtin.RuntimeError(
+                "cannot pop loop-iterations-per-frame outside a Thread");
+
         thread.pop_loop_iterations_per_frame();
     });
 

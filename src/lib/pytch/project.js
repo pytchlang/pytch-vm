@@ -804,6 +804,11 @@ var $builtinmodule = function (name) {
 
     class LoopIterationBatchingState {
         constructor(iterations_per_frame) {
+            if (typeof iterations_per_frame !== "number"
+                    || iterations_per_frame != (iterations_per_frame | 0)
+                    || iterations_per_frame <= 0)
+                throw Error("LoopIterationBatchingState(): positive integer required");
+
             this.iterations_per_frame = iterations_per_frame;
             this.credits = iterations_per_frame;
         }
@@ -1044,6 +1049,15 @@ var $builtinmodule = function (name) {
         }
 
         pop_loop_iterations_per_frame() {
+            if (this.loop_iteration_batching_states.length == 0)
+                throw Sk.builtin.ValueError(
+                    ("cannot pop from empty LoopIterationBatchingState stack"
+                     + " [SHOULD NOT HAPPEN]"));
+
+            if (this.loop_iteration_batching_states.length == 1)
+                throw Sk.builtin.ValueError(
+                    "cannot pop the base LoopIterationBatchingState");
+
             this.loop_iteration_batching_states.pop();
         }
 
