@@ -30,6 +30,11 @@ var $builtinmodule = function (name) {
         }
     );
 
+    mod.pop_loop_iterations_per_frame = new Sk.builtin.func(() => {
+        const thread = Sk.pytch.executing_thread;
+        thread.pop_loop_iterations_per_frame();
+    });
+
     const broadcast_maybe_wait = (py_message, wait) => {
         let message = Sk.ffi.remapToJs(py_message);
         return new_pytch_suspension("broadcast", {message, wait});
