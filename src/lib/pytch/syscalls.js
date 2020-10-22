@@ -18,7 +18,9 @@ var $builtinmodule = function (name) {
         if (executing_thread == null)
             return Sk.builtin.none.none$;
 
-        return new_pytch_suspension("next-frame", {});
+        return (executing_thread.should_yield()
+                ? new_pytch_suspension("next-frame", {})
+                : Sk.builtin.none.none$);
     });
 
     const broadcast_maybe_wait = (py_message, wait) => {
