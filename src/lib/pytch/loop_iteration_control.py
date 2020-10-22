@@ -23,3 +23,7 @@ def multiple_loop_iterations_decorator(n_iters):
                 return fun(*args, **kwargs)
         return decorated_fun
     return decorator
+
+
+# A reasonable default might be one second's worth, i.e., 60 frames.
+default_n_iters_decorator = multiple_loop_iterations_decorator(60)
