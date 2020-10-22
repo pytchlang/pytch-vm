@@ -1049,6 +1049,15 @@ var $builtinmodule = function (name) {
         }
 
         pop_loop_iterations_per_frame() {
+            if (this.loop_iteration_batching_states.length == 0)
+                throw Sk.builtin.ValueError(
+                    ("cannot pop from empty LoopIterationBatchingState stack"
+                     + " [SHOULD NOT HAPPEN]"));
+
+            if (this.loop_iteration_batching_states.length == 1)
+                throw Sk.builtin.ValueError(
+                    "cannot pop the base LoopIterationBatchingState");
+
             this.loop_iteration_batching_states.pop();
         }
 
