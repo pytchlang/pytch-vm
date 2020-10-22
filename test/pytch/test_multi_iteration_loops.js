@@ -65,9 +65,9 @@ describe("Multiple loop iterations per frame", () => {
     });
 
     [
-        //
-        // TODO: Specs with properties 'label', 'code_fragment'.
-        //
+        { label: "string", code_fragment: '"banana"' },
+        { label: "non-integer", code_fragment: "3.25" },
+        { label: "non-positive", code_fragment: "0" },
     ].forEach(spec =>
         it("rejects bad push_loop_iterations_per_frame() call (${spec.label})",
            async () => {
