@@ -96,4 +96,32 @@ describe("Multiple loop iterations per frame", () => {
                assert.ok(/positive integer required/.test(err_str));
            })
     );
+
+    [
+        //
+        // TODO: Specs with properties 'call_nub', 'code'.
+        //
+    ].forEach(spec =>
+        it(`rejects loop-yield-strategy call at top level (${spec.call_nub})`,
+           async () => {
+               const build_error_match = new RegExp(
+                   `cannot ${spec.call_nub} .* outside a Thread`);
+
+               const full_code = `
+
+                   import pytch
+                   from pytch.syscalls import (
+                       push_loop_iterations_per_frame,
+                       pop_loop_iterations_per_frame,
+                   )
+                   ${spec.code}
+               `;
+
+               await assert.rejects(
+                   import_deindented(full_code),
+                   assertBuildErrorFun("import",
+                                       Sk.builtin.RuntimeError,
+                                       build_error_match));
+           })
+    );
 });
