@@ -63,4 +63,37 @@ describe("Multiple loop iterations per frame", () => {
             assert.deepEqual(got_ns, spec.exp_ns);
         });
     });
+
+    [
+        //
+        // TODO: Specs with properties 'label', 'code_fragment'.
+        //
+    ].forEach(spec =>
+        it("rejects bad push_loop_iterations_per_frame() call (${spec.label})",
+           async () => {
+               const project = await import_deindented(`
+
+                   import pytch
+                   from pytch.syscalls import (
+                       push_loop_iterations_per_frame,
+                   )
+
+                   class Counter(pytch.Sprite):
+                       Costumes = []
+
+                       @pytch.when_I_receive("trouble")
+                       def run(self):
+                           push_loop_iterations_per_frame(${spec.code_fragment})
+               `);
+
+               project.do_synthetic_broadcast("trouble");
+               one_frame(project);
+
+               const errs = pytch_errors.drain_errors();
+               assert.strictEqual(errs.length, 1);
+
+               const err_str = errs[0].err.toString();
+               assert.ok(/positive integer required/.test(err_str));
+           })
+    );
 });
