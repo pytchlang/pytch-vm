@@ -18,9 +18,12 @@ configure_mocha();
 
 describe("Multiple loop iterations per frame", () => {
     [
-        //
-        // TODO: Specs with properties 'iters_per_frame', 'exp_ns'
-        //
+        { iters_per_frame: 5, exp_ns: [5, 10, 15, 21, 22] },
+        { iters_per_frame: 8, exp_ns: [8, 16, 21, 22, 23] },
+        { iters_per_frame: 10, exp_ns: [10, 21, 22, 23, 24] },
+        { iters_per_frame: 19, exp_ns: [19, 21, 22, 23, 24] },
+        { iters_per_frame: 20, exp_ns: [21, 22, 23, 24, 25] },
+        { iters_per_frame: 50, exp_ns: [21, 22, 23, 24, 25] },
     ].forEach(spec => {
         const detail = `${spec.iters_per_frame} iters/frame`;
         it(`obeys loop-yielding-strategy (${detail})`, async () => {
