@@ -1,4 +1,7 @@
 # Top-level package file for 'pytch'.
+#
+# IMPORTANT: Update the hard-coded list of auto-completions in the webapp
+# when adding symbols to this file.
 
 from .project import (
     Project,
@@ -20,6 +23,11 @@ from .hat_blocks import (
 
 from .clone import (
     create_clone_of,
+)
+
+from .loop_iteration_control import (
+    LoopIterationsPerFrame,
+    non_yielding_loops,
 )
 
 from .syscalls import (

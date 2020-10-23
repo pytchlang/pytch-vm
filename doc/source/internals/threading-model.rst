@@ -40,6 +40,12 @@ point *before* each run of a loop body.  Inserting the YNF call at the
 end of the loop body would have the undesired effect that ``continue``
 statements would bypass the yield.
 
+Sometimes the user has a legitimate need for a loop to run 'all at
+once', such as when checking a list of conditions without updating the
+Sprite's state.  Pytch provides a context manager which lets multiple
+loop iterations run in one frame; see ``LoopIterationsPerFrame`` and
+the decorator ``non_yielding_loop``.
+
 There is precedent for this behaviour, whereby a magic import changes
 the language’s semantics, in Python’s various
 ``from __future__import something`` mechanisms.
