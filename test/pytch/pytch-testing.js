@@ -206,9 +206,21 @@ const pytch_errors = (() => {
         return errors;
     });
 
+    const sole_error = (() => {
+        const errors = drain_errors();
+        assert.strictEqual(errors.length, 1);
+        return errors[0];
+    });
+
+    const sole_error_string = (() => {
+        return sole_error().err.toString();
+    });
+
     return {
         append_error,
         drain_errors,
+        sole_error,
+        sole_error_string,
     };
 })();
 
