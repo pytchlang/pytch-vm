@@ -16,6 +16,11 @@ configure_mocha();
 //
 // Machinery to allow more than one loop iteration per frame.
 
+const import_loop_iteration_control_syscalls
+      = ("from pytch.syscalls import ("
+         + "push_loop_iterations_per_frame, "
+         + "pop_loop_iterations_per_frame)");
+
 describe("Multiple loop iterations per frame", () => {
     [
         { iters_per_frame: 5, exp_ns: [5, 10, 15, 21, 22] },
