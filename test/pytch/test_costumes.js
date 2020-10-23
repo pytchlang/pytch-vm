@@ -173,10 +173,7 @@ describe("Costume handling", () => {
                 project.do_synthetic_broadcast(spec.message);
                 one_frame(project);
 
-                let errs = pytch_errors.drain_errors();
-                assert.strictEqual(errs.length, 1);
-
-                let err_str = errs[0].err.toString();
+                let err_str = pytch_errors.sole_error_string();
                 assert.ok(spec.err_test.test(err_str));
             })})});
 
@@ -206,10 +203,7 @@ describe("Costume handling", () => {
             project.do_synthetic_broadcast("show-yourself");
             one_frame(project);
 
-            let errs = pytch_errors.drain_errors();
-            assert.strictEqual(errs.length, 1);
-
-            let err_str = errs[0].err.toString();
+            let err_str = pytch_errors.sole_error_string();
             assert.ok(/cannot show .* no Costumes/.test(err_str));
         })});
 

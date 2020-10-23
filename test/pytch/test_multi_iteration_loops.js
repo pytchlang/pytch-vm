@@ -86,10 +86,7 @@ describe("Multiple loop iterations per frame", () => {
         project.do_synthetic_broadcast("trouble");
         one_frame(project);
 
-        const errs = pytch_errors.drain_errors();
-        assert.strictEqual(errs.length, 1);
-
-        const err_str = errs[0].err.toString();
+        const err_str = pytch_errors.sole_error_string();
         assert.ok(/cannot pop the base/.test(err_str));
     });
 
@@ -118,10 +115,7 @@ describe("Multiple loop iterations per frame", () => {
                project.do_synthetic_broadcast("trouble");
                one_frame(project);
 
-               const errs = pytch_errors.drain_errors();
-               assert.strictEqual(errs.length, 1);
-
-               const err_str = errs[0].err.toString();
+               const err_str = pytch_errors.sole_error_string();
                assert.ok(/positive integer required/.test(err_str));
            })
     );
