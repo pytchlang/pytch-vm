@@ -66,16 +66,7 @@ describe("Multiple loop iterations per frame", () => {
                             self.n += 1
             `);
 
-            const counter_0 = project.instance_0_by_class_name("Counter");
-            const current_n = () => js_getattr(counter_0.py_object, "n");
-
-            project.do_synthetic_broadcast("run");
-            let got_ns = [];
-            for (let i = 0; i < 5; ++i) {
-                one_frame(project);
-                got_ns.push(current_n());
-            }
-
+            const got_ns = n_value_history(project, 5);
             assert.deepEqual(got_ns, spec.exp_ns);
         });
     });
@@ -212,17 +203,7 @@ describe("Multiple loop iterations per frame", () => {
                         self.count_up_by_five()
             `);
 
-            const counter_0 = project.instance_0_by_class_name("Counter");
-            const current_n = () => js_getattr(counter_0.py_object, "n");
-
-            project.do_synthetic_broadcast("run")
-
-            let got_ns = [];
-            for (let i = 0; i < 15; ++i) {
-                one_frame(project);
-                got_ns.push(current_n());
-            }
-
+            const got_ns = n_value_history(project, 15);
             assert.deepEqual(got_ns, spec.exp_ns);
         });
     });
@@ -248,17 +229,7 @@ describe("Multiple loop iterations per frame", () => {
                         self.count_ten()
         `);
 
-        const counter_0 = project.instance_0_by_class_name("Counter");
-        const current_n = () => js_getattr(counter_0.py_object, "n");
-
-        project.do_synthetic_broadcast("run");
-
-        let got_ns = [];
-        for (let i = 0; i < 7; ++i) {
-            one_frame(project);
-            got_ns.push(current_n());
-        }
-
+        const got_ns = n_value_history(project, 7);
         assert.deepEqual(got_ns, [11, 22, 33, 44, 55, 55, 55]);
     });
 
@@ -287,17 +258,7 @@ describe("Multiple loop iterations per frame", () => {
                     self.count_in_twos()
         `);
 
-        const counter_0 = project.instance_0_by_class_name("Counter");
-        const current_n = () => js_getattr(counter_0.py_object, "n");
-
-        project.do_synthetic_broadcast("run");
-
-        let got_ns = [];
-        for (let i = 0; i < 5; ++i) {
-            one_frame(project);
-            got_ns.push(current_n());
-        }
-
+        const got_ns = n_value_history(project, 5);
         assert.deepEqual(got_ns, [2, 4, 6, 8, 10]);
     });
 });
