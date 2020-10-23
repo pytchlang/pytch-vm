@@ -259,4 +259,43 @@ describe("Multiple loop iterations per frame", () => {
 
         assert.deepEqual(got_ns, [11, 22, 33, 44, 55, 55, 55]);
     });
+
+    it("handles consecutive loops correctly", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Counter(pytch.Sprite):
+                Costumes = []
+
+                # We should see each frame execute two loop bodies.
+                # These pairs of loop-body runs should be (i=0,i=1),
+                # (i=2,i=3), (i=4,j=0), (j=1,j=2), (j=3,j=4).  Each
+                # pair of body runs increments self.n by 2.
+                @pytch.non_yielding_loops(2)
+                def count_in_twos(self):
+                    for i in range(5):
+                        self.n += 1
+                    for j in range(5):
+                        self.n += 1
+
+                @pytch.when_I_receive("run")
+                def run(self):
+                    self.n = 0
+                    self.count_in_twos()
+        `);
+
+        const counter_0 = project.instance_0_by_class_name("Counter");
+        const current_n = () => js_getattr(counter_0.py_object, "n");
+
+        project.do_synthetic_broadcast("run");
+
+        let got_ns = [];
+        for (let i = 0; i < 5; ++i) {
+            one_frame(project);
+            got_ns.push(current_n());
+        }
+
+        assert.deepEqual(got_ns, [2, 4, 6, 8, 10]);
+    });
 });
