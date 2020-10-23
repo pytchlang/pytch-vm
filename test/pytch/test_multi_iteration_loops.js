@@ -36,10 +36,7 @@ describe("Multiple loop iterations per frame", () => {
             const project = await import_deindented(`
 
                 import pytch
-                from pytch.syscalls import (
-                    push_loop_iterations_per_frame,
-                    pop_loop_iterations_per_frame,
-                )
+                ${import_loop_iteration_control_syscalls}
 
                 class Counter(pytch.Sprite):
                     Costumes = []
@@ -73,10 +70,7 @@ describe("Multiple loop iterations per frame", () => {
         const project = await import_deindented(`
 
             import pytch
-            from pytch.syscalls import (
-                push_loop_iterations_per_frame,
-                pop_loop_iterations_per_frame,
-            )
+            ${import_loop_iteration_control_syscalls}
 
             class Counter(pytch.Sprite):
                 Costumes = []
@@ -105,9 +99,7 @@ describe("Multiple loop iterations per frame", () => {
                const project = await import_deindented(`
 
                    import pytch
-                   from pytch.syscalls import (
-                       push_loop_iterations_per_frame,
-                   )
+                   ${import_loop_iteration_control_syscalls}
 
                    class Counter(pytch.Sprite):
                        Costumes = []
@@ -137,10 +129,7 @@ describe("Multiple loop iterations per frame", () => {
                const full_code = `
 
                    import pytch
-                   from pytch.syscalls import (
-                       push_loop_iterations_per_frame,
-                       pop_loop_iterations_per_frame,
-                   )
+                   ${import_loop_iteration_control_syscalls}
                    ${spec.code}
                `;
 
