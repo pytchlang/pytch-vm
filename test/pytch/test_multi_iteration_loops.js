@@ -21,6 +21,20 @@ const import_loop_iteration_control_syscalls
          + "push_loop_iterations_per_frame, "
          + "pop_loop_iterations_per_frame)");
 
+const n_value_history = (project, n_frames) => {
+    const counter_0 = project.instance_0_by_class_name("Counter");
+    const current_n = () => js_getattr(counter_0.py_object, "n");
+
+    project.do_synthetic_broadcast("run");
+    let got_ns = [];
+    for (let i = 0; i < n_frames; ++i) {
+        one_frame(project);
+        got_ns.push(current_n());
+    }
+
+    return got_ns;
+};
+
 describe("Multiple loop iterations per frame", () => {
     [
         { iters_per_frame: 5, exp_ns: [5, 10, 15, 21, 22] },
