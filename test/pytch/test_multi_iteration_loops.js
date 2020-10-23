@@ -16,6 +16,25 @@ configure_mocha();
 //
 // Machinery to allow more than one loop iteration per frame.
 
+const import_loop_iteration_control_syscalls
+      = ("from pytch.syscalls import ("
+         + "push_loop_iterations_per_frame, "
+         + "pop_loop_iterations_per_frame)");
+
+const n_value_history = (project, n_frames) => {
+    const counter_0 = project.instance_0_by_class_name("Counter");
+    const current_n = () => js_getattr(counter_0.py_object, "n");
+
+    project.do_synthetic_broadcast("run");
+    let got_ns = [];
+    for (let i = 0; i < n_frames; ++i) {
+        one_frame(project);
+        got_ns.push(current_n());
+    }
+
+    return got_ns;
+};
+
 describe("Multiple loop iterations per frame", () => {
     [
         { iters_per_frame: 5, exp_ns: [5, 10, 15, 21, 22] },
@@ -31,10 +50,7 @@ describe("Multiple loop iterations per frame", () => {
             const project = await import_deindented(`
 
                 import pytch
-                from pytch.syscalls import (
-                    push_loop_iterations_per_frame,
-                    pop_loop_iterations_per_frame,
-                )
+                ${import_loop_iteration_control_syscalls}
 
                 class Counter(pytch.Sprite):
                     Costumes = []
@@ -50,16 +66,7 @@ describe("Multiple loop iterations per frame", () => {
                             self.n += 1
             `);
 
-            const counter_0 = project.instance_0_by_class_name("Counter");
-            const current_n = () => js_getattr(counter_0.py_object, "n");
-
-            project.do_synthetic_broadcast("run");
-            let got_ns = [];
-            for (let i = 0; i < 5; ++i) {
-                one_frame(project);
-                got_ns.push(current_n());
-            }
-
+            const got_ns = n_value_history(project, 5);
             assert.deepEqual(got_ns, spec.exp_ns);
         });
     });
@@ -68,10 +75,7 @@ describe("Multiple loop iterations per frame", () => {
         const project = await import_deindented(`
 
             import pytch
-            from pytch.syscalls import (
-                push_loop_iterations_per_frame,
-                pop_loop_iterations_per_frame,
-            )
+            ${import_loop_iteration_control_syscalls}
 
             class Counter(pytch.Sprite):
                 Costumes = []
@@ -86,10 +90,7 @@ describe("Multiple loop iterations per frame", () => {
         project.do_synthetic_broadcast("trouble");
         one_frame(project);
 
-        const errs = pytch_errors.drain_errors();
-        assert.strictEqual(errs.length, 1);
-
-        const err_str = errs[0].err.toString();
+        const err_str = pytch_errors.sole_error_string();
         assert.ok(/cannot pop the base/.test(err_str));
     });
 
@@ -103,9 +104,7 @@ describe("Multiple loop iterations per frame", () => {
                const project = await import_deindented(`
 
                    import pytch
-                   from pytch.syscalls import (
-                       push_loop_iterations_per_frame,
-                   )
+                   ${import_loop_iteration_control_syscalls}
 
                    class Counter(pytch.Sprite):
                        Costumes = []
@@ -118,10 +117,7 @@ describe("Multiple loop iterations per frame", () => {
                project.do_synthetic_broadcast("trouble");
                one_frame(project);
 
-               const errs = pytch_errors.drain_errors();
-               assert.strictEqual(errs.length, 1);
-
-               const err_str = errs[0].err.toString();
+               const err_str = pytch_errors.sole_error_string();
                assert.ok(/positive integer required/.test(err_str));
            })
     );
@@ -138,10 +134,7 @@ describe("Multiple loop iterations per frame", () => {
                const full_code = `
 
                    import pytch
-                   from pytch.syscalls import (
-                       push_loop_iterations_per_frame,
-                       pop_loop_iterations_per_frame,
-                   )
+                   ${import_loop_iteration_control_syscalls}
                    ${spec.code}
                `;
 
@@ -210,17 +203,7 @@ describe("Multiple loop iterations per frame", () => {
                         self.count_up_by_five()
             `);
 
-            const counter_0 = project.instance_0_by_class_name("Counter");
-            const current_n = () => js_getattr(counter_0.py_object, "n");
-
-            project.do_synthetic_broadcast("run")
-
-            let got_ns = [];
-            for (let i = 0; i < 15; ++i) {
-                one_frame(project);
-                got_ns.push(current_n());
-            }
-
+            const got_ns = n_value_history(project, 15);
             assert.deepEqual(got_ns, spec.exp_ns);
         });
     });
@@ -246,17 +229,7 @@ describe("Multiple loop iterations per frame", () => {
                         self.count_ten()
         `);
 
-        const counter_0 = project.instance_0_by_class_name("Counter");
-        const current_n = () => js_getattr(counter_0.py_object, "n");
-
-        project.do_synthetic_broadcast("run");
-
-        let got_ns = [];
-        for (let i = 0; i < 7; ++i) {
-            one_frame(project);
-            got_ns.push(current_n());
-        }
-
+        const got_ns = n_value_history(project, 7);
         assert.deepEqual(got_ns, [11, 22, 33, 44, 55, 55, 55]);
     });
 
@@ -285,17 +258,7 @@ describe("Multiple loop iterations per frame", () => {
                     self.count_in_twos()
         `);
 
-        const counter_0 = project.instance_0_by_class_name("Counter");
-        const current_n = () => js_getattr(counter_0.py_object, "n");
-
-        project.do_synthetic_broadcast("run");
-
-        let got_ns = [];
-        for (let i = 0; i < 5; ++i) {
-            one_frame(project);
-            got_ns.push(current_n());
-        }
-
+        const got_ns = n_value_history(project, 5);
         assert.deepEqual(got_ns, [2, 4, 6, 8, 10]);
     });
 });

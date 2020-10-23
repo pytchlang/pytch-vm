@@ -27,12 +27,10 @@ describe("Use of for/while loops at module top-level", () => {
                     i += 1
     `;
 
-    const loop_test_specs = [
+    [
         { label: 'for loop', code: for_loop_code },
         { label: 'while loop', code: while_loop_code },
-    ];
-
-    loop_test_specs.forEach(spec =>
+    ].forEach(spec =>
         it(`allows top-level loop (${spec.label})`, async () => {
             const project = await import_deindented(`
 
