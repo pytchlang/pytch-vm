@@ -1,6 +1,7 @@
 import sys
 
 import unittest
+from test_grammar import (VALID_UNDERSCORE_LITERALS, INVALID_UNDERSCORE_LITERALS)
 
 L = [
         ('0', 0),
@@ -214,9 +215,22 @@ class IntTestCases(unittest.TestCase):
         self.assertEqual(int('1z141z5', 36), 4294967297)
 
     def test_underscores(self):
+        for lit in VALID_UNDERSCORE_LITERALS:
+            if any(ch in lit for ch in '.eEjJ'):
+                continue
+            self.assertEqual(int(lit, 0), int(lit.replace('_', ''), 0))
+
+        for lit in INVALID_UNDERSCORE_LITERALS:
+            if lit in ('0_7', '09_99'):  # octals are not recognized here
+                continue
+            if any(ch in lit for ch in '.eEjJ'):
+                continue
+            self.assertRaises(ValueError, int, lit, 0)
+
         # Additional test cases with bases != 0, only for the constructor:
-        # self.assertEqual(int("1_00", 3), 9)
-        # self.assertEqual(int("0_100"), 100)  # not valid as a literal!
+        self.assertEqual(int("1_00", 3), 9)
+        self.assertEqual(int("0_100"), 100)  # not valid as a literal!
+        # self.assertEqual(int(b"1_00"), 100)  # byte underscore
         self.assertRaises(ValueError, int, "_100")
         self.assertRaises(ValueError, int, "+_100")
         self.assertRaises(ValueError, int, "1__00")
@@ -232,6 +246,7 @@ class IntTestCases(unittest.TestCase):
 
     def test_keyword_args(self):
         # Test invoking int() using keyword arguments.
+        # x = no longer supported in Python
         # self.assertEqual(int(x=1.2), 1)
         self.assertEqual(int('100', base=2), 4)
         # self.assertEqual(int(x='100', base=2), 4)

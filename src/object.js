@@ -16,6 +16,50 @@ Sk.builtin.object = function () {
     return this;
 };
 
+Object.defineProperties(Sk.builtin.object.prototype, /**@lends {Sk.builtin.object.prototype}*/ {
+    ob$type: { value: Sk.builtin.object, writable: true },
+    tp$name: { value: "object", writable: true },
+    tp$base: { value: undefined, writable: true },
+    sk$object: { value: true },
+});
+
+/**
+ * @description
+ * We aim to match python and javascript inheritance like
+ * type   instanceof object => true
+ * object instanceof type   => true
+ * type   instanceof type   => true
+ * object instanceof object => true
+ *
+ * type   subclassof object => type.prototype   instanceof object => true
+ * object subclassof type   => object.prototype instanceof type   => false
+ * 
+ * this algorithm achieves the equivalent with the following prototypical chains
+ * using `Object.setPrototypeOf`
+ *
+ * ```
+ * type.__proto__             = type.prototype   (type   instanceof type  )
+ * type.__proto__.__proto__   = object.prototype (type   instanceof object)
+ * type.prototype.__proto__   = object.prototype (type   subclassof object)
+ * object.__proto__           = type.prototype   (object instanceof type  )
+ * object.__proto__.__proto__ = object.prototype (object instanceof object)
+ * ```
+ *
+ * while `Object.setPrototypeOf` is not considered [good practice](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/setPrototypeOf)
+ * this is a particularly unique use case and creates a lot of prototypical benefits
+ * all single inheritance classes (i.e. all builtins) now follow prototypical inheritance
+ * similarly it makes metclasses that much easier to implement
+ * Object.setPrototypeOf is also a feature built into the javascript language
+ *
+ * @ignore
+ */
+(function setUpBaseInheritance () {
+    Object.setPrototypeOf(Sk.builtin.type.prototype, Sk.builtin.object.prototype);
+    Object.setPrototypeOf(Sk.builtin.type, Sk.builtin.type.prototype);
+    Object.setPrototypeOf(Sk.builtin.object, Sk.builtin.type.prototype);
+    Sk.builtin.type.prototype.tp$base = Sk.builtin.object;
+})();
+
 Sk.builtin.object.prototype.__init__ = function __init__() {
     return Sk.builtin.none.none$;
 };
@@ -44,7 +88,6 @@ Sk.builtin.object.prototype.GenericGetAttr = function (pyName, canSuspend) {
     var tp;
     var dict;
     var getf;
-    var jsName = pyName.$jsstr();
 
     tp = this.ob$type;
     Sk.asserts.assert(tp !== undefined, "object has no ob$type!");
@@ -59,11 +102,12 @@ Sk.builtin.object.prototype.GenericGetAttr = function (pyName, canSuspend) {
         } else if (dict.mp$subscript) {
             res = Sk.builtin._tryGetSubscript(dict, pyName);
         } else if (typeof dict === "object") {
-            res = dict[jsName];
+            const mangled = pyName.$mangled;
+            res = dict[mangled];
         }
         if (res !== undefined) {
             return res;
-        } else if (jsName == "__dict__" && dict instanceof Sk.builtin.dict) {
+        } else if (pyName.$jsstr() == "__dict__" && dict instanceof Sk.builtin.dict) {
             return dict;
         }
     }
@@ -141,12 +185,11 @@ Sk.builtin.object.prototype.GenericSetAttr = function (pyName, value, canSuspend
     dict = this["$d"] || this.constructor["$d"];
 
     if (jsName == "__class__") {
-        if (value.tp$mro === undefined || value.tp$name === undefined) {
+        if (value.tp$mro === undefined || value.sk$klass === undefined) {
             throw new Sk.builtin.TypeError(
                 "attempted to assign non-class to __class__");
         }
         this.ob$type = value;
-        this.tp$name = value.tp$name;
         return;
     }
 
@@ -165,11 +208,12 @@ Sk.builtin.object.prototype.GenericSetAttr = function (pyName, value, canSuspend
         if (this instanceof Sk.builtin.object && !(this.ob$type.sk$klass) &&
             dict.mp$lookup(pyName) === undefined) {
             // Cannot add new attributes to a builtin object
-            throw new Sk.builtin.AttributeError("'" + objname + "' object has no attribute '" + Sk.unfixReserved(jsName) + "'");
+            throw new Sk.builtin.AttributeError("'" + objname + "' object has no attribute '" + pyName.$jsstr() + "'");
         }
         dict.mp$ass_subscript(pyName, value);
     } else if (typeof dict === "object") {
-        dict[jsName] = value;
+        const mangled = pyName.$mangled;
+        dict[mangled] = value;
     }
 };
 Sk.exportSymbol("Sk.builtin.object.prototype.GenericSetAttr", Sk.builtin.object.prototype.GenericSetAttr);
@@ -191,18 +235,6 @@ Sk.builtin.object.prototype.tp$setattr = Sk.builtin.object.prototype.GenericSetA
 Sk.builtin.object.prototype["__getattribute__"] = Sk.builtin.object.prototype.GenericPythonGetAttr;
 Sk.builtin.object.prototype["__setattr__"] = Sk.builtin.object.prototype.GenericPythonSetAttr;
 
-/**
- * The name of this class.
- * @type {string}
- */
-Sk.builtin.object.prototype.tp$name = "object";
-
-/**
- * The type object of this class.
- * @type {Sk.builtin.type|Object}
- */
-Sk.builtin.object.prototype.ob$type = Sk.builtin.type.makeIntoTypeObj("object", Sk.builtin.object);
-Sk.builtin.object.prototype.ob$type.sk$klass = undefined;   // Nonsense for closure compiler
 Sk.builtin.object.prototype.tp$descr_set = undefined;   // Nonsense for closure compiler
 
 /** Default implementations of dunder methods found in all Python objects */
@@ -360,7 +392,16 @@ Sk.builtin.object.prototype["__ge__"] = function (self, other) {
  * @return {Sk.builtin.str} The Python string representation of this instance.
  */
 Sk.builtin.object.prototype["$r"] = function () {
-    return new Sk.builtin.str("<object>");
+    const mod = Sk.abstr.lookupSpecial(this, Sk.builtin.str.$module);
+    let cname = "";
+    if (mod && Sk.builtin.checkString(mod)) {
+        cname = mod.v + ".";
+    }
+    return new Sk.builtin.str("<" + cname + Sk.abstr.typeName(this) + " object>");
+};
+
+Sk.builtin.object.prototype.tp$str = function () {
+    return this.$r();
 };
 
 Sk.builtin.hashCount = 1;
@@ -492,7 +533,7 @@ Sk.builtin.object.pythonFunctions = [
  * @extends {Sk.builtin.object}
  */
 Sk.builtin.none = function () {
-    this.v = null;
+    return Sk.builtin.none.none$; // always return the same object
 };
 Sk.abstr.setUpInheritance("NoneType", Sk.builtin.none, Sk.builtin.object);
 
@@ -505,10 +546,13 @@ Sk.builtin.none.prototype.tp$hash = function () {
 };
 
 /**
- * Python None constant.
+ * Python None value.
  * @type {Sk.builtin.none}
+ * @member {Sk.builtin.none}
  */
-Sk.builtin.none.none$ = new Sk.builtin.none();
+Sk.builtin.none.none$ =  /** @type {Sk.builtin.none} */ (Object.create(Sk.builtin.none.prototype, {
+    v: { value: null, enumerable: true },
+}));
 
 /**
  * @constructor
@@ -516,7 +560,9 @@ Sk.builtin.none.none$ = new Sk.builtin.none();
  *
  * @extends {Sk.builtin.object}
  */
-Sk.builtin.NotImplemented = function() { };
+Sk.builtin.NotImplemented = function() {
+    return Sk.builtin.NotImplemented.NotImplemented$; // always return the same object
+};
 Sk.abstr.setUpInheritance("NotImplementedType", Sk.builtin.NotImplemented, Sk.builtin.object);
 
 /** @override */
@@ -525,8 +571,10 @@ Sk.builtin.NotImplemented.prototype["$r"] = function () { return new Sk.builtin.
 /**
  * Python NotImplemented constant.
  * @type {Sk.builtin.NotImplemented}
+ * @member {Sk.builtin.NotImplemented}
  */
-Sk.builtin.NotImplemented.NotImplemented$ = new Sk.builtin.NotImplemented();
-
+Sk.builtin.NotImplemented.NotImplemented$ =  /** @type {Sk.builtin.NotImplemented} */ (Object.create(Sk.builtin.NotImplemented.prototype, {
+    v: { value: null, enumerable: true },
+}));
 Sk.exportSymbol("Sk.builtin.none", Sk.builtin.none);
 Sk.exportSymbol("Sk.builtin.NotImplemented", Sk.builtin.NotImplemented);

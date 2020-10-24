@@ -46,7 +46,6 @@ Sk.python2 = {
     octal_number_literal: false,
     bankers_rounding: false,
     python_version: false,
-    dunder_next: false,
     dunder_round: false,
     exceptions: false,
     no_long_type: false,
@@ -67,7 +66,6 @@ Sk.python3 = {
     octal_number_literal: true,
     bankers_rounding: true,
     python_version: true,
-    dunder_next: true,
     dunder_round: true,
     exceptions: true,
     no_long_type: true,
@@ -167,7 +165,6 @@ Sk.configure = function (options) {
     Sk.bool_check(Sk.__future__.octal_number_literal, "Sk.__future__.octal_number_literal");
     Sk.bool_check(Sk.__future__.bankers_rounding, "Sk.__future__.bankers_rounding");
     Sk.bool_check(Sk.__future__.python_version, "Sk.__future__.python_version");
-    Sk.bool_check(Sk.__future__.dunder_next, "Sk.__future__.dunder_next");
     Sk.bool_check(Sk.__future__.dunder_round, "Sk.__future__.dunder_round");
     Sk.bool_check(Sk.__future__.exceptions, "Sk.__future__.exceptions");
     Sk.bool_check(Sk.__future__.no_long_type, "Sk.__future__.no_long_type");
@@ -185,7 +182,7 @@ Sk.configure = function (options) {
     Sk.inputfunTakesPrompt = options["inputfunTakesPrompt"] || false;
     Sk.asserts.assert(typeof Sk.inputfunTakesPrompt === "boolean");
 
-    Sk.retainGlobals = options["retainglobals"] || false;
+    Sk.retainGlobals = options["retainglobals"] || options["retainGlobals"] || false;
     Sk.asserts.assert(typeof Sk.retainGlobals === "boolean");
 
     Sk.debugging = options["debugging"] || false;
@@ -258,17 +255,21 @@ Sk.configure = function (options) {
     Sk.misceval.softspace_ = false;
 
     Sk.switch_version("round$", Sk.__future__.dunder_round);
-    Sk.switch_version("next$", Sk.__future__.dunder_next);
+    Sk.switch_version("next$", Sk.__future__.python3);
     Sk.switch_version("haskey$", Sk.__future__.python3);
     Sk.switch_version("clear$", Sk.__future__.python3);
     Sk.switch_version("copy$", Sk.__future__.python3);
 
-    Sk.builtin.lng.tp$name = Sk.__future__.no_long_type ? "int" : "long";
+    Sk.builtin.lng.prototype.tp$name = Sk.__future__.no_long_type ? "int" : "long";
+    Sk.builtin.lng.prototype.ob$type = Sk.__future__.no_long_type ? Sk.builtin.int_ : Sk.builtin.lng;
+
+    Sk.builtin.str.$next = Sk.__future__.python3 ? new Sk.builtin.str("__next__") : new Sk.builtin.str("next");
 
     Sk.setupOperators(Sk.__future__.python3);
     Sk.setupDunderMethods(Sk.__future__.python3);
-    Sk.setupDictIterators(Sk.__future__.python3);
+    setupDictIterators(Sk.__future__.python3);
     Sk.setupObjects(Sk.__future__.python3);
+    Sk.token.setupTokens(Sk.__future__.python3);
 };
 
 Sk.exportSymbol("Sk.configure", Sk.configure);
@@ -313,11 +314,16 @@ Sk.output = function (x) {
 };
 
 /*
- * Replacable function to load modules with (called via import, etc.)
+ * Replaceable function to load modules with (called via import, etc.)
  * todo; this should be an async api
  */
 Sk.read = function (x) {
-    throw "Sk.read has not been implemented";
+    if (Sk.builtinFiles === undefined) {
+        throw "skulpt-stdlib.js has not been loaded";
+    } else if (Sk.builtinFiles.files[x] === undefined) {
+        throw "File not found: '" + x + "'";
+    }
+    return Sk.builtinFiles.files[x];
 };
 
 /*
@@ -405,7 +411,6 @@ Sk.setup_method_mappings = function () {
             "classes": [Sk.builtin.dict_iter_,
                         Sk.builtin.list_iter_,
                         Sk.builtin.set_iter_,
-                        Sk.builtin.frozenset_iter_,
                         Sk.builtin.str_iter_,
                         Sk.builtin.tuple_iter_,
                         Sk.builtin.generator,
@@ -455,3 +460,16 @@ Sk.switch_version = function (method_to_map, python3) {
 
 Sk.exportSymbol("Sk.__future__", Sk.__future__);
 Sk.exportSymbol("Sk.inputfun", Sk.inputfun);
+
+function setupDictIterators (python3) {
+    if (python3) {
+        Sk.builtin.dict.prototype["keys"] = new Sk.builtin.func(Sk.builtin.dict.prototype.py3$keys);
+        Sk.builtin.dict.prototype["values"] = new Sk.builtin.func(Sk.builtin.dict.prototype.py3$values);
+        Sk.builtin.dict.prototype["items"] = new Sk.builtin.func(Sk.builtin.dict.prototype.py3$items);
+    } else {
+        Sk.builtin.dict.prototype["keys"] = new Sk.builtin.func(Sk.builtin.dict.prototype.py2$keys);
+        Sk.builtin.dict.prototype["values"] = new Sk.builtin.func(Sk.builtin.dict.prototype.py2$values);
+        Sk.builtin.dict.prototype["items"] = new Sk.builtin.func(Sk.builtin.dict.prototype.py2$items);
+    }
+};
+

@@ -40,6 +40,9 @@ Sk.builtins = {
     "IndexError"         : Sk.builtin.IndexError,
     "KeyError"           : Sk.builtin.KeyError,
     "TypeError"          : Sk.builtin.TypeError,
+    "LookupError"        : Sk.builtin.LookupError,
+    "UnicodeDecodeError" : Sk.builtin.UnicodeDecodeError,
+    "UnicodeEncodeError" : Sk.builtin.UnicodeEncodeError,
     "NameError"          : Sk.builtin.NameError,
     "IOError"            : Sk.builtin.IOError,
     "NotImplementedError": Sk.builtin.NotImplementedError,
@@ -90,7 +93,7 @@ Sk.builtins = {
     "bytearray" : Sk.builtin.bytearray,
     "callable"  : Sk.builtin.callable,
     "delattr"   : Sk.builtin.delattr,
-    "eval_$rn$" : Sk.builtin.eval_,
+    "eval_$rw$" : Sk.builtin.eval_,
     "execfile"  : Sk.builtin.execfile,
     "frozenset" : Sk.builtin.frozenset,
     "help"      : Sk.builtin.help,
@@ -104,7 +107,7 @@ Sk.builtins = {
     "unichr"    : Sk.builtin.unichr,
     "vars"      : Sk.builtin.vars,
     "xrange"    : Sk.builtin.xrange,
-    "apply_$rn$": Sk.builtin.apply_,
+    "apply_$rw$": Sk.builtin.apply_,
     "buffer"    : Sk.builtin.buffer,
     "coerce"    : Sk.builtin.coerce,
     "intern"    : Sk.builtin.intern
@@ -115,18 +118,27 @@ Sk.setupObjects = function (py3) {
         Sk.builtins["filter"] = Sk.builtin.filter_;
         Sk.builtins["map"] = Sk.builtin.map_;
         Sk.builtins["zip"] = Sk.builtin.zip_;
+        Sk.builtins["bytes"] = Sk.builtin.bytes;
         Sk.builtins["range"] = new Sk.builtin.func(Sk.builtin.xrange);
         delete Sk.builtins["xrange"];
         delete Sk.builtins["StandardError"];
         delete Sk.builtins["unicode"];
+        delete Sk.builtins["basestring"];
+        delete Sk.builtin.str.prototype.decode;
+        Sk.builtins["bytes"] = Sk.builtin.bytes;
+        Sk.builtins["ascii"] = new Sk.builtin.func(Sk.builtin.ascii);
     } else {
         Sk.builtins["filter"] = new Sk.builtin.func(Sk.builtin.filter);
         Sk.builtins["map"] = new Sk.builtin.func(Sk.builtin.map);
         Sk.builtins["zip"] = new Sk.builtin.func(Sk.builtin.zip);
         Sk.builtins["range"] = new Sk.builtin.func(Sk.builtin.range);
         Sk.builtins["xrange"] = new Sk.builtin.func(Sk.builtin.xrange);
-        Sk.builtins["StandardError"] = Sk.builtin.StandardError;
+        Sk.builtins["StandardError"] = Sk.builtin.Exception;
         Sk.builtins["unicode"] = Sk.builtin.str;
+        Sk.builtins["basestring"] = Sk.builtin.str;
+        Sk.builtin.str.prototype.decode = Sk.builtin.str.$py2decode;
+        delete Sk.builtins["bytes"];
+        delete Sk.builtins["ascii"];
     }
 };
 Sk.exportSymbol("Sk.setupObjects", Sk.setupObjects);

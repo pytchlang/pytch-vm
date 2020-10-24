@@ -1,39 +1,35 @@
 /**
  * @constructor
  * @param {Array.<Object>|Object} L
+ * @param {boolean=} canSuspend
  */
-Sk.builtin.tuple = function (L) {
-    var it, i;
+Sk.builtin.tuple = function (L, canSuspend) {
     if (!(this instanceof Sk.builtin.tuple)) {
+        // called from python
         Sk.builtin.pyCheckArgsLen("tuple", arguments.length, 0, 1);
-        return new Sk.builtin.tuple(L);
+        return new Sk.builtin.tuple(L, true);
     }
-
 
     if (L === undefined) {
-        L = [];
-    }
-
-    if (Object.prototype.toString.apply(L) === "[object Array]") {
+        this.v = [];
+    } else if (Array.isArray(L)) {
         this.v = L;
     } else {
-        if (Sk.builtin.checkIterable(L)) {
-            this.v = [];
-            for (it = Sk.abstr.iter(L), i = it.tp$iternext(); i !== undefined; i = it.tp$iternext()) {
-                this.v.push(i);
-            }
-        } else {
-            throw new Sk.builtin.TypeError("expecting Array or iterable");
-        }
+        return Sk.misceval.chain(Sk.misceval.arrayFromIterable(L, canSuspend), (v) => {
+            this.v = v;
+            return this;
+        });
     }
-
-    this.__class__ = Sk.builtin.tuple;
-
-    this["v"] = this.v;
-    return this;
 };
 
 Sk.abstr.setUpInheritance("tuple", Sk.builtin.tuple, Sk.builtin.seqtype);
+
+Sk.builtin.tuple.prototype.__class__ = Sk.builtin.tuple;
+
+/* Return copy of internal array */
+Sk.builtin.tuple.prototype.sk$asarray = function () {
+    return this.v.slice(0);
+};
 
 Sk.builtin.tuple.prototype["$r"] = function () {
     var ret;
@@ -54,8 +50,7 @@ Sk.builtin.tuple.prototype["$r"] = function () {
 };
 
 Sk.builtin.tuple.prototype.mp$subscript = function (index) {
-    var ret;
-    var i;
+    let i;
     if (Sk.misceval.isIndex(index)) {
         i = Sk.misceval.asIndex(index);
         if (typeof i !== "number") {
@@ -71,9 +66,9 @@ Sk.builtin.tuple.prototype.mp$subscript = function (index) {
             return this.v[i];
         }
     } else if (index instanceof Sk.builtin.slice) {
-        ret = [];
-        index.sssiter$(this, function (i, wrt) {
-            ret.push(wrt.v[i]);
+        const ret = [];
+        index.sssiter$(this.v.length, (i) => {
+            ret.push(this.v[i]);
         });
         return new Sk.builtin.tuple(ret);
     }
@@ -107,19 +102,19 @@ Sk.builtin.tuple.prototype.tp$hash = function () {
 };
 
 Sk.builtin.tuple.prototype.sq$repeat = function (n) {
-    var j;
-    var i;
+    var i, cnt;
     var ret;
+    if (!Sk.misceval.isIndex(n)) {
+        throw new Sk.builtin.TypeError("can't multiply sequence by non-int of type '" + Sk.abstr.typeName(n) + "'");
+    }
 
-    n = Sk.misceval.asIndex(n);
-    if (typeof n !== "number") {
+    cnt = Sk.misceval.asIndex(n);
+    if (typeof cnt !== "number") {
         throw new Sk.builtin.OverflowError("cannot fit '" + Sk.abstr.typeName(n) + "' into an index-sized integer");
     }
     ret = [];
-    for (i = 0; i < n; ++i) {
-        for (j = 0; j < this.v.length; ++j) {
-            ret.push(this.v[j]);
-        }
+    for (i = 0; i < cnt; ++i) {
+        ret.push.apply(ret, this.v);
     }
     return new Sk.builtin.tuple(ret);
 };
@@ -219,15 +214,15 @@ Sk.builtin.tuple.prototype.sq$concat = function (other) {
     return new Sk.builtin.tuple(this.v.concat(other.v));
 };
 
-Sk.builtin.tuple.prototype.sq$contains = function (ob) {
-    var it, i;
+Sk.builtin.tuple.prototype.sq$contains = function (item) {
+    var i;
+    var obj = this.v;
 
-    for (it = this.tp$iter(), i = it.tp$iternext(); i !== undefined; i = it.tp$iternext()) {
-        if (Sk.misceval.richCompareBool(i, ob, "Eq")) {
+    for (i = 0; i < obj.length; i++) {
+        if (Sk.misceval.richCompareBool(obj[i], item, "Eq")) {
             return true;
         }
     }
-
     return false;
 };
 
@@ -277,7 +272,7 @@ Sk.builtin.tuple_iter_ = function (obj) {
     this.$index = 0;
     this.$obj = obj.v.slice();
     this.sq$length = this.$obj.length;
-    this.tp$iter = this;
+    this.tp$iter = () => this;
     this.tp$iternext = function () {
         if (this.$index >= this.sq$length) {
             return undefined;

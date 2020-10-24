@@ -36,10 +36,12 @@ Sk.configure({
     output: (args) => { process.stdout.write(args); },
     read: (fname) => { return fs.readFileSync(fname, "utf8"); },
     systemexit: true,
-    retainglobals: true,
+    retainGlobals: true,
     inputfun: readline,
     __future__: py3 ? Sk.python3 : Sk.python2,
 });
+
+Sk.globals = { __name__: new Sk.builtin.str("__main__")};
 
 var //finds lines starting with "print"
     re = new RegExp("\\s*print"),
@@ -60,10 +62,10 @@ var //finds lines starting with "print"
 
 if (Sk.__future__.python3) {
     console.log("Python 3.7(ish) (skulpt, " + new Date() + ")");
-    printevaluationresult = "if not evaluationresult == None: print(repr(evaluationresult))"
+    printevaluationresult = "if not evaluationresult == None: print(repr(evaluationresult))";
 } else {
     console.log("Python 2.7(ish) (skulpt, " + new Date() + ")");
-    printevaluationresult = "if not evaluationresult == None: print repr(evaluationresult)"
+    printevaluationresult = "if not evaluationresult == None: print repr(evaluationresult)";
 }
 console.log("[node: " + process.version + "] on a system");
 console.log('Don\'t type "help", "copyright", "credits" or "license" unless you\'ve assigned something to them');

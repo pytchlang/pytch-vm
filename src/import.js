@@ -60,8 +60,6 @@ Sk.importSearchPathForName = function (name, ext, searchPath) {
  * @return {undefined}
  */
 Sk.doOneTimeInitialization = function (canSuspend) {
-    var proto, name, i, x, func, typesWithFunctionsToWrap, builtin_type, j;
-
     // can't fill these out when making the type because tuple/dict aren't
     // defined yet.
     Sk.builtin.type.basesStr_ = new Sk.builtin.str("__bases__");
@@ -70,47 +68,42 @@ Sk.doOneTimeInitialization = function (canSuspend) {
     // Register a Python class with an internal dictionary, which allows it to
     // be subclassed
     var setUpClass = function (child) {
-        var parent = child.prototype.tp$base;
-        var bases = [];
-        var base;
+        const parent = child.prototype.tp$base;
+        const bases = [];
 
-        for (base = parent; base !== undefined; base = base.prototype.tp$base) {
-            if (!base.sk$abstract && Sk.builtins[base.tp$name]) {
+        for (let base = parent; base !== undefined; base = base.prototype.tp$base) {
+            if (!base.sk$abstract && Sk.builtins[base.prototype.tp$name]) {
                 // check the base is not an abstract class and that it is in the builtins dict
                 bases.push(base);
             }
         }
 
-        child.tp$mro = new Sk.builtin.tuple([child]);
-        if (!child.tp$base){
+        child.tp$mro = new Sk.builtin.tuple([child].concat(bases));
+        if (!child.hasOwnProperty("tp$base")){
             child.tp$base = bases[0];
         }
         child["$d"] = new Sk.builtin.dict([]);
-        child["$d"].mp$ass_subscript(Sk.builtin.type.basesStr_, new Sk.builtin.tuple(bases));
-        child["$d"].mp$ass_subscript(Sk.builtin.type.mroStr_, new Sk.builtin.tuple([child].concat(bases)));
+        child["$d"].mp$ass_subscript(Sk.builtin.type.basesStr_, child.tp$base ? new Sk.builtin.tuple([child.tp$base]) : new Sk.builtin.tuple([]));
+        child["$d"].mp$ass_subscript(Sk.builtin.type.mroStr_, child.tp$mro);
         child["$d"].mp$ass_subscript(new Sk.builtin.str("__name__"), new Sk.builtin.str(child.prototype.tp$name));
-        child.tp$setattr = function(pyName, value, canSuspend) {
-            throw new Sk.builtin.TypeError("can't set attributes of built-in/extension type '" + this.tp$name + "'");
-        };
     };
 
-    for (x in Sk.builtin) {
-        func = Sk.builtin[x];
-        if ((func.prototype instanceof Sk.builtin.object ||
-             func === Sk.builtin.object) && !func.sk$abstract) {
-            setUpClass(func);
+    for (let x in Sk.builtin) {
+        const type = Sk.builtin[x];
+        if (type instanceof Sk.builtin.type && type.sk$abstract === undefined) {
+            setUpClass(type);
         }
     }
 
     // Wrap the inner Javascript code of Sk.builtin.object's Python methods inside
     // Sk.builtin.func, as that class was undefined when these functions were declared
-    typesWithFunctionsToWrap = [Sk.builtin.object, Sk.builtin.type, Sk.builtin.func, Sk.builtin.method];
+    const typesWithFunctionsToWrap = [Sk.builtin.object, Sk.builtin.type, Sk.builtin.func, Sk.builtin.method];
 
-    for (i = 0; i < typesWithFunctionsToWrap.length; i++) {
-        builtin_type = typesWithFunctionsToWrap[i];
-        proto = builtin_type.prototype;
-        for (j = 0; j < builtin_type.pythonFunctions.length; j++) {
-            name = builtin_type.pythonFunctions[j];
+    for (let i = 0; i < typesWithFunctionsToWrap.length; i++) {
+        const builtin_type = typesWithFunctionsToWrap[i];
+        const proto = builtin_type.prototype;
+        for (let j = 0; j < builtin_type.pythonFunctions.length; j++) {
+            const name = builtin_type.pythonFunctions[j];
 
             if (proto[name] instanceof Sk.builtin.func) {
                 // If functions have already been initialized, do not wrap again.
@@ -129,6 +122,8 @@ Sk.doOneTimeInitialization = function (canSuspend) {
         mod = Sk.misceval.retryOptionalSuspensionOrThrow(mod);
         Sk.asserts.assert(mod["$d"][fileWithoutExtension] !== undefined, "Should have imported name " + fileWithoutExtension);
         Sk.builtins[fileWithoutExtension] = mod["$d"][fileWithoutExtension];
+        delete Sk.builtins[fileWithoutExtension].__module__;
+        delete Sk.globals[fileWithoutExtension];
     }
 };
 
@@ -208,13 +203,12 @@ Sk.importModuleInternal_ = function (name, dumpJS, modname, suppliedPyBody, rela
         topLevelModuleToReturn = topLevelModuleToReturn_;
 
         // if leaf is already in sys.modules, early out
-        try {
-            prev = Sk.sysmodules.mp$subscript(modname);
+        prev = Sk.sysmodules.mp$lookup(modname);
+        if (prev !== undefined) {
             // if we're a dotted module, return the top level, otherwise ourselves
             return topLevelModuleToReturn || prev;
-        } catch (x) {
-            // not in sys.modules, continue
         }
+        // not in sys.modules, continue
 
         return Sk.misceval.chain(undefined, function() {
             var codeAndPath, co, googClosure;
@@ -238,7 +232,7 @@ Sk.importModuleInternal_ = function (name, dumpJS, modname, suppliedPyBody, rela
             // - run module and set the module locals returned to the module __dict__
             module = new Sk.builtin.module();
 
-            if (suppliedPyBody) {
+            if (typeof suppliedPyBody === "string") {
                 filename = name + ".py";
                 co = Sk.compile(suppliedPyBody, filename, "exec", canSuspend);
             } else {
@@ -495,11 +489,7 @@ Sk.builtin.__import__ = function (name, globals, locals, fromlist, level) {
             relativeToPackageNames.length -= level-1;
             relativeToPackageName = relativeToPackageNames.join(".");
         }
-        try {
-            relativeToPackage = Sk.sysmodules.mp$subscript(relativeToPackageName);
-        } catch(e) {
-            relativeToPackageName = undefined;
-        }
+        relativeToPackage = Sk.sysmodules.mp$lookup(relativeToPackageName);
     }
 
     if (level > 0 && relativeToPackage === undefined) {

@@ -15,81 +15,60 @@
  * @return {Sk.builtin.float_} Python float
  */
 Sk.builtin.float_ = function (x) {
-    var tmp;
-    if (x === undefined) {
-        return new Sk.builtin.float_(0.0);
-    }
-
     if (!(this instanceof Sk.builtin.float_)) {
         return new Sk.builtin.float_(x);
     }
 
-
-    if (x instanceof Sk.builtin.str) {
-        return Sk.builtin._str_to_float(x.v);
-    }
-
-    // Floats are just numbers
-    if (typeof x === "number" || x instanceof Sk.builtin.int_ || x instanceof Sk.builtin.lng || x instanceof Sk.builtin.float_) {
-        tmp = Sk.builtin.asnum$(x);
-        if (typeof tmp === "string") {
-            return Sk.builtin._str_to_float(tmp);
+    if (x === undefined) {
+        this.v = 0.0;
+    } else if (typeof x === "number") {
+        this.v = x;
+    } else if (x.nb$float_) {
+        const tmp = x.nb$float_();
+        if (tmp.constructor !== Sk.builtin.float_) {
+            throw new Sk.builtin.TypeError("__float__ returned non-float (type " + Sk.abstr.typeName(tmp) + ")");
         }
-        this.v = tmp;
-        return this;
-    }
-
-    // Convert booleans
-    if (x instanceof Sk.builtin.bool) {
-        this.v = Sk.builtin.asnum$(x);
-        return this;
-    }
-
-    // this is a special internal case
-    if(typeof x === "boolean") {
+        this.v = tmp.v;
+    } else if (Sk.builtin.checkString(x)) {
+        this.v = _str_to_float(x.$jsstr()).v;
+    } else if (typeof x === "boolean") {
         this.v = x ? 1.0 : 0.0;
-        return this;
-    }
-
-    if (typeof x === "string") {
+    } else if (typeof x === "string") {
         this.v = parseFloat(x);
-        if (this.v == Infinity || this.v == -Infinity){ //trying to convert a large js string to a float
-            throw new Sk.builtin.OverflowError("int too large to convert to float");
-        }
-        return this;
+    } else {
+        throw new Sk.builtin.TypeError("float() argument must be a string or a number");
     }
-
-    // try calling __float__
-    var special = Sk.abstr.lookupSpecial(x, Sk.builtin.str.$float_);
-    if (special != null) {
-        // method on builtin, provide this arg
-        return Sk.misceval.callsimArray(special, [x]);
-    }
-
-    throw new Sk.builtin.TypeError("float() argument must be a string or a number");
 };
 
 Sk.abstr.setUpInheritance("float", Sk.builtin.float_, Sk.builtin.numtype);
 
-Sk.builtin._str_to_float = function (str) {
-    var tmp;
-
-    if (str.match(/^-inf$/i)) {
-        tmp = -Infinity;
-    } else if (str.match(/^[+]?inf$/i)) {
-        tmp = Infinity;
-    } else if (str.match(/^[-+]?nan$/i)) {
-        tmp = NaN;
-    } else if (!isNaN(str)) {
-        tmp = parseFloat(str);
-        if (tmp === Infinity || tmp === -Infinity) {
-            throw new Sk.builtin.OverflowError("int too large to convert to float");
+const invalidUnderscores = /_[eE]|[eE]_|\._|_\.|[+-]_|__/;
+const validUnderscores = /_(?=[^_])/g;
+function _str_to_float(str) {
+    let ret;
+    let tmp = str;
+    
+    if (str.indexOf("_") !== -1) {
+        if (invalidUnderscores.test(str)) {
+            throw new Sk.builtin.ValueError("could not convert string to float: '" + str + "'");
         }
+    
+        tmp = str.charAt(0) + str.substring(1).replace(validUnderscores, "");
+    }
+    
+    if (str.match(/^-inf$/i)) {
+        ret = -Infinity;
+    } else if (str.match(/^[+]?inf$/i)) {
+        ret = Infinity;
+    } else if (str.match(/^[-+]?nan$/i)) {
+        ret = NaN;
+    } else if (!isNaN(tmp)) {
+        ret = parseFloat(tmp);
     } else {
         throw new Sk.builtin.ValueError("float: Argument: " + str + " is not number");
     }
-    return new Sk.builtin.float_(tmp);
-};
+    return new Sk.builtin.float_(ret);
+}
 
 Sk.builtin.float_.prototype.nb$int_ = function () {
     var v = this.v;
@@ -701,7 +680,7 @@ Sk.builtin.float_.prototype.ob$eq = function (other) {
         other instanceof Sk.builtin.lng ||
         other instanceof Sk.builtin.float_) {
         return new Sk.builtin.bool(this.numberCompare(other) == 0); //jshint ignore:line
-    } else if (other instanceof Sk.builtin.none) {
+    } else if (other === Sk.builtin.none.none$) {
         return Sk.builtin.bool.false$;
     } else {
         return Sk.builtin.NotImplemented.NotImplemented$;
@@ -714,7 +693,7 @@ Sk.builtin.float_.prototype.ob$ne = function (other) {
         other instanceof Sk.builtin.lng ||
         other instanceof Sk.builtin.float_) {
         return new Sk.builtin.bool(this.numberCompare(other) != 0); //jshint ignore:line
-    } else if (other instanceof Sk.builtin.none) {
+    } else if (other === Sk.builtin.none.none$) {
         return Sk.builtin.bool.true$;
     } else {
         return Sk.builtin.NotImplemented.NotImplemented$;

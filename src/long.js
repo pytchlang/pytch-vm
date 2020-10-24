@@ -118,7 +118,12 @@ Sk.builtin.lng.prototype.nb$lng_ = function () {
 };
 
 Sk.builtin.lng.prototype.nb$float_ = function() {
-    return new Sk.builtin.float_(Sk.ffi.remapToJs(this));
+    let tmp = Sk.builtin.asnum$(this);
+    tmp = parseFloat(tmp);
+    if (!isFinite(tmp)) {
+        throw new Sk.builtin.OverflowError("int too large to convert to float");
+    }
+    return new Sk.builtin.float_(tmp);
 };
 
 //    Threshold to determine when types should be converted to long
@@ -156,7 +161,7 @@ Sk.longFromStr = function (s, base) {
 Sk.exportSymbol("Sk.longFromStr", Sk.longFromStr);
 
 Sk.builtin.lng.prototype.toInt$ = function () {
-    return this.biginteger.intValue();
+    return parseInt(this.biginteger.toString(), 10);
 };
 
 Sk.builtin.lng.prototype.clone = function () {
@@ -741,7 +746,7 @@ Sk.builtin.lng.prototype.ob$eq = function (other) {
     if (other instanceof Sk.builtin.int_ || other instanceof Sk.builtin.lng ||
         other instanceof Sk.builtin.float_) {
         return new Sk.builtin.bool(this.longCompare(other) == 0); //jshint ignore:line
-    } else if (other instanceof Sk.builtin.none) {
+    } else if (other === Sk.builtin.none.none$) {
         return Sk.builtin.bool.false$;
     } else {
         return Sk.builtin.NotImplemented.NotImplemented$;
@@ -752,7 +757,7 @@ Sk.builtin.lng.prototype.ob$ne = function (other) {
     if (other instanceof Sk.builtin.int_ || other instanceof Sk.builtin.lng ||
         other instanceof Sk.builtin.float_) {
         return new Sk.builtin.bool(this.longCompare(other) != 0); //jshint ignore:line
-    } else if (other instanceof Sk.builtin.none) {
+    } else if (other === Sk.builtin.none.none$) {
         return Sk.builtin.bool.true$;
     } else {
         return Sk.builtin.NotImplemented.NotImplemented$;

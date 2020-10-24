@@ -1385,7 +1385,7 @@ class BuiltinTest(unittest.TestCase):
                     raise IndexError
                 else:
                     return i
-        self.assertEqual(list(zip(SequenceWithoutALength(), range(2**23))), list(enumerate(range(5))))
+        self.assertEqual(list(zip(SequenceWithoutALength(), range(2**10))), list(enumerate(range(5))))
         a = zip([1], [2])
         self.assertEqual(type(a), zip)
         l = [1,2,3,4]
@@ -1649,6 +1649,23 @@ class TestType(unittest.TestCase):
     #         pass
     #     self.assertRaises(TypeError, lambda: type('A', (B,), {'__slots__': '__dict__'}))
     #     self.assertRaises(TypeError, lambda: type('A', (B,), {'__slots__': '__weakref__'}))
+
+
+class HasClassMethod(object):
+    @classmethod
+    def foo(cls, *args, **kwargs):
+        return (cls, args, kwargs)
+
+
+class AlsoHasClassMethod(HasClassMethod):
+    pass
+
+
+class TestMisc(unittest.TestCase):
+    def test_classmethod(self):
+        self.assertEqual(HasClassMethod().foo(1, x=2), (HasClassMethod, (1,), {'x': 2}))
+        self.assertEqual(AlsoHasClassMethod().foo(1, x=2), (AlsoHasClassMethod, (1,), {'x': 2}))
+
 
 if __name__ == "__main__":
     unittest.main()

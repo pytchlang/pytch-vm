@@ -29,16 +29,7 @@ function showjs(text) {
 }
 
 
-function builtinRead(x) {
-    console.log(x);
-    if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined) {
-        throw "File not found: '" + x + "'";
-    }
 
-    var file = Sk.builtinFiles["files"][x];
-
-    return file;
-}
 
 function runit(myDiv, pyver) {
     var prog = document.getElementById(myDiv+"_code").value;
@@ -74,7 +65,6 @@ function runit(myDiv, pyver) {
 
     Sk.configure({
         output:outf,
-        read: builtinRead,
         inputfunTakesPrompt: true,
         debugout: showjs,
         debugging: debug,
@@ -110,9 +100,7 @@ function runit(myDiv, pyver) {
 <h3>Test Code</h3>
 <div id="runbrowser">
 <form>
-<textarea edit_id="eta_5" id="runbrowser_code" cols="72" rows="20" style="font-family: 'Lucida Console', Monaco, monospace;">
-<%- code %>
-</textarea>
+<textarea edit_id="eta_5" id="runbrowser_code" cols="72" rows="20" style="font-family: 'Lucida Console', Monaco, monospace;"><%- code %></textarea>
 <br>
 <input type="checkbox" id="debug">Debug</input>
 <br>

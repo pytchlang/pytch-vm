@@ -159,7 +159,7 @@ Sk.builtin.file.$readline = function (self, size, prompt) {
 
         x = Sk.inputfun(lprompt);
 
-        if (x instanceof Promise) {
+        if (x instanceof Promise || (x && typeof x.then === "function")) {
             susp = new Sk.misceval.Suspension();
 
             susp.resume = function() {
@@ -254,6 +254,7 @@ Sk.builtin.file.prototype["write"] = new Sk.builtin.func(function write(self, st
     } else {
         throw new Sk.builtin.IOError("File not open for writing");
     }
+    return Sk.builtin.none.none$;
 });
 
 

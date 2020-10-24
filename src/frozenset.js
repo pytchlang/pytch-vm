@@ -4,30 +4,40 @@
  */
 Sk.builtin.frozenset = function (S) {
     var it, i;
-    var S_list;
+    var obj, len;
+
     if (!(this instanceof Sk.builtin.frozenset)) {
         Sk.builtin.pyCheckArgsLen("frozenset", arguments.length, 0, 1);
         return new Sk.builtin.frozenset(S);
     }
 
-
-    if (typeof(S) === "undefined") {
-        S = [];
-    }
-
     this.frozenset_reset_();
-    S_list = new Sk.builtin.list(S);
 
-    for (it = Sk.abstr.iter(S_list), i = it.tp$iternext(); i !== undefined; i = it.tp$iternext()) {
-        this.v.mp$ass_subscript(i, true);
+    if (S !== undefined) {
+        obj = S;
+        if (obj.sk$asarray) {
+            obj = obj.sk$asarray();
+        }
+
+        if (Object.prototype.toString.apply(obj) === "[object Array]") {
+            len = obj.length;
+            for (i = 0; i < len; i++) {
+                this.v.mp$ass_subscript(obj[i], true);
+            }
+        } else if (Sk.builtin.checkIterable(obj)) {
+            for (it = Sk.abstr.iter(obj), i = it.tp$iternext(); i !== undefined; i = it.tp$iternext()) {
+                this.v.mp$ass_subscript(i, true);
+            }
+        } else {
+            throw new Sk.builtin.TypeError("'" + Sk.abstr.typeName(S) + "' " + "object is not iterable");
+        }
     }
 
-    this.__class__ = Sk.builtin.frozenset;
-
-    this["v"] = this.v;
     return this;
 };
 Sk.abstr.setUpInheritance("frozenset", Sk.builtin.frozenset, Sk.builtin.object);
+
+Sk.builtin.frozenset.prototype.__class__ = Sk.builtin.frozenset;
 
 Sk.builtin.frozenset.prototype.frozenset_reset_ = function () {
     this.v = new Sk.builtin.dict([]);
@@ -49,6 +59,25 @@ Sk.builtin.frozenset.prototype["$r"] = function () {
     } else {
         return new Sk.builtin.str("frozenset([" + ret.join(", ") + "])");
     }
+};
+
+Sk.builtin.frozenset.prototype.sk$asarray = function () {
+    return this.v.sk$asarray();
+};
+
+Sk.builtin.frozenset.prototype.tp$hash = function () {
+    // numbers taken from Cpython 2.7 hash function
+    let hash = 1927868237;
+    const entries = this.sk$asarray();
+    hash *= entries.length + 1;
+    for (let i = 0; i < entries.length; i++) {
+        const h = Sk.builtin.hash(entries[i]).v;
+        hash ^= (h ^ (h << 16) ^ 89869747) * 3644798167;
+    }
+    hash = hash * 69069 + 907133923;
+    hash = new Sk.builtin.int_(hash);
+    this.$savedHash_ = hash;
+    return hash;
 };
 
 Sk.builtin.frozenset.prototype.ob$eq = function (other) {
@@ -181,11 +210,11 @@ Sk.builtin.frozenset.prototype.nb$subtract = function(other){
 
 Sk.builtin.frozenset.prototype["__iter__"] = new Sk.builtin.func(function (self) {
     Sk.builtin.pyCheckArgsLen("__iter__", arguments.length, 0, 0, false, true);
-    return new Sk.builtin.frozenset_iter_(self);
+    return new Sk.builtin.set_iter_(self);
 });
 
 Sk.builtin.frozenset.prototype.tp$iter = function () {
-    return new Sk.builtin.frozenset_iter_(this);
+    return new Sk.builtin.set_iter_(this);
 };
 
 Sk.builtin.frozenset.prototype.sq$length = function () {
@@ -359,61 +388,6 @@ Sk.builtin.frozenset.prototype["copy"] = new Sk.builtin.func(function (self) {
 });
 
 Sk.exportSymbol("Sk.builtin.frozenset", Sk.builtin.frozenset);
-
-/**
- * @constructor
- * @param {Object} obj
- */
-Sk.builtin.frozenset_iter_ = function (obj) {
-    var allkeys, k, i, bucket, buckets;
-    if (!(this instanceof Sk.builtin.frozenset_iter_)) {
-        return new Sk.builtin.frozenset_iter_(obj);
-    }
-    this.$obj = obj;
-    this.tp$iter = this;
-    allkeys = [];
-    buckets = obj.v.buckets;
-    for (k in buckets) {
-        if (buckets.hasOwnProperty(k)) {
-            bucket = buckets[k];
-            if (bucket && bucket.$hash !== undefined && bucket.items !== undefined) {
-                // skip internal stuff. todo; merge pyobj and this
-                for (i = 0; i < bucket.items.length; i++) {
-                    allkeys.push(bucket.items[i].lhs);
-                }
-            }
-        }
-    }
-    this.$index = 0;
-    this.$keys = allkeys;
-    this.tp$iternext = function () {
-        if (this.$index >= this.$keys.length) {
-            return undefined;
-        }
-        return this.$keys[this.$index++];
-    };
-    this.$r = function () {
-        return new Sk.builtin.str("frozensetiterator");
-    };
-    return this;
-};
-
-Sk.abstr.setUpInheritance("frozensetiterator", Sk.builtin.frozenset_iter_, Sk.builtin.object);
-
-Sk.builtin.frozenset_iter_.prototype.__class__ = Sk.builtin.frozenset_iter_;
-
-Sk.builtin.frozenset_iter_.prototype.__iter__ = new Sk.builtin.func(function (self) {
-    Sk.builtin.pyCheckArgsLen("__iter__", arguments.length, 0, 0, true, false);
-    return self;
-});
-
-Sk.builtin.frozenset_iter_.prototype.next$ = function (self) {
-    var ret = self.tp$iternext();
-    if (ret === undefined) {
-        throw new Sk.builtin.StopIteration();
-    }
-    return ret;
-};
 
 Sk.builtin.frozenset.prototype.__contains__ = new Sk.builtin.func(function(self, item) {
     Sk.builtin.pyCheckArgsLen("__contains__", arguments.length, 2, 2);
