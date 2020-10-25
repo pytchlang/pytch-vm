@@ -208,7 +208,7 @@ Sk.abstr.setUpInheritance("PytchAssetLoadError",
  * null), and "innerError".
  */
 Sk.pytchsupport.PytchBuildError = function(...args) {
-    // Convert args into form expected by StandardError.
+    // Convert args into form expected by Exception.
     const details = args[0];
     args[0] = "could not build project";
 
@@ -217,12 +217,12 @@ Sk.pytchsupport.PytchBuildError = function(...args) {
         o.constructor.apply(o, args);
         return o;
     }
-    Sk.builtin.StandardError.apply(this, args);
+    Sk.builtin.Exception.apply(this, args);
     Object.assign(this, details);
 }
 Sk.abstr.setUpInheritance("PytchBuildError",
                           Sk.pytchsupport.PytchBuildError,
-                          Sk.builtin.StandardError);
+                          Sk.builtin.Exception);
 
 
 ////////////////////////////////////////////////////////////////////////////////
