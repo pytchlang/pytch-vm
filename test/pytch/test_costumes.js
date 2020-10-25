@@ -59,8 +59,8 @@ describe("Costume handling", () => {
             let module = await import_module();
             let caught_exception = module.$d.caught_exception;
             let err_msg = Sk.builtin.str(caught_exception).v;
-            assert.ok(/could not load image/.test(err_msg));
-            assert.equal(caught_exception.args.v[1].v, "image");
+            assert.ok(/could not load Image/.test(err_msg));
+            assert.equal(caught_exception.kind, "Image");
         })});
 
     const bad_Backdrop_cases = [
