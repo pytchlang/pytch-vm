@@ -408,9 +408,18 @@ const assert_has_bbox = (
 //
 // Assert that a particular kind of build error was thrown.
 
-const assertBuildError = (err, exp_phase, innerMsgRegExp) => {
+const assertBuildError = (err, exp_phase, exp_inner_type, innerMsgRegExp) => {
     assert.ok(err instanceof Sk.pytchsupport.PytchBuildError);
     assert.equal(err.phase, exp_phase);
+
+    if (exp_inner_type != null) {
+        const got_typename = err.innerError.tp$name;
+        const exp_typename = js_getattr(exp_inner_type, "__name__");
+
+        assert.ok(err.innerError instanceof exp_inner_type,
+                  `expecting innerError to be of type ${exp_typename}`
+                  + ` but was of type ${got_typename}`);
+    }
 
     if (innerMsgRegExp != null) {
         const innerMsg = Sk.builtin.str(err.innerError).v;
