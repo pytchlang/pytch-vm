@@ -61,8 +61,8 @@ const import_project = async (code_text) => {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-const PytchAssetLoadError = (...args) => {
-    return new Sk.pytchsupport.PytchAssetLoadError(...args);
+const PytchAssetLoadError = (detail) => {
+    return new Sk.pytchsupport.PytchAssetLoadError(detail);
 }
 
 
