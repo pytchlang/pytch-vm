@@ -163,6 +163,9 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
 
 /**
  * Pytch-specific errors.
+ *
+ * IMPORTANT: If more exception types are added, add them to the
+ * set-up code in doOneTimeInitialization().
  */
 
 

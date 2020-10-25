@@ -95,6 +95,9 @@ Sk.doOneTimeInitialization = function (canSuspend) {
         }
     }
 
+    setUpClass(Sk.pytchsupport.PytchBuildError);
+    setUpClass(Sk.pytchsupport.PytchAssetLoadError);
+
     // Wrap the inner Javascript code of Sk.builtin.object's Python methods inside
     // Sk.builtin.func, as that class was undefined when these functions were declared
     const typesWithFunctionsToWrap = [Sk.builtin.object, Sk.builtin.type, Sk.builtin.func, Sk.builtin.method];
