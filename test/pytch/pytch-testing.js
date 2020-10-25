@@ -409,11 +409,7 @@ const assert_has_bbox = (
 // Assert that a particular kind of build error was thrown.
 
 const assertBuildError = (err, exp_phase, innerMsgRegExp) => {
-    const msg = Sk.builtin.str(err).v;
-    assert.ok(
-        /^PytchBuildError/.test(msg),
-        `did not get PytchBuildError: ${msg}`
-    );
+    assert.ok(err instanceof Sk.pytchsupport.PytchBuildError);
     assert.equal(err.phase, exp_phase);
 
     if (innerMsgRegExp != null) {
