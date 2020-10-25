@@ -137,8 +137,7 @@ const mock_sound_manager = (() => {
     let async_load_sound = ((tag, url) => {
         let maybe_sound = MockSound.maybe_create(mock_sound_manager, tag, url);
         if (maybe_sound === null) {
-            let error_message = `could not load sound "${url}"`;
-            let py_error = PytchAssetLoadError(error_message, "sound", url);
+            let py_error = PytchAssetLoadError({ kind: "Sound", path: url });
             return Promise.reject(py_error);
         } else
             return Promise.resolve(maybe_sound);
@@ -220,8 +219,7 @@ const pytch_errors = (() => {
 const async_load_mock_image = (url) => {
     let maybe_image = MockImage.maybe_create(url);
     if (maybe_image === null) {
-        let error_message = `could not load image "${url}"`;
-        let py_error = PytchAssetLoadError(error_message, "image", url);
+        let py_error = PytchAssetLoadError({ kind: "Image", path: url });
         return Promise.reject(py_error);
     } else
         return Promise.resolve(maybe_image);
