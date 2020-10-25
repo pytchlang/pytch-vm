@@ -916,7 +916,7 @@ Sk.builtin.int_.prototype.ob$eq = function (other) {
     if (other instanceof Sk.builtin.int_ || other instanceof Sk.builtin.lng ||
         other instanceof Sk.builtin.float_) {
         return new Sk.builtin.bool(this.numberCompare(other) == 0); //jshint ignore:line
-    } else if (other instanceof Sk.builtin.none) {
+    } else if (other === Sk.builtin.none.none$) {
         return Sk.builtin.bool.false$;
     } else {
         return Sk.builtin.NotImplemented.NotImplemented$;
@@ -928,7 +928,7 @@ Sk.builtin.int_.prototype.ob$ne = function (other) {
     if (other instanceof Sk.builtin.int_ || other instanceof Sk.builtin.lng ||
         other instanceof Sk.builtin.float_) {
         return new Sk.builtin.bool(this.numberCompare(other) != 0); //jshint ignore:line
-    } else if (other instanceof Sk.builtin.none) {
+    } else if (other === Sk.builtin.none.none$) {
         return Sk.builtin.bool.true$;
     } else {
         return Sk.builtin.NotImplemented.NotImplemented$;
@@ -1064,6 +1064,8 @@ Sk.builtin.int_.prototype.str$ = function (base, sign) {
     return tmp;
 };
 
+
+const validUnderscores = /_(?=[^_])/g;
 /**
  * Takes a JavaScript string and returns a number using the parser and negater
  *  functions (for int/long right now)
@@ -1141,6 +1143,20 @@ Sk.str2number = function (s, base, parser, negater, fname) {
 
     if (base === 0) {
         base = 10;
+    }
+
+    if (s.indexOf("_") !== -1) {
+        if (s.indexOf("__") !== -1) {
+            throw new Sk.builtin.ValueError("invalid literal for " + fname + "() with base " + base + ": '" + origs + "'");
+        }
+
+        if (base !== 10) {
+            s = s.replace(validUnderscores, "");
+        } else {
+            // avoid replacing initial `_` if present
+            // workaround since closure-compiler errors on lookbehinds
+            s = s.charAt(0) + s.substring(1).replace(validUnderscores, "");
+        }
     }
 
     if (s.length === 0) {

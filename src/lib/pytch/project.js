@@ -445,6 +445,15 @@ var $builtinmodule = function (name) {
             let js_dir = Sk.ffi.remapToJs(Sk.builtin.dir(this.py_cls));
 
             for (let js_attr_name of js_dir) {
+                // Skulpt gives us things like "__eq__" in the dir() which then
+                // fail when you getattr() them.  I suspect this is a bug, but
+                // for now, work round by ignoring all dunder-names.
+                //
+                const is_dunder = (js_attr_name.startsWith("__")
+                                   && js_attr_name.endsWith("__"));
+                if (is_dunder)
+                    continue;
+
                 let py_attr_name = Sk.builtin.str(js_attr_name);
                 let attr_val = Sk.builtin.getattr(this.py_cls, py_attr_name);
 

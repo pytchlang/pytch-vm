@@ -61,8 +61,8 @@ const import_project = async (code_text) => {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-const PytchAssetLoadError = (...args) => {
-    return new Sk.pytchsupport.PytchAssetLoadError(...args);
+const PytchAssetLoadError = (detail) => {
+    return new Sk.pytchsupport.PytchAssetLoadError(detail);
 }
 
 
@@ -137,8 +137,7 @@ const mock_sound_manager = (() => {
     let async_load_sound = ((tag, url) => {
         let maybe_sound = MockSound.maybe_create(mock_sound_manager, tag, url);
         if (maybe_sound === null) {
-            let error_message = `could not load sound "${url}"`;
-            let py_error = PytchAssetLoadError(error_message, "sound", url);
+            let py_error = PytchAssetLoadError({ kind: "Sound", path: url });
             return Promise.reject(py_error);
         } else
             return Promise.resolve(maybe_sound);
@@ -220,8 +219,7 @@ const pytch_errors = (() => {
 const async_load_mock_image = (url) => {
     let maybe_image = MockImage.maybe_create(url);
     if (maybe_image === null) {
-        let error_message = `could not load image "${url}"`;
-        let py_error = PytchAssetLoadError(error_message, "image", url);
+        let py_error = PytchAssetLoadError({ kind: "Image", path: url });
         return Promise.reject(py_error);
     } else
         return Promise.resolve(maybe_image);
@@ -410,13 +408,18 @@ const assert_has_bbox = (
 //
 // Assert that a particular kind of build error was thrown.
 
-const assertBuildError = (err, exp_phase, innerMsgRegExp) => {
-    const msg = Sk.builtin.str(err).v;
-    assert.ok(
-        /^PytchBuildError/.test(msg),
-        `did not get PytchBuildError: ${msg}`
-    );
+const assertBuildError = (err, exp_phase, exp_inner_type, innerMsgRegExp) => {
+    assert.ok(err instanceof Sk.pytchsupport.PytchBuildError);
     assert.equal(err.phase, exp_phase);
+
+    if (exp_inner_type != null) {
+        const got_typename = err.innerError.tp$name;
+        const exp_typename = js_getattr(exp_inner_type, "__name__");
+
+        assert.ok(err.innerError instanceof exp_inner_type,
+                  `expecting innerError to be of type ${exp_typename}`
+                  + ` but was of type ${got_typename}`);
+    }
 
     if (innerMsgRegExp != null) {
         const innerMsg = Sk.builtin.str(err.innerError).v;

@@ -7,6 +7,13 @@ class TestFixture():
     def delete(self):
         return True
 
+class A:
+    pass
+a = A()
+a.name = 'foo'
+a.length = 'bar'
+default = "foo"
+
 class Test_ReservedWords(unittest.TestCase):
     def test_getattr(self):
         f = TestFixture()
@@ -15,6 +22,13 @@ class Test_ReservedWords(unittest.TestCase):
 
         func_delete = getattr(f, "delete")
         self.assertTrue(func_delete())
+
+        self.assertNotIn("$", repr(func_default))
+        self.assertNotIn("$", repr(func_delete))
+
+    def test_getattr_with_name(self):
+        self.assertEqual(getattr(a, 'name'), 'foo')
+        self.assertEqual(getattr(a, 'length'), 'bar')
 
     def test_setattr(self):
         f = TestFixture()
@@ -27,9 +41,33 @@ class Test_ReservedWords(unittest.TestCase):
     def test_error_message(self):
         f = True
         try:
-          setattr(f, "continue", True)
+            setattr(f, "continue", True)
         except AttributeError as e:
-          self.assertTrue("_$rw$" not in str(e))
+            self.assertTrue("_$rw$" not in str(e))
+
+        try:
+            f.name
+        except AttributeError as e:
+            self.assertTrue('_$rn$' not in str(e))
+
+    def test_dir(self):
+        self.assertTrue('name' in dir(a))
+        self.assertTrue('length' in dir(a))
+
+    def test_arguments_prototype(self):
+        with self.assertRaises(AttributeError):
+            A.prototype
+        with self.assertRaises(AttributeError):
+            A.arguments 
+
+    def test_bug_949(self):
+        def wrapper(name):
+            def inner():
+                return name
+            return inner
+        self.assertEqual(wrapper("foo")(), "foo")
+    def test_global(self):
+        self.assertTrue("default" in globals())
 
 if __name__ == '__main__':
     unittest.main()

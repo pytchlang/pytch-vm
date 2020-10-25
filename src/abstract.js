@@ -19,8 +19,8 @@ Sk.abstr.typeName = function (v) {
 };
 
 Sk.abstr.binop_type_error = function (v, w, name) {
-    var vtypename = Sk.abstr.typeName(v),
-        wtypename = Sk.abstr.typeName(w);
+    const vtypename = Sk.abstr.typeName(v);
+    const wtypename = Sk.abstr.typeName(w);
 
     throw new Sk.builtin.TypeError("unsupported operand type(s) for " + name + ": '" + vtypename + "' and '" + wtypename + "'");
 };
@@ -28,9 +28,9 @@ Sk.abstr.binop_type_error = function (v, w, name) {
 Sk.abstr.unop_type_error = function (v, name) {
     var vtypename = Sk.abstr.typeName(v),
         uop = {
-            "UAdd"  : "+",
-            "USub"  : "-",
-            "Invert": "~"
+            UAdd: "+",
+            USub: "-",
+            Invert: "~",
         }[name];
 
     throw new Sk.builtin.TypeError("bad operand type for unary " + uop + ": '" + vtypename + "'");
@@ -168,14 +168,12 @@ Sk.abstr.uoNameToSlotFunc_ = function (obj, name) {
 };
 
 Sk.abstr.binary_op_ = function (v, w, opname) {
-    var wop;
-    var ret;
-    var vop;
-
     // All Python inheritance is now enforced with Javascript inheritance
     // (see Sk.abstr.setUpInheritance). This checks if w's type is a strict
     // subclass of v's type
-    var w_is_subclass = w.constructor.prototype instanceof v.constructor;
+    const w_type = w.constructor;
+    const v_type = v.constructor;
+    const w_is_subclass = w_type !== v_type && w instanceof v_type;
 
     // From the Python 2.7 docs:
     //
@@ -186,6 +184,8 @@ Sk.abstr.binary_op_ = function (v, w, opname) {
     //
     // -- https://docs.python.org/2/reference/datamodel.html#index-92
 
+    let wop;
+    let ret;
     if (w_is_subclass) {
         wop = Sk.abstr.boNameToSlotFuncRhs_(w, opname);
         if (wop !== undefined) {
@@ -200,7 +200,7 @@ Sk.abstr.binary_op_ = function (v, w, opname) {
         }
     }
 
-    vop = Sk.abstr.boNameToSlotFuncLhs_(v, opname);
+    const vop = Sk.abstr.boNameToSlotFuncLhs_(v, opname);
     if (vop !== undefined) {
         if (vop.call) {
             ret = vop.call(v, w);
@@ -229,9 +229,8 @@ Sk.abstr.binary_op_ = function (v, w, opname) {
 };
 
 Sk.abstr.binary_iop_ = function (v, w, opname) {
-    var wop;
-    var ret;
-    var vop = Sk.abstr.iboNameToSlotFunc_(v, opname);
+    let ret;
+    const vop = Sk.abstr.iboNameToSlotFunc_(v, opname);
     if (vop !== undefined) {
         if (vop.call) {
             ret = vop.call(v, w);
@@ -246,8 +245,8 @@ Sk.abstr.binary_iop_ = function (v, w, opname) {
     return Sk.abstr.binary_op_(v, w, opname);
 };
 Sk.abstr.unary_op_ = function (v, opname) {
-    var ret;
-    var vop = Sk.abstr.uoNameToSlotFunc_(v, opname);
+    let ret;
+    const vop = Sk.abstr.uoNameToSlotFunc_(v, opname);
     if (vop !== undefined) {
         if (vop.call) {
             ret = vop.call(v);
@@ -261,202 +260,20 @@ Sk.abstr.unary_op_ = function (v, opname) {
     Sk.abstr.unop_type_error(v, opname);
 };
 
-//
-// handle upconverting a/b from number to long if op causes too big/small a
-// result, or if either of the ops are already longs
-Sk.abstr.numOpAndPromote = function (a, b, opfn) {
-    var tmp;
-    var ans;
-    if (a === null || b === null) {
-        return undefined;
-    }
-
-    if (typeof a === "number" && typeof b === "number") {
-        ans = opfn(a, b);
-        // todo; handle float   Removed RNL (bugs in lng, and it should be a question of precision, not magnitude -- this was just wrong)
-        if ((ans > Sk.builtin.int_.threshold$ || ans < -Sk.builtin.int_.threshold$) && Math.floor(ans) === ans) {
-            return [Sk.builtin.lng.fromInt$(a), Sk.builtin.lng.fromInt$(b)];
-        } else {
-            return ans;
-        }
-    } else if (a === undefined || b === undefined) {
-        throw new Sk.builtin.NameError("Undefined variable in expression");
-    }
-
-    if (a.constructor === Sk.builtin.lng) {
-        return [a, b];
-    } else if ((a.constructor === Sk.builtin.int_ ||
-                a.constructor === Sk.builtin.float_) &&
-                b.constructor === Sk.builtin.complex) {
-        // special case of upconverting nmber and complex
-        // can we use here the Sk.builtin.checkComplex() method?
-        tmp = new Sk.builtin.complex(a);
-        return [tmp, b];
-    } else if (a.constructor === Sk.builtin.int_ ||
-               a.constructor === Sk.builtin.float_) {
-        return [a, b];
-    } else if (typeof a === "number") {
-        tmp = Sk.builtin.assk$(a);
-        return [tmp, b];
-    } else {
-        return undefined;
-    }
-};
-
-Sk.abstr.boNumPromote_ = {
-    "Add"     : function (a, b) {
-        return a + b;
-    },
-    "Sub"     : function (a, b) {
-        return a - b;
-    },
-    "Mult"    : function (a, b) {
-        return a * b;
-    },
-    "Mod"     : function (a, b) {
-        var m;
-        if (b === 0) {
-            throw new Sk.builtin.ZeroDivisionError("division or modulo by zero");
-        }
-        m = a % b;
-        return ((m * b) < 0 ? (m + b) : m);
-    },
-    "Div"     : function (a, b) {
-        if (b === 0) {
-            throw new Sk.builtin.ZeroDivisionError("division or modulo by zero");
-        } else {
-            return a / b;
-        }
-    },
-    "FloorDiv": function (a, b) {
-        if (b === 0) {
-            throw new Sk.builtin.ZeroDivisionError("division or modulo by zero");
-        } else {
-            return Math.floor(a / b);
-        } // todo; wrong? neg?
-    },
-    "Pow"     : Math.pow,
-    "BitAnd"  : function (a, b) {
-        var m = a & b;
-        if (m < 0) {
-            m = m + 4294967296; // convert back to unsigned
-        }
-        return m;
-    },
-    "BitOr"   : function (a, b) {
-        var m = a | b;
-        if (m < 0) {
-            m = m + 4294967296; // convert back to unsigned
-        }
-        return m;
-    },
-    "BitXor"  : function (a, b) {
-        var m = a ^ b;
-        if (m < 0) {
-            m = m + 4294967296; // convert back to unsigned
-        }
-        return m;
-    },
-    "LShift"  : function (a, b) {
-        var m;
-        if (b < 0) {
-            throw new Sk.builtin.ValueError("negative shift count");
-        }
-        m = a << b;
-        if (m > a) {
-            return m;
-        } else {
-            // Fail, this will get recomputed with longs
-            return a * Math.pow(2, b);
-        }
-    },
-    "RShift"  : function (a, b) {
-        var m;
-        if (b < 0) {
-            throw new Sk.builtin.ValueError("negative shift count");
-        }
-        m = a >> b;
-        if ((a > 0) && (m < 0)) {
-            // fix incorrect sign extension
-            m = m & (Math.pow(2, 32 - b) - 1);
-        }
-        return m;
-    }
-};
-
 Sk.abstr.numberBinOp = function (v, w, op) {
-    var tmp;
-    var numPromoteFunc = Sk.abstr.boNumPromote_[op];
-    if (numPromoteFunc !== undefined) {
-        tmp = Sk.abstr.numOpAndPromote(v, w, numPromoteFunc);
-        if (typeof tmp === "number") {
-            return tmp;
-        } else if (tmp !== undefined && tmp.constructor === Sk.builtin.int_) {
-            return tmp;
-        } else if (tmp !== undefined && tmp.constructor === Sk.builtin.float_) {
-            return tmp;
-        } else if (tmp !== undefined && tmp.constructor === Sk.builtin.lng) {
-            return tmp;
-        } else if (tmp !== undefined) {
-            v = tmp[0];
-            w = tmp[1];
-        }
-    }
-
     return Sk.abstr.binary_op_(v, w, op);
 };
 Sk.exportSymbol("Sk.abstr.numberBinOp", Sk.abstr.numberBinOp);
 
 Sk.abstr.numberInplaceBinOp = function (v, w, op) {
-    var tmp;
-    var numPromoteFunc = Sk.abstr.boNumPromote_[op];
-    if (numPromoteFunc !== undefined) {
-        tmp = Sk.abstr.numOpAndPromote(v, w, numPromoteFunc);
-        if (typeof tmp === "number") {
-            return tmp;
-        } else if (tmp !== undefined && tmp.constructor === Sk.builtin.int_) {
-            return tmp;
-        } else if (tmp !== undefined && tmp.constructor === Sk.builtin.float_) {
-            return tmp;
-        } else if (tmp !== undefined && tmp.constructor === Sk.builtin.lng) {
-            return tmp;
-        } else if (tmp !== undefined) {
-            v = tmp[0];
-            w = tmp[1];
-        }
-    }
-
     return Sk.abstr.binary_iop_(v, w, op);
 };
 Sk.exportSymbol("Sk.abstr.numberInplaceBinOp", Sk.abstr.numberInplaceBinOp);
 
 Sk.abstr.numberUnaryOp = function (v, op) {
-    var value;
     if (op === "Not") {
         return Sk.misceval.isTrue(v) ? Sk.builtin.bool.false$ : Sk.builtin.bool.true$;
-    } else if (v instanceof Sk.builtin.bool) {
-        value = Sk.builtin.asnum$(v);
-        if (op === "USub") {
-            return new Sk.builtin.int_(-value);
-        }
-        if (op === "UAdd") {
-            return new Sk.builtin.int_(value);
-        }
-        if (op === "Invert") {
-            return new Sk.builtin.int_(~value);
-        }
-    } else {
-        if (op === "USub" && v.nb$negative) {
-            return v.nb$negative();
-        }
-        if (op === "UAdd" && v.nb$positive) {
-            return v.nb$positive();
-        }
-        if (op === "Invert" && v.nb$invert) {
-            return v.nb$invert();
-        }
     }
-
     return Sk.abstr.unary_op_(v, op);
 };
 Sk.exportSymbol("Sk.abstr.numberUnaryOp", Sk.abstr.numberUnaryOp);
@@ -652,31 +469,75 @@ Sk.abstr.sequenceSetSlice = function (seq, i1, i2, x) {
     }
 };
 
-// seq - Python object to unpack
-// n   - JavaScript number of items to unpack
-Sk.abstr.sequenceUnpack = function (seq, n) {
-    var res = [];
-    var it, i;
-
+/**
+ * 
+ * @param {*} seq the iterable to unpack
+ * @param {*} breakIdx either the starred index or the number of elements to unpack if no star
+ * @param {*} numvals the total number of un-starred indices
+ * @param {*} hasStar is there a starred index
+ * 
+ * this function is used in compile code to unpack a sequence to an assignment statement
+ * e.g.
+ * a, b, c = 1, 2, 3 # seq is the tuple 1,2,3
+ * // Sk.abstr.sequenceUncpack(seq, 3, 3, false)
+ * // return [int_(1), int_(2), int_(3)]
+ * 
+ * 
+ * a, *b, c = 1,2,3,4 
+ * // Sk.abstr.sequenceUncpack(seq, 1, 2, true)
+ * // return [int_(1), list(int_(2), int_(3)), int_(4)]
+ * 
+ */
+Sk.abstr.sequenceUnpack = function (seq, breakIdx, numvals, hasStar) {
     if (!Sk.builtin.checkIterable(seq)) {
-        throw new Sk.builtin.TypeError("'" + Sk.abstr.typeName(seq) + "' object is not iterable");
+        throw new Sk.builtin.TypeError("cannot unpack non-iterable " + Sk.abstr.typeName(seq) + " object");
+    }
+    const it = Sk.abstr.iter(seq);
+    const res = [];
+    let i = 0;
+    let upToStar;
+    if (breakIdx > 0) {
+        // iterator up to but not including the breakIdx
+        upToStar = Sk.misceval.iterFor(it, (nxt) => {
+            res.push(nxt);
+            if (++i === breakIdx) {
+                return new Sk.misceval.Break();
+            }
+        });
     }
 
-    for (it = Sk.abstr.iter(seq), i = it.tp$iternext();
-        (i !== undefined) && (res.length < n);
-        i = it.tp$iternext()) {
-        res.push(i);
-    }
-
-    if (res.length < n) {
-        throw new Sk.builtin.ValueError("need more than " + res.length + " values to unpack");
-    }
-    if (i !== undefined) {
-        throw new Sk.builtin.ValueError("too many values to unpack");
-    }
-
-    // Return Javascript array of items
-    return res;
+    return Sk.misceval.chain(upToStar, () => {
+        if (res.length < breakIdx) {
+            throw new Sk.builtin.ValueError("not enough values to unpack (expected at least " + numvals + ", got " + res.length + ")");
+        }
+        if (!hasStar) {
+            // check we've consumed the iterator
+            return Sk.misceval.chain(it.tp$iternext(true), (nxt) => {
+                if (nxt !== undefined) {
+                    throw new Sk.builtin.ValueError("too many values to unpack (expected " + breakIdx + ")");
+                }
+                return res;
+            });
+        }
+        const starred = [];
+        return Sk.misceval.chain(
+            Sk.misceval.iterFor(it, (nxt) => {
+                starred.push(nxt);
+            }),
+            () => {
+                const starred_end = starred.length + breakIdx - numvals;
+                if (starred_end < 0) {
+                    throw new Sk.builtin.ValueError(
+                        "not enough values to unpack (expected at least " + numvals + ", got " + (numvals + starred_end) + ")"
+                    );
+                }
+                res.push(new Sk.builtin.list(starred.slice(0, starred_end)));
+                res.push(...starred.slice(starred_end));
+                // Return Javascript array of items
+                return res;
+            }
+        );
+    });
 };
 
 // Unpack mapping into a JS array of alternating keys/values, possibly suspending
@@ -737,35 +598,18 @@ Sk.abstr.objectAdd = function (a, b) {
 
 // in Python 2.6, this behaviour seems to be defined for numbers and bools (converts bool to int)
 Sk.abstr.objectNegative = function (obj) {
-    var objtypename;
-    var obj_asnum = Sk.builtin.asnum$(obj); // this will also convert bool type to int
-
-    if (obj instanceof Sk.builtin.bool) {
-        obj = new Sk.builtin.int_(obj_asnum);
-    }
-
     if (obj.nb$negative) {
         return obj.nb$negative();
     }
-
-    objtypename = Sk.abstr.typeName(obj);
-    throw new Sk.builtin.TypeError("bad operand type for unary -: '" + objtypename + "'");
+    throw new Sk.builtin.TypeError("bad operand type for unary -: '" + Sk.abstr.typeName(obj) + "'");
 };
 
 // in Python 2.6, this behaviour seems to be defined for numbers and bools (converts bool to int)
 Sk.abstr.objectPositive = function (obj) {
-    var objtypename = Sk.abstr.typeName(obj);
-    var obj_asnum = Sk.builtin.asnum$(obj); // this will also convert bool type to int
-
-    if (obj instanceof Sk.builtin.bool) {
-        obj = new Sk.builtin.int_(obj_asnum);
-    }
-
-    if (obj.nb$negative) {
+    if (obj.nb$positive) {
         return obj.nb$positive();
     }
-
-    throw new Sk.builtin.TypeError("bad operand type for unary +: '" + objtypename + "'");
+    throw new Sk.builtin.TypeError("bad operand type for unary +: '" + Sk.abstr.typeName(obj) + "'");
 };
 
 Sk.abstr.objectDelItem = function (o, key) {
@@ -834,20 +678,21 @@ Sk.abstr.gattr = function (obj, pyName, canSuspend) {
     // Should this be an assert?
     if (obj === null || !obj.tp$getattr) {
         let objname = Sk.abstr.typeName(obj);
-        let jsName = pyName.$jsstr();
-        throw new Sk.builtin.AttributeError("'" + objname + "' object has no attribute '" + jsName + "'");
+        throw new Sk.builtin.AttributeError("'" + objname + "' object has no attribute '" + pyName.$jsstr() + "'");
     }
 
     // This function is so hot that we do our own inline suspension checks
 
     let ret = obj.tp$getattr(pyName, canSuspend);
-
+    let error_name;
     if (ret === undefined) {
-        throw new Sk.builtin.AttributeError("'" + Sk.abstr.typeName(obj) + "' object has no attribute '" + pyName.$jsstr() + "'");
+        error_name = obj.sk$type ? "type object '" + obj.prototype.tp$name + "'" : "'" + Sk.abstr.typeName(obj) + "' object";
+        throw new Sk.builtin.AttributeError(error_name + " has no attribute '" + pyName.$jsstr() + "'");
     } else if (ret.$isSuspension) {
         return Sk.misceval.chain(ret, function(r) {
             if (r === undefined) {
-                throw new Sk.builtin.AttributeError("'" + Sk.abstr.typeName(obj) + "' object has no attribute '" + pyName.$jsstr() + "'");
+                error_name = obj.sk$type ? "type object '" + obj.prototype.tp$name + "'" : "'" + Sk.abstr.typeName(obj) + "' object";
+                throw new Sk.builtin.AttributeError(error_name + " has no attribute '" + pyName.$jsstr() + "'");
             }
             return r;
         });
@@ -860,16 +705,15 @@ Sk.exportSymbol("Sk.abstr.gattr", Sk.abstr.gattr);
 
 Sk.abstr.sattr = function (obj, pyName, data, canSuspend) {
     var objname = Sk.abstr.typeName(obj), r, setf;
-    var jsName = pyName.$jsstr();
 
     if (obj === null) {
-        throw new Sk.builtin.AttributeError("'" + objname + "' object has no attribute '" + jsName + "'");
+        throw new Sk.builtin.AttributeError("'" + objname + "' object has no attribute '" + pyName.$jsstr() + "'");
     }
 
     if (obj.tp$setattr !== undefined) {
         return obj.tp$setattr(pyName, data, canSuspend);
     } else {
-        throw new Sk.builtin.AttributeError("'" + objname + "' object has no attribute '" + jsName + "'");
+        throw new Sk.builtin.AttributeError("'" + objname + "' object has no attribute '" + pyName.$jsstr() + "'");
     }
 };
 Sk.exportSymbol("Sk.abstr.sattr", Sk.abstr.sattr);
@@ -926,25 +770,14 @@ Sk.abstr.iter = function(obj) {
         };
     };
 
-    if (obj.tp$getattr) {
-        iter =  Sk.abstr.lookupSpecial(obj, Sk.builtin.str.$iter);
-        if (iter) {
-            ret = Sk.misceval.callsimArray(iter, [obj]);
-            if (ret.tp$iternext) {
-                return ret;
-            }
-        }
-    }
     if (obj.tp$iter) {
-        try {  // catch and ignore not iterable error here.
-            ret = obj.tp$iter();
-            if (ret.tp$iternext) {
-                return ret;
-            }
-        } catch (e) { }
-    }
-    getit = Sk.abstr.lookupSpecial(obj, Sk.builtin.str.$getitem);
-    if (getit) {
+        ret = obj.tp$iter();
+        if (ret.tp$iternext) {
+            return ret;
+        } else {
+            throw new Sk.builtin.TypeError("'" + Sk.abstr.typeName(obj) + "' object is not iterable");
+        }
+    } else if (Sk.abstr.lookupSpecial(obj, Sk.builtin.str.$getitem)) {
         // create internal iterobject if __getitem__
         return new seqIter(obj);
     }

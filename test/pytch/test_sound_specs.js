@@ -91,7 +91,9 @@ describe("Sound spec parsing", () => {
                 class Banana(pytch.Sprite):
                     Sounds = [${spec.fragment}]
             `),
-            assertBuildErrorFun("register-actor", spec.error_regexp));
+            assertBuildErrorFun("register-actor",
+                                Sk.builtin.ValueError,
+                                spec.error_regexp));
     });
     });
 });

@@ -171,8 +171,8 @@ describe("bad sounds", () => {
             let module = await import_module();
             let caught_exception = module.$d.caught_exception;
             let err_msg = Sk.builtin.str(caught_exception).v;
-            assert.ok(/could not load sound/.test(err_msg));
-            assert.equal(caught_exception.args.v[1].v, "sound");
+            assert.ok(/could not load Sound/.test(err_msg));
+            assert.equal(caught_exception.kind, "Sound");
         });
     });
 });

@@ -1,19 +1,5 @@
 Sk.builtin.str.$emptystr = new Sk.builtin.str("");
 
-/**
- * Python bool True constant.
- * @type {Sk.builtin.bool}
- * @memberOf Sk.builtin.bool
- */
-Sk.builtin.bool.true$ = /** @type {Sk.builtin.bool} */ (Object.create(Sk.builtin.bool.prototype, {v: {value: 1, enumerable: true}}));
-
-/**
- * Python bool False constant.
- * @type {Sk.builtin.bool}
- * @memberOf Sk.builtin.bool
- */
-Sk.builtin.bool.false$ = /** @type {Sk.builtin.bool} */ (Object.create(Sk.builtin.bool.prototype, {v: {value: 0, enumerable: true}}));
-
 /* Constants used for kwargs */
 
 // Sk.builtin.int_
@@ -35,11 +21,15 @@ Sk.builtin.dict.prototype["fromkeys"] = new Sk.builtin.func(Sk.builtin.dict.$fro
 // String constants
 Sk.builtin.str.$empty = new Sk.builtin.str("");
 
+Sk.builtin.str.$utf8 = new Sk.builtin.str("utf-8");
+Sk.builtin.str.$ascii = new Sk.builtin.str("ascii");
+
 Sk.builtin.str.$default_factory = new Sk.builtin.str("default_factory");
 Sk.builtin.str.$imag = new Sk.builtin.str("imag");
 Sk.builtin.str.$real = new Sk.builtin.str("real");
 
 Sk.builtin.str.$abs = new Sk.builtin.str("__abs__");
+Sk.builtin.str.$bytes = new Sk.builtin.str("__bytes__");
 Sk.builtin.str.$call = new Sk.builtin.str("__call__");
 Sk.builtin.str.$cmp = new Sk.builtin.str("__cmp__");
 Sk.builtin.str.$complex = new Sk.builtin.str("__complex__");
@@ -64,11 +54,11 @@ Sk.builtin.str.$gt = new Sk.builtin.str("__gt__");
 Sk.builtin.str.$le = new Sk.builtin.str("__le__");
 Sk.builtin.str.$len = new Sk.builtin.str("__len__");
 Sk.builtin.str.$lt = new Sk.builtin.str("__lt__");
+Sk.builtin.str.$module = new Sk.builtin.str("__module__");
 Sk.builtin.str.$name = new Sk.builtin.str("__name__");
 Sk.builtin.str.$ne = new Sk.builtin.str("__ne__");
 Sk.builtin.str.$new = new Sk.builtin.str("__new__");
-Sk.builtin.str.$next2 = new Sk.builtin.str("next");
-Sk.builtin.str.$next3 = new Sk.builtin.str("__next__");
+Sk.builtin.str.$next = new Sk.builtin.str("__next__");
 Sk.builtin.str.$path = new Sk.builtin.str("__path__");
 Sk.builtin.str.$repr = new Sk.builtin.str("__repr__");
 Sk.builtin.str.$reversed = new Sk.builtin.str("__reversed__");

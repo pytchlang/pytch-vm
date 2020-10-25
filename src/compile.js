@@ -126,115 +126,18 @@ Compiler.prototype.niceName = function (roughName) {
     return this.gensym(roughName.replace("<", "").replace(">", "").replace(" ", "_"));
 };
 
-var reservedWords_ = {
-    "abstract": true,
-    "as": true,
-    "boolean": true,
-    "break": true,
-    "byte": true,
-    "case": true,
-    "catch": true,
-    "char": true,
-    "class": true,
-    "continue": true,
-    "const": true,
-    "debugger": true,
-    "default": true,
-    "delete": true,
-    "do": true,
-    "double": true,
-    "else": true,
-    "enum": true,
-    "export": true,
-    "extends": true,
-    "false": true,
-    "final": true,
-    "finally": true,
-    "float": true,
-    "for": true,
-    "function": true,
-    "goto": true,
-    "if": true,
-    "implements": true,
-    "import": true,
-    "in": true,
-    "instanceof": true,
-    "int": true,
-    "interface": true,
-    "is": true,
-    "long": true,
-    "namespace": true,
-    "native": true,
-    "new": true,
-    "null": true,
-    "package": true,
-    "private": true,
-    "protected": true,
-    "public": true,
-    "return": true,
-    "short": true,
-    "static": true,
-    "super": false,
-    "switch": true,
-    "synchronized": true,
-    "this": true,
-    "throw": true,
-    "throws": true,
-    "transient": true,
-    "true": true,
-    "try": true,
-    "typeof": true,
-    "use": true,
-    "var": true,
-    "void": true,
-    "volatile": true,
-    "while": true,
-    "with": true
-};
+var reservedWords_ = Sk.builtin.str.reservedWords_; // defined in str.js
 
-/**
- * Fix reserved words
- *
- * @param {string} name
- */
-function fixReservedWords(name) {
-    if (reservedWords_[name] !== true) {
+
+function fixReserved(name) {
+    if (reservedWords_[name] === undefined) {
         return name;
     }
     return name + "_$rw$";
 }
 
-var reservedNames_ = {
-    "__defineGetter__": true,
-    "__defineSetter__": true,
-    "apply": true,
-    "call": true,
-    "eval": true,
-    "hasOwnProperty": true,
-    "isPrototypeOf": true,
-    "__lookupGetter__": true,
-    "__lookupSetter__": true,
-    "__noSuchMethod__": true,
-    "propertyIsEnumerable": true,
-    "toSource": true,
-    "toLocaleString": true,
-    "toString": true,
-    "unwatch": true,
-    "valueOf": true,
-    "watch": true,
-    "length": true,
-    "name": true,
-};
-
-function fixReservedNames (name) {
-    if (reservedNames_[name]) {
-        return name + "_$rn$";
-    }
-    return name;
-}
-
 function unfixReserved(name) {
-    return name.replace(/_\$r[wn]\$$/, "");
+    return name.replace(/_\$rw\$$/, "");
 }
 
 function mangleName (priv, ident) {
@@ -291,7 +194,7 @@ Compiler.prototype.makeConstant = function (rest) {
     v = this.u.scopename + "." + this.gensym("const");
     this.u.consts[v] = val;
     return v;
-}
+};
 
 /**
  * @param {string} hint basename for gensym
@@ -316,7 +219,7 @@ Compiler.prototype._gr = function (hint, rest) {
 Compiler.prototype.outputInterruptTest = function () { // Added by RNL
     var output = "";
     if (Sk.execLimit !== null || Sk.yieldLimit !== null && this.u.canSuspend) {
-            output += "var $dateNow = Date.now();";
+        output += "var $dateNow = Date.now();";
         if (Sk.execLimit !== null) {
             output += "if ($dateNow - Sk.execStart > Sk.execLimit) {throw new Sk.builtin.TimeLimitError(Sk.timeoutMsg())}";
         }
@@ -412,7 +315,7 @@ Compiler.prototype.cunpackstarstoarray = function(elts, permitEndOnly) {
         // Fast path
         return "[" + elts.map((expr) => this.vexpr(expr)).join(",") + "]";
     }
-}
+};
 
 Compiler.prototype.ctuplelistorset = function(e, data, tuporlist) {
     var i;
@@ -422,21 +325,41 @@ Compiler.prototype.ctuplelistorset = function(e, data, tuporlist) {
     Sk.asserts.assert(tuporlist === "tuple" || tuporlist === "list" || tuporlist === "set");
 
     let hasStars = false;
-    for (let elt of e.elts) {
-        if (elt.constructor === Sk.astnodes.Starred) { hasStars = true; break; }
+    let starIdx;
+    for (i = 0; i < e.elts.length; i++) {
+        if (e.elts[i].constructor === Sk.astnodes.Starred) {
+            hasStars = true;
+            starIdx = i;
+            break;
+        }
     }
 
     if (e.ctx === Sk.astnodes.Store) {
         if (hasStars) {
-            // TODO support this in Python 3 mode
-            throw new Sk.builtin.SyntaxError("Tuple unpacking with stars is not supported");
+            if (!Sk.__future__.python3) {
+                throw new Sk.builtin.SyntaxError("assignment unpacking with stars is not supported in Python 2", this.filename, e.lineno);
+            }
+            for (i = starIdx + 1; i < e.elts.length; i++) {
+                if (e.elts[i].constructor === Sk.astnodes.Starred) {
+                    throw new Sk.builtin.SyntaxError("multiple starred expressions in assignment", this.filename, e.lineno);
+                }
+            }
         }
-        items = this._gr("items", "Sk.abstr.sequenceUnpack(" + data + "," + e.elts.length + ")");
+        const breakIdx = hasStars ? starIdx : e.elts.length;
+        const numvals = hasStars ? e.elts.length - 1 : breakIdx;
+        out("$ret = Sk.abstr.sequenceUnpack(" + data + "," + breakIdx + "," + numvals + ", " + hasStars + ");");
+        this._checkSuspension();
+        items = this._gr("items", "$ret");
+        
         for (i = 0; i < e.elts.length; ++i) {
-            this.vexpr(e.elts[i], items + "[" + i + "]");
+            if (i === starIdx) {
+                this.vexpr(e.elts[i].value, items + "[" + i + "]");
+            } else {
+                this.vexpr(e.elts[i], items + "[" + i + "]");
+            }
         }
-    }
-    else if (e.ctx === Sk.astnodes.Load || tuporlist === "set") { //because set's can't be assigned to.
+    } else if (e.ctx === Sk.astnodes.Load || tuporlist === "set") {
+        //because set's can't be assigned to.
 
         if (hasStars) {
             if (!Sk.__future__.python3) {
@@ -579,7 +502,7 @@ Compiler.prototype.cyield = function(e)
     if (this.u.ste.blockType !== Sk.SYMTAB_CONSTS.FunctionBlock) {
         throw new Sk.builtin.SyntaxError("'yield' outside function", this.filename, e.lineno);
     }
-    var val = "null",
+    var val = "Sk.builtin.none.none$",
         nextBlock;
     if (e.value) {
         val = this.vexpr(e.value);
@@ -588,7 +511,7 @@ Compiler.prototype.cyield = function(e)
     // return a pair: resume target block and yielded value
     out("return [/*resume*/", nextBlock, ",/*ret*/", val, "];");
     this.setBlock(nextBlock);
-    return "$gen.gi$sentvalue"; // will either be null if none sent, or the value from gen.send(value)
+    return "$gen.gi$sentvalue"; // will either be none if none sent, or the value from gen.send(value)
 };
 
 Compiler.prototype.ccompare = function (e) {
@@ -803,12 +726,11 @@ Compiler.prototype.cformattedvalue = function(e) {
     let value = this.vexpr(e.value);
     switch (e.conversion) {
         case 's':
-            value = this._gr("value", "Sk.builtin.str(",value,")");
+            value = this._gr("value", "new Sk.builtin.str(",value,")");
             break;
         case 'a':
-            // TODO when repr() becomes more unicode-aware,
-            // we'll want to handle repr() and ascii() differently.
-            // For now, they're the same
+            value = this._gr("value", "Sk.builtin.ascii(",value,")");
+            break;
         case 'r':
             value = this._gr("value", "Sk.builtin.repr(",value,")");
             break;
@@ -817,6 +739,26 @@ Compiler.prototype.cformattedvalue = function(e) {
     return this._gr("formatted", "Sk.abstr.objectFormat("+value+","+formatSpec+")");
 };
 
+function getJsLiteralForString(s) {
+    let r = "\"";
+    for (let i = 0; i < s.length; i++) {
+        let c = s.charCodeAt(i);
+        // Escape quotes, anything before space, and anything non-ASCII
+        if (c == 0x0a) {
+            r += "\\n";
+        } else if (c == 92) {
+            r += "\\\\";
+        } else if (c == 34 || c < 32 || c >= 0x7f && c < 0x100) {
+            r += "\\x" + ("0" + c.toString(16)).substr(-2);
+        } else if (c >= 0x100) {
+            r += "\\u" + ("000" + c.toString(16)).substr(-4);
+        } else {
+            r += s.charAt(i);
+        }
+    }
+    r += "\"";
+    return r;
+}
 
 /**
  *
@@ -888,13 +830,23 @@ Compiler.prototype.vexpr = function (e, data, augvar, augsubs) {
             }
             else if (e.n instanceof Sk.builtin.complex) {
                 // preserve sign of zero here too
-                var real_val = e.n.real.v === 0 && 1/e.n.real.v === -Infinity ? "-0" : e.n.real.v;
-                var imag_val = e.n.imag.v === 0 && 1/e.n.imag.v === -Infinity ? "-0" : e.n.imag.v;
-                return this.makeConstant("new Sk.builtin.complex(new Sk.builtin.float_(" + real_val + "), new Sk.builtin.float_(" + imag_val + "))");
+                var real_val = e.n.real === 0 && 1/e.n.real === -Infinity ? "-0" : e.n.real;
+                var imag_val = e.n.imag === 0 && 1/e.n.imag === -Infinity ? "-0" : e.n.imag;
+                return this.makeConstant("new Sk.builtin.complex(" + real_val + ", " + imag_val + ")");
             }
             Sk.asserts.fail("unhandled Num type");
+        case Sk.astnodes.Bytes:
+            if (Sk.__future__.python3) {
+                const source = [];
+                const str = e.s.$jsstr();
+                for (let i = 0; i < str.length; i++) {
+                    source.push(str.charCodeAt(i));
+                }
+                return this.makeConstant("new Sk.builtin.bytes([", source.join(", "), "])");
+            }
+            // else fall through and make a string instead
         case Sk.astnodes.Str:
-            return this.makeConstant("new Sk.builtin.str(", e.s["$r"]().v, ")");
+            return this.makeConstant("new Sk.builtin.str(", getJsLiteralForString(e.s.$jsstr()), ")");
         case Sk.astnodes.Attribute:
             if (e.ctx !== Sk.astnodes.AugLoad && e.ctx !== Sk.astnodes.AugStore) {
                 val = this.vexpr(e.value);
@@ -902,8 +854,6 @@ Compiler.prototype.vexpr = function (e, data, augvar, augsubs) {
             mangled = e.attr["$r"]().v;
             mangled = mangled.substring(1, mangled.length - 1);
             mangled = mangleName(this.u.private_, new Sk.builtin.str(mangled)).v;
-            mangled = fixReservedWords(mangled);
-            mangled = fixReservedNames(mangled);
             mname = this.makeConstant("new Sk.builtin.str('" + mangled + "')");
             switch (e.ctx) {
                 case Sk.astnodes.AugLoad:
@@ -940,7 +890,7 @@ Compiler.prototype.vexpr = function (e, data, augvar, augsubs) {
             switch (e.ctx) {
                 case Sk.astnodes.AugLoad:
                     out("$ret = Sk.abstr.objectGetItem(",augvar,",",augsubs,", true);");
-                    this._checkSuspension(e)
+                    this._checkSuspension(e);
                     return this._gr("gitem", "$ret");
                 case Sk.astnodes.Load:
                 case Sk.astnodes.Store:
@@ -987,7 +937,14 @@ Compiler.prototype.vexpr = function (e, data, augvar, augsubs) {
         case Sk.astnodes.Set:
             return this.ctuplelistorset(e, data, 'set');
         case Sk.astnodes.Starred:
-            break;
+            switch (e.ctx) {
+                case Sk.astnodes.Store:
+                    /* In all legitimate cases, the Starred node was already replaced
+                     * by compiler_list/compiler_tuple. XXX: is that okay? */
+                    throw new Sk.builtin.SyntaxError("starred assignment target must be in a list or tuple", this.filename, e.lineno);
+                default:
+                    throw new Sk.builtin.SyntaxError("can't use starred expression here", this.filename, e.lineno);
+            }
         case Sk.astnodes.JoinedStr:
             return this.cjoinedstr(e);
         case Sk.astnodes.FormattedValue:
@@ -1429,7 +1386,7 @@ Compiler.prototype.craise = function (s) {
         // for the Python version you're using.
 
         var instantiatedException = this.newBlock("exception now instantiated");
-        var isClass = this._gr("isclass", exc + " instanceof Sk.builtin.type || " + exc + ".prototype instanceof Sk.builtin.BaseException");
+        var isClass = this._gr("isclass", exc + ".prototype instanceof Sk.builtin.BaseException");
         this._jumpfalse(isClass, instantiatedException);
         //this._jumpfalse(instantiatedException, isClass);
 
@@ -1453,7 +1410,7 @@ Compiler.prototype.craise = function (s) {
         // TODO TODO TODO set cause appropriately
         // (and perhaps traceback for py2 if we care before it gets fully deprecated)
 
-        out("throw ",exc,";");
+        out("if (", exc, " instanceof Sk.builtin.BaseException) {throw ",exc,";} else {throw new Sk.builtin.TypeError('exceptions must derive from BaseException');};");
     }
     else {
         // re-raise
@@ -1769,7 +1726,7 @@ Compiler.prototype.cfromimport = function (s) {
         level = -1;
     }
     for (i = 0; i < n; ++i) {
-        names[i] = "'" + fixReservedWords(s.names[i].name.v) + "'";
+        names[i] = "'" + fixReserved(s.names[i].name.v) + "'";
     }
     out("$ret = Sk.builtin.__import__(", s.module["$r"]().v, ",$gbl,$loc,[", names, "],",level,");");
 
@@ -1780,7 +1737,7 @@ Compiler.prototype.cfromimport = function (s) {
     mod = this._gr("module", "$ret");
     for (i = 0; i < n; ++i) {
         alias = s.names[i];
-        aliasOut = "'" + fixReservedWords(alias.name.v) + "'";
+        aliasOut = "'" + alias.name.v + "'";
         if (i === 0 && alias.name.v === "*") {
             Sk.asserts.assert(n === 1);
             out("Sk.importStar(", mod, ",$loc, $gbl);");
@@ -1913,12 +1870,24 @@ Compiler.prototype.buildcodeobj = function (n, coname, decorator_list, args, cal
             funcArgs.push(this.nameop(args.vararg.arg, Sk.astnodes.Param));
         }
     }
+    // Are we using the new fast-call mechanism, where the
+    // function we define implements the tp$call interface?
+    // (Right now we haven't migrated generators because they're
+    // a mess, but if this works we can move everything over)
+    let fastCall = !isGenerator;
+
     if (hasFree) {
-        funcArgs.push("$free");
+        if (!fastCall) {
+            funcArgs.push("$free");
+        }
         this.u.tempsToSave.push("$free");
     }
 
-    this.u.prefixCode += funcArgs.join(",");
+    if (fastCall) {
+        this.u.prefixCode += "$posargs,$kwargs";
+    } else {
+        this.u.prefixCode += funcArgs.join(",");
+    }
 
     this.u.prefixCode += "){";
 
@@ -1930,6 +1899,10 @@ Compiler.prototype.buildcodeobj = function (n, coname, decorator_list, args, cal
     }
     if (hasCell) {
         this.u.prefixCode += "\n// has cell\n";
+    }
+
+    if (fastCall) {
+        this.u.prefixCode += "\n// fast call\n";
     }
 
     //
@@ -1949,7 +1922,8 @@ Compiler.prototype.buildcodeobj = function (n, coname, decorator_list, args, cal
 
     // note special usage of 'this' to avoid having to slice globals into
     // all function invocations in call
-    this.u.varDeclsCode += "var $blk=" + entryBlock + ",$exc=[],$loc=" + locals + cells + ",$gbl=this,$err=undefined,$ret=undefined,$postfinally=undefined,$currLineNo=undefined,$currColNo=undefined;";
+    // (fastcall doesn't need to do this, as 'this' is the func object)
+    this.u.varDeclsCode += "var $blk=" + entryBlock + ",$exc=[],$loc=" + locals + cells + ",$gbl=" +(fastCall?"this && this.func_globals":"this") + ((fastCall&&hasFree)?",$free=this && this.func_closure":"") + ",$err=undefined,$ret=undefined,$postfinally=undefined,$currLineNo=undefined,$currColNo=undefined;";
     if (Sk.execLimit !== null) {
         this.u.varDeclsCode += "if (typeof Sk.execStart === 'undefined') {Sk.execStart = Date.now()}";
     }
@@ -1962,6 +1936,22 @@ Compiler.prototype.buildcodeobj = function (n, coname, decorator_list, args, cal
     // parameters appropriately.
     //
     this.u.varDeclsCode += "if ("+scopename+".$wakingSuspension!==undefined) { $wakeFromSuspension(); } else {";
+
+    if (fastCall) {
+        // Resolve our arguments from $posargs+$kwargs.
+        // If we're posargs-only, we can handle the fast path
+        // without even calling out
+        if (!kwarg && !vararg && (!args || !args.kwonlyargs || args.kwonlyargs.length === 0)) {
+            this.u.varDeclsCode += "var $args = ((!$kwargs || $kwargs.length===0) && $posargs.length===" + funcArgs.length + ") ? $posargs : this.$resolveArgs($posargs,$kwargs)";
+        } else {
+            this.u.varDeclsCode += "\nvar $args = this.$resolveArgs($posargs,$kwargs)\n";
+        }
+        for (let i=0; i < funcArgs.length; i++) {
+            this.u.varDeclsCode += ","+funcArgs[i]+"=$args["+i+"]";
+        }
+        this.u.varDeclsCode += ";\n";
+    }
+
 
     // TODO update generators to do their arg checks in outside generated code,
     // like functions do
@@ -1988,17 +1978,20 @@ Compiler.prototype.buildcodeobj = function (n, coname, decorator_list, args, cal
     for (i = 0; args && i < args.args.length; ++i) {
         id = args.args[i].arg;
         if (this.isCell(id)) {
-            this.u.varDeclsCode += "$cell." + id.v + "=" + id.v + ";";
+            let mangled = fixReserved(mangleName(this.u.private_, id).v);
+            this.u.varDeclsCode += "$cell." + mangled + "=" + mangled + ";";
         }
     }
     for (i = 0; args && args.kwonlyargs && i < args.kwonlyargs.length; ++i) {
         id = args.kwonlyargs[i].arg;
         if (this.isCell(id)) {
-            this.u.varDeclsCode += "$cell." + id.v + "=" + id.v + ";";
+            let mangled = fixReserved(mangleName(this.u.private_, id).v);
+            this.u.varDeclsCode += "$cell." + mangled + "=" + mangled + ";";
         }
     }
     if (vararg && this.isCell(vararg.arg)) {
-        this.u.varDeclsCode += "$cell." + vararg.arg.v + "=" + vararg.arg.v + ";";
+        let mangled = fixReserved(mangleName(this.u.private_, vararg.arg).v);
+        this.u.varDeclsCode += "$cell." + mangled + "=" + mangled + ";";
     }
 
     //
@@ -2008,7 +2001,8 @@ Compiler.prototype.buildcodeobj = function (n, coname, decorator_list, args, cal
         this.u.localnames.push(kwarg.arg.v);
         this.u.varDeclsCode += kwarg.arg.v + "=new Sk.builtins['dict']($kwa);";
         if (this.isCell(kwarg.arg)) {
-            this.u.varDeclsCode += "$cell." + kwarg.arg.v + "=" + kwarg.arg.v + ";";
+            let mangled = fixReserved(mangleName(this.u.private_, kwarg.arg).v);
+            this.u.varDeclsCode += "$cell." + mangled + "=" + mangled + ";";
         }
     }
 
@@ -2019,7 +2013,7 @@ Compiler.prototype.buildcodeobj = function (n, coname, decorator_list, args, cal
 
     // inject __class__ cell when running python3
     if (Sk.__future__.python3 && class_for_super) {
-        this.u.varDeclsCode += "$gbl.__class__=this." + class_for_super.v + ";";
+        this.u.varDeclsCode += "$gbl.__class__=$gbl." + class_for_super.v + ";";
     }
 
     // finally, set up the block switch that the jump code expects
@@ -2094,6 +2088,9 @@ Compiler.prototype.buildcodeobj = function (n, coname, decorator_list, args, cal
     if (vararg) {
         out(scopename, ".co_varargs=1;");
     }
+    if (!isGenerator) {
+        out(scopename, ".co_fastcall=1;");
+    }
 
     //
     // build either a 'function' or 'generator'. the function is just a simple
@@ -2137,7 +2134,7 @@ Compiler.prototype.buildcodeobj = function (n, coname, decorator_list, args, cal
         var res;
         if (decos.length > 0) {
             out("$ret = new Sk.builtins['function'](", scopename, ",$gbl", frees, ");");
-            for (let decorator of decos) {
+            for (let decorator of decos.reverse()) {
                 out("$ret = Sk.misceval.callsimOrSuspendArray(", decorator, ",[$ret]);");
                 this._checkSuspension();
             }
@@ -2481,7 +2478,7 @@ var D_FREEVARS = 1;
 var D_CELLVARS = 2;
 
 Compiler.prototype.isCell = function (name) {
-    var mangled = mangleName(this.u.private_, name).v;
+    var mangled = fixReserved(mangleName(this.u.private_, name).v);
     var scope = this.u.ste.getScope(mangled);
     var dict = null;
     return scope === Sk.SYMTAB_CONSTS.CELL;
@@ -2512,7 +2509,7 @@ Compiler.prototype.nameop = function (name, ctx, dataToStore) {
 
     mangled = mangleName(this.u.private_, name).v;
     // Have to do this before looking it up in the scope
-    mangled = fixReservedNames(mangled);
+    mangled = fixReserved(mangled);
     op = 0;
     optype = OP_NAME;
     scope = this.u.ste.getScope(mangled);
@@ -2543,8 +2540,6 @@ Compiler.prototype.nameop = function (name, ctx, dataToStore) {
             break;
     }
 
-    // have to do this after looking it up in the scope
-    mangled = fixReservedWords(mangled);
 
     //print("mangled", mangled);
     // TODO TODO TODO todo; import * at global scope failing here
@@ -2664,8 +2659,7 @@ Compiler.prototype.exitScope = function () {
     this.nestlevel--;
     if (this.stack.length - 1 >= 0) {
         this.u = this.stack.pop();
-    }
-    else {
+    } else {
         this.u = null;
     }
     if (this.u) {
@@ -2675,8 +2669,6 @@ Compiler.prototype.exitScope = function () {
     if (prev.name.v !== "<module>") {// todo; hacky
         mangled = prev.name["$r"]().v;
         mangled = mangled.substring(1, mangled.length - 1);
-        mangled = fixReservedWords(mangled);
-        mangled = fixReservedNames(mangled);
         out(prev.scopename, ".co_name=new Sk.builtins['str']('", mangled, "');");
     }
     for (var constant in prev.consts) {
@@ -2843,11 +2835,8 @@ Sk.resetCompiler = function () {
 
 Sk.exportSymbol("Sk.resetCompiler", Sk.resetCompiler);
 
-Sk.fixReservedWords = fixReservedWords;
-Sk.exportSymbol("Sk.fixReservedWords", Sk.fixReservedWords);
-
-Sk.fixReservedNames = fixReservedNames;
-Sk.exportSymbol("Sk.fixReservedNames", Sk.fixReservedNames);
+Sk.fixReserved = fixReserved;
+Sk.exportSymbol("Sk.fixReserved", Sk.fixReserved);
 
 Sk.unfixReserved = unfixReserved;
 Sk.exportSymbol("Sk.unfixReserved", Sk.unfixReserved);
