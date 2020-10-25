@@ -85,7 +85,9 @@ describe("Costume handling", () => {
                 class Sky(pytch.Stage):
                     Backdrops = [${spec.fragment}]
             `),
-            assertBuildErrorFun("register-actor", spec.error_regexp));
+            assertBuildErrorFun("register-actor",
+                                Sk.builtin.ValueError,
+                                spec.error_regexp));
     })});
 
     const bad_Costume_cases = [
@@ -140,7 +142,9 @@ describe("Costume handling", () => {
                 class Alien(pytch.Sprite):
                     Costumes = [${spec.fragment}]
             `),
-            assertBuildErrorFun("register-actor", spec.error_regexp));
+            assertBuildErrorFun("register-actor",
+                                Sk.builtin.ValueError,
+                                spec.error_regexp));
     })});
 
     with_project("py/project/some_costumes.py", (import_project) => {
@@ -236,7 +240,9 @@ describe("Costume handling", () => {
     it("rejects start_shown True when no Costumes", async () => {
         await assert.rejects(
             import_deindented(alien_code(true, false)),
-            assertBuildErrorFun("register-actor", /start_shown.*but.*Costumes/));
+            assertBuildErrorFun("register-actor",
+                                Sk.builtin.ValueError,
+                                /start_shown.*but.*Costumes/));
     });
 
     it("obeys start_shown False when no Costumes", async () => {

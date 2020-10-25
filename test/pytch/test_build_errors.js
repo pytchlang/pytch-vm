@@ -20,7 +20,7 @@ describe("build-error handling", () => {
             // can directly use it as the first arg to assert.rejects().
             await assert.rejects(
                 import_project(),
-                assertBuildErrorFun("import", /^SyntaxError.*import pytch/)
+                assertBuildErrorFun("import", Sk.builtin.SyntaxError, /import pytch/)
             );
         });
     });
@@ -30,7 +30,8 @@ describe("build-error handling", () => {
             await assert.rejects(
                 import_project(),
                 assertBuildErrorFun("register-actor",
-                                    /^PytchAssetLoadError.*angry-alien/)
+                                    Sk.pytchsupport.PytchAssetLoadError,
+                                    /angry-alien/)
             );
         });
     });
