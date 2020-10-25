@@ -210,7 +210,7 @@ Sk.abstr.setUpInheritance("PytchAssetLoadError",
 Sk.pytchsupport.PytchBuildError = function(...args) {
     // Convert args into form expected by StandardError.
     const details = args[0];
-    args[0] = "Could not build project";
+    args[0] = "could not build project";
 
     if (! (this instanceof Sk.pytchsupport.PytchBuildError)) {
         let o = Object.create(Sk.pytchsupport.PytchBuildError.prototype);
