@@ -169,30 +169,28 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
 /**
  * Exception subclass representing the failure to load a project asset.
  *
- * Construct with three arguments:
+ * Construct with a single argument, being an object having properties:
  *
- *     (error_message, asset_kind, asset_path)
- *
- * where 'asset_kind' should be "image" or "sound".
+ *     kind: either "Image" or "Sound"
+ *     path: a string giving the location of the not-found asset
  */
-//
-// TODO Use "...args" in signature and "args" instead of "arguments" in body?
-//
-Sk.pytchsupport.PytchAssetLoadError = function (args) {
+Sk.pytchsupport.PytchAssetLoadError = function (...args) {
+    // Convert args into form expected by Exception.
+    const details = args[0];
+    args = [`could not load ${details.kind} "${details.path}"`];
+
     var o;
     if (! (this instanceof Sk.pytchsupport.PytchAssetLoadError)) {
         o = Object.create(Sk.pytchsupport.PytchAssetLoadError.prototype);
-        o.constructor.apply(o, arguments);
+        o.constructor.apply(o, args);
         return o;
     }
-    Sk.builtin.StandardError.apply(this, arguments);
-
-    // Undo the traceback-seeding done in Sk.builtin.BaseException().
-    this.traceback = [];
+    Sk.builtin.Exception.apply(this, args);
+    Object.assign(this, details);
 };
 Sk.abstr.setUpInheritance("PytchAssetLoadError",
                           Sk.pytchsupport.PytchAssetLoadError,
-                          Sk.builtin.StandardError);
+                          Sk.builtin.Exception);
 
 
 /**
