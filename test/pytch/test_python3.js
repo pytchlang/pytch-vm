@@ -26,4 +26,17 @@ describe("support for Python 3", () => {
         const stdout = pytch_stdout.drain_stdout();
         assert.equal(stdout, "Hello world\n");
     });
+
+    it("has print() as a function", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            # Emits ('Hello', 'world') under Python 2:
+            print("Hello", "world")
+        `);
+
+        const stdout = pytch_stdout.drain_stdout();
+        assert.equal(stdout, "Hello world\n");
+    });
 });
