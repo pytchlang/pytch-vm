@@ -271,9 +271,14 @@ describe("Multiple loop iterations per frame", () => {
                     @pytch.non_yielding_loops(2)`;
 
     [
-        //
-        // TODO: Specs with properties 'detail', 'decorators'.
-        //
+        {
+            detail: "@loops @event method",
+            decorators: loop_control_outside_event_code,
+        },
+        {
+            detail: "@event @loops method",
+            decorators: event_outside_loop_control_code,
+        },
     ].forEach(spec => {
         it(`can stack decorators (${spec.detail})`, async () => {
             const project = await import_deindented(`
