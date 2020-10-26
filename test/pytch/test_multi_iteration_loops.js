@@ -262,6 +262,14 @@ describe("Multiple loop iterations per frame", () => {
         assert.deepEqual(got_ns, [2, 4, 6, 8, 10]);
     });
 
+    const loop_control_outside_event_code = `# Decorators:
+                    @pytch.non_yielding_loops(2)
+                    @pytch.when_I_receive("run")`;
+
+    const event_outside_loop_control_code = `# Decorators:
+                    @pytch.when_I_receive("run")
+                    @pytch.non_yielding_loops(2)`;
+
     [
         //
         // TODO: Specs with properties 'detail', 'decorators'.
