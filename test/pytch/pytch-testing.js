@@ -559,6 +559,7 @@ const import_deindented = (raw_code_text) => {
 require("../../support/run/require-skulpt").requireSkulpt(false, false);
 
 Sk.configure({
+    __future__: Sk.python3,
     read: (fname => fs.readFileSync(fname, { encoding: "utf8" })),
     output: (args) => { pytch_stdout.append_stdout(args); },
     pytch: {
