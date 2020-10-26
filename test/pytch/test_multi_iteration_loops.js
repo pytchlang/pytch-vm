@@ -261,4 +261,29 @@ describe("Multiple loop iterations per frame", () => {
         const got_ns = n_value_history(project, 5);
         assert.deepEqual(got_ns, [2, 4, 6, 8, 10]);
     });
+
+    [
+        //
+        // TODO: Specs with properties 'detail', 'decorators'.
+        //
+    ].forEach(spec => {
+        it(`can stack decorators (${spec.detail})`, async () => {
+            const project = await import_deindented(`
+
+                import pytch
+
+                class Counter(pytch.Sprite):
+                    Costumes = []
+
+                    ${spec.decorators}
+                    def count_in_twos(self):
+                        self.n = 0
+                        for i in range(10):
+                            self.n += 1
+            `);
+
+            const got_ns = n_value_history(project, 5);
+            assert.deepEqual(got_ns, [2, 4, 6, 8, 10]);
+        });
+    });
 });
