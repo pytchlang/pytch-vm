@@ -1,4 +1,7 @@
 # Top-level package file for 'pytch'.
+#
+# IMPORTANT: Update the hard-coded list of auto-completions in the webapp
+# when adding symbols to this file.
 
 from .project import (
     Project,
