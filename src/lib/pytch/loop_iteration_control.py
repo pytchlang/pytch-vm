@@ -21,6 +21,8 @@ def multiple_loop_iterations_decorator(n_iters):
         def decorated_fun(*args, **kwargs):
             with LoopIterationsPerFrame(n_iters):
                 return fun(*args, **kwargs)
+        if hasattr(fun, '_pytch_handler_for'):
+            decorated_fun._pytch_handler_for = fun._pytch_handler_for
         return decorated_fun
     return decorator
 
