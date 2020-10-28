@@ -11,4 +11,4 @@ The Pytch VM and IDE
    :caption: Contents:
 
    user/index
-   internals/index
+   developer/index
