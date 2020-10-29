@@ -19,6 +19,11 @@
 The Pytch VM and IDE
 ====================
 
+.. caution::
+
+   This index will not appear in the final website documentation.  It is just
+   for standalone development of the webapp docs.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
