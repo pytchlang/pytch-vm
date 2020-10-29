@@ -1,7 +1,20 @@
-.. Pytch VM/IDE documentation master file, created by
-   sphinx-quickstart on Fri Aug  7 09:20:18 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+..
+   To set up for standalone development:
+
+   At root of repo:
+
+      virtualenv -p python3 venv
+      source venv/bin/activate
+      pip install sphinx sphinx-rtd-theme sphinx-autobuild
+
+   Then, within "doc/" directory,
+
+      sphinx-autobuild --re-ignore '/\.#' source build/html
+
+   will launch a live-reload server to view the results.  See the developer docs
+   for the pytch-website repository for how to build these docs into the main
+   website docs.
+
 
 The Pytch VM and IDE
 ====================
