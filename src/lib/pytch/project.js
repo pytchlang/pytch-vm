@@ -291,6 +291,12 @@ var $builtinmodule = function (name) {
             let attr_name = this.appearances_attr_name;
             let raw_descriptors = js_getattr(this.py_cls, attr_name);
 
+            // The error message here is a bit of a lie; we will also
+            // accept a Python tuple.
+            if (!(raw_descriptors instanceof Array))
+                throw new Sk.builtin.ValueError(
+                    `${attr_name.v} must be a list`);
+
             let appearance_descriptors
                 = raw_descriptors.map(
                     d => this.validate_appearance_descriptor(d));

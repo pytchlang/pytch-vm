@@ -5,6 +5,7 @@ const {
     import_deindented,
     assert,
     assert_Appearance_equal,
+    assertBuildErrorFun,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -67,20 +68,27 @@ describe("Costume spec parsing", () => {
         },
     ];
 
-    test_cases.forEach(spec => {
-    it(`parses spec (${spec.label}) correctly`, async () => {
-        const project = await import_deindented(`
+    [
+        { label: "list", open: "[", close: "]" },
+        // Close must include comma to parse a single-element tuple:
+        { label: "tuple", open: "(", close: ",)" },
+    ].forEach(seqSpec => {
+        test_cases.forEach(spec => {
+            const label = `${spec.label} / ${seqSpec.label}`;
+            it(`parses spec (${label}) correctly`, async () => {
+                const project = await import_deindented(`
 
-            import pytch
-            class Banana(pytch.Sprite):
-                Costumes = [${spec.fragment}]
-        `);
+                    import pytch
+                    class Banana(pytch.Sprite):
+                        Costumes = ${seqSpec.open}${spec.fragment}${seqSpec.close}
+                `);
 
-        const banana = project.actor_by_class_name("Banana");
-        const appearances = banana._appearances;
-        assert.equal(appearances.length, 1);
-        assert_Appearance_equal(appearances[0], ...spec.exp_info);
-    });
+                const banana = project.actor_by_class_name("Banana");
+                const appearances = banana._appearances;
+                assert.equal(appearances.length, 1);
+                assert_Appearance_equal(appearances[0], ...spec.exp_info);
+            });
+        });
     });
 });
 
@@ -130,5 +138,42 @@ describe("Backdrop spec parsing", () => {
 
         assert_Appearance_equal(appearances[0], ...full_spec);
     });
+    });
+});
+
+describe("Non-sequence as Costumes or Backdrops", () => {
+    // A user might give a non-sequence as a Costumes or Backdrops
+    // attribute.  They should get a useful error message if so.
+
+    it("gives useful error for non-sequence Costumes", async () => {
+        const import_project = import_deindented(`
+
+            import pytch
+            class Banana(pytch.Sprite):
+                Costumes = "yellow-banana.png"
+        `);
+
+        await assert.rejects(
+            import_project,
+            assertBuildErrorFun("register-actor",
+                                Sk.builtin.ValueError,
+                                /Costumes must be a list/)
+        );
+    });
+
+    it("gives useful error for non-sequence Backdrops", async () => {
+        const import_project = import_deindented(`
+
+            import pytch
+            class Sky(pytch.Stage):
+                Backdrops = "starry-night.jpg"
+        `);
+
+        await assert.rejects(
+            import_project,
+            assertBuildErrorFun("register-actor",
+                                Sk.builtin.ValueError,
+                                /Backdrops must be a list/)
+        );
     });
 });
