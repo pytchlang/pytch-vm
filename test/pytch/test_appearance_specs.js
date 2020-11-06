@@ -73,21 +73,21 @@ describe("Costume spec parsing", () => {
         // Close must include comma to parse a single-element tuple:
         { label: "tuple", open: "(", close: ",)" },
     ].forEach(seqSpec => {
-    test_cases.forEach(spec => {
-    it(`parses spec (${spec.label} / ${seqSpec.label}) correctly`, async () => {
-        const project = await import_deindented(`
+        test_cases.forEach(spec => {
+            it(`parses spec (${spec.label} / ${seqSpec.label}) correctly`, async () => {
+                const project = await import_deindented(`
 
-            import pytch
-            class Banana(pytch.Sprite):
-                Costumes = ${seqSpec.open}${spec.fragment}${seqSpec.close}
-        `);
+                    import pytch
+                    class Banana(pytch.Sprite):
+                        Costumes = ${seqSpec.open}${spec.fragment}${seqSpec.close}
+                `);
 
-        const banana = project.actor_by_class_name("Banana");
-        const appearances = banana._appearances;
-        assert.equal(appearances.length, 1);
-        assert_Appearance_equal(appearances[0], ...spec.exp_info);
-    });
-    });
+                const banana = project.actor_by_class_name("Banana");
+                const appearances = banana._appearances;
+                assert.equal(appearances.length, 1);
+                assert_Appearance_equal(appearances[0], ...spec.exp_info);
+            });
+        });
     });
 });
 
