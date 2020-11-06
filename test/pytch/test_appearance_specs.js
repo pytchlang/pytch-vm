@@ -132,3 +132,8 @@ describe("Backdrop spec parsing", () => {
     });
     });
 });
+
+describe("Non-sequence as Costumes or Backdrops", () => {
+    // A user might give a non-sequence as a Costumes or Backdrops
+    // attribute.  They should get a useful error message if so.
+});
