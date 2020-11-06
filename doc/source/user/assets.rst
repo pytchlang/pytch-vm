@@ -1,5 +1,8 @@
+.. _costume_specifications:
+
 Costumes
 --------
+
 
 A Sprite has *Costumes* and the Stage has *Backdrops*.  Both Sprites
 and the Stage can have *Sounds*.  The way that you define these in
@@ -54,6 +57,8 @@ the 'y' coordinate goes down, rather than the usual 'positive is up'
 convention for the stage.  This is to follow the usual convention for
 computer images, which uses (0, 0) as the top-left corner.*
 
+.. _costume_label_specifications:
+
 Specifying the label of the costume
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -86,6 +91,7 @@ With these specifications, you now say
 ``self.switch_costume("fast-car")`` or
 ``self.switch_costume("crashed-car")`` in your code.
 
+.. _costume_label_origin_specifications:
 
 Specifying the label and the origin of the costume
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
