@@ -5,6 +5,7 @@ const {
     import_deindented,
     assert,
     assert_Appearance_equal,
+    assertBuildErrorFun,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -136,4 +137,20 @@ describe("Backdrop spec parsing", () => {
 describe("Non-sequence as Costumes or Backdrops", () => {
     // A user might give a non-sequence as a Costumes or Backdrops
     // attribute.  They should get a useful error message if so.
+
+    it("gives useful error for non-sequence Costumes", async () => {
+        const import_project = import_deindented(`
+
+            import pytch
+            class Banana(pytch.Sprite):
+                Costumes = "yellow-banana.png"
+        `);
+
+        await assert.rejects(
+            import_project,
+            assertBuildErrorFun("register-actor",
+                                Sk.builtin.ValueError,
+                                /Costumes must be a list/)
+        );
+    });
 });
