@@ -153,4 +153,20 @@ describe("Non-sequence as Costumes or Backdrops", () => {
                                 /Costumes must be a list/)
         );
     });
+
+    it("gives useful error for non-sequence Backdrops", async () => {
+        const import_project = import_deindented(`
+
+            import pytch
+            class Sky(pytch.Stage):
+                Backdrops = "starry-night.jpg"
+        `);
+
+        await assert.rejects(
+            import_project,
+            assertBuildErrorFun("register-actor",
+                                Sk.builtin.ValueError,
+                                /Backdrops must be a list/)
+        );
+    });
 });
