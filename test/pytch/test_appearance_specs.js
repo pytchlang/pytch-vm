@@ -74,7 +74,8 @@ describe("Costume spec parsing", () => {
         { label: "tuple", open: "(", close: ",)" },
     ].forEach(seqSpec => {
         test_cases.forEach(spec => {
-            it(`parses spec (${spec.label} / ${seqSpec.label}) correctly`, async () => {
+            const label = `${spec.label} / ${seqSpec.label}`;
+            it(`parses spec (${label}) correctly`, async () => {
                 const project = await import_deindented(`
 
                     import pytch
