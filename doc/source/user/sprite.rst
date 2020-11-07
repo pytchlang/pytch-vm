@@ -18,7 +18,7 @@ Creating Sprites
 You can create a Sprite in your project by declaring a Python *class*
 that uses the Sprite as a foundation. You do this by creating a class
 with some name (for example, "Kitten"), and mentioning the pytch
-Sprite class as it's basis. Here is an example of a Kitten class that
+Sprite class as its basis. Here is an example of a Kitten class that
 has a single costume (costumes are discussed just below):
 
 .. code-block:: python
@@ -36,7 +36,7 @@ looks. The first costume mentioned will be how the sprite first
 appears and you can change the Sprite's appearance using commands.
 
 If a Sprite is to appear on the stage then it has to have at least one
-costume (it's OK for a sprite to be invisible, and then it doesnt'
+costume (it's OK for a sprite to be invisible, and then it doesn't
 need to have any costumes at all). Costumes are controlled by a
 variable in each Sprite that lists the images that the Sprite can
 have. To use an image you have to upload it to your project, and then
@@ -49,7 +49,7 @@ Usually all you have to do is make a list called *Costumes* in the
 sprite and list all the names of the uploaded files you want to use.
 
 This list has to be set up as the Sprite is created (Pytch can't yet
-load more images after the sprite has been set up)
+load more images after the sprite has been set up).
 
 The *Costumes* variable needs to be declared inside the Sprite. For
 example, here is a definition for a new Sprite class that will have
@@ -61,7 +61,7 @@ two costumes:
         Costumes = ["smiling-kitten.jpg",
                     "frowning-kitten.jpg"]
 
-By default the Sprite will use the first image as it's appearance. If
+By default the Sprite will use the first image as its appearance. If
 you want to change to another costume you can use the *switch_costume*
 method. 
 
@@ -87,7 +87,7 @@ Showing and hiding the sprite
 Changing the sprite appearance
   Method: ``self.switch_costume(name)``
 
-  Select one of the costumes listed in this Sprites *Costumes*
+  Select one of the costumes listed in this Sprite's *Costumes*
   variable. The name can be either the complete filename, the filename
   without the extension, or a custom label (as described in
   :ref:`assets<costume_label_specifications>` ). For example, you might use ``self.switch_costume("smiling-kitten")`` to choose a new costume.
@@ -132,11 +132,11 @@ Change the y-position of the sprite by a certain amount (for example, ``self.cha
 
   ``self.set_x(x)``
 
-  Move the sprite to a certain x-position on the stage while keeping it's y-position the same.
+  Move the sprite to a certain x-position on the stage while keeping its y-position the same.
 
   ``self.set_y(y)``
   
-  Move the sprite to a certain y-position on the stage while keeping it's x-position the same.
+  Move the sprite to a certain y-position on the stage while keeping its x-position the same.
 
   ``self.get_x()``
   
@@ -155,7 +155,7 @@ Making sounds
   Start a sound playing. You can refer to the sound using the file
   name from the ``Sounds`` variable in the sprite, or using a label
   (see the :ref:``assets<sounds>` document). Once the sound has
-  started the Sprite will move on to it's next instruction.
+  started the Sprite will move on to its next instruction.
 
   ``self.play_sound_until_done(sound_name)``
 
@@ -163,7 +163,7 @@ Making sounds
   name from the ``Sounds`` variable in the sprite, or using a label
   (see the :ref:``assets<sounds>` document). This method will not
   return until the entire sound has played, so the script it is
-  contained in won't do it's next instruction until then.
+  contained in won't do its next instruction until then.
 
 
 Making and deleting copies of a Sprite
@@ -171,7 +171,7 @@ Making and deleting copies of a Sprite
 
   Each Sprite is created on the Stage at the start of the program, but it is possible to create further copies of each Sprite when the program is running. These copies are called "clones" of the original.
 
-  When a clone is created it starts at the same position and wearing the same costume as the original, but it can run it's own scripts to change it's behaviour. The "self" variable always refers to the _current_ clone.
+  When a clone is created it starts at the same position and wearing the same costume as the original, but it can run its own scripts to change its behaviour. The "self" variable always refers to the _current_ clone.
 
   Clones can be created using the ``create_clone_of(thing)`` function (see :ref:``clones<creating_clones>``).
 
@@ -212,11 +212,11 @@ Checking for sprites colliding
 
   You can use this method to check whether this sprite is touching any
   instance of another class. For example ``self.touching(Dog)`` will
-  return either True of False depending on whether the current Sprite
+  return either True or False depending on whether the current Sprite
   is overlapping a ``Dog`` sprite.
 
   At the moment Pytch does not look at the actual image in the
-  costume, just it's overall size, so if the two costumes have blank
+  costume, just its overall size, so if the two costumes have blank
   sections but the costumes themselves are overlapping then this
   method will still return true. The current costume and the size set by
   ``set_size`` is taken into account when checking. 
@@ -242,10 +242,10 @@ Showing and hiding speech balloons
   ``self.say_nothing()``
 
   Remove a speech balloon (if there is no speech balloon shown then
-  this does nothing)
+  this does nothing).
 
   ``self.say_for_seconds(content,seconds)``
 
   Show a speech balloon, wait for the number of seconds given, and
-  then remove it. The while script will wait while the balloon is
-  being show.
+  then remove it. The whole script will wait while the balloon is
+  being shown.
