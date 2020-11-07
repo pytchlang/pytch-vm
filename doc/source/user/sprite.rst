@@ -67,7 +67,7 @@ method.
 
 
 Setting the sprite size
-  Method: ``self.set_size( size )``
+  .. function:: self.set_size(size)
 
   Set how large the sprite appears, as a proportion of the size of the
   current costume image, where ``1`` is the normal size of the image.
@@ -76,16 +76,15 @@ Setting the sprite size
 
 
 Showing and hiding the sprite
-  ``self.show()``
-
-  ``self.hide()``
+  .. function:: self.show()
+                self.hide()
 
   Make the sprite appear or disappear from the stage. Sprites that are
   not showing can still be moved, change costume, and so on but you
   won't see the effect until the sprite is shown again.
 
 Changing the sprite appearance
-  Method: ``self.switch_costume(name)``
+  .. function:: self.switch_costume(name)
 
   Select one of the costumes listed in this Sprite's *Costumes*
   variable. The name can be either the complete filename, the filename
@@ -100,15 +99,13 @@ Controlling the order Sprites are drawn
   that, and so on until the front layer is reached. By moving sprites
   between layers you can control which Sprites appear on top.
 
-  Method: ``self.move_to_front_layer()``
-
-  Method: ``self.move_to_back_layer()``
+  .. function:: self.move_to_front_layer()
+                self.move_to_back_layer()
 
   These methods move a sprite to the very front or the very back of the layers.
 
-  Method: ``self.move_forward_layers(n)``
-
-  Method: ``self.move_backward_layers(n)``
+  .. function:: self.move_forward_layers(n)
+                self.move_backward_layers(n)
 
   These methods move a sprite a certain number of layers forward or backward.
 
@@ -118,29 +115,28 @@ Moving a Sprite
 
   Sprites can move their position on the stage using these motion commands. There is an exact x and y position on the stage where the "origin" of the sprite is. Normally the origin in the exact middle of the sprite's current costume, but you can change the origin when you are creating the costume (see :ref:`here<costume_label_origin_specifications>` )
 
-  ``self.go_to_xy(x,y)``
+.. function:: self.go_to_xy(x, y)
 
   Move the sprite to a particular position on the stage
 
-  ``self.change_x(dx)``
+.. function:: self.change_x(dx)
 
   Change the x-position of the sprite by a certain amount (for example, ``self.change_x(10)`` will move the sprite 10 pixels to the right on the stage). The number of pixels can be negative.
 
-  ``self.change_y(dy)``
+.. function:: self.change_y(dy)
 
 Change the y-position of the sprite by a certain amount (for example, ``self.change_y(10)`` will move the sprite 10 pixels up on the stage). The number can be negative.
 
-  ``self.set_x(x)``
+.. function:: self.set_x(x)
 
   Move the sprite to a certain x-position on the stage while keeping its y-position the same.
 
-  ``self.set_y(y)``
+.. function:: self.set_y(y)
 
   Move the sprite to a certain y-position on the stage while keeping its x-position the same.
 
-  ``self.get_x()``
-
-  ``self.get_y()``
+.. function:: self.get_x()
+              self.get_y()
 
   Return the current x or y position of the sprite.
 
@@ -150,14 +146,14 @@ Making sounds
 
   Sounds have to be loaded into the Sprite when it is created (see the :ref:`assets<sound_specifications>` document). Once a sound has been loaded you can get the sprite to play it.
 
-  ``self.start_sound(sound_name)``
+.. function:: self.start_sound(sound_name)
 
   Start a sound playing. You can refer to the sound using the file
   name from the ``Sounds`` variable in the sprite, or using a label
   (see the :ref:`assets<sound_specifications>` document). Once the sound has
   started the Sprite will move on to its next instruction.
 
-  ``self.play_sound_until_done(sound_name)``
+.. function:: self.play_sound_until_done(sound_name)
 
   Start a sound playing. You can refer to the sound using the file
   name from the ``Sounds`` variable in the sprite, or using a label
@@ -175,11 +171,11 @@ Making and deleting copies of a Sprite
 
   Clones can be created using the ``create_clone_of(thing)`` function (see :ref:``clones<creating_clones>``).
 
-  ``self.delete_this_clone()``
+.. function:: self.delete_this_clone()
 
   Remove the current clone. If this method is run by the original sprite then it has no effect, but if it is run by a clone then the clone immediately vanishes.
 
-  ``Class.the_original()``
+.. function:: Class.the_original()
 
   This returns a reference to the _original_ object that this clone is
   a copy of. This can be used to look up variables or send messages to
@@ -188,14 +184,14 @@ Making and deleting copies of a Sprite
   the class name (for example ``Kitten.the_original()``), not the
   ``self`` object.
 
-  ``Class.all_clones()``
+.. function:: Class.all_clones()
 
   Returns a list of all the existing clones of the Sprite that is
   mentioned (for example ``Kitten.all_clones()``). Notice that this
   method is run using the class name (for example
   ``Kitten.all_clones()``), not the ``self`` object.
 
-  ``Class.all_instances()``
+.. function:: Class.all_instances()
 
   Like ``all_clones``, this returns a list of all clones of the Sprite
   that is mentioned (for example ``Kitten.all_clones()``), but
@@ -208,7 +204,7 @@ Making and deleting copies of a Sprite
 Checking for sprites colliding
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  ``self.touching( target_class )``
+.. function:: self.touching( target_class )
 
   You can use this method to check whether this sprite is touching any
   instance of another class. For example ``self.touching(Dog)`` will
@@ -231,7 +227,7 @@ Showing and hiding speech balloons
 
   Speech balloons can be used to get Sprites to show some text on the Stage.
 
-  ``self.say(content)``
+.. function:: self.say(content)
 
   Show a speech balloon next to the current Sprite, showing the text
   supplied. For exampler ``self.say("Hello there")``. The balloon will
@@ -239,12 +235,12 @@ Showing and hiding speech balloons
   Sprite uses ``hide`` to disappear from the stage then the balloon
   will also disappear.
 
-  ``self.say_nothing()``
+.. function:: self.say_nothing()
 
   Remove a speech balloon (if there is no speech balloon shown then
   this does nothing).
 
-  ``self.say_for_seconds(content,seconds)``
+.. function:: self.say_for_seconds(content,seconds)
 
   Show a speech balloon, wait for the number of seconds given, and
   then remove it. The whole script will wait while the balloon is
