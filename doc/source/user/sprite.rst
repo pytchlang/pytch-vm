@@ -29,7 +29,7 @@ has a single costume (costumes are discussed just below):
      Costumes = ["happy-kitten.jpg"]
 
 Controlling how a sprite looks
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Each sprite can have a collection of *Costumes* that control how it
 looks. The first costume mentioned will be how the sprite first
@@ -114,7 +114,7 @@ Controlling the order Sprites are drawn
 
 
 Moving a Sprite
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
   Sprites can move their position on the stage using these motion commands. There is an exact x and y position on the stage where the "origin" of the sprite is. Normally the origin in the exact middle of the sprite's current costume, but you can change the origin when you are creating the costume (see :ref:`here<costume_label_origin_specifications>` )
 
@@ -146,7 +146,7 @@ Change the y-position of the sprite by a certain amount (for example, ``self.cha
 
 
 Making sounds
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
   Sounds have to be loaded into the Sprite when it is created (see the :ref:``assets<sounds>` document). Once a sound has been loaded you can get the sprite to play it.
 
@@ -167,7 +167,7 @@ Making sounds
 
 
 Making and deleting copies of a Sprite
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Each Sprite is created on the Stage at the start of the program, but it is possible to create further copies of each Sprite when the program is running. These copies are called "clones" of the original.
 
