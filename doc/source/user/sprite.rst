@@ -26,7 +26,7 @@ has a single costume (costumes are discussed just below):
    import pytch
 
    class Kitten(pytch.Sprite):
-     Costumes = ["happy-kitten.jpg"]
+       Costumes = ["happy-kitten.jpg"]
 
 Controlling how a sprite looks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,9 +57,9 @@ two costumes:
 
 .. code-block:: python
 
-    class Kitten(pytch.Sprite):
-        Costumes = ["smiling-kitten.jpg",
-                    "frowning-kitten.jpg"]
+   class Kitten(pytch.Sprite):
+       Costumes = ["smiling-kitten.jpg",
+                   "frowning-kitten.jpg"]
 
 By default the Sprite will use the first image as its appearance. If
 you want to change to another costume you can use the *switch_costume*
