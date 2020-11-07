@@ -22,7 +22,7 @@ Sprite class as its basis. Here is an example of a Kitten class that
 has a single costume (costumes are discussed just below):
 
 .. code-block:: python
-   
+
    import pytch
 
    class Kitten(pytch.Sprite):
@@ -56,14 +56,14 @@ example, here is a definition for a new Sprite class that will have
 two costumes:
 
 .. code-block:: python
-                
+
     class Kitten(pytch.Sprite):
         Costumes = ["smiling-kitten.jpg",
                     "frowning-kitten.jpg"]
 
 By default the Sprite will use the first image as its appearance. If
 you want to change to another costume you can use the *switch_costume*
-method. 
+method.
 
 
 Setting the sprite size
@@ -72,17 +72,17 @@ Setting the sprite size
   Set how large the sprite appears, as a proportion of the size of the
   current costume image, where ``1`` is the normal size of the image.
   For example, ``self.set_size( 0.5 )`` will set the sprite to be
-  half-sized. 
+  half-sized.
 
 
 Showing and hiding the sprite
-  ``self.show()`` 
-  
+  ``self.show()``
+
   ``self.hide()``
 
   Make the sprite appear or disappear from the stage. Sprites that are
   not showing can still be moved, change costume, and so on but you
-  won't see the effect until the sprite is shown again. 
+  won't see the effect until the sprite is shown again.
 
 Changing the sprite appearance
   Method: ``self.switch_costume(name)``
@@ -110,7 +110,7 @@ Controlling the order Sprites are drawn
 
   Method: ``self.move_backward_layers(n)``
 
-  These methods move a sprite a certain number of layers forward or backward. 
+  These methods move a sprite a certain number of layers forward or backward.
 
 
 Moving a Sprite
@@ -127,7 +127,7 @@ Moving a Sprite
   Change the x-position of the sprite by a certain amount (for example, ``self.change_x(10)`` will move the sprite 10 pixels to the right on the stage). The number of pixels can be negative.
 
   ``self.change_y(dy)``
-  
+
 Change the y-position of the sprite by a certain amount (for example, ``self.change_y(10)`` will move the sprite 10 pixels up on the stage). The number can be negative.
 
   ``self.set_x(x)``
@@ -135,14 +135,14 @@ Change the y-position of the sprite by a certain amount (for example, ``self.cha
   Move the sprite to a certain x-position on the stage while keeping its y-position the same.
 
   ``self.set_y(y)``
-  
+
   Move the sprite to a certain y-position on the stage while keeping its x-position the same.
 
   ``self.get_x()``
-  
+
   ``self.get_y()``
 
-  Return the current x or y position of the sprite. 
+  Return the current x or y position of the sprite.
 
 
 Making sounds
@@ -219,7 +219,7 @@ Checking for sprites colliding
   costume, just its overall size, so if the two costumes have blank
   sections but the costumes themselves are overlapping then this
   method will still return true. The current costume and the size set by
-  ``set_size`` is taken into account when checking. 
+  ``set_size`` is taken into account when checking.
 
   Note that you check using a *class* name, so if the ``self`` sprite
   is touching any clone of the target class then ``touching`` will
@@ -229,7 +229,7 @@ Checking for sprites colliding
 Showing and hiding speech balloons
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  Speech balloons can be used to get Sprites to show some text on the Stage. 
+  Speech balloons can be used to get Sprites to show some text on the Stage.
 
   ``self.say(content)``
 
