@@ -29,3 +29,11 @@ start playing the ``big-loud-bark.mp3`` file; or we can say
 ``self.start_sound("growl")``, which will start playing the
 ``growl.mp3`` file.  This example shows that you can give some sounds
 a custom label, and leave others with their default label.
+
+
+Playing sounds
+--------------
+
+Once you have given your Sprite (or Stage) some sounds as above, see
+the help about the :ref:`Making sounds<methods_playing_sounds>`
+methods to learn how to play them.
