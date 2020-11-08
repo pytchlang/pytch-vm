@@ -140,6 +140,8 @@ Move the sprite to a certain y-position on the stage while keeping its x-positio
 Return the current x or y position of the sprite.
 
 
+.. _methods_playing_sounds:
+
 Making sounds
 ~~~~~~~~~~~~~
 
