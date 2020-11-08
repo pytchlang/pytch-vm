@@ -6,6 +6,7 @@ Writing Pytch programs
    :caption: Contents:
 
    sprite
+   pytch-module-functions
    hat-blocks
    costume-specs
    backdrop-specs
