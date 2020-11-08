@@ -6,6 +6,7 @@ Writing Pytch programs
    :caption: Contents:
 
    sprite
+   non-hat-blocks
    pytch-module-functions
    hat-blocks
    costume-specs
