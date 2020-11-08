@@ -6,3 +6,4 @@ User documentation
    :caption: Contents:
 
    assets
+   sprite
