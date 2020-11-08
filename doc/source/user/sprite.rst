@@ -30,6 +30,34 @@ has a single costume (costumes are discussed just below):
    class Kitten(pytch.Sprite):
        Costumes = ["happy-kitten.jpg"]
 
+
+Saying how a sprite should behave
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In Scratch you put together scripts which say how you want your Sprite
+to behave when certain things happen, for example, when that Sprite is
+clicked.  In Pytch, you do this by writing your own methods on your
+class.  For example,
+
+.. code:: python
+
+   import pytch
+
+   class Spaceship(pytch.Sprite):
+       @pytch.when_key_pressed("ArrowUp")
+       def move_up(self):
+           self.change_y(10)
+
+Here we see:
+
+* The *method decorator* ``pytch.when_key_pressed`` does the job of a
+  Scratch *hat block* — Pytch's decorators are described in
+  :doc:`their own help file<hat-blocks>`.
+* The method call ``self.change_y(10)`` does the job of the
+  *change y by* Scratch block — a Pytch sprite's methods are described
+  below.
+
+
 Controlling how a sprite looks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
