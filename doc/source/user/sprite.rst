@@ -62,7 +62,7 @@ two costumes:
                    "frowning-kitten.jpg"]
 
 By default the Sprite will use the first image as its appearance. If
-you want to change to another costume you can use the *switch_costume*
+you want to change to another costume you can use the ``switch_costume()``
 method.
 
 
@@ -71,7 +71,7 @@ Setting the sprite size
 
   Set how large the sprite appears, as a proportion of the size of the
   current costume image, where ``1`` is the normal size of the image.
-  For example, ``self.set_size( 0.5 )`` will set the sprite to be
+  For example, ``self.set_size(0.5)`` will set the sprite to be
   half-sized.
 
 
@@ -166,9 +166,9 @@ Making and deleting copies of a Sprite
 
 Each Sprite is created on the Stage at the start of the program, but it is possible to create further copies of each Sprite when the program is running. These copies are called "clones" of the original.
 
-When a clone is created it starts at the same position and wearing the same costume as the original, but it can run its own scripts to change its behaviour. The "self" variable always refers to the _current_ clone.
+When a clone is created it starts at the same position and wearing the same costume as the original, but it can run its own scripts to change its behaviour. The "self" variable always refers to the *current* clone.
 
-Clones can be created using the ``create_clone_of(thing)`` function (see :ref:``clones<creating_clones>``).
+Clones can be created using the ``create_clone_of(thing)`` function (see :ref:`clones<creating_clones>`).
 
 .. function:: self.delete_this_clone()
 
@@ -176,7 +176,7 @@ Remove the current clone. If this method is run by the original sprite then it h
 
 .. function:: Class.the_original()
 
-This returns a reference to the _original_ object that this clone is
+This returns a reference to the *original* object that this clone is
 a copy of. This can be used to look up variables or send messages to
 the original object. If it is run by the original Sprite then it
 returns a reference to itself. Notice that this method is run using
@@ -203,7 +203,7 @@ and originals). Notice that this method is run using the class name
 Checking for sprites colliding
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. function:: self.touching( target_class )
+.. function:: self.touching(target_class)
 
 You can use this method to check whether this sprite is touching any
 instance of another class. For example ``self.touching(Dog)`` will
@@ -239,7 +239,7 @@ will also disappear.
 Remove a speech balloon (if there is no speech balloon shown then
 this does nothing).
 
-.. function:: self.say_for_seconds(content,seconds)
+.. function:: self.say_for_seconds(content, seconds)
 
 Show a speech balloon, wait for the number of seconds given, and
 then remove it. The whole script will wait while the balloon is
