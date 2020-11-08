@@ -169,6 +169,26 @@ Each Sprite is created on the Stage at the start of the program, but it is possi
 When a clone is created it starts at the same position and wearing the same costume as the original, but it can run its own scripts to change its behaviour. The "self" variable always refers to the *current* clone.
 
 Clones can be created using the ``create_clone_of(thing)`` function (see :ref:`clones<creating_clones>`).
+Clones can be created using the ``pytch.create_clone_of(thing)`` function:
+
+.. function:: pytch.create_clone_of(thing)
+
+Create a new clone of ``thing``.  You can create clones in two ways.
+You can clone the original or a copy of one of your Sprites, for
+example the copy which is calling the ``create_clone_of()`` function:
+
+.. code-block:: python
+
+   pytch.create_clone_of(self)
+
+Or you can create a clone of a particular class of Sprite:
+
+.. code-block:: python
+
+   pytch.create_clone_of(Spaceship)
+
+In this case, Pytch makes a clone of the original instance of that
+sprite.
 
 .. function:: self.delete_this_clone()
 
