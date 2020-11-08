@@ -6,6 +6,7 @@ Writing Pytch programs
    :caption: Contents:
 
    sprite
+   hat-blocks
    costume-specs
    backdrop-specs
    sound-specs
