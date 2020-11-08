@@ -9,8 +9,10 @@ You control how a sprite moves and acts by writing *scripts*. Each
 sprite can also have *costumes* and *sounds* that control how it looks
 and sounds.
 
-Each sprite has *methods* which are commands that you can issue to
-get a sprite to do something.
+Each sprite has *methods* which are commands that you can issue to get
+a sprite to do something.  You also write your own methods to say how
+your sprite should behave.
+
 
 Creating Sprites
 ~~~~~~~~~~~~~~~~
