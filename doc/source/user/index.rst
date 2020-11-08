@@ -1,5 +1,5 @@
-User documentation
-==================
+Writing Pytch programs
+======================
 
 .. toctree::
    :maxdepth: 2
