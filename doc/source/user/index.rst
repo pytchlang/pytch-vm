@@ -5,5 +5,7 @@ User documentation
    :maxdepth: 2
    :caption: Contents:
 
-   assets
    sprite
+   costume-specs
+   backdrop-specs
+   sound-specs
