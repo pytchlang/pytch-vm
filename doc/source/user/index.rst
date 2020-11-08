@@ -13,3 +13,4 @@ Writing Pytch programs
    costume-specs
    backdrop-specs
    sound-specs
+   multi-threading
