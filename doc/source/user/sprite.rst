@@ -195,7 +195,7 @@ method is run using the class name (for example
 Like ``all_clones``, this returns a list of all clones of the Sprite
 that is mentioned (for example ``Kitten.all_clones()``), but
 ``all_instances`` also includes the original Sprite in the
-list. This is useful if you want acces to everything (both clones
+list. This is useful if you want access to everything (both clones
 and originals). Notice that this method is run using the class name
 (for example ``Kitten.all_instances()``), not the ``self`` object.
 
