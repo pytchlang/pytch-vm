@@ -11,7 +11,8 @@ def create_clone_of(original):
         raise NotImplementedError('TODO: Clone instance-0 of a class')
 
     # TODO: Use instance-0 of 'original' if 'original' is a class.
-    obj = original
+    else:
+        obj = original
 
     return create_clone_of_instance(obj)
 
