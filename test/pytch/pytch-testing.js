@@ -208,7 +208,10 @@ const pytch_errors = (() => {
 
     const sole_error = (() => {
         const errors = drain_errors();
-        assert.strictEqual(errors.length, 1);
+        assert.strictEqual(
+            errors.length, 1,
+            `expecting exactly one error but got ${errors.length}`
+        );
         return errors[0];
     });
 
