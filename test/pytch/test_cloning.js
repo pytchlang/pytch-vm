@@ -7,6 +7,7 @@ const {
     many_frames,
     one_frame,
     import_deindented,
+    pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -306,5 +307,28 @@ describe("cloning", () => {
         project.do_synthetic_broadcast("clone");
         many_frames(project, 2);
         assert.deepStrictEqual(banana_xs(), [42, 84, 84]);
+    });
+
+    it("rejects clone from a non-Pytch-registered class", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Banana:
+                pass
+
+            class Pear(pytch.Sprite):
+                Costumes = []
+
+                @pytch.when_I_receive("clone")
+                def make_clone(self):
+                    pytch.create_clone_of(Banana)
+        `);
+
+        project.do_synthetic_broadcast("clone");
+        one_frame(project);
+
+        const err_str = pytch_errors.sole_error_string();
+        assert.ok(/can only clone a Pytch-registered/.test(err_str));
     });
 });
