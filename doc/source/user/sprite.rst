@@ -11,7 +11,13 @@ and sounds.
 
 Each sprite has *methods* which are commands that you can issue to get
 a sprite to do something.  You also write your own methods to say how
-your sprite should behave.
+your sprite should behave, in two ways:
+
+* A method which should run every time some event happens, for example
+  when the green flag is clicked.  See :doc:`hat-blocks` for details
+  of how this works.
+* A method which your code will use internally.  These are the
+  equivalent of the *custom blocks* you can define in Scratch.
 
 
 Creating Sprites
