@@ -302,5 +302,9 @@ describe("cloning", () => {
         project.do_synthetic_broadcast("clone");
         many_frames(project, 2);
         assert.deepStrictEqual(banana_xs(), [42, 84]);
+
+        project.do_synthetic_broadcast("clone");
+        many_frames(project, 2);
+        assert.deepStrictEqual(banana_xs(), [42, 84, 84]);
     });
 });
