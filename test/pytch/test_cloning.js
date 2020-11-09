@@ -6,6 +6,7 @@ const {
     assert,
     many_frames,
     one_frame,
+    import_deindented,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -258,4 +259,29 @@ describe("cloning", () => {
                 project[method]();
                 assert.strictEqual(n_brooms(), 1);
             }))});
+
+    it("can clone from a Pytch-registered class", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Banana(pytch.Sprite):
+                Costumes = []
+
+                @pytch.when_I_receive("run")
+                def init_var(self):
+                    self.x = 42
+
+                @pytch.when_I_start_as_a_clone
+                def update_var(self):
+                    self.x *= 2
+
+            class Pear(pytch.Sprite):
+                Costumes = []
+
+                @pytch.when_I_receive("clone")
+                def make_clone(self):
+                    pytch.create_clone_of(Banana)
+        `);
+    });
 });
