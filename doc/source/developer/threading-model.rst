@@ -1,3 +1,5 @@
+.. _threading_model:
+
 Threading model
 ---------------
 

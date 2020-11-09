@@ -9,8 +9,16 @@ You control how a sprite moves and acts by writing *scripts*. Each
 sprite can also have *costumes* and *sounds* that control how it looks
 and sounds.
 
-Each sprite has *methods* which are commands that you can issue to
-get a sprite to do something.
+Each sprite has *methods* which are commands that you can issue to get
+a sprite to do something.  You also write your own methods to say how
+your sprite should behave, in two ways:
+
+* A method which should run every time some event happens, for example
+  when the green flag is clicked.  See :doc:`hat-blocks` for details
+  of how this works.
+* A method which your code will use internally.  These are the
+  equivalent of the *custom blocks* you can define in Scratch.
+
 
 Creating Sprites
 ~~~~~~~~~~~~~~~~
@@ -27,6 +35,34 @@ has a single costume (costumes are discussed just below):
 
    class Kitten(pytch.Sprite):
        Costumes = ["happy-kitten.jpg"]
+
+
+Saying how a sprite should behave
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In Scratch you put together scripts which say how you want your Sprite
+to behave when certain things happen, for example, when that Sprite is
+clicked.  In Pytch, you do this by writing your own methods on your
+class.  For example,
+
+.. code:: python
+
+   import pytch
+
+   class Spaceship(pytch.Sprite):
+       @pytch.when_key_pressed("ArrowUp")
+       def move_up(self):
+           self.change_y(10)
+
+Here we see:
+
+* The *method decorator* ``pytch.when_key_pressed`` does the job of a
+  Scratch *hat block* — Pytch's decorators are described in
+  :doc:`their own help file<hat-blocks>`.
+* The method call ``self.change_y(10)`` does the job of the
+  *change y by* Scratch block — a Pytch sprite's methods are described
+  below.
+
 
 Controlling how a sprite looks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -139,6 +175,8 @@ Move the sprite to a certain y-position on the stage while keeping its x-positio
 
 Return the current x or y position of the sprite.
 
+
+.. _methods_playing_sounds:
 
 Making sounds
 ~~~~~~~~~~~~~
