@@ -17,7 +17,6 @@ def create_clone_of(original):
         except:
             raise RuntimeError("the_original() failed")
 
-    # TODO: Use instance-0 of 'original' if 'original' is a class.
     else:
         obj = original
 
