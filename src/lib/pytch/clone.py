@@ -8,7 +8,14 @@ def create_clone_of(original):
     instance.  If a class, we clone its instance-0.
     """
     if isinstance(original, type):
-        raise NotImplementedError('TODO: Clone instance-0 of a class')
+        if not hasattr(original, "_pytch_parent_project"):
+            raise ValueError("can only clone a Pytch-registered class")
+
+        # Would be surprising if this fails, but handle anyway.
+        try:
+            obj = original.the_original()
+        except:
+            raise RuntimeError("the_original() failed")
 
     # TODO: Use instance-0 of 'original' if 'original' is a class.
     else:
