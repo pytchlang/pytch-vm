@@ -283,5 +283,12 @@ describe("cloning", () => {
                 def make_clone(self):
                     pytch.create_clone_of(Banana)
         `);
+
+        let banana = project.actor_by_class_name("Banana");
+        let banana_xs = () => {
+            let raw_xs = banana.instances.map(b => b.js_attr("x"));
+            raw_xs.sort((a, b) => (a - b));
+            return raw_xs;
+        };
     });
 });
