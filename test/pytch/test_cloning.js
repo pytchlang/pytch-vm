@@ -261,6 +261,15 @@ describe("cloning", () => {
                 assert.strictEqual(n_brooms(), 1);
             }))});
 
+
+    const codeForPear = `#
+            class Pear(pytch.Sprite):
+                Costumes = []
+
+                @pytch.when_I_receive("clone")
+                def make_clone(self):
+                    pytch.create_clone_of(Banana)`;
+
     it("can clone from a Pytch-registered class", async () => {
         const project = await import_deindented(`
 
@@ -277,12 +286,7 @@ describe("cloning", () => {
                 def update_var(self):
                     self.x *= 2
 
-            class Pear(pytch.Sprite):
-                Costumes = []
-
-                @pytch.when_I_receive("clone")
-                def make_clone(self):
-                    pytch.create_clone_of(Banana)
+            ${codeForPear}
         `);
 
         let banana = project.actor_by_class_name("Banana");
@@ -317,12 +321,7 @@ describe("cloning", () => {
             class Banana:
                 pass
 
-            class Pear(pytch.Sprite):
-                Costumes = []
-
-                @pytch.when_I_receive("clone")
-                def make_clone(self):
-                    pytch.create_clone_of(Banana)
+            ${codeForPear}
         `);
 
         project.do_synthetic_broadcast("clone");
@@ -346,12 +345,7 @@ describe("cloning", () => {
                 def the_original(cls):
                     raise RuntimeError("oh no!")
 
-            class Pear(pytch.Sprite):
-                Costumes = []
-
-                @pytch.when_I_receive("clone")
-                def make_clone(self):
-                    pytch.create_clone_of(Banana)
+            ${codeForPear}
         `);
 
         project.do_synthetic_broadcast("clone");
