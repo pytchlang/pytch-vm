@@ -290,5 +290,9 @@ describe("cloning", () => {
             raw_xs.sort((a, b) => (a - b));
             return raw_xs;
         };
+
+        project.do_synthetic_broadcast("run");
+        one_frame(project);
+        assert.deepStrictEqual(banana_xs(), [42]);
     });
 });
