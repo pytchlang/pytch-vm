@@ -294,5 +294,13 @@ describe("cloning", () => {
         project.do_synthetic_broadcast("run");
         one_frame(project);
         assert.deepStrictEqual(banana_xs(), [42]);
+
+        // After the broadcast, we need one frame for the handler to
+        // respond, then another frame for the clone to start its
+        // when-I-start-as-clone handler.
+        //
+        project.do_synthetic_broadcast("clone");
+        many_frames(project, 2);
+        assert.deepStrictEqual(banana_xs(), [42, 84]);
     });
 });
