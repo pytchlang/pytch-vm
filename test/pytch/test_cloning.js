@@ -331,4 +331,33 @@ describe("cloning", () => {
         const err_str = pytch_errors.sole_error_string();
         assert.ok(/can only clone a Pytch-registered/.test(err_str));
     });
+
+    it("handles failure of the_original()", async () => {
+        // This would require some effort on the user's part, but test anyway:
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Banana(pytch.Sprite):
+                Costumes = []
+
+                # Deliberately override with error-raising method:
+                @classmethod
+                def the_original(cls):
+                    raise RuntimeError("oh no!")
+
+            class Pear(pytch.Sprite):
+                Costumes = []
+
+                @pytch.when_I_receive("clone")
+                def make_clone(self):
+                    pytch.create_clone_of(Banana)
+        `);
+
+        project.do_synthetic_broadcast("clone");
+        one_frame(project);
+
+        const err_str = pytch_errors.sole_error_string();
+        assert.ok(/the_original.*failed/.test(err_str));
+    });
 });
