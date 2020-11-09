@@ -6,6 +6,8 @@ const {
     assert,
     many_frames,
     one_frame,
+    import_deindented,
+    pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -258,4 +260,98 @@ describe("cloning", () => {
                 project[method]();
                 assert.strictEqual(n_brooms(), 1);
             }))});
+
+
+    const codeForPear = `#
+            class Pear(pytch.Sprite):
+                Costumes = []
+
+                @pytch.when_I_receive("clone")
+                def make_clone(self):
+                    pytch.create_clone_of(Banana)`;
+
+    it("can clone from a Pytch-registered class", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Banana(pytch.Sprite):
+                Costumes = []
+
+                @pytch.when_I_receive("run")
+                def init_var(self):
+                    self.x = 42
+
+                @pytch.when_I_start_as_a_clone
+                def update_var(self):
+                    self.x *= 2
+
+            ${codeForPear}
+        `);
+
+        let banana = project.actor_by_class_name("Banana");
+        let banana_xs = () => {
+            let raw_xs = banana.instances.map(b => b.js_attr("x"));
+            raw_xs.sort((a, b) => (a - b));
+            return raw_xs;
+        };
+
+        project.do_synthetic_broadcast("run");
+        one_frame(project);
+        assert.deepStrictEqual(banana_xs(), [42]);
+
+        // After the broadcast, we need one frame for the handler to
+        // respond, then another frame for the clone to start its
+        // when-I-start-as-clone handler.
+        //
+        project.do_synthetic_broadcast("clone");
+        many_frames(project, 2);
+        assert.deepStrictEqual(banana_xs(), [42, 84]);
+
+        project.do_synthetic_broadcast("clone");
+        many_frames(project, 2);
+        assert.deepStrictEqual(banana_xs(), [42, 84, 84]);
+    });
+
+    it("rejects clone from a non-Pytch-registered class", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Banana:
+                pass
+
+            ${codeForPear}
+        `);
+
+        project.do_synthetic_broadcast("clone");
+        one_frame(project);
+
+        const err_str = pytch_errors.sole_error_string();
+        assert.ok(/can only clone a Pytch-registered/.test(err_str));
+    });
+
+    it("handles failure of the_original()", async () => {
+        // This would require some effort on the user's part, but test anyway:
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Banana(pytch.Sprite):
+                Costumes = []
+
+                # Deliberately override with error-raising method:
+                @classmethod
+                def the_original(cls):
+                    raise RuntimeError("oh no!")
+
+            ${codeForPear}
+        `);
+
+        project.do_synthetic_broadcast("clone");
+        one_frame(project);
+
+        const err_str = pytch_errors.sole_error_string();
+        assert.ok(/the_original.*failed/.test(err_str));
+    });
 });
