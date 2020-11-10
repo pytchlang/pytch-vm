@@ -18,6 +18,7 @@ provided by Pytch:
 
 .. function:: self.start_sound(sound_name)
               self.play_sound_until_done(sound_name)
+   :noindex:
 
 These methods work in the same way as the ones provided by the
 ``Sprite`` class.  See :ref:`the help in the Sprite
