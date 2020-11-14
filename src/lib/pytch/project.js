@@ -517,6 +517,13 @@ var $builtinmodule = function (name) {
 
         launch_sound_performance(name) {
             let sound = this._sound_from_name.get(name);
+
+            if (typeof sound === "undefined") {
+                let cls_name = name_of_py_class(this.py_cls);
+                throw Sk.builtin.KeyError(
+                    `could not find sound "${name}" in class "${cls_name}"`);
+            }
+
             return sound.launch_new_performance();
         }
     }
