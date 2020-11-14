@@ -364,9 +364,9 @@ var $builtinmodule = function (name) {
             let sounds = await Promise.all(async_sounds);
             this._sounds = sounds;
 
-            this._sound_from_name = {};
+            this._sound_from_name = new Map();
             for (let [nm, sound] of sounds)
-                this._sound_from_name[nm] = sound;
+                this._sound_from_name.set(nm, sound);
         }
 
         async async_init() {
@@ -516,7 +516,7 @@ var $builtinmodule = function (name) {
         }
 
         launch_sound_performance(name) {
-            let sound = this._sound_from_name[name];
+            let sound = this._sound_from_name.get(name);
             return sound.launch_new_performance();
         }
     }
