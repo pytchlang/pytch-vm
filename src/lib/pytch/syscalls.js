@@ -14,7 +14,18 @@ var $builtinmodule = function (name) {
             },
         };
 
-        susp.resume = () => Sk.builtin.none.none$;
+        susp.resume = () => {
+            const result = susp.data.result;
+
+            switch (result.kind) {
+            case "success":
+                return result.value;
+            case "failure":
+                throw result.error;
+            default:
+                throw Error("unknown result-kind");
+            }
+        };
 
         return susp;
     };
