@@ -927,6 +927,70 @@ var $builtinmodule = function (name) {
             }
         }
 
+        enact_syscall(syscall_kind, syscall_args) {
+            switch (syscall_kind) {
+            case "next-frame": {
+                return [];
+            }
+
+            case "broadcast": {
+                let message = syscall_args.message;
+                let new_thread_group
+                    = (this.parent_project
+                       .thread_group_for_broadcast_receivers(message));
+
+                if (syscall_args.wait) {
+                    this.state = Thread.State.AWAITING_THREAD_GROUP_COMPLETION;
+                    this.sleeping_on = new_thread_group;
+                }
+
+                return [new_thread_group];
+            }
+
+            case "play-sound": {
+                let sound_name = syscall_args.sound_name;
+                let actor = syscall_args.py_obj.$pytchActorInstance.actor;
+                let performance = actor.launch_sound_performance(sound_name);
+
+                if (syscall_args.wait) {
+                    this.state = Thread.State.AWAITING_SOUND_COMPLETION;
+                    this.sleeping_on = performance;
+                }
+
+                return [];
+            }
+
+            case "wait-seconds": {
+                let n_seconds = syscall_args.n_seconds;
+                let raw_n_frames = Math.ceil(n_seconds * FRAMES_PER_SECOND);
+                let n_frames = (raw_n_frames < 1 ? 1 : raw_n_frames);
+
+                this.state = Thread.State.AWAITING_PASSAGE_OF_TIME;
+                this.sleeping_on = n_frames;
+
+                return [];
+            }
+
+            case "register-instance": {
+                let py_instance = syscall_args.py_instance;
+                let py_cls = Sk.builtin.getattr(py_instance, s_dunder_class);
+                let actor = py_cls.$pytchActor;
+                actor.register_py_instance(py_instance);
+
+                let thread_group = new ThreadGroup("start-as-clone");
+                actor.clone_handlers.forEach(
+                    py_fun => thread_group.create_thread(py_fun,
+                                                         py_instance,
+                                                         this.parent_project));
+
+                return [thread_group];
+            }
+
+            default:
+                throw Error(`unknown Pytch syscall "${susp.data.subtype}"`);
+            }
+        }
+
         one_frame() {
             if (! this.is_running())
                 return [];
@@ -974,66 +1038,13 @@ var $builtinmodule = function (name) {
                     // syscalls, we want it to resume the new suspension:
                     this.skulpt_susp = susp;
 
-                    switch (susp.data.subtype) {
-                    case "next-frame": {
+                    try {
+                        return this.enact_syscall(susp.data.subtype, syscall_args);
+                    } catch (err) {
+                        // Defer the error until next time the innermost
+                        // Python-level code runs.
+                        susp.data.result = { kind: "failure", error: err };
                         return [];
-                    }
-
-                    case "broadcast": {
-                        let message = syscall_args.message;
-                        let new_thread_group
-                            = (this.parent_project
-                               .thread_group_for_broadcast_receivers(message));
-
-                        if (syscall_args.wait) {
-                            this.state = Thread.State.AWAITING_THREAD_GROUP_COMPLETION;
-                            this.sleeping_on = new_thread_group;
-                        }
-
-                        return [new_thread_group];
-                    }
-
-                    case "play-sound": {
-                        let sound_name = syscall_args.sound_name;
-                        let actor = syscall_args.py_obj.$pytchActorInstance.actor;
-                        let performance = actor.launch_sound_performance(sound_name);
-
-                        if (syscall_args.wait) {
-                            this.state = Thread.State.AWAITING_SOUND_COMPLETION;
-                            this.sleeping_on = performance;
-                        }
-
-                        return [];
-                    }
-
-                    case "wait-seconds": {
-                        let n_seconds = syscall_args.n_seconds;
-                        let raw_n_frames = Math.ceil(n_seconds * FRAMES_PER_SECOND);
-                        let n_frames = (raw_n_frames < 1 ? 1 : raw_n_frames);
-
-                        this.state = Thread.State.AWAITING_PASSAGE_OF_TIME;
-                        this.sleeping_on = n_frames;
-
-                        return [];
-                    }
-
-                    case "register-instance": {
-                        let py_instance = syscall_args.py_instance;
-                        let py_cls = Sk.builtin.getattr(py_instance, s_dunder_class);
-                        let actor = py_cls.$pytchActor;
-                        actor.register_py_instance(py_instance);
-
-                        let thread_group = new ThreadGroup("start-as-clone");
-                        actor.clone_handlers.forEach(
-                            py_fun => thread_group.create_thread(py_fun,
-                                                                 py_instance,
-                                                                 this.parent_project));
-
-                        return [thread_group];
-                    }
-
-                    default:
-                        throw Error(`unknown Pytch syscall "${susp.data.subtype}"`);
                     }
                 }
             } finally {
