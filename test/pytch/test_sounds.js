@@ -179,7 +179,11 @@ describe("bad sounds", () => {
         });
     });
 
-    it("rejects unknown sound", async () => {
+    [
+        { label: "unknown string", fragment: '"violin"', err_regexp: /could not find sound/ },
+        { label: "lambda", fragment: "lambda x: 42", err_regexp: /must be given a string/ },
+    ].forEach(spec =>
+    it(`rejects unknown sound (${spec.label})`, async () => {
         const project = await import_deindented(`
 
             import pytch
@@ -199,7 +203,7 @@ describe("bad sounds", () => {
                     self.fall_over_3()
 
                 def fall_over_3(self):
-                    self.start_sound("violin")
+                    self.start_sound(${spec.fragment})
         `);
 
         // The error is deferred to the next frame, so we must step
@@ -210,7 +214,7 @@ describe("bad sounds", () => {
         const err = pytch_errors.sole_error();
 
         const err_str = err.err.toString();
-        assert.ok(/could not find sound/.test(err_str));
+        assert.ok(spec.err_regexp.test(err_str));
 
         // Traceback should have:
         //     Actor.play_sound_until_done()
@@ -219,6 +223,6 @@ describe("bad sounds", () => {
         //     Banana.fall_over_1()
         //     Banana.fall_over_0()
         assert.equal(err.err.traceback.length, 5);
-    });
+    }));
 });
 
