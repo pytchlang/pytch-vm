@@ -76,6 +76,10 @@ var $builtinmodule = function (name) {
 
     mod.play_sound = new Sk.builtin.func((py_obj, py_sound_name, py_wait) => {
         let sound_name = Sk.ffi.remapToJs(py_sound_name);
+        if (typeof sound_name !== "string")
+            throw new Sk.builtin.TypeError(
+                "play_sound() must be given a string");
+
         let wait = Sk.ffi.remapToJs(py_wait);
         return new_pytch_suspension("play-sound", {py_obj, sound_name, wait});
     });

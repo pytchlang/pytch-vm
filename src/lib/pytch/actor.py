@@ -25,10 +25,10 @@ class Actor:
         self.ensure_have_appearance_names()
 
         if appearance_name not in self._appearance_names:
-            raise ValueError('could not find {} "{}" in class "{}"'
-                             .format(self._appearance_hyponym,
-                                     appearance_name,
-                                     self.__class__.__name__))
+            raise KeyError('could not find {} "{}" in class "{}"'
+                           .format(self._appearance_hyponym,
+                                   appearance_name,
+                                   self.__class__.__name__))
 
         self._appearance = appearance_name
 

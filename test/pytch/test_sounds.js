@@ -5,8 +5,11 @@ const {
     with_project,
     with_module,
     one_frame,
+    many_frames,
     assert,
     mock_sound_manager,
+    import_deindented,
+    pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -167,7 +170,7 @@ describe("waiting and non-waiting sounds", () => {
 
 describe("bad sounds", () => {
     with_module("py/project/bad_sound.py", (import_module) => {
-        it("throws Python error if sound not found", async () => {
+        it("throws Python error if sound file not found", async () => {
             let module = await import_module();
             let caught_exception = module.$d.caught_exception;
             let err_msg = Sk.builtin.str(caught_exception).v;
@@ -175,5 +178,51 @@ describe("bad sounds", () => {
             assert.equal(caught_exception.kind, "Sound");
         });
     });
+
+    [
+        { label: "unknown string", fragment: '"violin"', err_regexp: /could not find sound/ },
+        { label: "lambda", fragment: "lambda x: 42", err_regexp: /must be given a string/ },
+    ].forEach(spec =>
+        it(`rejects unknown sound (${spec.label})`, async () => {
+            const project = await import_deindented(`
+
+                import pytch
+
+                class Banana(pytch.Sprite):
+                    Costumes = []
+                    Sounds = ["trumpet.mp3"]
+
+                    @pytch.when_I_receive("go")
+                    def fall_over_0(self):
+                        self.fall_over_1()
+
+                    def fall_over_1(self):
+                        self.fall_over_2()
+
+                    def fall_over_2(self):
+                        self.fall_over_3()
+
+                    def fall_over_3(self):
+                        self.start_sound(${spec.fragment})
+            `);
+
+            // The error is deferred to the next frame, so we must step
+            // two frames to actually see the error.
+            project.do_synthetic_broadcast("go");
+            many_frames(project, 2);
+
+            const err = pytch_errors.sole_error();
+
+            const err_str = err.err.toString();
+            assert.ok(spec.err_regexp.test(err_str));
+
+            // Traceback should have:
+            //     Actor.play_sound_until_done()
+            //     Banana.fall_over_3()
+            //     Banana.fall_over_2()
+            //     Banana.fall_over_1()
+            //     Banana.fall_over_0()
+            assert.equal(err.err.traceback.length, 5);
+        }));
 });
 
