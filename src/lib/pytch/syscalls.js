@@ -8,6 +8,10 @@ var $builtinmodule = function (name) {
             type: "Pytch",
             subtype: syscall_name,
             subtype_data: syscall_args,
+            result: {  // Default is for a syscall to return None
+                kind: "success",
+                value: Sk.builtin.none.none$,
+            },
         };
 
         susp.resume = () => Sk.builtin.none.none$;
