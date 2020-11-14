@@ -5,8 +5,11 @@ const {
     with_project,
     with_module,
     one_frame,
+    many_frames,
     assert,
     mock_sound_manager,
+    import_deindented,
+    pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -174,6 +177,48 @@ describe("bad sounds", () => {
             assert.ok(/could not load Sound/.test(err_msg));
             assert.equal(caught_exception.kind, "Sound");
         });
+    });
+
+    it("rejects unknown sound", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Banana(pytch.Sprite):
+                Costumes = []
+                Sounds = ["trumpet.mp3"]
+
+                @pytch.when_I_receive("go")
+                def fall_over_0(self):
+                    self.fall_over_1()
+
+                def fall_over_1(self):
+                    self.fall_over_2()
+
+                def fall_over_2(self):
+                    self.fall_over_3()
+
+                def fall_over_3(self):
+                    self.start_sound("violin")
+        `);
+
+        // The error is deferred to the next frame, so we must step
+        // two frames to actually see the error.
+        project.do_synthetic_broadcast("go");
+        many_frames(project, 2);
+
+        const err = pytch_errors.sole_error();
+
+        const err_str = err.err.toString();
+        assert.ok(/could not find sound/.test(err_str));
+
+        // Traceback should have:
+        //     Actor.play_sound_until_done()
+        //     Banana.fall_over_3()
+        //     Banana.fall_over_2()
+        //     Banana.fall_over_1()
+        //     Banana.fall_over_0()
+        assert.equal(err.err.traceback.length, 5);
     });
 });
 
