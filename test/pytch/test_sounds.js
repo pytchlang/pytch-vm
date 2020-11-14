@@ -170,7 +170,7 @@ describe("waiting and non-waiting sounds", () => {
 
 describe("bad sounds", () => {
     with_module("py/project/bad_sound.py", (import_module) => {
-        it("throws Python error if sound not found", async () => {
+        it("throws Python error if sound file not found", async () => {
             let module = await import_module();
             let caught_exception = module.$d.caught_exception;
             let err_msg = Sk.builtin.str(caught_exception).v;
