@@ -3,10 +3,13 @@ var $builtinmodule = function (name) {
 
     const new_pytch_suspension = (syscall_name, syscall_args) => {
         let susp = new Sk.misceval.Suspension();
-        susp.resume = () => Sk.builtin.none.none$;
+
         susp.data = { type: "Pytch",
                       subtype: syscall_name,
                       subtype_data: syscall_args };
+
+        susp.resume = () => Sk.builtin.none.none$;
+
         return susp;
     };
 
