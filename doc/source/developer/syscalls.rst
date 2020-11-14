@@ -20,6 +20,13 @@ could explore other approaches, e.g., a broadcast could return to Python
 the list of created threads.) The ‘is-touching’ syscall returns a Python
 bool giving the answer to the is-touching question.
 
+If a syscall itself throws a JavaScript error, that error is captured
+and then eventually raised when the Python-level computation resumes.
+This is achieved by the Pytch suspension storing the error, which is
+then thrown in the suspension's ``resume()`` method.  See
+``new_pytch_suspension()::resume()`` and ``Thread.one_frame()`` for
+details.
+
 We create a new type “Pytch” of Skulpt suspension. Use “subtype” to say
 which syscall was invoked; add a new suspension property “subtype_data”
 for any arguments the syscall requires.
