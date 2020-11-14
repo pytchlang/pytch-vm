@@ -1038,7 +1038,14 @@ var $builtinmodule = function (name) {
                     // syscalls, we want it to resume the new suspension:
                     this.skulpt_susp = susp;
 
-                    return this.enact_syscall(susp.data.subtype, syscall_args);
+                    try {
+                        return this.enact_syscall(susp.data.subtype, syscall_args);
+                    } catch (err) {
+                        // Defer the error until next time the innermost
+                        // Python-level code runs.
+                        susp.data.result = { kind: "failure", error: err };
+                        return [];
+                    }
                 }
             } finally {
                 Sk.pytch.executing_thread = null;
