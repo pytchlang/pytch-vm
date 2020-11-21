@@ -55,7 +55,26 @@ describe("Behaviour of glide-to method", () => {
     });
 
     [
-        // TODO: Specs with properties "label", "fragment", "err_match".
+        {
+            label: "x-coord-string",
+            fragment: "'foo', 0, 1.0",
+            err_match: /destination.*must be numbers/,
+        },
+        {
+            label: "y-coord-string",
+            fragment: "0, 'foo', 1.0",
+            err_match: /destination.*must be numbers/,
+        },
+        {
+            label: "seconds-lambda",
+            fragment: "0, 0, (lambda x: 42)",
+            err_match: /seconds.*must be a number/,
+        },
+        {
+            label: "seconds-negative",
+            fragment: "0, 0, -42",
+            err_match: /seconds.*cannot be negative/,
+        },
     ].forEach(spec => {
         it(`handles bad input (${spec.label})`, async () => {
             const project = await import_deindented(`
