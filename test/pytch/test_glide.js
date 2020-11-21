@@ -54,6 +54,26 @@ describe("Behaviour of glide-to method", () => {
         });
     });
 
+    it("executes zero-time glide", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            class Banana(pytch.Sprite):
+                Costumes = ["yellow-banana.png"]
+                @pytch.when_I_receive("run")
+                def slide_across_screen(self):
+                    self.go_to_xy(-120, -120)
+                    self.glide_to_xy(42, 123, 0)
+        `);
+
+        let banana = project.instance_0_by_class_name("Banana");
+
+        project.do_synthetic_broadcast("run");
+        one_frame(project);
+        assert.equal(banana.js_attr("_x"), 42);
+        assert.equal(banana.js_attr("_y"), 123);
+    });
+
     [
         {
             label: "x-coord-string",
