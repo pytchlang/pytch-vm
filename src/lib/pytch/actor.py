@@ -103,6 +103,15 @@ class Sprite(Actor):
         self._y += dy
 
     def glide_to_xy(self, destination_x, destination_y, seconds):
+        destination_is_number = (
+            (isinstance(destination_x, int)
+             or isinstance(destination_x, float))
+            and (isinstance(destination_y, int)
+                 or isinstance(destination_y, float))
+        )
+        if not destination_is_number:
+            raise ValueError("destination coordinates must be numbers")
+
         seconds_is_number = isinstance(seconds, int) or isinstance(seconds, float)
         if not seconds_is_number:
             raise ValueError("'seconds' must be a number");
