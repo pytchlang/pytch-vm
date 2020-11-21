@@ -1524,6 +1524,9 @@ var $builtinmodule = function (name) {
         on_red_stop_clicked() {
             this.kill_all_threads_and_sounds();
             this.actors.forEach(a => a.delete_all_clones());
+
+            // Now there is only the original instance to deal with:
+            this.actors.forEach(a => a.instances[0].clear_speech());
         }
 
         /** Return a list of rendering instructions for the current
