@@ -695,6 +695,10 @@ var $builtinmodule = function (name) {
 
         get layer_group() { return this.actor.layer_group; }
 
+        clear_speech() {
+            Sk.builtin.setattr(this.py_object, s_speech, Sk.builtin.none.none$);
+        }
+
         rendering_instructions() {
             if (! this.render_shown)
                 return [];
@@ -1520,6 +1524,9 @@ var $builtinmodule = function (name) {
         on_red_stop_clicked() {
             this.kill_all_threads_and_sounds();
             this.actors.forEach(a => a.delete_all_clones());
+
+            // Now there is only the original instance to deal with:
+            this.actors.forEach(a => a.instances[0].clear_speech());
         }
 
         /** Return a list of rendering instructions for the current
