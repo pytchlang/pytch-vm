@@ -3,6 +3,7 @@
 const {
     configure_mocha,
     import_deindented,
+    assert,
     assert_renders_as,
     many_frames,
     one_frame,
@@ -79,6 +80,37 @@ describe("Speech bubbles", () => {
             one_frame(project)
             assert_speech("after-talk-briefly", []);
         }
+    });
+
+    it("clears speech bubbles on red-stop", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            class Banana(pytch.Sprite):
+                Costumes = ["yellow-banana.png"]
+                @pytch.when_I_receive("talk")
+                def talk(self):
+                    self.say("Hello world")
+        `);
+
+        const assert_bubble_contents = (exp_bubbles) => {
+            const got_instructions = project.rendering_instructions();
+            const got_bubbles = got_instructions.filter(
+                i => i.kind === "RenderSpeechBubble"
+            ).map(
+                i => i.content
+            );
+            got_bubbles.sort();
+            assert.deepStrictEqual(got_bubbles, exp_bubbles);
+        };
+
+        project.do_synthetic_broadcast("talk");
+        one_frame(project);
+        assert_bubble_contents(["Hello world"]);
+
+        project.on_red_stop_clicked();
+        one_frame(project);
+        assert_bubble_contents([]);
     });
 
     it("moves speech-bubble with sprite", async () => {
