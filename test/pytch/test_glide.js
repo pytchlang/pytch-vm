@@ -5,6 +5,7 @@ const {
     import_deindented,
     one_frame,
     assert,
+    pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -50,6 +51,29 @@ describe("Behaviour of glide-to method", () => {
             }
 
             assert.deepStrictEqual(got_positions, exp_positions);
+        });
+    });
+
+    [
+        // TODO: Specs with properties "label", "fragment", "err_match".
+    ].forEach(spec => {
+        it(`handles bad input (${spec.label})`, async () => {
+            const project = await import_deindented(`
+
+                import pytch
+                class Banana(pytch.Sprite):
+                    Costumes = ["yellow-banana.png"]
+                    @pytch.when_I_receive("run")
+                    def slide_across_screen(self):
+                        self.go_to_xy(-120, -120)
+                        self.glide_to_xy(${spec.fragment})
+            `);
+
+            project.do_synthetic_broadcast("run");
+            one_frame(project);
+
+            const err_str = pytch_errors.sole_error_string();
+            assert.match(err_str, spec.err_match);
         });
     });
 });
