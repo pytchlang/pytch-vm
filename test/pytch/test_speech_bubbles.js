@@ -58,13 +58,13 @@ describe("Speech bubbles", () => {
 
         project.do_synthetic_broadcast("talk")
         for (let i = 0; i < 10; ++i) {
-            one_frame(project)
+            one_frame(project);
             assert_speech("after-talk", [exp_speech("Hello world", 0, 15)]);
         }
 
         project.do_synthetic_broadcast("silence")
         for (let i = 0; i < 10; ++i) {
-            one_frame(project)
+            one_frame(project);
             assert_speech("after-silence", []);
         }
 
@@ -73,11 +73,11 @@ describe("Speech bubbles", () => {
 
         project.do_synthetic_broadcast("talk-briefly")
         for (let i = 0; i < 30; ++i) {
-            one_frame(project)
+            one_frame(project);
             assert_speech("after-talk-briefly", [exp_speech("Mumble", 0, 15)]);
         }
         for (let i = 0; i < 30; ++i) {
-            one_frame(project)
+            one_frame(project);
             assert_speech("after-talk-briefly", []);
         }
     });
