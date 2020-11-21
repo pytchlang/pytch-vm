@@ -1635,6 +1635,9 @@ var $builtinmodule = function (name) {
     };
 
     mod.Project = Sk.misceval.buildClass(mod, project_cls, "Project", []);
+    mod.FRAMES_PER_SECOND = new Sk.builtin.int_(FRAMES_PER_SECOND);
+    mod.STAGE_WIDTH = new Sk.builtin.int_(STAGE_WIDTH);
+    mod.STAGE_HEIGHT = new Sk.builtin.int_(STAGE_HEIGHT);
 
 
     ////////////////////////////////////////////////////////////////////////////////
