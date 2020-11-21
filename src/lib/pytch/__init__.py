@@ -5,6 +5,9 @@
 
 from .project import (
     Project,
+    FRAMES_PER_SECOND,
+    STAGE_WIDTH,
+    STAGE_HEIGHT,
 )
 
 from .actor import (
