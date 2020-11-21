@@ -7,6 +7,10 @@ from pytch.syscalls import (
 from pytch.project import FRAMES_PER_SECOND
 
 
+def _is_number(x):
+    return isinstance(x, int) or isinstance(x, float)
+
+
 class Actor:
     Sounds = []
     _appearance_names = None
