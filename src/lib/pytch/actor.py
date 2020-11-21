@@ -103,6 +103,12 @@ class Sprite(Actor):
         self._y += dy
 
     def glide_to_xy(self, destination_x, destination_y, seconds):
+        seconds_is_number = isinstance(seconds, int) or isinstance(seconds, float)
+        if not seconds_is_number:
+            raise ValueError("'seconds' must be a number");
+        if seconds < 0:
+            raise ValueError("'seconds' cannot be negative")
+
         n_frames = max(int(seconds * FRAMES_PER_SECOND), 1)
         start_x = self._x
         start_y = self._y
