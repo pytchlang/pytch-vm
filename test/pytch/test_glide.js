@@ -15,6 +15,10 @@ configure_mocha();
 
 describe("Behaviour of glide-to method", () => {
     it("executes glide", async () => {
+        // The calculations involve (1/60) so won't come out exact.  Round
+        // the got positions to the nearest multiple of (1/2^16).
+        const round = (x) => (Math.round(x * 65536) / 65536);
+
         const project = await import_deindented(`
 
             import pytch
