@@ -4,6 +4,8 @@ from pytch.syscalls import (
     wait_seconds,
 )
 
+from pytch.project import FRAMES_PER_SECOND
+
 
 class Actor:
     Sounds = []
@@ -99,6 +101,22 @@ class Sprite(Actor):
 
     def change_y(self, dy):
         self._y += dy
+
+    def glide_to_xy(self, destination_x, destination_y, seconds):
+        n_frames = max(int(seconds * FRAMES_PER_SECOND), 1)
+        start_x = self._x
+        start_y = self._y
+
+        # On completion, we must be exactly at the target, and we want
+        # the first frame to involve some movement, so count from 1 up
+        # to n_frames (inclusive) rather than 0 up to n_frames - 1.
+        for frame_idx in range(1, n_frames + 1):
+            t = frame_idx / n_frames  # t is in (0.0, 1.0]
+            t_c = 1.0 - t  # 'complement'
+            x = t * destination_x + t_c * start_x
+            y = t * destination_y + t_c * start_y
+            self.go_to_xy(x, y)
+            wait_seconds(0)  # No auto-yield (we don't do "import pytch")
 
     def set_size(self, size):
         self._size = size
