@@ -154,6 +154,12 @@ Sprites can move their position on the stage using these motion commands. There 
 
 Move the sprite to a particular position on the stage.
 
+.. function:: self.glide_to_xy(x, y, seconds)
+
+Glide the sprite smoothly to a particular position on the stage,
+taking the given number of seconds to do so.  The value for
+``seconds`` does not have to be a whole number.
+
 .. function:: self.change_x(dx)
 
 Change the x-position of the sprite by a certain amount (for example, ``self.change_x(10)`` will move the sprite 10 pixels to the right on the stage). The number of pixels can be negative.
