@@ -123,9 +123,13 @@ result:
 -  Runs to completion, returning a Python object (usually ``None`` but
    doesn’t have to be). The thread is done; turned into a ``Zombie``.
 
--  Calls a Pytch syscall, creating a Skulpt suspension. Handled on the
-   JavaScript side, e.g., broadcast message will usually create new
-   thread-groups. Most syscalls act as co-operative yield points.
+-  Calls a Pytch syscall, creating a Skulpt suspension of type
+   `Pytch`. Handled on the JavaScript side, e.g., broadcast message
+   will usually create new thread-groups. Most syscalls act as
+   co-operative yield points.
+
+-  Returns a non-Pytch suspension.  E.g., if ``time.sleep()`` is
+   called.  This is treated as an error by ``one_frame()``.
 
 -  Throws a Python exception, which is turned into a JavaScript
    exception. Thread is killed and error message reported.
