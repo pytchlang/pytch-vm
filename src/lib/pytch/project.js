@@ -1025,18 +1025,7 @@ var $builtinmodule = function (name) {
                 try {
                     susp_or_retval = this.skulpt_susp.resume();
                 } catch (err) {
-                    const instance = this.actor_instance;
-                    Sk.pytch.on_exception(
-                        err,
-                        {
-                            kind: "one_frame",
-                            event_label: this.thread_group.label,
-                            target_class_kind: instance.actor.class_kind_name,
-                            target_class_name: instance.class_name,
-                            callable_name: this.callable_name,
-                        }
-                    );
-
+                    Sk.pytch.on_exception(err, this.one_frame_error_context());
                     this.state = Thread.State.RAISED_EXCEPTION;
                     this.skulpt_susp = null;
                     return [];
@@ -1054,18 +1043,7 @@ var $builtinmodule = function (name) {
                     if (susp.data.type !== "Pytch") {
                         const err = new Error("cannot handle non-Pytch suspension"
                                               + ` of type "${susp.data.type}"`);
-                        const instance = this.actor_instance;
-                        Sk.pytch.on_exception(
-                            err,
-                            {
-                                kind: "one_frame",
-                                event_label: this.thread_group.label,
-                                target_class_kind: instance.actor.class_kind_name,
-                                target_class_name: instance.class_name,
-                                callable_name: this.callable_name,
-                            },
-                        );
-
+                        Sk.pytch.on_exception(err, this.one_frame_error_context());
                         this.state = Thread.State.RAISED_EXCEPTION;
                         this.skulpt_susp = null;
                         return [];
