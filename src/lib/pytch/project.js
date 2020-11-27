@@ -1040,8 +1040,9 @@ var $builtinmodule = function (name) {
                     // Python-land code invoked a syscall.
 
                     let susp = susp_or_retval;
-                    if (susp.data.type !== "Pytch")
+                    if (susp.data.type !== "Pytch") {
                         throw Error("cannot handle non-Pytch suspensions");
+                    }
 
                     let syscall_args = susp.data.subtype_data;
 
