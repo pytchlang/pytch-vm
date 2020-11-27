@@ -1002,6 +1002,17 @@ var $builtinmodule = function (name) {
             }
         }
 
+        one_frame_error_context() {
+            const instance = this.actor_instance;
+            return {
+                kind: "one_frame",
+                event_label: this.thread_group.label,
+                target_class_kind: instance.actor.class_kind_name,
+                target_class_name: instance.class_name,
+                callable_name: this.callable_name,
+            };
+        }
+
         one_frame() {
             if (! this.is_running())
                 return [];
@@ -1014,18 +1025,7 @@ var $builtinmodule = function (name) {
                 try {
                     susp_or_retval = this.skulpt_susp.resume();
                 } catch (err) {
-                    const instance = this.actor_instance;
-                    Sk.pytch.on_exception(
-                        err,
-                        {
-                            kind: "one_frame",
-                            event_label: this.thread_group.label,
-                            target_class_kind: instance.actor.class_kind_name,
-                            target_class_name: instance.class_name,
-                            callable_name: this.callable_name,
-                        }
-                    );
-
+                    Sk.pytch.on_exception(err, this.one_frame_error_context());
                     this.state = Thread.State.RAISED_EXCEPTION;
                     this.skulpt_susp = null;
                     return [];
@@ -1033,15 +1033,21 @@ var $builtinmodule = function (name) {
 
                 if (! susp_or_retval.$isSuspension) {
                     // Python-land code ran to completion; thread is finished.
-                    this.skulpt_susp = null;
                     this.state = Thread.State.ZOMBIE;
+                    this.skulpt_susp = null;
                     return [];
                 } else {
                     // Python-land code invoked a syscall.
 
                     let susp = susp_or_retval;
-                    if (susp.data.type !== "Pytch")
-                        throw Error("cannot handle non-Pytch suspensions");
+                    if (susp.data.type !== "Pytch") {
+                        const err = new Error("cannot handle non-Pytch suspension"
+                                              + ` of type "${susp.data.type}"`);
+                        Sk.pytch.on_exception(err, this.one_frame_error_context());
+                        this.state = Thread.State.RAISED_EXCEPTION;
+                        this.skulpt_susp = null;
+                        return [];
+                    }
 
                     let syscall_args = susp.data.subtype_data;
 
