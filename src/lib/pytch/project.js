@@ -1041,7 +1041,23 @@ var $builtinmodule = function (name) {
 
                     let susp = susp_or_retval;
                     if (susp.data.type !== "Pytch") {
-                        throw Error("cannot handle non-Pytch suspensions");
+                        const err = new Error("cannot handle non-Pytch suspension"
+                                              + ` of type "${susp.data.type}"`);
+                        const instance = this.actor_instance;
+                        Sk.pytch.on_exception(
+                            err,
+                            {
+                                kind: "one_frame",
+                                event_label: this.thread_group.label,
+                                target_class_kind: instance.actor.class_kind_name,
+                                target_class_name: instance.class_name,
+                                callable_name: this.callable_name,
+                            },
+                        );
+
+                        this.state = Thread.State.RAISED_EXCEPTION;
+                        this.skulpt_susp = null;
+                        return [];
                     }
 
                     let syscall_args = susp.data.subtype_data;
