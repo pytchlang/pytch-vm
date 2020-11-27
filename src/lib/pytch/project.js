@@ -1002,6 +1002,17 @@ var $builtinmodule = function (name) {
             }
         }
 
+        one_frame_error_context() {
+            const instance = this.actor_instance;
+            return {
+                kind: "one_frame",
+                event_label: this.thread_group.label,
+                target_class_kind: instance.actor.class_kind_name,
+                target_class_name: instance.class_name,
+                callable_name: this.callable_name,
+            };
+        }
+
         one_frame() {
             if (! this.is_running())
                 return [];
