@@ -2,6 +2,7 @@
 
 const {
     configure_mocha,
+    import_deindented,
     with_project,
     assert,
     pytch_errors,
@@ -82,5 +83,27 @@ describe("error handling", () => {
             assert.equal(n_ticks(), n_ticks_when_errors_thrown,
                          "Banana should stop ticking once errors thrown");
         });
+    });
+
+    it("reports error from non-Pytch suspension", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            import time
+
+            class Banana(pytch.Sprite):
+                Costumes = []
+
+                @pytch.when_I_receive("run")
+                def run(self):
+                    time.sleep(1.0)
+                    # should not get here
+        `);
+
+        project.do_synthetic_broadcast("run");
+        one_frame(project);
+
+        let err_str = pytch_errors.sole_error_string();
+        assert.match(err_str, /non-Pytch suspension/);
     });
 });
