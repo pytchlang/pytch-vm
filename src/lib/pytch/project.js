@@ -1033,8 +1033,8 @@ var $builtinmodule = function (name) {
 
                 if (! susp_or_retval.$isSuspension) {
                     // Python-land code ran to completion; thread is finished.
-                    this.skulpt_susp = null;
                     this.state = Thread.State.ZOMBIE;
+                    this.skulpt_susp = null;
                     return [];
                 } else {
                     // Python-land code invoked a syscall.
