@@ -28,3 +28,7 @@ example/pytch/skulpt-stdlib.js
 example/pytch/tutorials/
 doc/venv/
 doc/build/
+
+# Deployment layer build artifacts
+website-layer/layer-content/
+website-layer/layer.zip
