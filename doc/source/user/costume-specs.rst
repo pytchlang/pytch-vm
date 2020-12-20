@@ -51,7 +51,7 @@ costume specification.  For example,
    class Spaceship(pytch.Sprite):
        Costumes = [("rocket.png", 10, 20)]
 
-will make the origin of the ``rocket`` costume be 10 pixels left and
+will make the origin of the ``rocket`` costume be 10 pixels right and
 20 pixels down from the top-left corner of the image.  *Notice that
 the 'y' coordinate goes down, rather than the usual 'positive is up'
 convention for the stage.  This is to follow the usual convention for
