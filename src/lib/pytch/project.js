@@ -276,11 +276,16 @@ var $builtinmodule = function (name) {
                 `problem with specification for Sound: ${error_message_nub}`);
         }
 
-        register_py_instance(py_instance) {
+        register_py_instance(py_instance, maybe_py_parent) {
             let actor_instance = new PytchActorInstance(this, py_instance);
             py_instance.$pytchActorInstance = actor_instance;
             this.instances.push(actor_instance);
-            this.parent_project.register_for_drawing(actor_instance);
+
+            let maybe_parent_instance
+                = maybe_py_parent && maybe_py_parent.$pytchActorInstance;
+
+            this.parent_project.register_for_drawing(actor_instance,
+                                                     maybe_parent_instance);
         }
 
         get class_name() {
