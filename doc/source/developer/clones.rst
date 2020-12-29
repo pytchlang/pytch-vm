@@ -3,7 +3,7 @@ Clones
 
 Clones are created in two phases: First, we create a new Python instance
 with the same properties as the existing one; this is done via standard
-Python \`deepcopy()z. (We might hit some limitations of this in future,
+Python ``deepcopy()``. (We might hit some limitations of this in future,
 but so far it seems to be working.) Second, we register that instance
 with the Project; see next.
 
