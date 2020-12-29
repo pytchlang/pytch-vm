@@ -988,10 +988,10 @@ var $builtinmodule = function (name) {
             }
 
             case "register-instance": {
-                let py_instance = syscall_args.py_instance;
+                let { py_instance, py_parent_instance } = syscall_args;
                 let py_cls = Sk.builtin.getattr(py_instance, s_dunder_class);
                 let actor = py_cls.$pytchActor;
-                actor.register_py_instance(py_instance);
+                actor.register_py_instance(py_instance, py_parent_instance);
 
                 let thread_group = new ThreadGroup("start-as-clone");
                 actor.clone_handlers.forEach(
