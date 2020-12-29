@@ -1250,6 +1250,11 @@ var $builtinmodule = function (name) {
     ////////////////////////////////////////////////////////////////////////////////
     //
     // Layer group of things to draw
+    //
+    // Each layer-group contains an array of instances.  Actor-instances earlier
+    // in that array are drawn before actor-instances later in that array, and
+    // so the last actor-instance in the array is at the 'front' of the
+    // layer-group from the point of view of the visible result.
 
     class DrawLayerGroup {
         static get STAGE() { return 0; }
