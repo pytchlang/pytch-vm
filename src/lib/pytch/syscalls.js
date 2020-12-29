@@ -95,9 +95,9 @@ var $builtinmodule = function (name) {
     });
 
     mod.register_sprite_instance = new Sk.builtin.func(
-        py_instance => {
+        (py_instance, py_parent_instance) => {
             return new_pytch_suspension("register-instance",
-                                        {py_instance});
+                                        {py_instance, py_parent_instance});
     });
 
     mod.registered_instances = new Sk.builtin.func(py_class => {
