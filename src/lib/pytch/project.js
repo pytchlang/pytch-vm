@@ -1381,9 +1381,9 @@ var $builtinmodule = function (name) {
             this.actors.unshift(stage);
         }
 
-        register_for_drawing(actor_instance) {
+        register_for_drawing(actor_instance, maybe_parent_instance) {
             let layer_group = this.draw_layer_groups[actor_instance.layer_group];
-            layer_group.register(actor_instance);
+            layer_group.register(actor_instance, maybe_parent_instance);
         }
 
         unregister_for_drawing(actor_instance) {
