@@ -18,6 +18,10 @@ central event-handler map of the ``Actor``, but in a dedicated list
 ``clone_handlers``. Threads are created, gathered into one thread-group,
 and marked ‘running’, ready for the next time round ``one_frame()``.
 
+A newly-registered clone is inserted in the drawing order just before
+the instance from which it was cloned.  This makes it appear just behind
+its parent instance, from the viewer’s perspective.
+
 ‘Deleting’ a clone
 ~~~~~~~~~~~~~~~~~~
 
