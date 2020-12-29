@@ -1255,10 +1255,24 @@ var $builtinmodule = function (name) {
             this.instances = [];
         }
 
-        register(instance) {
-            // TODO: Allow specification of which instance to be 'just
-            // behind', for use with cloning.
-            this.instances.push(instance);
+        /** Register the given instance as part of this draw-layer-group.  If
+         * maybe_parent is given, the `instance` is inserted into the
+         * layer-group such that `instance` appears immediately behind
+         * `maybe_parent`.  If `maybe_parent` is not given, `instance` appears
+         * at the very front.
+         */
+        register(instance, maybe_parent) {
+            if (maybe_parent != null) {
+                const parent_index = this.instances.indexOf(maybe_parent);
+                if (parent_index === -1)
+                    throw Error("could not find parent instance in draw-layer-group");
+
+                // For the new instance to show as just behind its parent, we
+                // want to insert it just before the parent in the array.
+                this.instances.splice(parent_index, 0, instance);
+            } else {
+                this.instances.push(instance);
+            }
         }
 
         unregister(instance) {
