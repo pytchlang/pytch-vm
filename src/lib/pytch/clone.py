@@ -25,4 +25,4 @@ def create_clone_of(original_cls_or_obj):
 
 def create_clone_of_instance(obj):
     new_obj = copy.deepcopy(obj)
-    return register_sprite_instance(new_obj)
+    return register_sprite_instance(new_obj, obj)
