@@ -94,6 +94,8 @@ var $builtinmodule = function (name) {
         return new_pytch_suspension("wait-seconds", {n_seconds});
     });
 
+    // TODO: Allow None as py_parent_instance, to register an instance
+    // which was not created by Pytch's clone mechanism?
     mod.register_sprite_instance = new Sk.builtin.func(
         (py_instance, py_parent_instance) => {
             return new_pytch_suspension("register-instance",
