@@ -3,7 +3,7 @@ Clones
 
 Clones are created in two phases: First, we create a new Python instance
 with the same properties as the existing one; this is done via standard
-Python \`deepcopy()z. (We might hit some limitations of this in future,
+Python ``deepcopy()``. (We might hit some limitations of this in future,
 but so far it seems to be working.) Second, we register that instance
 with the Project; see next.
 
@@ -17,6 +17,10 @@ particular instance being registered, so handlers are not stored in the
 central event-handler map of the ``Actor``, but in a dedicated list
 ``clone_handlers``. Threads are created, gathered into one thread-group,
 and marked ‘running’, ready for the next time round ``one_frame()``.
+
+A newly-registered clone is inserted in the drawing order just before
+the instance from which it was cloned.  This makes it appear just behind
+its parent instance, from the viewer’s perspective.
 
 ‘Deleting’ a clone
 ~~~~~~~~~~~~~~~~~~

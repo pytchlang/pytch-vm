@@ -276,11 +276,16 @@ var $builtinmodule = function (name) {
                 `problem with specification for Sound: ${error_message_nub}`);
         }
 
-        register_py_instance(py_instance) {
+        register_py_instance(py_instance, maybe_py_parent) {
             let actor_instance = new PytchActorInstance(this, py_instance);
             py_instance.$pytchActorInstance = actor_instance;
             this.instances.push(actor_instance);
-            this.parent_project.register_for_drawing(actor_instance);
+
+            let maybe_parent_instance
+                = maybe_py_parent && maybe_py_parent.$pytchActorInstance;
+
+            this.parent_project.register_for_drawing(actor_instance,
+                                                     maybe_parent_instance);
         }
 
         get class_name() {
@@ -983,10 +988,10 @@ var $builtinmodule = function (name) {
             }
 
             case "register-instance": {
-                let py_instance = syscall_args.py_instance;
+                let { py_instance, py_parent_instance } = syscall_args;
                 let py_cls = Sk.builtin.getattr(py_instance, s_dunder_class);
                 let actor = py_cls.$pytchActor;
-                actor.register_py_instance(py_instance);
+                actor.register_py_instance(py_instance, py_parent_instance);
 
                 let thread_group = new ThreadGroup("start-as-clone");
                 actor.clone_handlers.forEach(
@@ -1245,6 +1250,11 @@ var $builtinmodule = function (name) {
     ////////////////////////////////////////////////////////////////////////////////
     //
     // Layer group of things to draw
+    //
+    // Each layer-group contains an array of instances.  Actor-instances earlier
+    // in that array are drawn before actor-instances later in that array, and
+    // so the last actor-instance in the array is at the 'front' of the
+    // layer-group from the point of view of the visible result.
 
     class DrawLayerGroup {
         static get STAGE() { return 0; }
@@ -1255,10 +1265,24 @@ var $builtinmodule = function (name) {
             this.instances = [];
         }
 
-        register(instance) {
-            // TODO: Allow specification of which instance to be 'just
-            // behind', for use with cloning.
-            this.instances.push(instance);
+        /** Register the given instance as part of this draw-layer-group.  If
+         * maybe_parent is given, the `instance` is inserted into the
+         * layer-group such that `instance` appears immediately behind
+         * `maybe_parent`.  If `maybe_parent` is not given, `instance` appears
+         * at the very front.
+         */
+        register(instance, maybe_parent) {
+            if (maybe_parent != null) {
+                const parent_index = this.instances.indexOf(maybe_parent);
+                if (parent_index === -1)
+                    throw Error("could not find parent instance in draw-layer-group");
+
+                // For the new instance to show as just behind its parent, we
+                // want to insert it just before the parent in the array.
+                this.instances.splice(parent_index, 0, instance);
+            } else {
+                this.instances.push(instance);
+            }
         }
 
         unregister(instance) {
@@ -1367,9 +1391,9 @@ var $builtinmodule = function (name) {
             this.actors.unshift(stage);
         }
 
-        register_for_drawing(actor_instance) {
+        register_for_drawing(actor_instance, maybe_parent_instance) {
             let layer_group = this.draw_layer_groups[actor_instance.layer_group];
-            layer_group.register(actor_instance);
+            layer_group.register(actor_instance, maybe_parent_instance);
         }
 
         unregister_for_drawing(actor_instance) {

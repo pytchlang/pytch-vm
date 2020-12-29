@@ -11,6 +11,13 @@ tried.
 Each instance rendered according to properties: shown, x, y, size,
 costume.
 
+Rendering order
+~~~~~~~~~~~~~~~
+
+Objects are drawn from furthest-away to nearest, to ensure that nearer
+objects obscure further-away ones.  This is managed by the
+``DrawLayerGroup`` class.
+
 Rendering instructions
 ~~~~~~~~~~~~~~~~~~~~~~
 
