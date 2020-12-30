@@ -306,10 +306,9 @@ var $builtinmodule = function (name) {
                 = raw_descriptors.map(
                     d => this.validate_appearance_descriptor(d));
 
-            let async_appearances = appearance_descriptors.map(async d => {
-                let appearance = await Appearance.async_create(...d);
-                return appearance;
-            });
+            let async_appearances = appearance_descriptors.map(
+                d => Appearance.async_create(...d)
+            );
 
             this._appearances = await Promise.all(async_appearances);
             this._appearance_from_name = new Map(
