@@ -24,8 +24,9 @@ class Actor:
     @classmethod
     def ensure_have_appearance_names(cls):
         if cls._appearance_names is None:
-            cls._appearance_names = set(
-                appearance.label for appearance in cls._Appearances)
+            cls._appearance_names = [
+                appearance.label for appearance in cls._Appearances
+            ]
 
     def switch_appearance(self, appearance_name):
         self.ensure_have_appearance_names()
