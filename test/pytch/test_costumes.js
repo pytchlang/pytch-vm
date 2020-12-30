@@ -52,7 +52,8 @@ describe("Costume handling", () => {
                 stdout,
                 ("0, marching, marching-alien.png, (60, 20), (30, 10)\n"
                  + "1, firing, firing-alien.png, (80, 30), (40, 15)\n"));
-        })});
+        });
+    });
 
     with_module("py/project/bad_costume.py", (import_module) => {
         it("throws Python error if costume not found", async () => {
@@ -61,7 +62,8 @@ describe("Costume handling", () => {
             let err_msg = Sk.builtin.str(caught_exception).v;
             assert.ok(/could not load Image/.test(err_msg));
             assert.equal(caught_exception.kind, "Image");
-        })});
+        });
+    });
 
     const bad_Backdrop_cases = [
         {
@@ -154,7 +156,8 @@ describe("Costume handling", () => {
 
             assert.throws(() => alien.appearance_from_name("banana"),
                           /could not find Costume "banana" in class "Alien"/);
-        })});
+        });
+    });
 
     const bad_switch_test_specs = [
         { tag: 'costume',
