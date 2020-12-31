@@ -64,14 +64,14 @@ class Sprite(Actor):
             self._shown = at_least_one_Costume
 
         if at_least_one_Costume:
-            self.switch_costume(self._Appearances[0].label)
+            self._appearance_index = 0
         else:
             # It is not necessarily an error to have no Costumes, as
             # long as the Sprite always remains hidden.  It might, for
             # example, only receive/broadcast messages or play sounds.
             # We directly set the attribute here to avoid the check in
             # switch_appearance().
-            self._appearance = None
+            self._appearance_index = None
 
     @classmethod
     def the_original(cls):
