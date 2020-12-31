@@ -20,7 +20,7 @@ var $builtinmodule = function (name) {
     const s_x = Sk.builtin.str("_x");
     const s_y = Sk.builtin.str("_y");
     const s_size = Sk.builtin.str("_size");
-    const s_appearance = Sk.builtin.str("_appearance");
+    const s_appearance_index = Sk.builtin.str("_appearance_index");
     const s_Appearances = Sk.builtin.str("_Appearances");
     const s_speech = Sk.builtin.str("_speech");
 
@@ -694,7 +694,7 @@ var $builtinmodule = function (name) {
         get render_x() { return js_getattr(this.py_object, s_x); }
         get render_y() { return js_getattr(this.py_object, s_y); }
         get render_size() { return js_getattr(this.py_object, s_size); }
-        get render_appearance() { return js_getattr(this.py_object, s_appearance); }
+        get render_appearance_index() { return js_getattr(this.py_object, s_appearance_index); }
         get render_speech() { return js_getattr(this.py_object, s_speech); }
 
         get layer_group() { return this.actor.layer_group; }
@@ -708,8 +708,8 @@ var $builtinmodule = function (name) {
                 return [];
 
             let size = this.render_size;
-            let appearance_name = this.render_appearance;
-            let appearance = this.actor.appearance_from_name(appearance_name);
+            let appearance_index = this.render_appearance_index;
+            let appearance = this.actor._appearances[appearance_index];
 
             const render_x = this.render_x;
             const render_y = this.render_y;
@@ -728,7 +728,7 @@ var $builtinmodule = function (name) {
                                 render_y + offset_y,
                                 size,
                                 appearance.image,
-                                appearance_name),
+                                appearance.label),
             ];
 
             // Don't really like this 'initialise then overwrite' approach but
