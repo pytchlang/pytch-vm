@@ -765,8 +765,8 @@ var $builtinmodule = function (name) {
 
         bounding_box() {
             let size = this.render_size;
-            let appearance_name = this.render_appearance;
-            let appearance = this.actor.appearance_from_name(appearance_name);
+            let appearance_index = this.render_appearance_index;
+            let appearance = this.actor._appearances[appearance_index];
 
             // Annoying mixture of addition and subtraction, and care needed
             // with respect to which is min and which is max, to account for the
