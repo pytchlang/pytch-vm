@@ -191,7 +191,6 @@ class Stage(Actor):
     _size = 1.0
     _shown = True
     _speech = None
-    _appearance = 'solid-white'
 
     _appearance_hyponym = 'Backdrop'
 
