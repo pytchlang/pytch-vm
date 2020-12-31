@@ -69,8 +69,6 @@ class Sprite(Actor):
             # It is not necessarily an error to have no Costumes, as
             # long as the Sprite always remains hidden.  It might, for
             # example, only receive/broadcast messages or play sounds.
-            # We directly set the attribute here to avoid the check in
-            # switch_appearance().
             self._appearance_index = None
 
     @classmethod
