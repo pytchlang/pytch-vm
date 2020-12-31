@@ -37,7 +37,7 @@ class Actor:
                                    appearance_name,
                                    self.__class__.__name__))
 
-        self._appearance = appearance_name
+        self._appearance_index = self._appearance_names.index(appearance_name)
 
 
 class Sprite(Actor):
