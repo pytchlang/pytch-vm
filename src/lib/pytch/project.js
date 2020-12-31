@@ -694,7 +694,14 @@ var $builtinmodule = function (name) {
         get render_x() { return js_getattr(this.py_object, s_x); }
         get render_y() { return js_getattr(this.py_object, s_y); }
         get render_size() { return js_getattr(this.py_object, s_size); }
-        get render_appearance_index() { return js_getattr(this.py_object, s_appearance_index); }
+
+        get render_appearance_index() {
+            const appearance_index
+                  = js_getattr(this.py_object, s_appearance_index);
+
+            return appearance_index;
+        }
+
         get render_speech() { return js_getattr(this.py_object, s_speech); }
 
         get layer_group() { return this.actor.layer_group; }
