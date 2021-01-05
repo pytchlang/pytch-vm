@@ -40,8 +40,8 @@ are ‘Costumes’, and for the ``Stage``, these are ‘Backdrops’. The code
 refers to them both under the name ``Appearance``.
 
 On the JavaScript side, each ``Appearance`` has a JavaScript ``Image``,
-and also the coordinates of the ‘centre’ of the costume. When a
-``Sprite`` is at a particular location on the stage, it is the ‘centre’
+and also the coordinates of the ‘origin’ of the costume. When a
+``Sprite`` is at a particular location on the stage, it is the ‘origin’
 of its current Costume’s ``Image`` which is at that location.
 
 A ``Sprite``\ ’s collection of Costumes, or the ``Stage``\ ’s collection
