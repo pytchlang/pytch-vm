@@ -157,6 +157,28 @@ describe("Costume handling", () => {
             assert.throws(() => alien.appearance_from_name("banana"),
                           /could not find Costume "banana" in class "Alien"/);
         });
+
+        [
+            { tag: "None", regex: /a number/ },
+            { tag: "string", regex: /a number/ },
+            { tag: "non-integer", regex: /an integer/ },
+            { tag: "out-of-range-low", regex: /in the range/ },
+            { tag: "out-of-range-high", regex: /in the range/ },
+        ].forEach(spec => {
+            it(`does something if appearance-index ${spec.tag}`, async () => {
+                let project = await import_project();
+
+                const message = `set-appearance-index-attribute-${spec.tag}`;
+                project.do_synthetic_broadcast(message);
+                project.one_frame();
+
+                project.rendering_instructions();
+
+                const err_str = pytch_errors.sole_error_string();
+                assert.match(err_str, /appearance-index must be/);
+                assert.match(err_str, spec.regex);
+            });
+        });
     });
 
     const bad_switch_test_specs = [
