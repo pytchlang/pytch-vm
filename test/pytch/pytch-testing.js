@@ -495,6 +495,14 @@ const many_frames = (project, n, options = {}) => {
 
 const one_frame = (project, options = {}) => many_frames(project, 1, options);
 
+const appearance_by_name = (actor, appearance_name) => {
+    const matches = actor._appearances.filter(a => a.label === appearance_name);
+
+    if (matches.length !== 1)
+        throw Error(`no unique appearance "${appearance_name}"`);
+
+    return matches[0];
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -598,5 +606,6 @@ module.exports = {
     call_method,
     many_frames,
     one_frame,
+    appearance_by_name,
     configure_mocha,
 }
