@@ -149,6 +149,58 @@ describe("Costume handling", () => {
         });
     });
 
+    [
+        {
+            base: "Sprite",
+            attrname: "Costumes",
+            switch_methodname: "switch_costume",
+            next_methodname: "next_costume",
+        },
+        {
+            base: "Stage",
+            attrname: "Backdrops",
+            switch_methodname: "switch_backdrop",
+            next_methodname: "next_backdrop",
+        },
+    ].forEach(kind => {
+        [
+            { label: "default-arg", n_steps_fragment: "", exp_number: 2 },
+            { label: "by 0", n_steps_fragment: "0", exp_number: 1 },
+            { label: "by 1", n_steps_fragment: "1", exp_number: 2 },
+            { label: "by 2", n_steps_fragment: "2", exp_number: 0 },
+            { label: "by 3", n_steps_fragment: "3", exp_number: 1 },
+            { label: "by -1", n_steps_fragment: "-1", exp_number: 0 },
+            { label: "by 301", n_steps_fragment: "301", exp_number: 2 },
+            { label: "by -299", n_steps_fragment: "-299", exp_number: 2 },
+        ].forEach(spec => {
+            it(`can step onwards in ${kind.attrname} list (${spec.label})`,
+               async () => {
+                   const project = await import_deindented(`
+
+                       import pytch
+
+                       class Banana(pytch.${kind.base}):
+                           ${kind.attrname} = [
+                               "wooden-stage.png",
+                               "sunny-sky.png",
+                               "solid-white-stage.png",
+                           ]
+
+                           @pytch.when_I_receive("next")
+                           def advance_appearance(self):
+                               self.${kind.switch_methodname}(1)
+                               self.${kind.next_methodname}(${spec.n_steps_fragment})
+                               print(self.appearance_number)
+                   `);
+
+                   project.do_synthetic_broadcast("next");
+                   one_frame(project);
+                   const stdout = pytch_stdout.drain_stdout();
+                   assert.equal(stdout, `${spec.exp_number}\n`);
+               });
+        });
+    });
+
     with_module("py/project/bad_costume.py", (import_module) => {
         it("throws Python error if costume not found", async () => {
             let module = await import_module();
