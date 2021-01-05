@@ -68,6 +68,9 @@ class Actor:
                 .format(self._appearance_hyponym, self.__class__.__name__))
 
     def next_appearance(self, n_steps):
+        if not isinstance(n_steps, int):
+            raise ValueError('n_steps must be integer')
+
         self._appearance_index += n_steps
         self._appearance_index %= len(self._Appearances)
 
