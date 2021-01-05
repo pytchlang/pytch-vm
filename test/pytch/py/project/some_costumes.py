@@ -11,6 +11,18 @@ class Alien(Sprite):
         for i, a in enumerate(self._Appearances):
             print("%d, %s, %s, %s, %s" % (i, a.label, a.filename, a.size, a.centre))
 
+    @pytch.when_I_receive("print-current-costume")
+    def print_current_costume(self):
+        print("%d" % (self.costume_number,))
+
+    @pytch.when_I_receive("switch-to-marching")
+    def switch_to_marching(self):
+        self.switch_costume("marching")
+
+    @pytch.when_I_receive("switch-to-firing")
+    def switch_to_firing(self):
+        self.switch_costume("firing")
+
     @pytch.when_I_receive("set-appearance-index-attribute-None")
     def corrupt_appearance_index_None(self):
         self._appearance_index = None
