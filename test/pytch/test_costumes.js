@@ -54,6 +54,44 @@ describe("Costume handling", () => {
                 ("0, marching, marching-alien.png, (60, 20), (30, 10)\n"
                  + "1, firing, firing-alien.png, (80, 30), (40, 15)\n"));
         });
+
+        const assert_info_fun = (project, message) => (exp_stdout) => {
+            project.do_synthetic_broadcast(message);
+            one_frame(project);
+            const stdout = pytch_stdout.drain_stdout();
+            assert.equal(stdout, exp_stdout);
+        };
+
+        it("can read current costume info", async () => {
+            let project = await import_project();
+            const assert_info = assert_info_fun(project, "print-current-costume");
+
+            // Initial state is the first costume.
+            assert_info("0 marching\n");
+
+            project.do_synthetic_broadcast("switch-to-firing")
+            assert_info("1 firing\n");
+
+            project.do_synthetic_broadcast("switch-to-marching")
+            assert_info("0 marching\n");
+        });
+
+        it("can read current backdrop info", async () => {
+            let project = await import_project();
+            const assert_info = assert_info_fun(project, "print-current-backdrop");
+
+            // Initial state is the first backdrop.
+            assert_info("0 wooden-stage\n");
+
+            project.do_synthetic_broadcast("switch-to-sky")
+            assert_info("1 sunny-sky\n");
+
+            project.do_synthetic_broadcast("switch-to-white")
+            assert_info("2 solid-white-stage\n");
+
+            project.do_synthetic_broadcast("switch-to-wooden")
+            assert_info("0 wooden-stage\n");
+        });
     });
 
     with_module("py/project/bad_costume.py", (import_module) => {

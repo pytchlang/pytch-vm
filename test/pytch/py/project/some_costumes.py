@@ -11,6 +11,18 @@ class Alien(Sprite):
         for i, a in enumerate(self._Appearances):
             print("%d, %s, %s, %s, %s" % (i, a.label, a.filename, a.size, a.centre))
 
+    @pytch.when_I_receive("print-current-costume")
+    def print_current_costume(self):
+        print("%d %s" % (self.costume_number, self.costume_name))
+
+    @pytch.when_I_receive("switch-to-marching")
+    def switch_to_marching(self):
+        self.switch_costume("marching")
+
+    @pytch.when_I_receive("switch-to-firing")
+    def switch_to_firing(self):
+        self.switch_costume("firing")
+
     @pytch.when_I_receive("set-appearance-index-attribute-None")
     def corrupt_appearance_index_None(self):
         self._appearance_index = None
@@ -32,7 +44,28 @@ class Alien(Sprite):
         self._appearance_index = 2
 
 
+class Background(pytch.Stage):
+    Backdrops = ["wooden-stage.png", "sunny-sky.png", "solid-white-stage.png"]
+
+    @pytch.when_I_receive("print-current-backdrop")
+    def print_current_backdrop(self):
+        print("%d %s" % (self.backdrop_number, self.backdrop_name))
+
+    @pytch.when_I_receive("switch-to-wooden")
+    def switch_to_wooden(self):
+        self.switch_backdrop("wooden-stage")
+
+    @pytch.when_I_receive("switch-to-sky")
+    def switch_to_sky(self):
+        self.switch_backdrop("sunny-sky")
+
+    @pytch.when_I_receive("switch-to-white")
+    def switch_to_white(self):
+        self.switch_backdrop("solid-white-stage")
+
+
 # --cut-here-for-auto-config--
 
 project = Project()
 project.register_sprite_class(Alien)
+project.register_stage_class(Background)

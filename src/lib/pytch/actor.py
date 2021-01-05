@@ -39,6 +39,15 @@ class Actor:
 
         self._appearance_index = self._appearance_names.index(appearance_name)
 
+    @property
+    def appearance_number(self):
+        return self._appearance_index
+
+    @property
+    def appearance_name(self):
+        self.ensure_have_appearance_names()
+        return self._appearance_names[self._appearance_index]
+
 
 class Sprite(Actor):
     Costumes = [
@@ -147,6 +156,14 @@ class Sprite(Actor):
     def switch_costume(self, costume_name):
         self.switch_appearance(costume_name)
 
+    @property
+    def costume_number(self):
+        return self.appearance_number
+
+    @property
+    def costume_name(self):
+        return self.appearance_name
+
     def touching(self, target_class):
         return (self._pytch_parent_project
                 .instance_is_touching_any_of(self, target_class))
@@ -206,3 +223,11 @@ class Stage(Actor):
 
     def switch_backdrop(self, backdrop_name):
         self.switch_appearance(backdrop_name)
+
+    @property
+    def backdrop_number(self):
+        return self.appearance_number
+
+    @property
+    def backdrop_name(self):
+        return self.appearance_name

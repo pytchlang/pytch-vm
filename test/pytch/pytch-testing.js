@@ -258,6 +258,7 @@ const image_size_from_url = new Map([
     ["yellow-banana.png", [80, 30]],
     ["balloon.png", [100, 200]],
     ["wooden-stage.png", [480, 360]],
+    ["sunny-sky.png", [480, 360]],
 ]);
 
 class MockImage {
