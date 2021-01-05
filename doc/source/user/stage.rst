@@ -30,3 +30,12 @@ must refer to a Sound you have defined — see :doc:`sound-specs`.
 Make the Stage change its backdrop to the one with the given
 ``backdrop_name``.  This must be the name of a Backdrop defined by the
 class's ``Backdrops`` variable — see :doc:`backdrop-specs`.
+
+.. function:: self.switch_backdrop(backdrop_number)
+   :noindex:
+
+Make the Stage change its backdrop to the one at the given position in
+its list of Backdrops.  *Zero-based* indexing is used, which means
+that to switch to the first backdrop, use ``self.switch_backdrop(0)``;
+to switch to the second backdrop, use ``self.switch_backdrop(1)``; and
+so on.
