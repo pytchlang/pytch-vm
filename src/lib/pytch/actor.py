@@ -28,16 +28,18 @@ class Actor:
                 appearance.label for appearance in cls._Appearances
             ]
 
-    def switch_appearance(self, appearance_name):
+    def switch_appearance(self, appearance_name_or_index):
         self.ensure_have_appearance_names()
 
-        if appearance_name not in self._appearance_names:
-            raise KeyError('could not find {} "{}" in class "{}"'
-                           .format(self._appearance_hyponym,
-                                   appearance_name,
-                                   self.__class__.__name__))
+        if isinstance(appearance_name_or_index, str):
+            appearance_name = appearance_name_or_index
+            if appearance_name not in self._appearance_names:
+                raise KeyError('could not find {} "{}" in class "{}"'
+                               .format(self._appearance_hyponym,
+                                       appearance_name,
+                                       self.__class__.__name__))
 
-        self._appearance_index = self._appearance_names.index(appearance_name)
+            self._appearance_index = self._appearance_names.index(appearance_name)
 
     @property
     def appearance_number(self):
