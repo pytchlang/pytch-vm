@@ -207,10 +207,10 @@ describe("Costume handling", () => {
             let project = await import_project();
 
             let ball = project.instance_0_by_class_name("Ball");
-            assert.equal(ball.js_attr("_appearance"), "yellow-ball");
+            assert.equal(ball.js_attr("_appearance_index"), 0);
 
             let table = project.instance_0_by_class_name("Table");
-            assert.equal(table.js_attr("_appearance"), "wooden");
+            assert.equal(table.js_attr("_appearance_index"), 0);
         })});
 
     with_project("py/project/sprite_without_costumes.py", (import_project) => {
