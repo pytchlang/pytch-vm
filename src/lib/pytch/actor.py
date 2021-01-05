@@ -43,6 +43,11 @@ class Actor:
     def appearance_number(self):
         return self._appearance_index
 
+    @property
+    def appearance_name(self):
+        self.ensure_have_appearance_names()
+        return self._appearance_names[self._appearance_index]
+
 
 class Sprite(Actor):
     Costumes = [
