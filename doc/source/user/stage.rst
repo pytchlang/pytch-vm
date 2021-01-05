@@ -39,3 +39,18 @@ its list of Backdrops.  *Zero-based* indexing is used, which means
 that to switch to the first backdrop, use ``self.switch_backdrop(0)``;
 to switch to the second backdrop, use ``self.switch_backdrop(1)``; and
 so on.
+
+.. function:: self.next_backdrop()
+
+Switch to the next backdrop in the Stage's list of backdrops.  If the
+Stage is already showing its last backdrop, switch to showing the
+first one.
+
+.. function:: self.next_backdrop(n_steps)
+   :noindex:
+
+Switch to the backdrop ``n_steps`` later in the Stage's list of
+backdrops.  If this takes you beyond the end of the list, wrap back
+round to the start as if in a circle.  You can use a negative number
+as ``n_steps`` to move to an *earlier* backdrop; for example,
+``self.next_backdrop(-1)`` will change to the *previous* backdrop.
