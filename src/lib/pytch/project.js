@@ -393,7 +393,7 @@ var $builtinmodule = function (name) {
         }
 
         get n_appearances() {
-            return this._appearance_from_name.size;
+            return this._appearances.length;
         }
 
         static set_Appearances_attr(py_cls, js_actor) {
