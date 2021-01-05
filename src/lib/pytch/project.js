@@ -311,8 +311,6 @@ var $builtinmodule = function (name) {
             );
 
             this._appearances = await Promise.all(async_appearances);
-            this._appearance_from_name = new Map(
-                this._appearances.map(a => [a.label, a]));
         }
 
         validate_sound_descriptor(descr) {
