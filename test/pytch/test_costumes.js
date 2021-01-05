@@ -112,6 +112,43 @@ describe("Costume handling", () => {
         });
     });
 
+    [
+        { base: "Sprite", attrname: "Costumes", methodname: "switch_costume" },
+        { base: "Stage", attrname: "Backdrops", methodname: "switch_backdrop" },
+    ].forEach(kind => {
+        [
+            { label: "list", arg: "[1, 2, 3]", regex: /must be string or integer/ },
+            { label: "float", arg: "2.718", regex: /must be string or integer/ },
+            { label: "too-low-int", arg: "-1", regex: /can not be negative/ },
+            { label: "too-high-int", arg: "3", regex: /it only has 3/ },
+        ].forEach(spec => {
+            it(`rejects bad arg to ${kind.base}.${kind.methodname} (${spec.label})`,
+               async () => {
+                   const project = await import_deindented(`
+
+                       import pytch
+
+                       class Banana(pytch.${kind.base}):
+                           ${kind.attrname} = [
+                               "wooden-stage.png",
+                               "sunny-sky.png",
+                               "solid-white-stage.png",
+                           ]
+
+                           @pytch.when_I_receive("cause-trouble")
+                           def cause_trouble(self):
+                               self.${kind.methodname}(${spec.arg})
+                   `);
+
+                   project.do_synthetic_broadcast("cause-trouble");
+                   one_frame(project);
+
+                   const err_str = pytch_errors.sole_error_string();
+                   assert.match(err_str, spec.regex);
+               });
+        });
+    });
+
     with_module("py/project/bad_costume.py", (import_module) => {
         it("throws Python error if costume not found", async () => {
             let module = await import_module();
