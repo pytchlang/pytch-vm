@@ -151,6 +151,10 @@ class Sprite(Actor):
     def switch_costume(self, costume_name):
         self.switch_appearance(costume_name)
 
+    @property
+    def costume_number(self):
+        return self.appearance_number
+
     def touching(self, target_class):
         return (self._pytch_parent_project
                 .instance_is_touching_any_of(self, target_class))
