@@ -62,6 +62,10 @@ class Actor:
                             n_appearances))
 
             self._appearance_index = appearance_index
+        else:
+            raise ValueError(
+                'could not switch {} in class "{}": argument must be string or integer'
+                .format(self._appearance_hyponym, self.__class__.__name__))
 
     @property
     def appearance_number(self):
