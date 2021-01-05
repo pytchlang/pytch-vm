@@ -55,6 +55,13 @@ describe("Costume handling", () => {
                  + "1, firing, firing-alien.png, (80, 30), (40, 15)\n"));
         });
 
+        const assert_info_fun = (project, message) => (exp_stdout) => {
+            project.do_synthetic_broadcast(message);
+            one_frame(project);
+            const stdout = pytch_stdout.drain_stdout();
+            assert.equal(stdout, exp_stdout);
+        };
+
         it("can read current costume info", async () => {
             let project = await import_project();
 
