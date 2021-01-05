@@ -67,6 +67,13 @@ class Actor:
                 'could not switch {} in class "{}": argument must be string or integer'
                 .format(self._appearance_hyponym, self.__class__.__name__))
 
+    def next_appearance(self, n_steps):
+        if not isinstance(n_steps, int):
+            raise ValueError('n_steps must be integer')
+
+        self._appearance_index += n_steps
+        self._appearance_index %= len(self._Appearances)
+
     @property
     def appearance_number(self):
         return self._appearance_index
@@ -184,6 +191,9 @@ class Sprite(Actor):
     def switch_costume(self, costume_name):
         self.switch_appearance(costume_name)
 
+    def next_costume(self, n_steps=1):
+        self.next_appearance(n_steps)
+
     @property
     def costume_number(self):
         return self.appearance_number
@@ -251,6 +261,9 @@ class Stage(Actor):
 
     def switch_backdrop(self, backdrop_name):
         self.switch_appearance(backdrop_name)
+
+    def next_backdrop(self, n_steps=1):
+        self.next_appearance(n_steps)
 
     @property
     def backdrop_number(self):
