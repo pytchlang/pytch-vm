@@ -43,6 +43,24 @@ class Actor:
         elif isinstance(appearance_name_or_index, int):
             appearance_index = appearance_name_or_index
 
+            if appearance_index < 0:
+                raise ValueError(
+                    ('could not switch to {} number {} in class "{}":'
+                     ' number can not be negative')
+                    .format(self._appearance_hyponym,
+                            appearance_index,
+                            self.__class__.__name__))
+
+            n_appearances = len(self._appearance_names)
+            if appearance_index >= n_appearances:
+                raise ValueError(
+                    ('could not switch to {} number {} in class "{}":'
+                     ' it only has {} {0}s')
+                    .format(self._appearance_hyponym,
+                            appearance_index,
+                            self.__class__.__name__,
+                            n_appearances))
+
             self._appearance_index = appearance_index
 
     @property
