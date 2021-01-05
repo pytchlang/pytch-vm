@@ -699,6 +699,16 @@ var $builtinmodule = function (name) {
             const appearance_index
                   = js_getattr(this.py_object, s_appearance_index);
 
+            if (typeof appearance_index !== "number")
+                throw new Sk.builtin.ValueError("appearance-index must be a number");
+            if (appearance_index !== Math.floor(appearance_index))
+                throw new Sk.builtin.ValueError("appearance-index must be an integer");
+
+            const upper_bound = this.actor.n_appearances;
+            if (appearance_index < 0 || appearance_index >= upper_bound)
+                throw new Sk.builtin.ValueError(
+                    `appearance-index must be in the range [0, ${upper_bound})`);
+
             return appearance_index;
         }
 
