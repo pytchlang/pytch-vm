@@ -44,7 +44,28 @@ class Alien(Sprite):
         self._appearance_index = 2
 
 
+class Background(pytch.Stage):
+    Backdrops = ["wooden-stage.png", "sunny-sky.png", "solid-white-stage.png"]
+
+    @pytch.when_I_receive("print-current-backdrop")
+    def print_current_backdrop(self):
+        print("%d" % (self.backdrop_number,))
+
+    @pytch.when_I_receive("switch-to-wooden")
+    def switch_to_wooden(self):
+        self.switch_backdrop("wooden-stage")
+
+    @pytch.when_I_receive("switch-to-sky")
+    def switch_to_sky(self):
+        self.switch_backdrop("sunny-sky")
+
+    @pytch.when_I_receive("switch-to-white")
+    def switch_to_white(self):
+        self.switch_backdrop("solid-white-stage")
+
+
 # --cut-here-for-auto-config--
 
 project = Project()
 project.register_sprite_class(Alien)
+project.register_stage_class(Background)
