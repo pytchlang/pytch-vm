@@ -54,6 +54,26 @@ describe("Costume handling", () => {
                 ("0, marching, marching-alien.png, (60, 20), (30, 10)\n"
                  + "1, firing, firing-alien.png, (80, 30), (40, 15)\n"));
         });
+
+        it("can read current costume info", async () => {
+            let project = await import_project();
+
+            const assert_info = (exp_stdout) => {
+                project.do_synthetic_broadcast("print-current-costume");
+                one_frame(project);
+                const stdout = pytch_stdout.drain_stdout();
+                assert.equal(stdout, exp_stdout);
+            };
+
+            // Initial state is the first costume.
+            assert_info("0\n");
+
+            project.do_synthetic_broadcast("switch-to-firing")
+            assert_info("1\n");
+
+            project.do_synthetic_broadcast("switch-to-marching")
+            assert_info("0\n");
+        });
     });
 
     with_module("py/project/bad_costume.py", (import_module) => {
