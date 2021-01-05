@@ -49,9 +49,11 @@ of Backdrops, is described and stored as a list. This gives the
 collection of appearances a sequence, so it makes sense to talk about
 switching to the ‘next costume’ or the ‘next backdrop’.
 
-Within the web-app, images are loaded asynchronously on class
-registration. For testing, a hard-coded map provides the dimensions of
-an image given a URL.
+Within the web-app, images are loaded asynchronously (from the
+browser-local DB) on class registration. For testing, a hard-coded map
+provides the dimensions of an image given a URL.
+
+
 
 How Stage differs from Sprite
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
