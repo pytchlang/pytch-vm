@@ -259,6 +259,9 @@ class Stage(Actor):
     def switch_backdrop(self, backdrop_name):
         self.switch_appearance(backdrop_name)
 
+    def next_backdrop(self, n_steps=1):
+        self.next_appearance(n_steps)
+
     @property
     def backdrop_number(self):
         return self.appearance_number
