@@ -227,3 +227,7 @@ class Stage(Actor):
     @property
     def backdrop_number(self):
         return self.appearance_number
+
+    @property
+    def backdrop_name(self):
+        return self.appearance_name
