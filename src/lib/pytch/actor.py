@@ -67,6 +67,10 @@ class Actor:
                 'could not switch {} in class "{}": argument must be string or integer'
                 .format(self._appearance_hyponym, self.__class__.__name__))
 
+    def next_appearance(self, n_steps):
+        self._appearance_index += n_steps
+        self._appearance_index %= len(self._Appearances)
+
     @property
     def appearance_number(self):
         return self._appearance_index
