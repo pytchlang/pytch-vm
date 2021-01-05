@@ -188,6 +188,9 @@ class Sprite(Actor):
     def switch_costume(self, costume_name):
         self.switch_appearance(costume_name)
 
+    def next_costume(self, n_steps=1):
+        self.next_appearance(n_steps)
+
     @property
     def costume_number(self):
         return self.appearance_number
