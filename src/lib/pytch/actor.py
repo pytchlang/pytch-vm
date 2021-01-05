@@ -39,6 +39,10 @@ class Actor:
 
         self._appearance_index = self._appearance_names.index(appearance_name)
 
+    @property
+    def appearance_number(self):
+        return self._appearance_index
+
 
 class Sprite(Actor):
     Costumes = [
