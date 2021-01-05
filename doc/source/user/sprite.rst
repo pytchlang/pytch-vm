@@ -138,6 +138,22 @@ Changing the sprite appearance
   ``self.switch_costume(0)``; to switch to the second costume, you
   would use ``self.switch_costume(1)``, and so on.
 
+  .. function:: self.next_costume()
+
+  Switch to the costume after the current one.  If the Sprite is
+  wearing the last costume in its ``Costumes`` list, then go back to
+  the first one in the list.
+
+  .. function:: self.next_costume(n_steps)
+     :noindex:
+
+  Switch to the costume ``n_steps`` after the current one.  If this
+  would take the Sprite beyond the end of its ``Costumes`` list, then
+  wrap round to the first entry again, as if the costumes were in a
+  circle.  You can use a negative number for ``n_steps`` to choose an
+  *earlier* costume in the list.  For example,
+  ``self.next_costume(-1)`` will switch to the *previous* costume.
+
 Controlling the order Sprites are drawn
   When one sprite overlaps another it is the order that they are drawn
   that controls what you see. Sprites on the back layer are drawn
