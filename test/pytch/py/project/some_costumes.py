@@ -15,6 +15,15 @@ class Alien(Sprite):
     def print_current_costume(self):
         print("%d %s" % (self.costume_number, self.costume_name))
 
+    @pytch.when_I_receive("switch-costume-by-number")
+    def switch_costume_by_number(self):
+        self.switch_costume(1)
+        self.print_current_costume()
+        self.switch_costume(0)
+        self.print_current_costume()
+        self.switch_costume(1)
+        self.print_current_costume()
+
     @pytch.when_I_receive("switch-to-marching")
     def switch_to_marching(self):
         self.switch_costume("marching")
@@ -50,6 +59,19 @@ class Background(pytch.Stage):
     @pytch.when_I_receive("print-current-backdrop")
     def print_current_backdrop(self):
         print("%d %s" % (self.backdrop_number, self.backdrop_name))
+
+    @pytch.when_I_receive("switch-backdrop-by-number")
+    def switch_backdrop_by_number(self):
+        self.switch_backdrop(1)
+        self.print_current_backdrop()
+        self.switch_backdrop(0)
+        self.print_current_backdrop()
+        self.switch_backdrop(1)
+        self.print_current_backdrop()
+        self.switch_backdrop(2)
+        self.print_current_backdrop()
+        self.switch_backdrop(1)
+        self.print_current_backdrop()
 
     @pytch.when_I_receive("switch-to-wooden")
     def switch_to_wooden(self):

@@ -28,16 +28,44 @@ class Actor:
                 appearance.label for appearance in cls._Appearances
             ]
 
-    def switch_appearance(self, appearance_name):
+    def switch_appearance(self, appearance_name_or_index):
         self.ensure_have_appearance_names()
 
-        if appearance_name not in self._appearance_names:
-            raise KeyError('could not find {} "{}" in class "{}"'
-                           .format(self._appearance_hyponym,
-                                   appearance_name,
-                                   self.__class__.__name__))
+        if isinstance(appearance_name_or_index, str):
+            appearance_name = appearance_name_or_index
+            if appearance_name not in self._appearance_names:
+                raise KeyError('could not find {} "{}" in class "{}"'
+                               .format(self._appearance_hyponym,
+                                       appearance_name,
+                                       self.__class__.__name__))
 
-        self._appearance_index = self._appearance_names.index(appearance_name)
+            self._appearance_index = self._appearance_names.index(appearance_name)
+        elif isinstance(appearance_name_or_index, int):
+            appearance_index = appearance_name_or_index
+
+            if appearance_index < 0:
+                raise ValueError(
+                    ('could not switch to {} number {} in class "{}":'
+                     ' number can not be negative')
+                    .format(self._appearance_hyponym,
+                            appearance_index,
+                            self.__class__.__name__))
+
+            n_appearances = len(self._appearance_names)
+            if appearance_index >= n_appearances:
+                raise ValueError(
+                    ('could not switch to {} number {} in class "{}":'
+                     ' it only has {} {0}s')
+                    .format(self._appearance_hyponym,
+                            appearance_index,
+                            self.__class__.__name__,
+                            n_appearances))
+
+            self._appearance_index = appearance_index
+        else:
+            raise ValueError(
+                'could not switch {} in class "{}": argument must be string or integer'
+                .format(self._appearance_hyponym, self.__class__.__name__))
 
     @property
     def appearance_number(self):

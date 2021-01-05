@@ -92,6 +92,61 @@ describe("Costume handling", () => {
             project.do_synthetic_broadcast("switch-to-wooden")
             assert_info("0 wooden-stage\n");
         });
+
+        it("can switch costume by number", async () => {
+            let project = await import_project();
+            const assert_info = assert_info_fun(project, "switch-costume-by-number");
+            assert_info("1 firing\n"
+                        + "0 marching\n"
+                        + "1 firing\n");
+        });
+
+        it("can switch backdrop by number", async () => {
+            let project = await import_project();
+            const assert_info = assert_info_fun(project, "switch-backdrop-by-number");
+            assert_info("1 sunny-sky\n"
+                        + "0 wooden-stage\n"
+                        + "1 sunny-sky\n"
+                        + "2 solid-white-stage\n"
+                        + "1 sunny-sky\n");
+        });
+    });
+
+    [
+        { base: "Sprite", attrname: "Costumes", methodname: "switch_costume" },
+        { base: "Stage", attrname: "Backdrops", methodname: "switch_backdrop" },
+    ].forEach(kind => {
+        [
+            { label: "list", arg: "[1, 2, 3]", regex: /must be string or integer/ },
+            { label: "float", arg: "2.718", regex: /must be string or integer/ },
+            { label: "too-low-int", arg: "-1", regex: /can not be negative/ },
+            { label: "too-high-int", arg: "3", regex: /it only has 3/ },
+        ].forEach(spec => {
+            it(`rejects bad arg to ${kind.base}.${kind.methodname} (${spec.label})`,
+               async () => {
+                   const project = await import_deindented(`
+
+                       import pytch
+
+                       class Banana(pytch.${kind.base}):
+                           ${kind.attrname} = [
+                               "wooden-stage.png",
+                               "sunny-sky.png",
+                               "solid-white-stage.png",
+                           ]
+
+                           @pytch.when_I_receive("cause-trouble")
+                           def cause_trouble(self):
+                               self.${kind.methodname}(${spec.arg})
+                   `);
+
+                   project.do_synthetic_broadcast("cause-trouble");
+                   one_frame(project);
+
+                   const err_str = pytch_errors.sole_error_string();
+                   assert.match(err_str, spec.regex);
+               });
+        });
     });
 
     with_module("py/project/bad_costume.py", (import_module) => {
