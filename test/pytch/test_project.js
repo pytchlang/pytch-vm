@@ -7,6 +7,7 @@ const {
     assert,
     py_getattr,
     js_getattr,
+    appearance_by_name,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -82,8 +83,8 @@ describe("pytch.project module", () => {
             assert.strictEqual(banana, project.actors[1]);
 
             // Their Costume and Backdrop should have been picked out OK.
-            assert.strictEqual(banana.appearance_from_name("yellow").centre_x, 50);
-            assert.strictEqual(table.appearance_from_name("wooden").centre_x, 240);
+            assert.strictEqual(appearance_by_name(banana, "yellow").centre_x, 50);
+            assert.strictEqual(appearance_by_name(table, "wooden").centre_x, 240);
         })});
 
     with_project("py/project/bad_registrations.py", (import_project) => {

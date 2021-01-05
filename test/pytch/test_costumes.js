@@ -11,6 +11,7 @@ const {
     assertBuildErrorFun,
     many_frames,
     one_frame,
+    appearance_by_name,
     pytch_errors,
     pytch_stdout,
 } = require("./pytch-testing.js");
@@ -29,12 +30,12 @@ describe("Costume handling", () => {
 
             assert.strictEqual(alien.n_appearances, 2);
 
-            assert_Appearance_equal(alien.appearance_from_name("marching"),
+            assert_Appearance_equal(appearance_by_name(alien, "marching"),
                                     "marching",
                                     "marching-alien.png",
                                     60, 20, 30, 10);
 
-            assert_Appearance_equal(alien.appearance_from_name("firing"),
+            assert_Appearance_equal(appearance_by_name(alien, "firing"),
                                     "firing",
                                     "firing-alien.png",
                                     80, 30, 40, 15);
@@ -52,7 +53,8 @@ describe("Costume handling", () => {
                 stdout,
                 ("0, marching, marching-alien.png, (60, 20), (30, 10)\n"
                  + "1, firing, firing-alien.png, (80, 30), (40, 15)\n"));
-        })});
+        });
+    });
 
     with_module("py/project/bad_costume.py", (import_module) => {
         it("throws Python error if costume not found", async () => {
@@ -61,7 +63,8 @@ describe("Costume handling", () => {
             let err_msg = Sk.builtin.str(caught_exception).v;
             assert.ok(/could not load Image/.test(err_msg));
             assert.equal(caught_exception.kind, "Image");
-        })});
+        });
+    });
 
     const bad_Backdrop_cases = [
         {
@@ -148,13 +151,28 @@ describe("Costume handling", () => {
     })});
 
     with_project("py/project/some_costumes.py", (import_project) => {
-        it("rejects unknown costume on direct look-up attempt", async () => {
-            let project = await import_project();
-            let alien = project.actor_by_class_name("Alien");
+        [
+            { tag: "None", regex: /a number/ },
+            { tag: "string", regex: /a number/ },
+            { tag: "non-integer", regex: /an integer/ },
+            { tag: "out-of-range-low", regex: /in the range/ },
+            { tag: "out-of-range-high", regex: /in the range/ },
+        ].forEach(spec => {
+            it(`does something if appearance-index ${spec.tag}`, async () => {
+                let project = await import_project();
 
-            assert.throws(() => alien.appearance_from_name("banana"),
-                          /could not find Costume "banana" in class "Alien"/);
-        })});
+                const message = `set-appearance-index-attribute-${spec.tag}`;
+                project.do_synthetic_broadcast(message);
+                project.one_frame();
+
+                project.rendering_instructions();
+
+                const err_str = pytch_errors.sole_error_string();
+                assert.match(err_str, /appearance-index must be/);
+                assert.match(err_str, spec.regex);
+            });
+        });
+    });
 
     const bad_switch_test_specs = [
         { tag: 'costume',
@@ -182,10 +200,10 @@ describe("Costume handling", () => {
             let project = await import_project();
 
             let ball = project.instance_0_by_class_name("Ball");
-            assert.equal(ball.js_attr("_appearance"), "yellow-ball");
+            assert.equal(ball.js_attr("_appearance_index"), 0);
 
             let table = project.instance_0_by_class_name("Table");
-            assert.equal(table.js_attr("_appearance"), "wooden");
+            assert.equal(table.js_attr("_appearance_index"), 0);
         })});
 
     with_project("py/project/sprite_without_costumes.py", (import_project) => {

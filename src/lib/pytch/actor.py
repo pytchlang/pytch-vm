@@ -24,8 +24,9 @@ class Actor:
     @classmethod
     def ensure_have_appearance_names(cls):
         if cls._appearance_names is None:
-            cls._appearance_names = set(
-                appearance.label for appearance in cls._Appearances)
+            cls._appearance_names = [
+                appearance.label for appearance in cls._Appearances
+            ]
 
     def switch_appearance(self, appearance_name):
         self.ensure_have_appearance_names()
@@ -36,7 +37,7 @@ class Actor:
                                    appearance_name,
                                    self.__class__.__name__))
 
-        self._appearance = appearance_name
+        self._appearance_index = self._appearance_names.index(appearance_name)
 
 
 class Sprite(Actor):
@@ -63,14 +64,12 @@ class Sprite(Actor):
             self._shown = at_least_one_Costume
 
         if at_least_one_Costume:
-            self.switch_costume(self._Appearances[0].label)
+            self._appearance_index = 0
         else:
             # It is not necessarily an error to have no Costumes, as
             # long as the Sprite always remains hidden.  It might, for
             # example, only receive/broadcast messages or play sounds.
-            # We directly set the attribute here to avoid the check in
-            # switch_appearance().
-            self._appearance = None
+            self._appearance_index = None
 
     @classmethod
     def the_original(cls):
@@ -190,7 +189,6 @@ class Stage(Actor):
     _size = 1.0
     _shown = True
     _speech = None
-    _appearance = 'solid-white'
 
     _appearance_hyponym = 'Backdrop'
 
@@ -200,7 +198,7 @@ class Stage(Actor):
             # must have at least one Backdrop.
             raise ValueError('no Backdrops in Stage')
 
-        self.switch_backdrop(self._Appearances[0].label)
+        self._appearance_index = 0
 
     @classmethod
     def the_only(cls):

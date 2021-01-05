@@ -20,7 +20,7 @@ var $builtinmodule = function (name) {
     const s_x = Sk.builtin.str("_x");
     const s_y = Sk.builtin.str("_y");
     const s_size = Sk.builtin.str("_size");
-    const s_appearance = Sk.builtin.str("_appearance");
+    const s_appearance_index = Sk.builtin.str("_appearance_index");
     const s_Appearances = Sk.builtin.str("_Appearances");
     const s_speech = Sk.builtin.str("_speech");
 
@@ -306,14 +306,11 @@ var $builtinmodule = function (name) {
                 = raw_descriptors.map(
                     d => this.validate_appearance_descriptor(d));
 
-            let async_appearances = appearance_descriptors.map(async d => {
-                let appearance = await Appearance.async_create(...d);
-                return appearance;
-            });
+            let async_appearances = appearance_descriptors.map(
+                d => Appearance.async_create(...d)
+            );
 
             this._appearances = await Promise.all(async_appearances);
-            this._appearance_from_name = new Map(
-                this._appearances.map(a => [a.label, a]));
         }
 
         validate_sound_descriptor(descr) {
@@ -379,22 +376,8 @@ var $builtinmodule = function (name) {
             await this.async_load_sounds();
         }
 
-        appearance_from_name(appearance_name) {
-            let appearance = this._appearance_from_name.get(appearance_name);
-
-            if (typeof appearance == "undefined") {
-                let cls_name = name_of_py_class(this.py_cls);
-                let kind_name = this.appearance_single_name;
-
-                throw Error(`could not find ${kind_name} "${appearance_name}"`
-                            + ` in class "${cls_name}"`);
-            }
-
-            return appearance;
-        }
-
         get n_appearances() {
-            return this._appearance_from_name.size;
+            return this._appearances.length;
         }
 
         static set_Appearances_attr(py_cls, js_actor) {
@@ -695,7 +678,24 @@ var $builtinmodule = function (name) {
         get render_x() { return js_getattr(this.py_object, s_x); }
         get render_y() { return js_getattr(this.py_object, s_y); }
         get render_size() { return js_getattr(this.py_object, s_size); }
-        get render_appearance() { return js_getattr(this.py_object, s_appearance); }
+
+        get render_appearance_index() {
+            const appearance_index
+                  = js_getattr(this.py_object, s_appearance_index);
+
+            if (typeof appearance_index !== "number")
+                throw new Sk.builtin.ValueError("appearance-index must be a number");
+            if (appearance_index !== Math.floor(appearance_index))
+                throw new Sk.builtin.ValueError("appearance-index must be an integer");
+
+            const upper_bound = this.actor.n_appearances;
+            if (appearance_index < 0 || appearance_index >= upper_bound)
+                throw new Sk.builtin.ValueError(
+                    `appearance-index must be in the range [0, ${upper_bound})`);
+
+            return appearance_index;
+        }
+
         get render_speech() { return js_getattr(this.py_object, s_speech); }
 
         get layer_group() { return this.actor.layer_group; }
@@ -709,8 +709,8 @@ var $builtinmodule = function (name) {
                 return [];
 
             let size = this.render_size;
-            let appearance_name = this.render_appearance;
-            let appearance = this.actor.appearance_from_name(appearance_name);
+            let appearance_index = this.render_appearance_index;
+            let appearance = this.actor._appearances[appearance_index];
 
             const render_x = this.render_x;
             const render_y = this.render_y;
@@ -729,7 +729,7 @@ var $builtinmodule = function (name) {
                                 render_y + offset_y,
                                 size,
                                 appearance.image,
-                                appearance_name),
+                                appearance.label),
             ];
 
             // Don't really like this 'initialise then overwrite' approach but
@@ -766,8 +766,8 @@ var $builtinmodule = function (name) {
 
         bounding_box() {
             let size = this.render_size;
-            let appearance_name = this.render_appearance;
-            let appearance = this.actor.appearance_from_name(appearance_name);
+            let appearance_index = this.render_appearance_index;
+            let appearance = this.actor._appearances[appearance_index];
 
             // Annoying mixture of addition and subtraction, and care needed
             // with respect to which is min and which is max, to account for the
