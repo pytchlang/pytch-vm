@@ -40,6 +40,10 @@ class Actor:
                                        self.__class__.__name__))
 
             self._appearance_index = self._appearance_names.index(appearance_name)
+        elif isinstance(appearance_name_or_index, int):
+            appearance_index = appearance_name_or_index
+
+            self._appearance_index = appearance_index
 
     @property
     def appearance_number(self):
