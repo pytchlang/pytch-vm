@@ -125,7 +125,9 @@ Changing the sprite appearance
   Select one of the costumes listed in this Sprite's *Costumes*
   variable. The name can be either the complete filename, the filename
   without the extension, or a custom label (as described in
-  :ref:`assets<costume_label_specifications>`). For example, you might use ``self.switch_costume("smiling-kitten")`` to choose a new costume.
+  :ref:`assets<costume_label_specifications>`). For example, you might
+  use ``self.switch_costume("smiling-kitten")`` to choose a new
+  costume.
 
 Controlling the order Sprites are drawn
   When one sprite overlaps another it is the order that they are drawn
