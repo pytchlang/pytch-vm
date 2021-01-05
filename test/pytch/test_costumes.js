@@ -67,13 +67,13 @@ describe("Costume handling", () => {
             const assert_info = assert_info_fun(project, "print-current-costume");
 
             // Initial state is the first costume.
-            assert_info("0\n");
+            assert_info("0 marching\n");
 
             project.do_synthetic_broadcast("switch-to-firing")
-            assert_info("1\n");
+            assert_info("1 firing\n");
 
             project.do_synthetic_broadcast("switch-to-marching")
-            assert_info("0\n");
+            assert_info("0 marching\n");
         });
 
         it("can read current backdrop info", async () => {
@@ -81,16 +81,16 @@ describe("Costume handling", () => {
             const assert_info = assert_info_fun(project, "print-current-backdrop");
 
             // Initial state is the first backdrop.
-            assert_info("0\n");
+            assert_info("0 wooden-stage\n");
 
             project.do_synthetic_broadcast("switch-to-sky")
-            assert_info("1\n");
+            assert_info("1 sunny-sky\n");
 
             project.do_synthetic_broadcast("switch-to-white")
-            assert_info("2\n");
+            assert_info("2 solid-white-stage\n");
 
             project.do_synthetic_broadcast("switch-to-wooden")
-            assert_info("0\n");
+            assert_info("0 wooden-stage\n");
         });
     });
 
