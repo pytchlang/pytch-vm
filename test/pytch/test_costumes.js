@@ -172,6 +172,11 @@ describe("Costume handling", () => {
             { label: "by -1", n_steps_fragment: "-1", exp_number: 0 },
             { label: "by 301", n_steps_fragment: "301", exp_number: 2 },
             { label: "by -299", n_steps_fragment: "-299", exp_number: 2 },
+            {
+                label: "error if non-int",
+                n_steps_fragment: "2.5",
+                error_regex: /must be integer/,
+            },
         ].forEach(spec => {
             it(`can step onwards in ${kind.attrname} list (${spec.label})`,
                async () => {
@@ -195,8 +200,14 @@ describe("Costume handling", () => {
 
                    project.do_synthetic_broadcast("next");
                    one_frame(project);
-                   const stdout = pytch_stdout.drain_stdout();
-                   assert.equal(stdout, `${spec.exp_number}\n`);
+
+                   if (spec.exp_number !== undefined) {
+                       const stdout = pytch_stdout.drain_stdout();
+                       assert.equal(stdout, `${spec.exp_number}\n`);
+                   } else {
+                       const err_str = pytch_errors.sole_error_string();
+                       assert.match(err_str, spec.error_regex);
+                   }
                });
         });
     });
