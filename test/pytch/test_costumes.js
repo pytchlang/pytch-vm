@@ -151,14 +151,6 @@ describe("Costume handling", () => {
     })});
 
     with_project("py/project/some_costumes.py", (import_project) => {
-        it("rejects unknown costume on direct look-up attempt", async () => {
-            let project = await import_project();
-            let alien = project.actor_by_class_name("Alien");
-
-            assert.throws(() => alien.appearance_from_name("banana"),
-                          /could not find Costume "banana" in class "Alien"/);
-        });
-
         [
             { tag: "None", regex: /a number/ },
             { tag: "string", regex: /a number/ },
