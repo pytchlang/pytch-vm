@@ -154,6 +154,18 @@ Changing the sprite appearance
   *earlier* costume in the list.  For example,
   ``self.next_costume(-1)`` will switch to the *previous* costume.
 
+Finding out what costume the Sprite is currently wearing
+  .. attribute:: self.costume_number
+
+  The *zero-based* number of the costume currently being worn by the
+  Sprite.  Here, 'zero-based' means that the first costume in the
+  ``Costumes`` list is number 0; the second costume is number 1; and
+  so on.  This is the way that Python refers to list elements.
+
+  .. attribute:: self.costume_name
+
+  The name of the costume currently being worn by the Sprite.
+
 Controlling the order Sprites are drawn
   When one sprite overlaps another it is the order that they are drawn
   that controls what you see. Sprites on the back layer are drawn
