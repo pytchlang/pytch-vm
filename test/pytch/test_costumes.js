@@ -64,13 +64,7 @@ describe("Costume handling", () => {
 
         it("can read current costume info", async () => {
             let project = await import_project();
-
-            const assert_info = (exp_stdout) => {
-                project.do_synthetic_broadcast("print-current-costume");
-                one_frame(project);
-                const stdout = pytch_stdout.drain_stdout();
-                assert.equal(stdout, exp_stdout);
-            };
+            const assert_info = assert_info_fun(project, "print-current-costume");
 
             // Initial state is the first costume.
             assert_info("0\n");
@@ -84,13 +78,7 @@ describe("Costume handling", () => {
 
         it("can read current backdrop info", async () => {
             let project = await import_project();
-
-            const assert_info = (exp_stdout) => {
-                project.do_synthetic_broadcast("print-current-backdrop");
-                one_frame(project);
-                const stdout = pytch_stdout.drain_stdout();
-                assert.equal(stdout, exp_stdout);
-            };
+            const assert_info = assert_info_fun(project, "print-current-backdrop");
 
             // Initial state is the first backdrop.
             assert_info("0\n");
