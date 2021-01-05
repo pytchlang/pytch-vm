@@ -11,6 +11,7 @@ const {
     assertBuildErrorFun,
     many_frames,
     one_frame,
+    appearance_by_name,
     pytch_errors,
     pytch_stdout,
 } = require("./pytch-testing.js");
@@ -29,12 +30,12 @@ describe("Costume handling", () => {
 
             assert.strictEqual(alien.n_appearances, 2);
 
-            assert_Appearance_equal(alien.appearance_from_name("marching"),
+            assert_Appearance_equal(appearance_by_name(alien, "marching"),
                                     "marching",
                                     "marching-alien.png",
                                     60, 20, 30, 10);
 
-            assert_Appearance_equal(alien.appearance_from_name("firing"),
+            assert_Appearance_equal(appearance_by_name(alien, "firing"),
                                     "firing",
                                     "firing-alien.png",
                                     80, 30, 40, 15);
