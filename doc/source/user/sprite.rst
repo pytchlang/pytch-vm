@@ -129,6 +129,15 @@ Changing the sprite appearance
   use ``self.switch_costume("smiling-kitten")`` to choose a new
   costume.
 
+  .. function:: self.switch_costume(costume_number)
+     :noindex:
+
+  Select one of the costumes listed in this Sprite's *Costumes*
+  variable, by number.  Python starts counting entries in lists *at
+  zero*, so to switch to the first costume, you would use
+  ``self.switch_costume(0)``; to switch to the second costume, you
+  would use ``self.switch_costume(1)``, and so on.
+
 Controlling the order Sprites are drawn
   When one sprite overlaps another it is the order that they are drawn
   that controls what you see. Sprites on the back layer are drawn
