@@ -92,6 +92,24 @@ describe("Costume handling", () => {
             project.do_synthetic_broadcast("switch-to-wooden")
             assert_info("0 wooden-stage\n");
         });
+
+        it("can switch costume by number", async () => {
+            let project = await import_project();
+            const assert_info = assert_info_fun(project, "switch-costume-by-number");
+            assert_info("1 firing\n"
+                        + "0 marching\n"
+                        + "1 firing\n");
+        });
+
+        it("can switch backdrop by number", async () => {
+            let project = await import_project();
+            const assert_info = assert_info_fun(project, "switch-backdrop-by-number");
+            assert_info("1 sunny-sky\n"
+                        + "0 wooden-stage\n"
+                        + "1 sunny-sky\n"
+                        + "2 solid-white-stage\n"
+                        + "1 sunny-sky\n");
+        });
     });
 
     with_module("py/project/bad_costume.py", (import_module) => {
