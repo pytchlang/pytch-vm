@@ -10,8 +10,8 @@ from the ``pytch.Stage`` class.  For example,
        # Code for your stage goes here
 
 
-Methods available on the Stage
-------------------------------
+Methods and properties available on the Stage
+---------------------------------------------
 
 Your own version of the Stage can use the following methods, which are
 provided by Pytch:
