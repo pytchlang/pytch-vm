@@ -74,6 +74,29 @@ describe("Costume handling", () => {
             project.do_synthetic_broadcast("switch-to-marching")
             assert_info("0\n");
         });
+
+        it("can read current backdrop info", async () => {
+            let project = await import_project();
+
+            const assert_info = (exp_stdout) => {
+                project.do_synthetic_broadcast("print-current-backdrop");
+                one_frame(project);
+                const stdout = pytch_stdout.drain_stdout();
+                assert.equal(stdout, exp_stdout);
+            };
+
+            // Initial state is the first backdrop.
+            assert_info("0\n");
+
+            project.do_synthetic_broadcast("switch-to-sky")
+            assert_info("1\n");
+
+            project.do_synthetic_broadcast("switch-to-white")
+            assert_info("2\n");
+
+            project.do_synthetic_broadcast("switch-to-wooden")
+            assert_info("0\n");
+        });
     });
 
     with_module("py/project/bad_costume.py", (import_module) => {
