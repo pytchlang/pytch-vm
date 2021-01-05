@@ -54,3 +54,14 @@ backdrops.  If this takes you beyond the end of the list, wrap back
 round to the start as if in a circle.  You can use a negative number
 as ``n_steps`` to move to an *earlier* backdrop; for example,
 ``self.next_backdrop(-1)`` will change to the *previous* backdrop.
+
+.. attribute:: self.backdrop_number
+
+The *zero-based* number of the currently-shown backdrop.  So if the
+Stage is currently showing its first backdrop, ``backdrop_number``
+will be 0; if it's currently showing its second backdrop,
+``backdrop_number`` will be 1; and so on.
+
+.. attribute:: self.backdrop_name
+
+The name of the currently-shown backdrop.
