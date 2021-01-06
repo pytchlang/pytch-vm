@@ -125,7 +125,46 @@ Changing the sprite appearance
   Select one of the costumes listed in this Sprite's *Costumes*
   variable. The name can be either the complete filename, the filename
   without the extension, or a custom label (as described in
-  :ref:`assets<costume_label_specifications>`). For example, you might use ``self.switch_costume("smiling-kitten")`` to choose a new costume.
+  :ref:`assets<costume_label_specifications>`). For example, you might
+  use ``self.switch_costume("smiling-kitten")`` to choose a new
+  costume.
+
+  .. function:: self.switch_costume(costume_number)
+     :noindex:
+
+  Select one of the costumes listed in this Sprite's *Costumes*
+  variable, by number.  Python starts counting entries in lists *at
+  zero*, so to switch to the first costume, you would use
+  ``self.switch_costume(0)``; to switch to the second costume, you
+  would use ``self.switch_costume(1)``, and so on.
+
+  .. function:: self.next_costume()
+
+  Switch to the costume after the current one.  If the Sprite is
+  wearing the last costume in its ``Costumes`` list, then go back to
+  the first one in the list.
+
+  .. function:: self.next_costume(n_steps)
+     :noindex:
+
+  Switch to the costume ``n_steps`` after the current one.  If this
+  would take the Sprite beyond the end of its ``Costumes`` list, then
+  wrap round to the first entry again, as if the costumes were in a
+  circle.  You can use a negative number for ``n_steps`` to choose an
+  *earlier* costume in the list.  For example,
+  ``self.next_costume(-1)`` will switch to the *previous* costume.
+
+Finding out what costume the Sprite is currently wearing
+  .. attribute:: self.costume_number
+
+  The *zero-based* number of the costume currently being worn by the
+  Sprite.  Here, 'zero-based' means that the first costume in the
+  ``Costumes`` list is number 0; the second costume is number 1; and
+  so on.  This is the way that Python refers to list elements.
+
+  .. attribute:: self.costume_name
+
+  The name of the costume currently being worn by the Sprite.
 
 Controlling the order Sprites are drawn
   When one sprite overlaps another it is the order that they are drawn
