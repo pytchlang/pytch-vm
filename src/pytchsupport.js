@@ -119,7 +119,7 @@ Sk.pytchsupport.maybe_auto_configure_project = (async mod => {
                 phase: "register-actor",
                 phaseDetail: {
                     kind,
-                    className: Sk.ffi.remapToJs(Sk.builtin.getattr(cls, Sk.builtin.str("__name__"))),
+                    className: Sk.ffi.remapToJs(Sk.builtin.getattr(cls, new Sk.builtin.str("__name__"))),
                 },
                 innerError: err,
             });

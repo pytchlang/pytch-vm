@@ -285,10 +285,10 @@ function new_identifier(n, c) {
 function astForPytchYield(n) {
     var l = `'(auto-added yield in loop started on line ${n.lineno})'`;
     var c = `'(auto-added yield in loop started on column ${n.col_offset})'`;
-    var attr = new Sk.astnodes.Attribute(new Sk.astnodes.Name(Sk.builtin.str("pytch"),
+    var attr = new Sk.astnodes.Attribute(new Sk.astnodes.Name(new Sk.builtin.str("pytch"),
                                                               Sk.astnodes.Load,
                                                               l, c),
-                                         Sk.builtin.str("yield_until_next_frame"),
+                                         new Sk.builtin.str("yield_until_next_frame"),
                                          Sk.astnodes.Load,
                                          l, c);
     var call = new Sk.astnodes.Call(attr, null, null, l, c);

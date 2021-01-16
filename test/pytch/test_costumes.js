@@ -233,7 +233,7 @@ describe("Costume handling", () => {
         it("throws Python error if costume not found", async () => {
             let module = await import_module();
             let caught_exception = module.$d.caught_exception;
-            let err_msg = Sk.builtin.str(caught_exception).v;
+            let err_msg = new Sk.builtin.str(caught_exception).v;
             assert.ok(/could not load Image/.test(err_msg));
             assert.equal(caught_exception.kind, "Image");
         });
