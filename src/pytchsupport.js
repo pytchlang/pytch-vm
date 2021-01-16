@@ -42,7 +42,10 @@ Sk.pytchsupport.actors_of_module = (mod => {
     const pytch_Stage = pytch.$d.Stage;
 
     const is_strict_subclass = (obj, cls) => (
-        (Sk.builtin.checkClass(obj) && Sk.builtin.issubclass(obj, cls).v && obj !== cls));
+        Sk.builtin.checkClass(obj)
+        && Sk.builtin.issubclass(obj, cls).v
+        && obj !== cls
+    );
 
     let actors = [];
 
