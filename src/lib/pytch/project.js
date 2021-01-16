@@ -449,11 +449,16 @@ var $builtinmodule = function (name) {
                     continue;
 
                 let py_attr_name = new Sk.builtin.str(js_attr_name);
+
+                // Getting the attribute on the class object gives the
+                // method descriptor object, which is a callable.
+                //
+                // TODO: Check we haven't got a classmethod or staticmethod.
+                //
                 let attr_val = Sk.builtin.getattr(this.py_cls, py_attr_name);
 
-                let [has_im_func, im_func] = try_py_getattr(attr_val, s_im_func);
-                if (has_im_func)
-                    this.register_handlers_of_method(im_func);
+                if (attr_val.tp$call)
+                    this.register_handlers_of_method(attr_val);
             }
         }
 
