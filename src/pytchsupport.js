@@ -180,23 +180,20 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
  *     kind: either "Image" or "Sound"
  *     path: a string giving the location of the not-found asset
  */
-Sk.pytchsupport.PytchAssetLoadError = function (...args) {
-    // Convert args into form expected by Exception.
-    const details = args[0];
-    args = [`could not load ${details.kind} "${details.path}"`];
+Sk.pytchsupport.PytchAssetLoadError = Sk.abstr.buildNativeClass(
+    "PytchAssetLoadError",
+    {
+        constructor: function PytchAssetLoadError(...args) {
+            // Convert args into form expected by Exception.
+            const details = args[0];
+            args = [`could not load ${details.kind} "${details.path}"`];
 
-    var o;
-    if (! (this instanceof Sk.pytchsupport.PytchAssetLoadError)) {
-        o = Object.create(Sk.pytchsupport.PytchAssetLoadError.prototype);
-        o.constructor.apply(o, args);
-        return o;
+            Sk.builtin.Exception.apply(this, args);
+            Object.assign(this, details);
+        },
+        base: Sk.builtin.Exception,
     }
-    Sk.builtin.Exception.apply(this, args);
-    Object.assign(this, details);
-};
-Sk.abstr.setUpInheritance("PytchAssetLoadError",
-                          Sk.pytchsupport.PytchAssetLoadError,
-                          Sk.builtin.Exception);
+);
 
 
 /**
@@ -211,22 +208,20 @@ Sk.abstr.setUpInheritance("PytchAssetLoadError",
  * "import" or "register/register-actor"), "phaseDetail" (which can be
  * null), and "innerError".
  */
-Sk.pytchsupport.PytchBuildError = function(...args) {
-    // Convert args into form expected by Exception.
-    const details = args[0];
-    args[0] = "could not build project";
+Sk.pytchsupport.PytchBuildError = Sk.abstr.buildNativeClass(
+    "PytchBuildError",
+    {
+        constructor: function PytchBuildError(...args) {
+            // Convert args into form expected by Exception.
+            const details = args[0];
+            args[0] = "could not build project";
 
-    if (! (this instanceof Sk.pytchsupport.PytchBuildError)) {
-        let o = Object.create(Sk.pytchsupport.PytchBuildError.prototype);
-        o.constructor.apply(o, args);
-        return o;
+            Sk.builtin.Exception.apply(this, args);
+            Object.assign(this, details);
+        },
+        base: Sk.builtin.Exception,
     }
-    Sk.builtin.Exception.apply(this, args);
-    Object.assign(this, details);
-}
-Sk.abstr.setUpInheritance("PytchBuildError",
-                          Sk.pytchsupport.PytchBuildError,
-                          Sk.builtin.Exception);
+);
 
 
 ////////////////////////////////////////////////////////////////////////////////
