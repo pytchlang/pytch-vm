@@ -44,7 +44,10 @@ describe("pytch.project module", () => {
             let green_flag_handler = actor_0.event_handlers.green_flag.handlers[0];
 
             assert.strictEqual(green_flag_handler.pytch_actor, actor_0);
-            assert.strictEqual(green_flag_handler.py_func, py_getattr(actor_0.py_cls, "note_click"));
+            assert.strictEqual(
+                green_flag_handler.py_func,
+                py_getattr(actor_0.py_cls, "note_click")
+            );
         })});
 
     with_module("py/project/single_sprite.py", (import_module) => {
