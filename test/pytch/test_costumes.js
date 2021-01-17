@@ -212,6 +212,23 @@ describe("Costume handling", () => {
         });
     });
 
+    it("gives useful error for next_costume() when no Costumes", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            class InvisibleBanana(pytch.Sprite):
+                Costumes = []
+                @pytch.when_I_receive("try-next")
+                def try_next_costume(self):
+                    self.next_costume()
+        `);
+
+        project.do_synthetic_broadcast("try-next");
+        one_frame(project);
+        const err_str = pytch_errors.sole_error_string();
+        assert.match(err_str, /has no Costumes/);
+    });
+
     with_module("py/project/bad_costume.py", (import_module) => {
         it("throws Python error if costume not found", async () => {
             let module = await import_module();
