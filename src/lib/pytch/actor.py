@@ -64,8 +64,10 @@ class Actor:
             self._appearance_index = appearance_index
         else:
             raise ValueError(
-                'could not switch {} in class "{}": argument must be string or integer'
-                .format(self._appearance_hyponym, self.__class__.__name__))
+                ('could not switch {} in class "{}":'
+                 ' argument must be string or integer')
+                .format(self._appearance_hyponym,
+                        self.__class__.__name__))
 
     def next_appearance(self, n_steps):
         if not isinstance(n_steps, int):
