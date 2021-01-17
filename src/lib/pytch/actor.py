@@ -71,6 +71,13 @@ class Actor:
         if not isinstance(n_steps, int):
             raise ValueError("n_steps must be integer")
 
+        if len(self._Appearances) == 0:
+            raise ValueError(
+                ('could not move to next {} in class "{}":'
+                 ' it has no {0}s')
+                .format(self._appearance_hyponym, self.__class__.__name__)
+            )
+
         self._appearance_index += n_steps
         self._appearance_index %= len(self._Appearances)
 
