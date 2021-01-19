@@ -11,7 +11,7 @@ REPO_ROOT="$(realpath "$BUILD_DIR"/..)"
 cd "$REPO_ROOT"
 
 LAYER_DIR=website-layer/layer-content
-SKULPT_DIR="$LAYER_DIR"/skulpt
+SKULPT_DIR="$LAYER_DIR"/skulpt/"$PYTCH_DEPLOYMENT_ID"
 
 if [ -e node_modules -o -e $LAYER_DIR ]; then
     echo "Must be run in a clean clone"
