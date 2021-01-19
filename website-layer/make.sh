@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ -z "$PYTCH_DEPLOYMENT_ID" ]; then
+    echo "PYTCH_DEPLOYMENT_ID must be set"
+    exit 1
+fi
+
 BUILD_DIR="$(realpath "$(dirname "$0")")"
 REPO_ROOT="$(realpath "$BUILD_DIR"/..)"
 
