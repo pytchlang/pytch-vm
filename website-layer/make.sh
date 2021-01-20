@@ -1,12 +1,17 @@
 #!/bin/bash
 
+if [ -z "$PYTCH_DEPLOYMENT_ID" ]; then
+    echo "PYTCH_DEPLOYMENT_ID must be set"
+    exit 1
+fi
+
 BUILD_DIR="$(realpath "$(dirname "$0")")"
 REPO_ROOT="$(realpath "$BUILD_DIR"/..)"
 
 cd "$REPO_ROOT"
 
 LAYER_DIR=website-layer/layer-content
-SKULPT_DIR="$LAYER_DIR"/skulpt
+SKULPT_DIR="$LAYER_DIR"/skulpt/"$PYTCH_DEPLOYMENT_ID"
 
 if [ -e node_modules -o -e $LAYER_DIR ]; then
     echo "Must be run in a clean clone"
