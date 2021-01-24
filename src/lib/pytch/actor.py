@@ -130,6 +130,7 @@ class Sprite(Actor):
 
     @classmethod
     def all_clones(cls):
+        "() Return a list of all clones of this Sprite"
         return registered_instances(cls)[1:]
 
     @classmethod
@@ -141,6 +142,7 @@ class Sprite(Actor):
         self._y = y
 
     def get_x(self):
+        "() Return SELF's x-coordinate on the stage"
         return self._x
 
     def set_x(self, x):
@@ -269,6 +271,7 @@ class Stage(Actor):
         return registered_instances(cls)[0]
 
     def switch_backdrop(self, backdrop_name):
+        "(BACKDROP) Switch to the BACKDROP (name/number)"
         self.switch_appearance(backdrop_name)
 
     def next_backdrop(self, n_steps=1):

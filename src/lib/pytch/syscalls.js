@@ -113,7 +113,7 @@ var $builtinmodule = function (name) {
             let n_seconds = Sk.ffi.remapToJs(py_n_seconds);
             return new_pytch_suspension("wait-seconds", {n_seconds});
         },
-        `-- TODO: Docstring --`,
+        `(SECONDS) Pause for the given number of seconds`,
     );
 
     // TODO: Allow None as py_parent_instance, to register an instance
