@@ -1626,30 +1626,44 @@ var $builtinmodule = function (name) {
     // Python-level "Project" class
 
     const project_cls = function($gbl, $loc) {
-        $loc.__init__ = skulpt_function(self => {
-            self.js_project = new Project(self);
-        });
+        $loc.__init__ = skulpt_function(
+            (self) => {
+                self.js_project = new Project(self);
+            },
+            `-- TODO: Docstring --`,
+        );
 
         $loc.instance_is_touching_any_of = skulpt_function(
             (self, instance, target_cls) => (
                 (self.js_project.instance_is_touching_any_of(instance,
                                                              target_cls)
                  ? Sk.builtin.bool.true$
-                 : Sk.builtin.bool.false$)));
+                 : Sk.builtin.bool.false$)),
+            `-- TODO: Docstring --`,
+        );
 
-        $loc.register_sprite_class = skulpt_function((self, sprite_cls) => {
-            let do_register = self.js_project.register_sprite_class(sprite_cls);
-            return Sk.misceval.promiseToSuspension(do_register);
-        });
+        $loc.register_sprite_class = skulpt_function(
+            (self, sprite_cls) => {
+                let do_register = self.js_project.register_sprite_class(sprite_cls);
+                return Sk.misceval.promiseToSuspension(do_register);
+            },
+            `-- TODO: Docstring --`,
+        );
 
-        $loc.register_stage_class = skulpt_function((self, stage_cls) => {
-            let do_register = self.js_project.register_stage_class(stage_cls);
-            return Sk.misceval.promiseToSuspension(do_register);
-        });
+        $loc.register_stage_class = skulpt_function(
+            (self, stage_cls) => {
+                let do_register = self.js_project.register_stage_class(stage_cls);
+                return Sk.misceval.promiseToSuspension(do_register);
+            },
+            `-- TODO: Docstring --`,
+        );
 
-        $loc.unregister_actor_instance = skulpt_function((self, py_obj) => {
-            self.js_project.unregister_actor_instance(py_obj);
-        });
+        $loc.unregister_actor_instance = skulpt_function(
+            (self, py_obj) => {
+                self.js_project.unregister_actor_instance(py_obj);
+            },
+            `-- TODO: Docstring --`,
+        );
 
         $loc.move_within_draw_layer_group = skulpt_function(
             (self, py_instance, py_move_kind, py_index_or_offset) => {
@@ -1660,12 +1674,17 @@ var $builtinmodule = function (name) {
                 self.js_project.move_within_draw_layer_group(instance,
                                                              move_kind,
                                                              index_or_offset);
-            });
+            },
+            `-- TODO: Docstring --`,
+        );
 
-        $loc.go_live = skulpt_function((self) => {
-            Sk.pytch.current_live_project = self.js_project;
-            return Sk.builtin.none.none$;
-        });
+        $loc.go_live = skulpt_function(
+            (self) => {
+                Sk.pytch.current_live_project = self.js_project;
+                return Sk.builtin.none.none$;
+            },
+            `-- TODO: Docstring --`,
+        );
     };
 
     mod.Project = Sk.misceval.buildClass(mod, project_cls, "Project", []);
