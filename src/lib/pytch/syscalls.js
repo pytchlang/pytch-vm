@@ -45,7 +45,7 @@ var $builtinmodule = function (name) {
                     ? new_pytch_suspension("next-frame", {})
                     : Sk.builtin.none.none$);
         },
-        `-- TODO: Docstring --`,
+        `Pause until the next frame`,
     );
 
     mod.push_loop_iterations_per_frame = skulpt_function(
@@ -57,7 +57,7 @@ var $builtinmodule = function (name) {
 
             thread.push_loop_iterations_per_frame(py_iterations_per_frame.v);
         },
-        `-- TODO: Docstring --`,
+        `Push a new loop-control state onto the stack`,
     );
 
     mod.pop_loop_iterations_per_frame = skulpt_function(
@@ -69,7 +69,7 @@ var $builtinmodule = function (name) {
 
             thread.pop_loop_iterations_per_frame();
         },
-        `-- TODO: Docstring --`,
+        `Pop a loop-control state from the stack`,
     );
 
     const broadcast_maybe_wait = (py_message, wait) => {
@@ -79,12 +79,12 @@ var $builtinmodule = function (name) {
 
     mod.broadcast = skulpt_function(
         (py_message) => broadcast_maybe_wait(py_message, false),
-        `-- TODO: Docstring --`,
+        `(MESSAGE) Broadcast MESSAGE; continue executing`,
     );
 
     mod.broadcast_and_wait = skulpt_function(
         (py_message) => broadcast_maybe_wait(py_message, true),
-        `-- TODO: Docstring --`,
+        `(MESSAGE) Broadcast MESSAGE; pause until all listeners finish`,
     );
 
     mod.play_sound = skulpt_function(
@@ -97,7 +97,7 @@ var $builtinmodule = function (name) {
             let wait = Sk.ffi.remapToJs(py_wait);
             return new_pytch_suspension("play-sound", {py_obj, sound_name, wait});
         },
-        `-- TODO: Docstring --`,
+        `(SOUND) Play a sound from an object; maybe wait`,
     );
 
     mod.stop_all_sounds = skulpt_function(
@@ -105,7 +105,7 @@ var $builtinmodule = function (name) {
             Sk.pytch.sound_manager.stop_all_performances();
             return Sk.builtin.none.none$;
         },
-        `-- TODO: Docstring --`,
+        `() Stop all currently-playing sounds`,
     );
 
     mod.wait_seconds = skulpt_function(
@@ -123,7 +123,7 @@ var $builtinmodule = function (name) {
             return new_pytch_suspension("register-instance",
                                         {py_instance, py_parent_instance});
         },
-        `-- TODO: Docstring --`,
+        `Register a sprite instance`,
     );
 
     mod.registered_instances = skulpt_function(
@@ -132,7 +132,7 @@ var $builtinmodule = function (name) {
             let py_instances = actor.instances.map(instance => instance.py_object);
             return new Sk.builtin.list(py_instances);
         },
-        `-- TODO: Docstring --`,
+        `Return a list of all instances of the given class`,
     );
 
     mod.key_is_pressed = skulpt_function(
@@ -142,7 +142,7 @@ var $builtinmodule = function (name) {
                     ? Sk.builtin.bool.true$
                     : Sk.builtin.bool.false$);
         },
-        `-- TODO: Docstring --`,
+        `(KEY) Return whether KEY is currently pressed down`,
     );
 
     return mod;
