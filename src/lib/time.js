@@ -10,7 +10,6 @@
 var $builtinmodule = function (name) {
     var mod = {};
 
-    mod.__file__ = "/src/lib/time/__init__.js";
 
     mod.__package__ = new Sk.builtin.str("");
 
@@ -188,6 +187,8 @@ var $builtinmodule = function (name) {
     var daynames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
     function asctime_f(time) {
+        Sk.builtin.pyCheckArgsLen("asctime", arguments.length, 0, 1);
+
         if (!time || Sk.builtin.checkNone(time))
         {
             time = from_seconds();
@@ -215,10 +216,13 @@ var $builtinmodule = function (name) {
     mod.asctime = new Sk.builtin.func(asctime_f);
 
     mod.ctime = new Sk.builtin.func(function(secs) {
+        Sk.builtin.pyCheckArgsLen("ctime", arguments.length, 0, 1);
         return asctime_f(from_seconds(secs));
     });
 
     function mktime_f(time) {
+        Sk.builtin.pyCheckArgsLen("mktime", arguments.length, 1, 1);
+
         if (time instanceof Sk.builtin.tuple && time.v.length == 9)
         {
             var d = new Date(Sk.builtin.asnum$(time.v[0]),
@@ -280,7 +284,7 @@ var $builtinmodule = function (name) {
         }
         if (!t)
         {
-            t = localtime_f();
+            t = from_seconds();
         } else if (!(t instanceof struct_time_f)) {
             t = new struct_time_f(t);
         }
