@@ -1630,7 +1630,7 @@ var $builtinmodule = function (name) {
             (self) => {
                 self.js_project = new Project(self);
             },
-            `-- TODO: Docstring --`,
+            `Initialise SELF`,
         );
 
         $loc.instance_is_touching_any_of = skulpt_function(
@@ -1639,7 +1639,7 @@ var $builtinmodule = function (name) {
                                                              target_cls)
                  ? Sk.builtin.bool.true$
                  : Sk.builtin.bool.false$)),
-            `-- TODO: Docstring --`,
+            `Determine whether INSTANCE touches any TARGET_CLS instance`,
         );
 
         $loc.register_sprite_class = skulpt_function(
@@ -1647,7 +1647,7 @@ var $builtinmodule = function (name) {
                 let do_register = self.js_project.register_sprite_class(sprite_cls);
                 return Sk.misceval.promiseToSuspension(do_register);
             },
-            `-- TODO: Docstring --`,
+            `Register the SPRITE_CLS class with SELF`,
         );
 
         $loc.register_stage_class = skulpt_function(
@@ -1655,14 +1655,14 @@ var $builtinmodule = function (name) {
                 let do_register = self.js_project.register_stage_class(stage_cls);
                 return Sk.misceval.promiseToSuspension(do_register);
             },
-            `-- TODO: Docstring --`,
+            `Register the STAGE_CLS class with SELF`,
         );
 
         $loc.unregister_actor_instance = skulpt_function(
             (self, py_obj) => {
                 self.js_project.unregister_actor_instance(py_obj);
             },
-            `-- TODO: Docstring --`,
+            `Unregister the given object from SELF`,
         );
 
         $loc.move_within_draw_layer_group = skulpt_function(
@@ -1675,7 +1675,7 @@ var $builtinmodule = function (name) {
                                                              move_kind,
                                                              index_or_offset);
             },
-            `-- TODO: Docstring --`,
+            `Change object's position in drawing order`,
         );
 
         $loc.go_live = skulpt_function(
@@ -1683,7 +1683,7 @@ var $builtinmodule = function (name) {
                 Sk.pytch.current_live_project = self.js_project;
                 return Sk.builtin.none.none$;
             },
-            `-- TODO: Docstring --`,
+            `Make SELF be the current live project`,
         );
     };
 
