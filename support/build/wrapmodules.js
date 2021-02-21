@@ -82,7 +82,7 @@ async function buildJsonFile(name, dirs, exts, outfile, options) {
 
 async function main() {
     if (process.argv.includes("internal")) {
-        await buildJsonFile("internalPy", ["src"], [".py"], "src/internalpython.js");
+        // await buildJsonFile("internalPy", ["src"], [".py"], "src/internalpython.js");
     } else if (process.argv.includes("builtin")) {
         let excludes = [];
         if (fs.existsSync(excludeFileName)) {

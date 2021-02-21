@@ -1,6 +1,7 @@
 __author__ = 'Jacco Kulman'
 
 import unittest
+import re
 import time
 
 class TimeTestCase(unittest.TestCase):
@@ -119,6 +120,10 @@ class TimeTestCase(unittest.TestCase):
             "Feb 03 2002 01:01:01"
         );
 
+    def test_strftime_format_arg_only(self):
+        year_str = time.strftime("%Y")
+        self.assertEqual(year_str[:2], "20")
+
     def _test_dir(self):
         # this test fails because the compare 
         self.assertEqual(dir(time), [
@@ -142,6 +147,74 @@ class TimeTestCase(unittest.TestCase):
             'timezone', 
             'tzname', 
             'tzset']);
+
+
+class BadTimeFunctionArgsLength(unittest.TestCase):
+    def setUp(self):
+        self.t = 1606419201
+        self.t_struct = time.gmtime(self.t)
+
+    def assertFailsArgsLengthCheck(self, regex, fun, *args):
+        # TODO: assertRaisesRegex() would be useful here.
+        with self.assertRaises(TypeError) as raise_context:
+            fun(*args)
+        if raise_context.exception is not None:
+            exception_msg = str(raise_context.exception)
+            if not re.search(regex, exception_msg):
+                self.fail(f"exception matching '{regex}' not raised:"
+                          f" '{exception_msg}'")
+
+    def test_asctime(self):
+        # asctime([t])
+        self.assertFailsArgsLengthCheck(
+            "at most 1 argument",
+            time.asctime, self.t_struct, "arg 2")
+
+    def test_ctime(self):
+        # ctime([secs])
+        self.assertFailsArgsLengthCheck(
+            "at most 1 argument",
+            time.ctime, self.t, "arg 2")
+
+    def test_gmtime(self):
+        # gmtime([secs])
+        self.assertFailsArgsLengthCheck(
+            "at most 1 argument",
+            time.gmtime, self.t, "arg 2")
+
+    def test_localtime(self):
+        # localtime([secs])
+        self.assertFailsArgsLengthCheck(
+            "at most 1 argument",
+            time.localtime, self.t, "arg 2")
+
+    def test_mktime(self):
+        # mktime(t)
+        self.assertFailsArgsLengthCheck(
+            "exactly 1 argument",
+            time.mktime)  # no args
+        self.assertFailsArgsLengthCheck(
+            "exactly 1 argument",
+            time.mktime, self.t_struct, "arg 2")
+
+    def test_strftime(self):
+        # strftime(format[, t])
+        self.assertFailsArgsLengthCheck(
+            "at least 1 argument",
+            time.strftime)  # no args
+        self.assertFailsArgsLengthCheck(
+            "at most 2 arguments",
+            time.strftime, "%Y%m%d", self.t_struct, "arg 3")
+
+    def test_strptime(self):
+        # strptime(string[, format])
+        self.assertFailsArgsLengthCheck(
+            "at least 1 argument",
+            time.strptime)  # no args
+        self.assertFailsArgsLengthCheck(
+            "at most 2 arguments",
+            time.strptime, "2020-11-26", "%Y-%m-%d", "arg 3")
+
 
 if __name__ == '__main__':
     unittest.main()

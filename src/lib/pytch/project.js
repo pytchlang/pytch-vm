@@ -9,32 +9,29 @@ var $builtinmodule = function (name) {
     const STAGE_WIDTH = 480;
     const STAGE_HEIGHT = 360;
 
-    const s_dunder_name = Sk.builtin.str("__name__");
-    const s_dunder_class = Sk.builtin.str("__class__");
-    const s_im_func = Sk.builtin.str("im_func");
-    const s_pytch_handler_for = Sk.builtin.str("_pytch_handler_for");
-    const s_Costumes = Sk.builtin.str("Costumes");
-    const s_Backdrops = Sk.builtin.str("Backdrops");
-    const s_Sounds = Sk.builtin.str("Sounds");
-    const s_shown = Sk.builtin.str("_shown");
-    const s_x = Sk.builtin.str("_x");
-    const s_y = Sk.builtin.str("_y");
-    const s_size = Sk.builtin.str("_size");
-    const s_appearance_index = Sk.builtin.str("_appearance_index");
-    const s_Appearances = Sk.builtin.str("_Appearances");
-    const s_speech = Sk.builtin.str("_speech");
+    const s_pytch_handler_for = new Sk.builtin.str("_pytch_handler_for");
+    const s_Costumes = new Sk.builtin.str("Costumes");
+    const s_Backdrops = new Sk.builtin.str("Backdrops");
+    const s_Sounds = new Sk.builtin.str("Sounds");
+    const s_shown = new Sk.builtin.str("_shown");
+    const s_x = new Sk.builtin.str("_x");
+    const s_y = new Sk.builtin.str("_y");
+    const s_size = new Sk.builtin.str("_size");
+    const s_appearance_index = new Sk.builtin.str("_appearance_index");
+    const s_Appearances = new Sk.builtin.str("_Appearances");
+    const s_speech = new Sk.builtin.str("_speech");
 
-    const s_pytch_parent_project = Sk.builtin.str("_pytch_parent_project");
+    const s_pytch_parent_project = new Sk.builtin.str("_pytch_parent_project");
 
     // Attributes of Python-side Appearance object:
-    const s_Label = Sk.builtin.str("label");
-    const s_Filename = Sk.builtin.str("filename");
-    const s_Size = Sk.builtin.str("size");
-    const s_Centre = Sk.builtin.str("centre");
+    const s_Label = new Sk.builtin.str("label");
+    const s_Filename = new Sk.builtin.str("filename");
+    const s_Size = new Sk.builtin.str("size");
+    const s_Centre = new Sk.builtin.str("centre");
 
     const name_of_py_class
           = (py_cls =>
-             Sk.ffi.remapToJs(Sk.builtin.getattr(py_cls, s_dunder_name)));
+             Sk.ffi.remapToJs(Sk.builtin.getattr(py_cls, Sk.builtin.str.$name)));
 
     const js_hasattr = (py_obj, py_attr_name) => (
         (Sk.builtin.hasattr(py_obj, py_attr_name) === Sk.builtin.bool.true$));
@@ -116,18 +113,18 @@ var $builtinmodule = function (name) {
         const pyAppearance = Sk.misceval.callsim(mod.Appearance);
 
         Sk.builtin.setattr(pyAppearance, s_Label,
-                           Sk.builtin.str(js_appearance.label));
+                           new Sk.builtin.str(js_appearance.label));
         Sk.builtin.setattr(pyAppearance, s_Filename,
-                           Sk.builtin.str(js_appearance.filename));
+                           new Sk.builtin.str(js_appearance.filename));
 
-        const pyWidth = Sk.builtin.int_(js_appearance.image.width);
-        const pyHeight = Sk.builtin.int_(js_appearance.image.height);
-        const pySize = Sk.builtin.tuple([pyWidth, pyHeight]);
+        const pyWidth = new Sk.builtin.int_(js_appearance.image.width);
+        const pyHeight = new Sk.builtin.int_(js_appearance.image.height);
+        const pySize = new Sk.builtin.tuple([pyWidth, pyHeight]);
         Sk.builtin.setattr(pyAppearance, s_Size, pySize);
 
-        const pyCentreX = Sk.builtin.int_(js_appearance.centre_x);
-        const pyCentreY = Sk.builtin.int_(js_appearance.centre_y);
-        const pyCentre = Sk.builtin.tuple([pyCentreX, pyCentreY]);
+        const pyCentreX = new Sk.builtin.int_(js_appearance.centre_x);
+        const pyCentreY = new Sk.builtin.int_(js_appearance.centre_y);
+        const pyCentre = new Sk.builtin.tuple([pyCentreX, pyCentreY]);
         Sk.builtin.setattr(pyAppearance, s_Centre, pyCentre);
 
         return pyAppearance;
@@ -382,7 +379,7 @@ var $builtinmodule = function (name) {
 
         static set_Appearances_attr(py_cls, js_actor) {
             const py_appearances = js_actor._appearances.map(new_Appearance);
-            const py_appearances_list = Sk.builtin.list(py_appearances)
+            const py_appearances_list = new Sk.builtin.list(py_appearances)
             Sk.builtin.setattr(py_cls, s_Appearances, py_appearances_list);
         }
 
@@ -448,12 +445,17 @@ var $builtinmodule = function (name) {
                 if (is_dunder)
                     continue;
 
-                let py_attr_name = Sk.builtin.str(js_attr_name);
+                let py_attr_name = new Sk.builtin.str(js_attr_name);
+
+                // Getting the attribute on the class object gives the
+                // method descriptor object, which is a callable.
+                //
+                // TODO: Check we haven't got a classmethod or staticmethod.
+                //
                 let attr_val = Sk.builtin.getattr(this.py_cls, py_attr_name);
 
-                let [has_im_func, im_func] = try_py_getattr(attr_val, s_im_func);
-                if (has_im_func)
-                    this.register_handlers_of_method(im_func);
+                if (attr_val.tp$call)
+                    this.register_handlers_of_method(attr_val);
             }
         }
 
@@ -508,7 +510,7 @@ var $builtinmodule = function (name) {
 
             if (typeof sound === "undefined") {
                 let cls_name = name_of_py_class(this.py_cls);
-                throw Sk.builtin.KeyError(
+                throw new Sk.builtin.KeyError(
                     `could not find sound "${name}" in class "${cls_name}"`);
             }
 
@@ -670,7 +672,7 @@ var $builtinmodule = function (name) {
         }
 
         js_attr(js_attr_name) {
-            return js_getattr(this.py_object, Sk.builtin.str(js_attr_name));
+            return js_getattr(this.py_object, new Sk.builtin.str(js_attr_name));
         }
 
         // Special-case these; they might be performance-sensitive.
@@ -867,7 +869,7 @@ var $builtinmodule = function (name) {
             this.sleeping_on = null;
 
             this.actor_instance = py_arg.$pytchActorInstance;
-            this.callable_name = js_getattr(py_callable, s_dunder_name);
+            this.callable_name = js_getattr(py_callable, Sk.builtin.str.$name);
 
             this.loop_iteration_batching_states = [new LoopIterationBatchingState(1)];
         }
@@ -989,7 +991,7 @@ var $builtinmodule = function (name) {
 
             case "register-instance": {
                 let { py_instance, py_parent_instance } = syscall_args;
-                let py_cls = Sk.builtin.getattr(py_instance, s_dunder_class);
+                let py_cls = Sk.builtin.getattr(py_instance, Sk.builtin.str.$class);
                 let actor = py_cls.$pytchActor;
                 actor.register_py_instance(py_instance, py_parent_instance);
 
@@ -1089,12 +1091,12 @@ var $builtinmodule = function (name) {
 
         pop_loop_iterations_per_frame() {
             if (this.loop_iteration_batching_states.length == 0)
-                throw Sk.builtin.ValueError(
+                throw new Sk.builtin.ValueError(
                     ("cannot pop from empty LoopIterationBatchingState stack"
                      + " [SHOULD NOT HAPPEN]"));
 
             if (this.loop_iteration_batching_states.length == 1)
-                throw Sk.builtin.ValueError(
+                throw new Sk.builtin.ValueError(
                     "cannot pop the base LoopIterationBatchingState");
 
             this.loop_iteration_batching_states.pop();

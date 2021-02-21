@@ -438,7 +438,7 @@ const assertBuildError = (err, exp_phase, exp_inner_type, innerMsgRegExp) => {
     }
 
     if (innerMsgRegExp != null) {
-        const innerMsg = Sk.builtin.str(err.innerError).v;
+        const innerMsg = new Sk.builtin.str(err.innerError).v;
         assert.ok(
             innerMsgRegExp.test(innerMsg),
             (`innerError message "${innerMsg}"`
@@ -460,7 +460,7 @@ const assertBuildErrorFun = (...args) => {
 // Convenience methods for access into Python world.
 
 const py_getattr = (py_obj, js_attr_name) =>
-    Sk.builtin.getattr(py_obj, Sk.builtin.str(js_attr_name));
+    Sk.builtin.getattr(py_obj, new Sk.builtin.str(js_attr_name));
 
 const js_getattr = (py_obj, js_attr_name) =>
     Sk.ffi.remapToJs(py_getattr(py_obj, js_attr_name));
