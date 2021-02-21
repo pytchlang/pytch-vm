@@ -11,7 +11,6 @@ var $builtinmodule = function (name) {
 
     const s_dunder_name = new Sk.builtin.str("__name__");
     const s_dunder_class = new Sk.builtin.str("__class__");
-    const s_im_func = new Sk.builtin.str("im_func");
     const s_pytch_handler_for = new Sk.builtin.str("_pytch_handler_for");
     const s_Costumes = new Sk.builtin.str("Costumes");
     const s_Backdrops = new Sk.builtin.str("Backdrops");
