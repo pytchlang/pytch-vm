@@ -9,8 +9,6 @@ var $builtinmodule = function (name) {
     const STAGE_WIDTH = 480;
     const STAGE_HEIGHT = 360;
 
-    const s_dunder_name = new Sk.builtin.str("__name__");
-    const s_dunder_class = new Sk.builtin.str("__class__");
     const s_pytch_handler_for = new Sk.builtin.str("_pytch_handler_for");
     const s_Costumes = new Sk.builtin.str("Costumes");
     const s_Backdrops = new Sk.builtin.str("Backdrops");
@@ -33,7 +31,7 @@ var $builtinmodule = function (name) {
 
     const name_of_py_class
           = (py_cls =>
-             Sk.ffi.remapToJs(Sk.builtin.getattr(py_cls, s_dunder_name)));
+             Sk.ffi.remapToJs(Sk.builtin.getattr(py_cls, Sk.builtin.str.$name)));
 
     const js_hasattr = (py_obj, py_attr_name) => (
         (Sk.builtin.hasattr(py_obj, py_attr_name) === Sk.builtin.bool.true$));
@@ -871,7 +869,7 @@ var $builtinmodule = function (name) {
             this.sleeping_on = null;
 
             this.actor_instance = py_arg.$pytchActorInstance;
-            this.callable_name = js_getattr(py_callable, s_dunder_name);
+            this.callable_name = js_getattr(py_callable, Sk.builtin.str.$name);
 
             this.loop_iteration_batching_states = [new LoopIterationBatchingState(1)];
         }
@@ -993,7 +991,7 @@ var $builtinmodule = function (name) {
 
             case "register-instance": {
                 let { py_instance, py_parent_instance } = syscall_args;
-                let py_cls = Sk.builtin.getattr(py_instance, s_dunder_class);
+                let py_cls = Sk.builtin.getattr(py_instance, Sk.builtin.str.$class);
                 let actor = py_cls.$pytchActor;
                 actor.register_py_instance(py_instance, py_parent_instance);
 
