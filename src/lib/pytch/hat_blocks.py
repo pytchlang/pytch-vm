@@ -38,4 +38,6 @@ def when_this_sprite_clicked(fun):
     return _append_handler(fun, 'click')
 
 
-when_stage_clicked = when_this_sprite_clicked
+def when_stage_clicked(fun):
+    "Run your method when the user clicks the Stage"
+    return _append_handler(fun, 'click')
