@@ -56,4 +56,14 @@ describe("Completion info extraction", () => {
             assert.equal(doc, "Hello");
         });
     });
+
+    const completionInfo = () => {
+        const mod = Sk.builtin.__import__("pytch", {}, {}, [], -1);
+        const completionsInfoFun = Sk.builtin.getattr(
+            mod,
+            new Sk.builtin.str("_user_facing_completions")
+        );
+        const [completions, attrsWithoutDocs] = completionsInfoFun.tp$call([], {}).v;
+        return { completions, attrsWithoutDocs };
+    };
 });
