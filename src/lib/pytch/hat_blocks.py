@@ -6,14 +6,17 @@ def _append_handler(fun, handler_type, handler_data=None):
 
 
 def when_green_flag_clicked(fun):
+    "Run your method when the user clicks the green flag"
     return _append_handler(fun, 'green-flag')
 
 
 def when_I_start_as_a_clone(fun):
+    "Run your method on a newly-created clone"
     return _append_handler(fun, 'clone')
 
 
 class when_I_receive:
+    "(MESSAGE) Run your method when something broadcasts MESSAGE"
     def __init__(self, message):
         self.message = message
 
@@ -22,6 +25,7 @@ class when_I_receive:
 
 
 class when_key_pressed:
+    "(KEY) Run your method when the user presses KEY"
     def __init__(self, keyname):
         self.keyname = keyname
 
@@ -30,6 +34,7 @@ class when_key_pressed:
 
 
 def when_this_sprite_clicked(fun):
+    "Run your method when the user clicks this Sprite"
     return _append_handler(fun, 'click')
 
 
