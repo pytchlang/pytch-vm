@@ -66,4 +66,17 @@ describe("Completion info extraction", () => {
         const [completions, attrsWithoutDocs] = completionsInfoFun.tp$call([], {}).v;
         return { completions, attrsWithoutDocs };
     };
+
+    it("gives completion records", () => {
+        const { completions } = completionInfo();
+
+        const sPytch = new Sk.builtin.str("pytch");
+        const pytchRecords = completions.mp$subscript(sPytch);
+        const wait_seconds_records = pytchRecords.v.filter(
+            r => r.v[0].v === "wait_seconds"
+        );
+
+        assert.equal(wait_seconds_records.length, 1);
+        assert.match(wait_seconds_records[0].v[3].v, /Pause.*seconds/);
+    });
 });
