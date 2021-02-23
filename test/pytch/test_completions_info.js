@@ -79,4 +79,15 @@ describe("Completion info extraction", () => {
         assert.equal(wait_seconds_records.length, 1);
         assert.match(wait_seconds_records[0].v[3].v, /Pause.*seconds/);
     });
+
+    it("documents everything", () => {
+        const { attrsWithoutDocs } = completionInfo();
+        const nWithoutDocs = attrsWithoutDocs.v.length;
+
+        assert.strictEqual(
+            nWithoutDocs,
+            0,
+            `${nWithoutDocs} attribute/s without docstring`,
+        );
+    });
 });
