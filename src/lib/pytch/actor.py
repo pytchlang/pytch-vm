@@ -16,9 +16,11 @@ class Actor:
     _appearance_names = None
 
     def start_sound(self, sound_name):
+        "(SOUND) Start SOUND playing; continue running"
         play_sound(self, sound_name, False)
 
     def play_sound_until_done(self, sound_name):
+        "(SOUND) Play SOUND; pause until it finishes playing"
         play_sound(self, sound_name, True)
 
     @classmethod
@@ -94,6 +96,8 @@ class Actor:
 
 
 class Sprite(Actor):
+    "The starting class for all your sprites"
+
     Costumes = [
         ('question-mark',
          'question-mark.png', 16, 16),
@@ -126,6 +130,7 @@ class Sprite(Actor):
 
     @classmethod
     def the_original(cls):
+        "() Return the original Sprite instance"
         return registered_instances(cls)[0]
 
     @classmethod
@@ -135,9 +140,11 @@ class Sprite(Actor):
 
     @classmethod
     def all_instances(cls):
+        "() Return a list of all instances of this Sprite"
         return registered_instances(cls)
 
     def go_to_xy(self, x, y):
+        "(X, Y) Move SELF to location (X, Y) on the stage"
         self._x = x
         self._y = y
 
@@ -146,21 +153,27 @@ class Sprite(Actor):
         return self._x
 
     def set_x(self, x):
+        "(X) Move SELF horizontally to x-coord X"
         self._x = x
 
     def change_x(self, dx):
+        "(DX) Move SELF right DX on the stage (left if negative)"
         self._x += dx
 
     def get_y(self):
+        "() Return SELF's y-coordinate on the stage"
         return self._y
 
     def set_y(self, y):
+        "(Y) Move SELF vertically to y-coord Y"
         self._y = y
 
     def change_y(self, dy):
+        "(DY) Move SELF up DY on the stage (down if negative)"
         self._y += dy
 
     def glide_to_xy(self, destination_x, destination_y, seconds):
+        "(X, Y, SECONDS) Move SELF smoothly to (X, Y), taking SECONDS"
         destination_is_number = (
             _is_number(destination_x) and _is_number(destination_y)
         )
@@ -188,67 +201,85 @@ class Sprite(Actor):
             wait_seconds(0)  # No auto-yield (we don't do "import pytch")
 
     def set_size(self, size):
+        "(SIZE) Set SELF's size to SIZE"
         self._size = size
 
     def show(self):
+        "() Make SELF visible"
         if not self.Costumes:
             # See comment in __init__().
             raise RuntimeError('cannot show a Sprite with no Costumes')
         self._shown = True
 
     def hide(self):
+        "() Make SELF invisible"
         self._shown = False
 
     def switch_costume(self, costume_name):
+        "(COSTUME) Switch SELF to wearing COSTUME (name/number)"
         self.switch_appearance(costume_name)
 
     def next_costume(self, n_steps=1):
+        "(N=1) Switch SELF to Nth next costume, looping if past last"
         self.next_appearance(n_steps)
 
     @property
     def costume_number(self):
+        "The number of the costume SELF is currently wearing"
         return self.appearance_number
 
     @property
     def costume_name(self):
+        "The name of the costume SELF is currently wearing"
         return self.appearance_name
 
     def touching(self, target_class):
+        "(TARGET) Return whether SELF touches any TARGET instance"
         return (self._pytch_parent_project
                 .instance_is_touching_any_of(self, target_class))
 
     def delete_this_clone(self):
+        "() Remove SELF from the project"
         self._pytch_parent_project.unregister_actor_instance(self)
 
     def move_to_front_layer(self):
+        "() Move SELF to the front drawing layer"
         (self._pytch_parent_project
          .move_within_draw_layer_group(self, "absolute", -1))
 
     def move_to_back_layer(self):
+        "() Move SELF to the back drawing layer"
         (self._pytch_parent_project
          .move_within_draw_layer_group(self, "absolute", 0))
 
     def move_forward_layers(self, n_layers):
+        "(N) Move SELF forwards N drawing layers"
         (self._pytch_parent_project
          .move_within_draw_layer_group(self, "relative", n_layers))
 
     def move_backward_layers(self, n_layers):
+        "(N) Move SELF backwards N drawing layers"
         (self._pytch_parent_project
          .move_within_draw_layer_group(self, "relative", -n_layers))
 
     def say(self, content):
+        "(TEXT) Give SELF a speech bubble saying TEXT"
         self._speech = ("say", content)
 
     def say_nothing(self):
+        "() Remove any speech bubble SELF has"
         self._speech = None
 
     def say_for_seconds(self, content, seconds):
+        "(TEXT, SECONDS) Give SELF speech bubble saying TEXT for SECONDS"
         self.say(content)
         wait_seconds(seconds)
         self.say_nothing()
 
 
 class Stage(Actor):
+    "The starting class for your stage"
+
     Backdrops = [('solid-white', 'solid-white-stage.png')]
     _x = 0
     _y = 0
@@ -268,6 +299,7 @@ class Stage(Actor):
 
     @classmethod
     def the_only(cls):
+        "() Return the only Stage instance"
         return registered_instances(cls)[0]
 
     def switch_backdrop(self, backdrop_name):
@@ -275,12 +307,15 @@ class Stage(Actor):
         self.switch_appearance(backdrop_name)
 
     def next_backdrop(self, n_steps=1):
+        "(N=1) Switch SELF to Nth next backdrop, looping if past last"
         self.next_appearance(n_steps)
 
     @property
     def backdrop_number(self):
+        "The number of the backdrop SELF is currently showing"
         return self.appearance_number
 
     @property
     def backdrop_name(self):
+        "The name of the backdrop SELF is currently showing"
         return self.appearance_name
