@@ -84,6 +84,15 @@ describe("Completion info extraction", () => {
         const { attrsWithoutDocs } = completionInfo();
         const nWithoutDocs = attrsWithoutDocs.v.length;
 
+        if (nWithoutDocs > 0) {
+            console.log(
+                `\nThese ${nWithoutDocs} attributes do not have docstrings:`
+            );
+            attrsWithoutDocs.v.forEach(s => {
+                console.log(s.v);
+            });
+        }
+
         assert.strictEqual(
             nWithoutDocs,
             0,
