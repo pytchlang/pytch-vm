@@ -3,9 +3,11 @@ from pytch.syscalls import register_sprite_instance
 
 
 def create_clone_of(original_cls_or_obj):
-    """
+    """(SPRITE) Create a clone of a SPRITE class or instance
+
     Two variants, depending on whether the original is a class or an
-    instance.  If a class, we clone its instance-0.
+    instance.  If a class, we clone its instance-0.  If an instance,
+    clone that instance.
     """
     if isinstance(original_cls_or_obj, type):
         if not hasattr(original_cls_or_obj, "_pytch_parent_project"):

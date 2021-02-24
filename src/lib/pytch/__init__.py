@@ -42,3 +42,7 @@ from .syscalls import (
     wait_seconds,
     key_is_pressed,
 )
+
+from ._completions_info import (
+    _user_facing_completions,
+)

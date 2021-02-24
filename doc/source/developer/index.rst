@@ -24,3 +24,4 @@ extension to Skulpt.
    clones
    sounds
    tutorials
+   docstrings

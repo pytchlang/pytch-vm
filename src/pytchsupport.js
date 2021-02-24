@@ -14,6 +14,21 @@ Sk.pytchsupport = Sk.pytchsupport || {};
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
+ * Wrap a JS function into a Python function with a docstring
+ *
+ * Adds properties to the passed-in fun object:
+ *
+ *   co_docstring --- Python string created from JS string doc (if defined)
+ */
+
+Sk.pytchsupport.skulpt_function = (fun, doc) => {
+    if (doc != null)
+        fun.co_docstring = new Sk.builtin.str(doc);
+    return new Sk.builtin.func(fun);
+};
+
+
+/**
  * Return the imported "pytch" module from the given object (in usage, this
  * object will be a module).  Throw a Skulpt SyntaxError if no "pytch" found.
  *
@@ -225,6 +240,7 @@ Sk.pytchsupport.PytchBuildError = Sk.abstr.buildNativeClass(
 ////////////////////////////////////////////////////////////////////////////////
 
 [
+    "skulpt_function",
     "pytch_in_module",
     "actors_of_module",
     "module_has_Project_instance",

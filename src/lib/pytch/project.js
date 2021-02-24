@@ -5,6 +5,8 @@ var $builtinmodule = function (name) {
     //
     // Constants, convenience utilities
 
+    const skulpt_function = Sk.pytchsupport.skulpt_function;
+
     const FRAMES_PER_SECOND = 60;
     const STAGE_WIDTH = 480;
     const STAGE_HEIGHT = 360;
@@ -1624,32 +1626,46 @@ var $builtinmodule = function (name) {
     // Python-level "Project" class
 
     const project_cls = function($gbl, $loc) {
-        $loc.__init__ = new Sk.builtin.func(self => {
-            self.js_project = new Project(self);
-        });
+        $loc.__init__ = skulpt_function(
+            (self) => {
+                self.js_project = new Project(self);
+            },
+            `Initialise SELF`,
+        );
 
-        $loc.instance_is_touching_any_of = new Sk.builtin.func(
+        $loc.instance_is_touching_any_of = skulpt_function(
             (self, instance, target_cls) => (
                 (self.js_project.instance_is_touching_any_of(instance,
                                                              target_cls)
                  ? Sk.builtin.bool.true$
-                 : Sk.builtin.bool.false$)));
+                 : Sk.builtin.bool.false$)),
+            `Determine whether INSTANCE touches any TARGET_CLS instance`,
+        );
 
-        $loc.register_sprite_class = new Sk.builtin.func((self, sprite_cls) => {
-            let do_register = self.js_project.register_sprite_class(sprite_cls);
-            return Sk.misceval.promiseToSuspension(do_register);
-        });
+        $loc.register_sprite_class = skulpt_function(
+            (self, sprite_cls) => {
+                let do_register = self.js_project.register_sprite_class(sprite_cls);
+                return Sk.misceval.promiseToSuspension(do_register);
+            },
+            `Register the SPRITE_CLS class with SELF`,
+        );
 
-        $loc.register_stage_class = new Sk.builtin.func((self, stage_cls) => {
-            let do_register = self.js_project.register_stage_class(stage_cls);
-            return Sk.misceval.promiseToSuspension(do_register);
-        });
+        $loc.register_stage_class = skulpt_function(
+            (self, stage_cls) => {
+                let do_register = self.js_project.register_stage_class(stage_cls);
+                return Sk.misceval.promiseToSuspension(do_register);
+            },
+            `Register the STAGE_CLS class with SELF`,
+        );
 
-        $loc.unregister_actor_instance = new Sk.builtin.func((self, py_obj) => {
-            self.js_project.unregister_actor_instance(py_obj);
-        });
+        $loc.unregister_actor_instance = skulpt_function(
+            (self, py_obj) => {
+                self.js_project.unregister_actor_instance(py_obj);
+            },
+            `Unregister the given object from SELF`,
+        );
 
-        $loc.move_within_draw_layer_group = new Sk.builtin.func(
+        $loc.move_within_draw_layer_group = skulpt_function(
             (self, py_instance, py_move_kind, py_index_or_offset) => {
                 let instance = py_instance.$pytchActorInstance;
                 let move_kind = Sk.ffi.remapToJs(py_move_kind);
@@ -1658,12 +1674,17 @@ var $builtinmodule = function (name) {
                 self.js_project.move_within_draw_layer_group(instance,
                                                              move_kind,
                                                              index_or_offset);
-            });
+            },
+            `Change object's position in drawing order`,
+        );
 
-        $loc.go_live = new Sk.builtin.func((self) => {
-            Sk.pytch.current_live_project = self.js_project;
-            return Sk.builtin.none.none$;
-        });
+        $loc.go_live = skulpt_function(
+            (self) => {
+                Sk.pytch.current_live_project = self.js_project;
+                return Sk.builtin.none.none$;
+            },
+            `Make SELF be the current live project`,
+        );
     };
 
     mod.Project = Sk.misceval.buildClass(mod, project_cls, "Project", []);
