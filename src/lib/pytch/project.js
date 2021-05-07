@@ -1069,7 +1069,7 @@ var $builtinmodule = function (name) {
                     } catch (err) {
                         // Defer the error until next time the innermost
                         // Python-level code runs.
-                        susp.data.result = { kind: "failure", error: err };
+                        susp.data.set_failure(err);
                         return [];
                     }
                 }
