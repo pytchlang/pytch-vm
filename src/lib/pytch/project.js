@@ -1007,7 +1007,7 @@ var $builtinmodule = function (name) {
             }
 
             default:
-                throw Error(`unknown Pytch syscall "${susp.data.subtype}"`);
+                throw Error(`unknown Pytch syscall "${syscall_kind}"`);
             }
         }
 
