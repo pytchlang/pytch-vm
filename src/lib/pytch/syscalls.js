@@ -6,15 +6,24 @@ var $builtinmodule = function (name) {
     const new_pytch_suspension = (syscall_name, syscall_args) => {
         let susp = new Sk.misceval.Suspension();
 
-        susp.data = {
-            type: "Pytch",
-            subtype: syscall_name,
-            subtype_data: syscall_args,
-            result: {  // Default is for a syscall to return None
-                kind: "success",
-                value: Sk.builtin.none.none$,
-            },
-        };
+        susp.data = (() => {
+            let data = {
+                type: "Pytch",
+                subtype: syscall_name,
+                subtype_data: syscall_args,
+                result: {  // Default is for a syscall to return None
+                    kind: "success",
+                    value: Sk.builtin.none.none$,
+                },
+            };
+            data.set_success = (value) => {
+                data.result = { kind: "success", value };
+            };
+            data.set_failure = (error) => {
+                data.result = { kind: "failure", error };
+            };
+            return data;
+        })();
 
         susp.resume = () => {
             const result = susp.data.result;
