@@ -457,6 +457,32 @@ const assertBuildErrorFun = (...args) => {
 
 ////////////////////////////////////////////////////////////////////////////////
 //
+// Assert that we have no live question, or that a question with a
+// particular prompt is live.
+
+const assertNoLiveQuestion = (project) => {
+    const question = project.maybe_live_question();
+    if (question == null)
+        return;
+
+    assert.fail(
+        `expecting no live question; got ${question.id} / "${question.prompt}"`
+    );
+}
+
+const assertLiveQuestion = (project, exp_prompt) => {
+    const question = project.maybe_live_question();
+    assert.notStrictEqual(
+        question, null,
+        "expecting a live question but got none"
+    );
+
+    assert.strictEqual(question.prompt, exp_prompt);
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
 // Convenience methods for access into Python world.
 
 const py_getattr = (py_obj, js_attr_name) =>
@@ -602,6 +628,8 @@ module.exports = {
     assert_has_bbox,
     assertBuildError,
     assertBuildErrorFun,
+    assertNoLiveQuestion,
+    assertLiveQuestion,
     py_getattr,
     js_getattr,
     call_method,
