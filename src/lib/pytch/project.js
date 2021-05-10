@@ -1006,6 +1006,16 @@ var $builtinmodule = function (name) {
                 return [thread_group];
             }
 
+            case "ask-and-wait-for-answer": {
+                const { prompt } = syscall_args;
+                const question = this.parent_project.enqueue_question(prompt);
+
+                this.state = Thread.State.AWAITING_ANSWER_TO_QUESTION;
+                this.sleeping_on = question;
+
+                return [];
+            }
+
             default:
                 throw Error(`unknown Pytch syscall "${syscall_kind}"`);
             }
