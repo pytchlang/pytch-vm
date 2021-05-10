@@ -1337,6 +1337,17 @@ var $builtinmodule = function (name) {
     ////////////////////////////////////////////////////////////////////////////////
     //
     // Text input mechanism via "ask question and wait for answer"
+    //
+    // The project maintains a queue of yet-to-be-answered questions, each an
+    // instance of UserQuestion.  The question at the front of the queue is the
+    // "live question", and the VM's client should get the answer from the user
+    // in whatever way is suitable.  When that answer is available, the client
+    // should provide it to the Project via Project.accept_question_answer().
+    //
+    // The "WAITING_TO_BE_ASKED" state is redundant with "not first in the
+    // queue", but perhaps one day we might be able to ask more than one
+    // question at once, and also there might be some advantage to having the
+    // knowledge in the UserQuestion itself.
 
     class UserQuestion {
         constructor(prompt) {
