@@ -1693,6 +1693,27 @@ var $builtinmodule = function (name) {
 
             return question;
         }
+
+        accept_question_answer(id, value) {
+            if (this.unanswered_questions.length === 0)
+                throw new Sk.builtin.RuntimeError(
+                    "no unanswered questions to accept answer for");
+
+            let live_question = this.unanswered_questions[0];
+
+            if (id !== live_question.id)
+                throw new Sk.builtin.RuntimeError(
+                    `live question has id ${live_question.id} but`
+                    + ` accept_question_answer() given id ${id}`);
+
+            if (typeof value !== "string")
+                throw new Sk.builtin.RuntimeError(
+                    "answers to questions must be strings");
+
+            const py_value = new Sk.builtin.str(value);
+
+            live_question.set_answer(py_value);
+        }
     }
 
 
