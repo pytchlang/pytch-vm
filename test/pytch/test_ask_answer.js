@@ -9,6 +9,7 @@ const {
     pytch_stdout,
     assertLiveQuestion,
     assertNoLiveQuestion,
+    pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -127,4 +128,38 @@ describe("Ask and wait for answer", () => {
         assert.equal(pytch_stdout.drain_stdout(), "You are 47\n");
         assertNoLiveQuestion(project);
     });
+
+    [
+        { tag: "float", message: "banana-ask" },
+        { tag: "int", message: "pear-ask" },
+        { tag: "lambda", message: "bowl-ask" },
+    ].forEach(spec =>
+        it(`rejects non-string questions (${spec.tag})`, async () => {
+            const project = await import_deindented(`
+
+                import pytch
+
+                class Banana(pytch.Sprite):
+                    @pytch.when_I_receive("banana-ask")
+                    def ask_name(self):
+                        self.ask_and_wait_for_answer(3.14)
+
+                class Pear(pytch.Sprite):
+                    @pytch.when_I_receive("pear-ask")
+                    def ask_name(self):
+                        pytch.ask_and_wait_for_answer(99)
+
+                class FruitBowl(pytch.Stage):
+                    @pytch.when_I_receive("bowl-ask")
+                    def ask_name(self):
+                        self.ask_and_wait_for_answer(lambda x: 42)
+            `);
+
+            project.do_synthetic_broadcast(spec.message);
+            one_frame(project);
+
+            const err_str = pytch_errors.sole_error_string();
+            assert.match(err_str, /question must be a string/);
+        })
+    );
 });
