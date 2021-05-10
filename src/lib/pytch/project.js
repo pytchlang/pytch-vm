@@ -936,10 +936,14 @@ var $builtinmodule = function (name) {
             }
         }
 
+        wake() {
+            this.state = Thread.State.RUNNING;
+            this.sleeping_on = null;
+        }
+
         maybe_wake() {
             if ((! this.is_running()) && this.should_wake()) {
-                this.state = Thread.State.RUNNING;
-                this.sleeping_on = null;
+                this.wake();
             }
         }
 
