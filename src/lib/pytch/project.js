@@ -1142,6 +1142,12 @@ var $builtinmodule = function (name) {
         // instance's "sleeping_on" property.
         AWAITING_SOUND_COMPLETION: "awaiting-sound-completion",
 
+        // AWAITING_ANSWER_TO_QUESTION: The thread has requested the VM's client
+        // to ask the user a question; the thread will block until an answer is
+        // given.  A reference to the UserQuestion is stored in the Thread
+        // instance's "sleeping_on" property.
+        AWAITING_ANSWER_TO_QUESTION: "awaiting-answer-to-question",
+
         // ZOMBIE: The thread has terminated but has not yet been cleared from
         // the list of live threads.
         ZOMBIE: "zombie",
