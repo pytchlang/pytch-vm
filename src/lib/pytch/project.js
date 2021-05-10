@@ -1341,6 +1341,11 @@ var $builtinmodule = function (name) {
     class UserQuestion {
     }
 
+    UserQuestion.next_id = (() => {
+        let id = 50000;
+        return () => (++id);
+    })();
+
     UserQuestion.State = {
         WAITING_TO_BE_ASKED: "waiting-to-be-asked",
         WAITING_FOR_ANSWER: "waiting-for-answer",
