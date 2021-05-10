@@ -1714,6 +1714,20 @@ var $builtinmodule = function (name) {
 
             live_question.set_answer(py_value);
         }
+
+        maybe_live_question() {
+            if (this.unanswered_questions.length > 0) {
+                const live_question = this.unanswered_questions[0];
+
+                if (! live_question.is_waiting_for_answer())
+                    throw new Sk.builtin.RuntimeError(
+                        "internal error: live question is not waiting-for-answer");
+
+                return live_question;
+            } else {
+                return null;
+            }
+        }
     }
 
 
