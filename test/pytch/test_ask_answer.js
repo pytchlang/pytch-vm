@@ -74,4 +74,57 @@ describe("Ask and wait for answer", () => {
         assert.equal(pytch_stdout.drain_stdout(), "Ha ha 47 is very old!\n");
         assertNoLiveQuestion(project);
     });
+
+    it("queues near-simultaneous questions", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Banana(pytch.Sprite):
+                Costumes = []  # Invisible, so prompt is in question itself
+                @pytch.when_I_receive("banana-ask")
+                def ask_name(self):
+                    name = self.ask_and_wait_for_answer("name?")
+                    print(f"Hello {name}!")
+
+            class Pear(pytch.Sprite):
+                Costumes = []
+                @pytch.when_I_receive("pear-ask")
+                def ask_age(self):
+                    age = self.ask_and_wait_for_answer("age?")
+                    print(f"You are {age}")
+        `);
+
+        // Initially there should be no question being asked.
+        many_frames(project, 5);
+        assertNoLiveQuestion(project);
+
+        // Launch the banana question; should be asked immediately.
+        project.do_synthetic_broadcast("banana-ask")
+        one_frame(project);
+        assertLiveQuestion(project, "name?");
+
+        // Launch the pear question; should be queued behind still-active banana
+        // question, blocking the Pear's thread and so giving no new output.
+        project.do_synthetic_broadcast("pear-ask")
+        many_frames(project, 5);
+        assertLiveQuestion(project, "name?");
+        assert.equal(pytch_stdout.drain_stdout(), "");
+
+        // Answer the banana's question; should immediately see the output and
+        // the pear's question.
+        let { maybe_live_question: live_question_0 } = project.one_frame();
+        project.accept_question_answer(live_question_0.id, "Ben");
+        one_frame(project);
+        assert.equal(pytch_stdout.drain_stdout(), "Hello Ben!\n");
+        assertLiveQuestion(project, "age?");
+
+        // Answer the pear's question; should see the output and no further
+        // question.
+        let { maybe_live_question: live_question_1 } = project.one_frame();
+        project.accept_question_answer(live_question_1.id, "47");
+        one_frame(project);
+        assert.equal(pytch_stdout.drain_stdout(), "You are 47\n");
+        assertNoLiveQuestion(project);
+    });
 });
