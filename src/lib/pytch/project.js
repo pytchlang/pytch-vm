@@ -1609,6 +1609,8 @@ var $builtinmodule = function (name) {
 
             if (this.thread_groups.some(tg => tg.raised_exception()))
                 this.kill_all_threads_and_sounds();
+
+            this.maybe_retire_answered_question();
         }
 
         kill_all_threads_and_sounds() {
