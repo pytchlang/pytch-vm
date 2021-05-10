@@ -937,6 +937,25 @@ var $builtinmodule = function (name) {
         }
 
         wake() {
+            switch (this.state) {
+            case Thread.State.AWAITING_THREAD_GROUP_COMPLETION:
+            case Thread.State.AWAITING_PASSAGE_OF_TIME:
+            case Thread.State.AWAITING_SOUND_COMPLETION:
+            case Thread.State.ZOMBIE:
+                // No wake-up action required.
+                break;
+
+            case Thread.State.AWAITING_ANSWER_TO_QUESTION:
+                // Use the question's answer as the return value from the
+                // suspension, thereby giving it back to Python.
+                this.skulpt_susp.data.set_success(this.sleeping_on.value);
+                break;
+
+            default:
+                // Should never wake up a RUNNING or RAISED_EXCEPTION thread.
+                throw Error(`thread in bad state "${this.state}"`);
+            }
+
             this.state = Thread.State.RUNNING;
             this.sleeping_on = null;
         }
