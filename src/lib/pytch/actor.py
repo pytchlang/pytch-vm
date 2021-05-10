@@ -277,6 +277,18 @@ class Sprite(Actor):
         wait_seconds(seconds)
         self.say_nothing()
 
+    def ask_and_wait_for_answer(self, prompt):
+        "(QUESTION) Ask question; wait for and return user's answer"
+        if self._shown:
+            self.say(prompt)
+            answer = ask_and_wait_for_answer(None)
+            # Scratch clears speech even if the prompt isn't the live
+            # speech bubble; do likewise.
+            self.say_nothing()
+            return answer
+        else:
+            return ask_and_wait_for_answer(prompt)
+
 
 class Stage(Actor):
     "The starting class for your stage"
