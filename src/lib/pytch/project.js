@@ -1345,6 +1345,14 @@ var $builtinmodule = function (name) {
             this.state = UserQuestion.State.WAITING_TO_BE_ASKED;
             this.value = null;  // Python string object (once set)
         }
+
+        is_answered() {
+            return (this.state === UserQuestion.State.ANSWERED);
+        }
+
+        is_waiting_for_answer() {
+            return (this.state === UserQuestion.State.WAITING_FOR_ANSWER);
+        }
     }
 
     UserQuestion.next_id = (() => {
