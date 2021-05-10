@@ -1341,6 +1341,12 @@ var $builtinmodule = function (name) {
     class UserQuestion {
     }
 
+    UserQuestion.State = {
+        WAITING_TO_BE_ASKED: "waiting-to-be-asked",
+        WAITING_FOR_ANSWER: "waiting-for-answer",
+        ANSWERED: "answered",
+    };
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
