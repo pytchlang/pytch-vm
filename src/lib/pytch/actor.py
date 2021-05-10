@@ -2,6 +2,7 @@ from pytch.syscalls import (
     play_sound,
     registered_instances,
     wait_seconds,
+    ask_and_wait_for_answer,
 )
 
 from pytch.project import FRAMES_PER_SECOND
@@ -319,3 +320,7 @@ class Stage(Actor):
     def backdrop_name(self):
         "The name of the backdrop SELF is currently showing"
         return self.appearance_name
+
+    def ask_and_wait_for_answer(self, prompt):
+        "(QUESTION) Ask question; wait for and return user's answer"
+        return ask_and_wait_for_answer(prompt)
