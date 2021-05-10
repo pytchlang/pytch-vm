@@ -279,6 +279,8 @@ class Sprite(Actor):
 
     def ask_and_wait_for_answer(self, prompt):
         "(QUESTION) Ask question; wait for and return user's answer"
+        if not isinstance(prompt, str):
+            raise ValueError("the question must be a string")
         if self._shown:
             self.say(prompt)
             answer = ask_and_wait_for_answer(None)
@@ -335,4 +337,6 @@ class Stage(Actor):
 
     def ask_and_wait_for_answer(self, prompt):
         "(QUESTION) Ask question; wait for and return user's answer"
+        if not isinstance(prompt, str):
+            raise ValueError("the question must be a string")
         return ask_and_wait_for_answer(prompt)
