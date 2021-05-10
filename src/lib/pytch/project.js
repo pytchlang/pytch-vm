@@ -921,6 +921,9 @@ var $builtinmodule = function (name) {
             case Thread.State.AWAITING_SOUND_COMPLETION:
                 return this.sleeping_on.has_ended;
 
+            case Thread.State.AWAITING_ANSWER_TO_QUESTION:
+                return this.sleeping_on.is_answered();
+
             case Thread.State.ZOMBIE:
                 return false;
 
