@@ -1681,6 +1681,18 @@ var $builtinmodule = function (name) {
         threads_info() {
             return map_concat(tg => tg.threads_info(), this.thread_groups);
         }
+
+        enqueue_question(prompt) {
+            const question = new UserQuestion(prompt);
+            this.unanswered_questions.push(question);
+
+            // Ask immediately if queue was previously empty, i.e., if this
+            // question is the only one in the queue.
+            if (this.unanswered_questions.length === 1)
+                question.set_being_asked();
+
+            return question;
+        }
     }
 
 
