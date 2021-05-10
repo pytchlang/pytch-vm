@@ -1339,6 +1339,12 @@ var $builtinmodule = function (name) {
     // Text input mechanism via "ask question and wait for answer"
 
     class UserQuestion {
+        constructor(prompt) {
+            this.id = UserQuestion.next_id();
+            this.prompt = prompt;  // JavaScript string or null
+            this.state = UserQuestion.State.WAITING_TO_BE_ASKED;
+            this.value = null;  // Python string object (once set)
+        }
     }
 
     UserQuestion.next_id = (() => {
