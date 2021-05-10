@@ -1715,6 +1715,20 @@ var $builtinmodule = function (name) {
             live_question.set_answer(py_value);
         }
 
+        maybe_retire_answered_question() {
+            if (this.unanswered_questions.length > 0) {
+                const live_question = this.unanswered_questions[0];
+                if (live_question.is_answered()) {
+                    this.unanswered_questions.shift();
+
+                    // If, after removing the just-retired question, there is
+                    // another question waiting in the queue, then ask it.
+                    if (this.unanswered_questions.length > 0)
+                        this.unanswered_questions[0].set_being_asked();
+                }
+            }
+        }
+
         maybe_live_question() {
             if (this.unanswered_questions.length > 0) {
                 const live_question = this.unanswered_questions[0];
