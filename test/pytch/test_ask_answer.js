@@ -10,6 +10,7 @@ const {
     assertLiveQuestion,
     assertNoLiveQuestion,
     pytch_errors,
+    assert_renders_as,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -162,4 +163,65 @@ describe("Ask and wait for answer", () => {
             assert.match(err_str, /question must be a string/);
         })
     );
+
+    it("chooses bubble or prompt correctly", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Banana(pytch.Sprite):
+                Costumes = ["yellow-banana.png"]
+
+                @pytch.when_I_receive("ask-hidden")
+                def ask_hidden(self):
+                    self.hide()
+                    self.ask_and_wait_for_answer("name?")
+
+                @pytch.when_I_receive("ask-shown")
+                def ask_shown(self):
+                    self.show()
+                    self.ask_and_wait_for_answer("age?")
+        `);
+
+        const exp_speech = (content, tip_x, tip_y) =>
+              ["RenderSpeechBubble", content, tip_x, tip_y];
+
+        const assert_speech = (label, is_visible, exp_speech_instructions) => {
+            const sprite_instructions = is_visible
+              ? [["RenderImage", -40, 15, 1, "yellow-banana"]]
+              : [];
+
+            assert_renders_as(
+                label,
+                project,
+                [
+                    ...sprite_instructions,
+                    ...exp_speech_instructions,
+                ]
+            );
+        };
+
+        assert_speech("startup", true, []);
+
+        // Asking a question when hidden should put the prompt into the question
+        // itself, so no speech bubble should happen.
+        project.do_synthetic_broadcast("ask-hidden");
+        one_frame(project);
+        assert_speech("asking-hidden", false, []);
+        assertLiveQuestion(project, "name?");
+
+        let { maybe_live_question: live_question } = project.one_frame();
+        project.accept_question_answer(live_question.id, "Ben");
+        one_frame(project);
+
+        // Asking a question when shown should put the prompt into a speech
+        // bubble on the Sprite asking the question, with the question itself
+        // having no prompt.
+        project.do_synthetic_broadcast("ask-shown");
+        one_frame(project);
+        assert_speech("asking-hidden", true, [exp_speech("age?", 0, 15)]);
+        assertLiveQuestion(project, null);
+
+        // Don't bother answering the second question.
+    });
 });
