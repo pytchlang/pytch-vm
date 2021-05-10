@@ -1611,6 +1611,12 @@ var $builtinmodule = function (name) {
                 this.kill_all_threads_and_sounds();
 
             this.maybe_retire_answered_question();
+
+            const project_state = {
+                maybe_live_question: this.maybe_live_question(),
+            };
+
+            return project_state;
         }
 
         kill_all_threads_and_sounds() {
