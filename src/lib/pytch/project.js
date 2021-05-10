@@ -1353,6 +1353,20 @@ var $builtinmodule = function (name) {
         is_waiting_for_answer() {
             return (this.state === UserQuestion.State.WAITING_FOR_ANSWER);
         }
+
+        set_being_asked() {
+            this.state = UserQuestion.State.WAITING_FOR_ANSWER;
+        }
+
+        set_answer(py_value) {
+            if (this.state !== UserQuestion.State.WAITING_FOR_ANSWER)
+                throw new Sk.builtin.RuntimeError(
+                    `expecting to be in state waiting-for-answer`
+                    + ` but in state ${this.state}`);
+
+            this.value = py_value;
+            this.state = UserQuestion.State.ANSWERED;
+        }
     }
 
     UserQuestion.next_id = (() => {
