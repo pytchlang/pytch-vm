@@ -1402,6 +1402,11 @@ var $builtinmodule = function (name) {
             this.actors = [];
             this.thread_groups = [];
 
+            // Queue of yet-to-be-answered questions; the one at the front of
+            // the queue should either: be being asked by the VM's client; or have
+            // received an answer from the VM's client.
+            this.unanswered_questions = [];
+
             // List of 'layer groups'.  Each layer-group is a list.
             // The groups are drawn in order, so things in
             // lower-indexed layer-groups are hidden by things in
