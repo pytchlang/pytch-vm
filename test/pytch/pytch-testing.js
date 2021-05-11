@@ -387,6 +387,34 @@ const assert_renders_as = (label, project, exp_render_instrns) => {
     });
 };
 
+class SpeechAssertions {
+    constructor(project, sprite_instruction) {
+        this.project = project;
+        this.sprite_instruction = sprite_instruction;
+    }
+
+    is(label, sprite_is_visible, exp_speech_descriptors) {
+        const sprite_instructions = (
+            sprite_is_visible
+                ? [this.sprite_instruction]
+                : []
+        );
+
+        const exp_speech_instructions = exp_speech_descriptors.map(
+            (d) => ["RenderSpeechBubble", ...d]
+        );
+
+        assert_renders_as(
+            label,
+            this.project,
+            [
+                ...sprite_instructions,
+                ...exp_speech_instructions,
+            ]
+        );
+    }
+}
+
 const assert_n_speaker_ids = (project, exp_n_speakers) => {
     const speech_instructions = (project
                                  .rendering_instructions()
@@ -624,6 +652,7 @@ module.exports = {
     pytch_errors,
     assert_Appearance_equal,
     assert_renders_as,
+    SpeechAssertions,
     assert_n_speaker_ids,
     assert_has_bbox,
     assertBuildError,
