@@ -10,7 +10,7 @@ const {
     assertLiveQuestion,
     assertNoLiveQuestion,
     pytch_errors,
-    assert_renders_as,
+    SpeechAssertions,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -183,31 +183,18 @@ describe("Ask and wait for answer", () => {
                     self.ask_and_wait_for_answer("age?")
         `);
 
-        const exp_speech = (content, tip_x, tip_y) =>
-              ["RenderSpeechBubble", content, tip_x, tip_y];
+        const assert_speech = new SpeechAssertions(
+            project,
+            ["RenderImage", -40, 15, 1, "yellow-banana"]
+        );
 
-        const assert_speech = (label, is_visible, exp_speech_instructions) => {
-            const sprite_instructions = is_visible
-              ? [["RenderImage", -40, 15, 1, "yellow-banana"]]
-              : [];
-
-            assert_renders_as(
-                label,
-                project,
-                [
-                    ...sprite_instructions,
-                    ...exp_speech_instructions,
-                ]
-            );
-        };
-
-        assert_speech("startup", true, []);
+        assert_speech.is("startup", true, []);
 
         // Asking a question when hidden should put the prompt into the question
         // itself, so no speech bubble should happen.
         project.do_synthetic_broadcast("ask-hidden");
         one_frame(project);
-        assert_speech("asking-hidden", false, []);
+        assert_speech.is("asking-hidden", false, []);
         assertLiveQuestion(project, "name?");
 
         let { maybe_live_question: live_question } = project.one_frame();
@@ -219,7 +206,7 @@ describe("Ask and wait for answer", () => {
         // having no prompt.
         project.do_synthetic_broadcast("ask-shown");
         one_frame(project);
-        assert_speech("asking-hidden", true, [exp_speech("age?", 0, 15)]);
+        assert_speech.is("asking-hidden", true, [["age?", 0, 15]]);
         assertLiveQuestion(project, null);
 
         // Don't bother answering the second question.
