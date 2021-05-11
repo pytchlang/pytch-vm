@@ -5,6 +5,7 @@ const {
     import_deindented,
     assert,
     assert_renders_as,
+    SpeechAssertions,
     many_frames,
     one_frame,
     assert_n_speaker_ids,
@@ -37,21 +38,12 @@ describe("Speech bubbles", () => {
                     self.say_for_seconds("Mumble", 0.5)
         `);
 
-        const exp_speech = (content, tip_x, tip_y) =>
-              ["RenderSpeechBubble", content, tip_x, tip_y];
+        const assert_speech = new SpeechAssertions(
+            project,
+            ["RenderImage", -40, 15, 1, "yellow-banana"]
+        );
 
-        const assert_speech = (label, exp_speech_instructions) => {
-            assert_renders_as(
-                label,
-                project,
-                [
-                    ["RenderImage", -40, 15, 1, "yellow-banana"],
-                    ...exp_speech_instructions,
-                ]
-            );
-        };
-
-        assert_speech("startup", []);
+        assert_speech.is("startup", true, []);
 
         // The effects of the say() and say_nothing() methods should persist
         // until changed, so run for a few frames after each one.
@@ -59,13 +51,13 @@ describe("Speech bubbles", () => {
         project.do_synthetic_broadcast("talk")
         for (let i = 0; i < 10; ++i) {
             one_frame(project);
-            assert_speech("after-talk", [exp_speech("Hello world", 0, 15)]);
+            assert_speech.is("after-talk", true, [["Hello world", 0, 15]]);
         }
 
         project.do_synthetic_broadcast("silence")
         for (let i = 0; i < 10; ++i) {
             one_frame(project);
-            assert_speech("after-silence", []);
+            assert_speech.is("after-silence", true, []);
         }
 
         // But say_for_seconds(), with seconds = 0.5, should give exactly 30
@@ -74,11 +66,11 @@ describe("Speech bubbles", () => {
         project.do_synthetic_broadcast("talk-briefly")
         for (let i = 0; i < 30; ++i) {
             one_frame(project);
-            assert_speech("after-talk-briefly", [exp_speech("Mumble", 0, 15)]);
+            assert_speech.is("after-talk-briefly", true, [["Mumble", 0, 15]]);
         }
         for (let i = 0; i < 30; ++i) {
             one_frame(project);
-            assert_speech("after-talk-briefly", []);
+            assert_speech.is("after-talk-briefly", true, []);
         }
     });
 
