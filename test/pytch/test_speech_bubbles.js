@@ -4,7 +4,6 @@ const {
     configure_mocha,
     import_deindented,
     assert,
-    assert_renders_as,
     SpeechAssertions,
     many_frames,
     one_frame,
@@ -120,14 +119,11 @@ describe("Speech bubbles", () => {
 
         project.do_synthetic_broadcast("move-and-talk");
         one_frame(project);
-        assert_renders_as(
-            "startup",
+        const assert_speech = new SpeechAssertions(
             project,
-            [
-                ["RenderImage", 0, 35, 1, "yellow-banana"],
-                ["RenderSpeechBubble", "Hello world", 40, 35],
-            ]
+            ["RenderImage", 0, 35, 1, "yellow-banana"]
         );
+        assert_speech.is("startup", true, [["Hello world", 40, 35]]);
     });
 
     it("identifies the speaker of each bubble", async () => {
