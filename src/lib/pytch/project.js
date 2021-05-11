@@ -921,6 +921,9 @@ var $builtinmodule = function (name) {
             case Thread.State.AWAITING_SOUND_COMPLETION:
                 return this.sleeping_on.has_ended;
 
+            case Thread.State.AWAITING_ANSWER_TO_QUESTION:
+                return this.sleeping_on.is_answered();
+
             case Thread.State.ZOMBIE:
                 return false;
 
@@ -933,10 +936,33 @@ var $builtinmodule = function (name) {
             }
         }
 
+        wake() {
+            switch (this.state) {
+            case Thread.State.AWAITING_THREAD_GROUP_COMPLETION:
+            case Thread.State.AWAITING_PASSAGE_OF_TIME:
+            case Thread.State.AWAITING_SOUND_COMPLETION:
+            case Thread.State.ZOMBIE:
+                // No wake-up action required.
+                break;
+
+            case Thread.State.AWAITING_ANSWER_TO_QUESTION:
+                // Use the question's answer as the return value from the
+                // suspension, thereby giving it back to Python.
+                this.skulpt_susp.data.set_success(this.sleeping_on.value);
+                break;
+
+            default:
+                // Should never wake up a RUNNING or RAISED_EXCEPTION thread.
+                throw Error(`thread in bad state "${this.state}"`);
+            }
+
+            this.state = Thread.State.RUNNING;
+            this.sleeping_on = null;
+        }
+
         maybe_wake() {
             if ((! this.is_running()) && this.should_wake()) {
-                this.state = Thread.State.RUNNING;
-                this.sleeping_on = null;
+                this.wake();
             }
         }
 
@@ -1006,8 +1032,18 @@ var $builtinmodule = function (name) {
                 return [thread_group];
             }
 
+            case "ask-and-wait-for-answer": {
+                const { prompt } = syscall_args;
+                const question = this.parent_project.enqueue_question(prompt);
+
+                this.state = Thread.State.AWAITING_ANSWER_TO_QUESTION;
+                this.sleeping_on = question;
+
+                return [];
+            }
+
             default:
-                throw Error(`unknown Pytch syscall "${susp.data.subtype}"`);
+                throw Error(`unknown Pytch syscall "${syscall_kind}"`);
             }
         }
 
@@ -1069,7 +1105,7 @@ var $builtinmodule = function (name) {
                     } catch (err) {
                         // Defer the error until next time the innermost
                         // Python-level code runs.
-                        susp.data.result = { kind: "failure", error: err };
+                        susp.data.set_failure(err);
                         return [];
                     }
                 }
@@ -1141,6 +1177,12 @@ var $builtinmodule = function (name) {
         // 'performance' of the 'relevant sound' is stored in the Thread
         // instance's "sleeping_on" property.
         AWAITING_SOUND_COMPLETION: "awaiting-sound-completion",
+
+        // AWAITING_ANSWER_TO_QUESTION: The thread has requested the VM's client
+        // to ask the user a question; the thread will block until an answer is
+        // given.  A reference to the UserQuestion is stored in the Thread
+        // instance's "sleeping_on" property.
+        AWAITING_ANSWER_TO_QUESTION: "awaiting-answer-to-question",
 
         // ZOMBIE: The thread has terminated but has not yet been cleared from
         // the list of live threads.
@@ -1336,6 +1378,64 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Text input mechanism via "ask question and wait for answer"
+    //
+    // The project maintains a queue of yet-to-be-answered questions, each an
+    // instance of UserQuestion.  The question at the front of the queue is the
+    // "live question", and the VM's client should get the answer from the user
+    // in whatever way is suitable.  When that answer is available, the client
+    // should provide it to the Project via Project.accept_question_answer().
+    //
+    // The "WAITING_TO_BE_ASKED" state is redundant with "not first in the
+    // queue", but perhaps one day we might be able to ask more than one
+    // question at once, and also there might be some advantage to having the
+    // knowledge in the UserQuestion itself.
+
+    class UserQuestion {
+        constructor(prompt) {
+            this.id = UserQuestion.next_id();
+            this.prompt = prompt;  // JavaScript string or null
+            this.state = UserQuestion.State.WAITING_TO_BE_ASKED;
+            this.value = null;  // Python string object (once set)
+        }
+
+        is_answered() {
+            return (this.state === UserQuestion.State.ANSWERED);
+        }
+
+        is_waiting_for_answer() {
+            return (this.state === UserQuestion.State.WAITING_FOR_ANSWER);
+        }
+
+        set_being_asked() {
+            this.state = UserQuestion.State.WAITING_FOR_ANSWER;
+        }
+
+        set_answer(py_value) {
+            if (this.state !== UserQuestion.State.WAITING_FOR_ANSWER)
+                throw new Sk.builtin.RuntimeError(
+                    `expecting to be in state waiting-for-answer`
+                    + ` but in state ${this.state}`);
+
+            this.value = py_value;
+            this.state = UserQuestion.State.ANSWERED;
+        }
+    }
+
+    UserQuestion.next_id = (() => {
+        let id = 50000;
+        return () => (++id);
+    })();
+
+    UserQuestion.State = {
+        WAITING_TO_BE_ASKED: "waiting-to-be-asked",
+        WAITING_FOR_ANSWER: "waiting-for-answer",
+        ANSWERED: "answered",
+    };
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Javascript-level "Project" class
 
     class Project {
@@ -1343,6 +1443,11 @@ var $builtinmodule = function (name) {
             this.py_project = py_project;
             this.actors = [];
             this.thread_groups = [];
+
+            // Queue of yet-to-be-answered questions; the one at the front of
+            // the queue should either: be being asked by the VM's client; or have
+            // received an answer from the VM's client.
+            this.unanswered_questions = [];
 
             // List of 'layer groups'.  Each layer-group is a list.
             // The groups are drawn in order, so things in
@@ -1545,18 +1650,25 @@ var $builtinmodule = function (name) {
             this.thread_groups = new_thread_groups;
 
             if (this.thread_groups.some(tg => tg.raised_exception()))
-                this.kill_all_threads_and_sounds();
+                this.kill_all_threads_questions_sounds();
+
+            this.maybe_retire_answered_question();
+
+            const project_state = {
+                maybe_live_question: this.maybe_live_question(),
+            };
+
+            return project_state;
         }
 
-        kill_all_threads_and_sounds() {
-            // TODO: Also the live 'ask requests' queue, when that exists, at
-            // which point this method should have a different name.
+        kill_all_threads_questions_sounds() {
             this.thread_groups = [];
+            this.unanswered_questions = [];
             Sk.pytch.sound_manager.stop_all_performances();
         }
 
         on_red_stop_clicked() {
-            this.kill_all_threads_and_sounds();
+            this.kill_all_threads_questions_sounds();
             this.actors.forEach(a => a.delete_all_clones());
 
             // Now there is only the original instance to deal with:
@@ -1591,7 +1703,7 @@ var $builtinmodule = function (name) {
                 return instructions;
 
             errors.forEach(({err, context}) => Sk.pytch.on_exception(err, context));
-            this.kill_all_threads_and_sounds();
+            this.kill_all_threads_questions_sounds();
             return null;
         }
 
@@ -1617,6 +1729,67 @@ var $builtinmodule = function (name) {
 
         threads_info() {
             return map_concat(tg => tg.threads_info(), this.thread_groups);
+        }
+
+        enqueue_question(prompt) {
+            const question = new UserQuestion(prompt);
+            this.unanswered_questions.push(question);
+
+            // Ask immediately if queue was previously empty, i.e., if this
+            // question is the only one in the queue.
+            if (this.unanswered_questions.length === 1)
+                question.set_being_asked();
+
+            return question;
+        }
+
+        accept_question_answer(id, value) {
+            if (this.unanswered_questions.length === 0)
+                throw new Sk.builtin.RuntimeError(
+                    "no unanswered questions to accept answer for");
+
+            let live_question = this.unanswered_questions[0];
+
+            if (id !== live_question.id)
+                throw new Sk.builtin.RuntimeError(
+                    `live question has id ${live_question.id} but`
+                    + ` accept_question_answer() given id ${id}`);
+
+            if (typeof value !== "string")
+                throw new Sk.builtin.RuntimeError(
+                    "answers to questions must be strings");
+
+            const py_value = new Sk.builtin.str(value);
+
+            live_question.set_answer(py_value);
+        }
+
+        maybe_retire_answered_question() {
+            if (this.unanswered_questions.length > 0) {
+                const live_question = this.unanswered_questions[0];
+                if (live_question.is_answered()) {
+                    this.unanswered_questions.shift();
+
+                    // If, after removing the just-retired question, there is
+                    // another question waiting in the queue, then ask it.
+                    if (this.unanswered_questions.length > 0)
+                        this.unanswered_questions[0].set_being_asked();
+                }
+            }
+        }
+
+        maybe_live_question() {
+            if (this.unanswered_questions.length > 0) {
+                const live_question = this.unanswered_questions[0];
+
+                if (! live_question.is_waiting_for_answer())
+                    throw new Sk.builtin.RuntimeError(
+                        "internal error: live question is not waiting-for-answer");
+
+                return live_question;
+            } else {
+                return null;
+            }
         }
     }
 

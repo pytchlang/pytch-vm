@@ -387,6 +387,34 @@ const assert_renders_as = (label, project, exp_render_instrns) => {
     });
 };
 
+class SpeechAssertions {
+    constructor(project, sprite_instruction) {
+        this.project = project;
+        this.sprite_instruction = sprite_instruction;
+    }
+
+    is(label, sprite_is_visible, exp_speech_descriptors) {
+        const sprite_instructions = (
+            sprite_is_visible
+                ? [this.sprite_instruction]
+                : []
+        );
+
+        const exp_speech_instructions = exp_speech_descriptors.map(
+            (d) => ["RenderSpeechBubble", ...d]
+        );
+
+        assert_renders_as(
+            label,
+            this.project,
+            [
+                ...sprite_instructions,
+                ...exp_speech_instructions,
+            ]
+        );
+    }
+}
+
 const assert_n_speaker_ids = (project, exp_n_speakers) => {
     const speech_instructions = (project
                                  .rendering_instructions()
@@ -457,6 +485,32 @@ const assertBuildErrorFun = (...args) => {
 
 ////////////////////////////////////////////////////////////////////////////////
 //
+// Assert that we have no live question, or that a question with a
+// particular prompt is live.
+
+const assertNoLiveQuestion = (project) => {
+    const question = project.maybe_live_question();
+    if (question == null)
+        return;
+
+    assert.fail(
+        `expecting no live question; got ${question.id} / "${question.prompt}"`
+    );
+}
+
+const assertLiveQuestion = (project, exp_prompt) => {
+    const question = project.maybe_live_question();
+    assert.notStrictEqual(
+        question, null,
+        "expecting a live question but got none"
+    );
+
+    assert.strictEqual(question.prompt, exp_prompt);
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
 // Convenience methods for access into Python world.
 
 const py_getattr = (py_obj, js_attr_name) =>
@@ -517,7 +571,7 @@ const configure_mocha = () => {
     afterEach(() => {
         const errors = pytch_errors.drain_errors();
 
-        const error_messages = errors.map(e => Sk.builtin.str(e.err).v);
+        const error_messages = errors.map(e => (new Sk.builtin.str(e.err)).v);
 
         assert.strictEqual(errors.length, 0,
                            ("undrained errors at end of test:\n"
@@ -598,10 +652,13 @@ module.exports = {
     pytch_errors,
     assert_Appearance_equal,
     assert_renders_as,
+    SpeechAssertions,
     assert_n_speaker_ids,
     assert_has_bbox,
     assertBuildError,
     assertBuildErrorFun,
+    assertNoLiveQuestion,
+    assertLiveQuestion,
     py_getattr,
     js_getattr,
     call_method,
