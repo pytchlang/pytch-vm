@@ -1650,7 +1650,7 @@ var $builtinmodule = function (name) {
             this.thread_groups = new_thread_groups;
 
             if (this.thread_groups.some(tg => tg.raised_exception()))
-                this.kill_all_threads_and_sounds();
+                this.kill_all_threads_questions_sounds();
 
             this.maybe_retire_answered_question();
 
@@ -1661,16 +1661,14 @@ var $builtinmodule = function (name) {
             return project_state;
         }
 
-        kill_all_threads_and_sounds() {
-            // TODO: Also the live 'ask requests' queue, when that exists, at
-            // which point this method should have a different name.
+        kill_all_threads_questions_sounds() {
             this.thread_groups = [];
             this.unanswered_questions = [];
             Sk.pytch.sound_manager.stop_all_performances();
         }
 
         on_red_stop_clicked() {
-            this.kill_all_threads_and_sounds();
+            this.kill_all_threads_questions_sounds();
             this.actors.forEach(a => a.delete_all_clones());
 
             // Now there is only the original instance to deal with:
@@ -1705,7 +1703,7 @@ var $builtinmodule = function (name) {
                 return instructions;
 
             errors.forEach(({err, context}) => Sk.pytch.on_exception(err, context));
-            this.kill_all_threads_and_sounds();
+            this.kill_all_threads_questions_sounds();
             return null;
         }
 
