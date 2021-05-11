@@ -1665,6 +1665,7 @@ var $builtinmodule = function (name) {
             // TODO: Also the live 'ask requests' queue, when that exists, at
             // which point this method should have a different name.
             this.thread_groups = [];
+            this.unanswered_questions = [];
             Sk.pytch.sound_manager.stop_all_performances();
         }
 
