@@ -354,4 +354,6 @@ this does nothing).
 
 Show a speech balloon, wait for the number of seconds given, and
 then remove it. The whole script will wait while the balloon is
-being shown.
+being shown.  If a second script calls ``say_for_seconds()`` while a
+first script is already in the middle of ``say_for_seconds()``, the
+second script's speech replaces the first script's speech.
