@@ -289,8 +289,11 @@ class Sprite(Actor):
     def say_for_seconds(self, content, seconds):
         "(TEXT, SECONDS) Give SELF speech bubble saying TEXT for SECONDS"
         self.say(content)
+        speech_id = self._speech[0]
         wait_seconds(seconds)
-        self.say_nothing()
+        # Only erase utterance if it hasn't already been, and it's ours:
+        if (self._speech is not None) and (self._speech[0] == speech_id):
+            self.say_nothing()
 
     def ask_and_wait_for_answer(self, prompt):
         "(QUESTION) Ask question; wait for and return user's answer"
