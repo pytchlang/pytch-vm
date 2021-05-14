@@ -19,44 +19,44 @@ configure_mocha();
 
 describe("Speech bubbles", () => {
     with_project("py/project/talking_banana.py", (import_project) => {
-    it("includes speech-bubble instructions", async () => {
-        const project = await import_project();
+        it("includes speech-bubble instructions", async () => {
+            const project = await import_project();
 
-        const assert_speech = new SpeechAssertions(
-            project,
-            ["RenderImage", -40, 15, 1, "yellow-banana"]
-        );
+            const assert_speech = new SpeechAssertions(
+                project,
+                ["RenderImage", -40, 15, 1, "yellow-banana"]
+            );
 
-        assert_speech.is("startup", true, []);
+            assert_speech.is("startup", true, []);
 
-        // The effects of the say() and say_nothing() methods should persist
-        // until changed, so run for a few frames after each one.
+            // The effects of the say() and say_nothing() methods should persist
+            // until changed, so run for a few frames after each one.
 
-        project.do_synthetic_broadcast("talk")
-        for (let i = 0; i < 10; ++i) {
-            one_frame(project);
-            assert_speech.is("after-talk", true, [["Hello world", 0, 15]]);
-        }
+            project.do_synthetic_broadcast("talk")
+            for (let i = 0; i < 10; ++i) {
+                one_frame(project);
+                assert_speech.is("after-talk", true, [["Hello world", 0, 15]]);
+            }
 
-        project.do_synthetic_broadcast("silence")
-        for (let i = 0; i < 10; ++i) {
-            one_frame(project);
-            assert_speech.is("after-silence", true, []);
-        }
+            project.do_synthetic_broadcast("silence")
+            for (let i = 0; i < 10; ++i) {
+                one_frame(project);
+                assert_speech.is("after-silence", true, []);
+            }
 
-        // But say_for_seconds(), with seconds = 0.5, should give exactly 30
-        // frames of speech.
+            // But say_for_seconds(), with seconds = 0.5, should give exactly 30
+            // frames of speech.
 
-        project.do_synthetic_broadcast("talk-briefly")
-        for (let i = 0; i < 30; ++i) {
-            one_frame(project);
-            assert_speech.is("after-talk-briefly", true, [["Mumble", 0, 15]]);
-        }
-        for (let i = 0; i < 30; ++i) {
-            one_frame(project);
-            assert_speech.is("after-talk-briefly", true, []);
-        }
-    });
+            project.do_synthetic_broadcast("talk-briefly")
+            for (let i = 0; i < 30; ++i) {
+                one_frame(project);
+                assert_speech.is("after-talk-briefly", true, [["Mumble", 0, 15]]);
+            }
+            for (let i = 0; i < 30; ++i) {
+                one_frame(project);
+                assert_speech.is("after-talk-briefly", true, []);
+            }
+        });
     });
 
     it("clears speech bubbles on red-stop", async () => {
