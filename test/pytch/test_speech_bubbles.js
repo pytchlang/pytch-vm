@@ -84,6 +84,26 @@ describe("Speech bubbles", () => {
             one_frame(project);
             assert_speech.is("said-goodbye", true, []);
         });
+
+        // Not really 'cancelled' because we explicitly say-nothing, but
+        // we want to test this situation is handled by say_for_seconds().
+        it("handles 'cancelled' say-for-seconds call", async () => {
+            const project = await import_project();
+            const assert_speech = make_SpeechAssertions(project);
+
+            // Launch a half-second speech.
+            project.do_synthetic_broadcast("talk-briefly");
+            one_frame(project);
+            assert_speech.is("after-talk-briefly", true, [["Mumble", 0, 15]]);
+
+            // Quickly silence the banana.
+            project.do_synthetic_broadcast("silence");
+            one_frame(project);
+            assert_speech.is("after-silence", true, []);
+
+            // Nothing bad should happen if we run for another second.
+            many_frames(project, 60);
+        })
     });
 
     it("clears speech bubbles on red-stop", async () => {
