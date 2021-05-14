@@ -19,13 +19,14 @@ configure_mocha();
 
 describe("Speech bubbles", () => {
     with_project("py/project/talking_banana.py", (import_project) => {
+        const make_SpeechAssertions = (project) => new SpeechAssertions(
+            project,
+            ["RenderImage", -40, 15, 1, "yellow-banana"]
+        );
+
         it("includes speech-bubble instructions", async () => {
             const project = await import_project();
-
-            const assert_speech = new SpeechAssertions(
-                project,
-                ["RenderImage", -40, 15, 1, "yellow-banana"]
-            );
+            const assert_speech = make_SpeechAssertions(project);
 
             assert_speech.is("startup", true, []);
 
@@ -60,10 +61,7 @@ describe("Speech bubbles", () => {
 
         it("handles overlapping say-for-seconds calls", async () => {
             const project = await import_project();
-            const assert_speech = new SpeechAssertions(
-                project,
-                ["RenderImage", -40, 15, 1, "yellow-banana"]
-            );
+            const assert_speech = make_SpeechAssertions(project);
 
             assert_speech.is("startup", true, []);
 
