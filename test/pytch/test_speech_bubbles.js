@@ -2,6 +2,7 @@
 
 const {
     configure_mocha,
+    with_project,
     import_deindented,
     assert,
     SpeechAssertions,
@@ -17,25 +18,9 @@ configure_mocha();
 // Speech bubbles
 
 describe("Speech bubbles", () => {
+    with_project("py/project/talking_banana.py", (import_project) => {
     it("includes speech-bubble instructions", async () => {
-        const project = await import_deindented(`
-
-            import pytch
-            class Banana(pytch.Sprite):
-                Costumes = ["yellow-banana.png"]
-
-                @pytch.when_I_receive("talk")
-                def talk(self):
-                    self.say("Hello world")
-
-                @pytch.when_I_receive("silence")
-                def fall_silent(self):
-                    self.say_nothing()
-
-                @pytch.when_I_receive("talk-briefly")
-                def talk_briefly(self):
-                    self.say_for_seconds("Mumble", 0.5)
-        `);
+        const project = await import_project();
 
         const assert_speech = new SpeechAssertions(
             project,
@@ -71,6 +56,7 @@ describe("Speech bubbles", () => {
             one_frame(project);
             assert_speech.is("after-talk-briefly", true, []);
         }
+    });
     });
 
     it("clears speech bubbles on red-stop", async () => {
