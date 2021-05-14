@@ -14,6 +14,7 @@ class Banana(pytch.Sprite):
     @pytch.when_I_receive("talk-briefly")
     def talk_briefly(self):
         self.say_for_seconds("Mumble", 0.5)
+        print("/mumble")
 
     @pytch.when_I_receive("say-goodbye")
     def say_goodbye(self):

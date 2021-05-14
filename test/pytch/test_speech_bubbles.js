@@ -9,6 +9,7 @@ const {
     many_frames,
     one_frame,
     assert_n_speaker_ids,
+    pytch_stdout,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -57,6 +58,10 @@ describe("Speech bubbles", () => {
                 one_frame(project);
                 assert_speech.is("after-talk-briefly", true, []);
             }
+
+            // Nothing further should happen; ensure output correct.
+            many_frames(project, 60);
+            assert.strictEqual(pytch_stdout.drain_stdout(), "/mumble\n");
         });
 
         it("handles overlapping say-for-seconds calls", async () => {
@@ -83,6 +88,10 @@ describe("Speech bubbles", () => {
             // And then go away.
             one_frame(project);
             assert_speech.is("said-goodbye", true, []);
+
+            // Nothing further should happen; ensure output correct.
+            many_frames(project, 60);
+            assert.strictEqual(pytch_stdout.drain_stdout(), "/mumble\n");
         });
 
         // Not really 'cancelled' because we explicitly say-nothing, but
@@ -101,8 +110,10 @@ describe("Speech bubbles", () => {
             one_frame(project);
             assert_speech.is("after-silence", true, []);
 
-            // Nothing bad should happen if we run for another second.
+            // Nothing bad should happen if we run for another second;
+            // check output.
             many_frames(project, 60);
+            assert.strictEqual(pytch_stdout.drain_stdout(), "/mumble\n");
         })
     });
 
