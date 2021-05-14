@@ -280,7 +280,7 @@ class Sprite(Actor):
 
     def say(self, content):
         "(TEXT) Give SELF a speech bubble saying TEXT"
-        self._speech = ("say", content)
+        self._speech = (_new_speech_id(), "say", content)
 
     def say_nothing(self):
         "() Remove any speech bubble SELF has"
