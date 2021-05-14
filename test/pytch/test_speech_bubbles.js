@@ -2,12 +2,14 @@
 
 const {
     configure_mocha,
+    with_project,
     import_deindented,
     assert,
     SpeechAssertions,
     many_frames,
     one_frame,
     assert_n_speaker_ids,
+    pytch_stdout,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -17,60 +19,102 @@ configure_mocha();
 // Speech bubbles
 
 describe("Speech bubbles", () => {
-    it("includes speech-bubble instructions", async () => {
-        const project = await import_deindented(`
-
-            import pytch
-            class Banana(pytch.Sprite):
-                Costumes = ["yellow-banana.png"]
-
-                @pytch.when_I_receive("talk")
-                def talk(self):
-                    self.say("Hello world")
-
-                @pytch.when_I_receive("silence")
-                def fall_silent(self):
-                    self.say_nothing()
-
-                @pytch.when_I_receive("talk-briefly")
-                def talk_briefly(self):
-                    self.say_for_seconds("Mumble", 0.5)
-        `);
-
-        const assert_speech = new SpeechAssertions(
+    with_project("py/project/talking_banana.py", (import_project) => {
+        const make_SpeechAssertions = (project) => new SpeechAssertions(
             project,
             ["RenderImage", -40, 15, 1, "yellow-banana"]
         );
 
-        assert_speech.is("startup", true, []);
+        it("includes speech-bubble instructions", async () => {
+            const project = await import_project();
+            const assert_speech = make_SpeechAssertions(project);
 
-        // The effects of the say() and say_nothing() methods should persist
-        // until changed, so run for a few frames after each one.
+            assert_speech.is("startup", true, []);
 
-        project.do_synthetic_broadcast("talk")
-        for (let i = 0; i < 10; ++i) {
-            one_frame(project);
-            assert_speech.is("after-talk", true, [["Hello world", 0, 15]]);
-        }
+            // The effects of the say() and say_nothing() methods should persist
+            // until changed, so run for a few frames after each one.
 
-        project.do_synthetic_broadcast("silence")
-        for (let i = 0; i < 10; ++i) {
-            one_frame(project);
-            assert_speech.is("after-silence", true, []);
-        }
+            project.do_synthetic_broadcast("talk")
+            for (let i = 0; i < 10; ++i) {
+                one_frame(project);
+                assert_speech.is("after-talk", true, [["Hello world", 0, 15]]);
+            }
 
-        // But say_for_seconds(), with seconds = 0.5, should give exactly 30
-        // frames of speech.
+            project.do_synthetic_broadcast("silence")
+            for (let i = 0; i < 10; ++i) {
+                one_frame(project);
+                assert_speech.is("after-silence", true, []);
+            }
 
-        project.do_synthetic_broadcast("talk-briefly")
-        for (let i = 0; i < 30; ++i) {
+            // But say_for_seconds(), with seconds = 0.5, should give exactly 30
+            // frames of speech.
+
+            project.do_synthetic_broadcast("talk-briefly")
+            for (let i = 0; i < 30; ++i) {
+                one_frame(project);
+                assert_speech.is("after-talk-briefly", true, [["Mumble", 0, 15]]);
+            }
+            for (let i = 0; i < 30; ++i) {
+                one_frame(project);
+                assert_speech.is("after-talk-briefly", true, []);
+            }
+
+            // Nothing further should happen; ensure output correct.
+            many_frames(project, 60);
+            assert.strictEqual(pytch_stdout.drain_stdout(), "/mumble\n");
+        });
+
+        it("handles overlapping say-for-seconds calls", async () => {
+            const project = await import_project();
+            const assert_speech = make_SpeechAssertions(project);
+
+            assert_speech.is("startup", true, []);
+
+            // Launch a half-second speech.
+            project.do_synthetic_broadcast("talk-briefly");
             one_frame(project);
             assert_speech.is("after-talk-briefly", true, [["Mumble", 0, 15]]);
-        }
-        for (let i = 0; i < 30; ++i) {
+
+            // Launch the longer speech; it should replace the "Mumble".
+            project.do_synthetic_broadcast("say-goodbye");
             one_frame(project);
-            assert_speech.is("after-talk-briefly", true, []);
-        }
+            assert_speech.is("immed-after-say-goodbye", true, [["Bye!", 0, 15]]);
+
+            // The "Bye!" should persist for a whole second.  (We've already
+            // spend a frame in the previous check.)
+            many_frames(project, 59);
+            assert_speech.is("1s-after-say-goodbye", true, [["Bye!", 0, 15]]);
+
+            // And then go away.
+            one_frame(project);
+            assert_speech.is("said-goodbye", true, []);
+
+            // Nothing further should happen; ensure output correct.
+            many_frames(project, 60);
+            assert.strictEqual(pytch_stdout.drain_stdout(), "/mumble\n");
+        });
+
+        // Not really 'cancelled' because we explicitly say-nothing, but
+        // we want to test this situation is handled by say_for_seconds().
+        it("handles 'cancelled' say-for-seconds call", async () => {
+            const project = await import_project();
+            const assert_speech = make_SpeechAssertions(project);
+
+            // Launch a half-second speech.
+            project.do_synthetic_broadcast("talk-briefly");
+            one_frame(project);
+            assert_speech.is("after-talk-briefly", true, [["Mumble", 0, 15]]);
+
+            // Quickly silence the banana.
+            project.do_synthetic_broadcast("silence");
+            one_frame(project);
+            assert_speech.is("after-silence", true, []);
+
+            // Nothing bad should happen if we run for another second;
+            // check output.
+            many_frames(project, 60);
+            assert.strictEqual(pytch_stdout.drain_stdout(), "/mumble\n");
+        })
     });
 
     it("clears speech bubbles on red-stop", async () => {

@@ -743,7 +743,7 @@ var $builtinmodule = function (name) {
             let speech_instructions = [];
             const speech = this.render_speech;
             if (speech != null) {
-                let kind = speech[0];
+                let kind = speech[1];
 
                 // Position the tip of the speech-bubble's arrow in the centre
                 // of the top edge of the image.
@@ -754,7 +754,7 @@ var $builtinmodule = function (name) {
                 case "say": {
                     speech_instructions = [
                         new RenderSpeechBubble(this.numeric_id,
-                                               speech[1],
+                                               speech[2],
                                                tip_x,
                                                tip_y),
                     ];

@@ -12,6 +12,21 @@ def _is_number(x):
     return isinstance(x, int) or isinstance(x, float)
 
 
+class _IdGenerator:
+    def __init__(self):
+        self.id = 40000
+
+    def __call__(self):
+        self.id += 1
+        return self.id
+
+# Ensure that each individual utterance is uniquely identifiable.
+# This allows say_for_seconds() to only erase the current utterance if
+# it's the utterance which that invocation of say_for_seconds() put
+# there.
+_new_speech_id = _IdGenerator()
+
+
 class Actor:
     Sounds = []
     _appearance_names = None
@@ -265,7 +280,7 @@ class Sprite(Actor):
 
     def say(self, content):
         "(TEXT) Give SELF a speech bubble saying TEXT"
-        self._speech = ("say", content)
+        self._speech = (_new_speech_id(), "say", content)
 
     def say_nothing(self):
         "() Remove any speech bubble SELF has"
@@ -274,8 +289,11 @@ class Sprite(Actor):
     def say_for_seconds(self, content, seconds):
         "(TEXT, SECONDS) Give SELF speech bubble saying TEXT for SECONDS"
         self.say(content)
+        speech_id = self._speech[0]
         wait_seconds(seconds)
-        self.say_nothing()
+        # Only erase utterance if it hasn't already been, and it's ours:
+        if (self._speech is not None) and (self._speech[0] == speech_id):
+            self.say_nothing()
 
     def ask_and_wait_for_answer(self, prompt):
         "(QUESTION) Ask question; wait for and return user's answer"
