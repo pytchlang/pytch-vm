@@ -57,6 +57,35 @@ describe("Speech bubbles", () => {
                 assert_speech.is("after-talk-briefly", true, []);
             }
         });
+
+        it("handles overlapping say-for-seconds calls", async () => {
+            const project = await import_project();
+            const assert_speech = new SpeechAssertions(
+                project,
+                ["RenderImage", -40, 15, 1, "yellow-banana"]
+            );
+
+            assert_speech.is("startup", true, []);
+
+            // Launch a half-second speech.
+            project.do_synthetic_broadcast("talk-briefly");
+            one_frame(project);
+            assert_speech.is("after-talk-briefly", true, [["Mumble", 0, 15]]);
+
+            // Launch the longer speech; it should replace the "Mumble".
+            project.do_synthetic_broadcast("say-goodbye");
+            one_frame(project);
+            assert_speech.is("immed-after-say-goodbye", true, [["Bye!", 0, 15]]);
+
+            // The "Bye!" should persist for a whole second.  (We've already
+            // spend a frame in the previous check.)
+            many_frames(project, 59);
+            assert_speech.is("1s-after-say-goodbye", true, [["Bye!", 0, 15]]);
+
+            // And then go away.
+            one_frame(project);
+            assert_speech.is("said-goodbye", true, []);
+        });
     });
 
     it("clears speech bubbles on red-stop", async () => {
