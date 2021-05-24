@@ -59,7 +59,7 @@ How Stage differs from Sprite
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``Stage`` has ‘Backdrops’ (whose size is assumed to be 480x360 and
-whose ‘centre’ is the actual centre) instead of ‘Costumes’. The
+whose ‘origin’ is the actual centre) instead of ‘Costumes’. The
 ``Stage`` has no location or size, and is always shown.
 
 The ``Stage`` should always appear at the ‘back’ of the rendering. Until
