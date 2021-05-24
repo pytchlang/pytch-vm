@@ -40,8 +40,8 @@ are ‘Costumes’, and for the ``Stage``, these are ‘Backdrops’. The code
 refers to them both under the name ``Appearance``.
 
 On the JavaScript side, each ``Appearance`` has a JavaScript ``Image``,
-and also the coordinates of the ‘centre’ of the costume. When a
-``Sprite`` is at a particular location on the stage, it is the ‘centre’
+and also the coordinates of the ‘origin’ of the costume. When a
+``Sprite`` is at a particular location on the stage, it is the ‘origin’
 of its current Costume’s ``Image`` which is at that location.
 
 A ``Sprite``\ ’s collection of Costumes, or the ``Stage``\ ’s collection
@@ -49,15 +49,17 @@ of Backdrops, is described and stored as a list. This gives the
 collection of appearances a sequence, so it makes sense to talk about
 switching to the ‘next costume’ or the ‘next backdrop’.
 
-Within the web-app, images are loaded asynchronously on class
-registration. For testing, a hard-coded map provides the dimensions of
-an image given a URL.
+Within the web-app, images are loaded asynchronously (from the
+browser-local DB) on class registration. For testing, a hard-coded map
+provides the dimensions of an image given a URL.
+
+
 
 How Stage differs from Sprite
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``Stage`` has ‘Backdrops’ (whose size is assumed to be 480x360 and
-whose ‘centre’ is the actual centre) instead of ‘Costumes’. The
+whose ‘origin’ is the actual centre) instead of ‘Costumes’. The
 ``Stage`` has no location or size, and is always shown.
 
 The ``Stage`` should always appear at the ‘back’ of the rendering. Until
