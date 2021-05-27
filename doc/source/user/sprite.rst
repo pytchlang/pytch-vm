@@ -59,8 +59,8 @@ Here we see:
 * The *method decorator* ``pytch.when_key_pressed`` does the job of a
   Scratch *hat block* — Pytch's decorators are described in :doc:`their
   own help file<hat-blocks>`.
-* The method call ``self.change_y(10)`` does the job of the change y by*
-  *Scratch block — a Pytch sprite's methods are described below.
+* The method call ``self.change_y(10)`` does the job of the *change y by*
+  Scratch block — a Pytch sprite's methods are described below.
 
 
 Controlling how a sprite looks
