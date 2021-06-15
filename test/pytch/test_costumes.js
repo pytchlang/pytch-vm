@@ -117,10 +117,10 @@ describe("Costume handling", () => {
         { base: "Stage", attrname: "Backdrops", methodname: "switch_backdrop" },
     ].forEach(kind => {
         [
-            { label: "list", arg: "[1, 2, 3]", regex: /must be string or integer/ },
-            { label: "float", arg: "2.718", regex: /must be string or integer/ },
-            { label: "too-low-int", arg: "-1", regex: /can not be negative/ },
-            { label: "too-high-int", arg: "3", regex: /it only has 3/ },
+            { label: "list", arg: "[1, 2, 3]", error_regexp: /must be string or integer/ },
+            { label: "float", arg: "2.718", error_regexp: /must be string or integer/ },
+            { label: "too-low-int", arg: "-1", error_regexp: /can not be negative/ },
+            { label: "too-high-int", arg: "3", error_regexp: /it only has 3/ },
         ].forEach(spec => {
             it(`rejects bad arg to ${kind.base}.${kind.methodname} (${spec.label})`,
                async () => {
@@ -143,8 +143,7 @@ describe("Costume handling", () => {
                    project.do_synthetic_broadcast("cause-trouble");
                    one_frame(project);
 
-                   const err_str = pytch_errors.sole_error_string();
-                   assert.match(err_str, spec.regex);
+                   pytch_errors.assert_sole_error_matches(spec.error_regexp);
                });
         });
     });
@@ -175,7 +174,7 @@ describe("Costume handling", () => {
             {
                 label: "error if non-int",
                 n_steps_fragment: "2.5",
-                error_regex: /must be integer/,
+                error_regexp: /must be integer/,
             },
         ].forEach(spec => {
             it(`can step onwards in ${kind.attrname} list (${spec.label})`,
@@ -205,8 +204,7 @@ describe("Costume handling", () => {
                        const stdout = pytch_stdout.drain_stdout();
                        assert.equal(stdout, `${spec.exp_number}\n`);
                    } else {
-                       const err_str = pytch_errors.sole_error_string();
-                       assert.match(err_str, spec.error_regex);
+                       pytch_errors.assert_sole_error_matches(spec.error_regexp);
                    }
                });
         });
@@ -225,8 +223,7 @@ describe("Costume handling", () => {
 
         project.do_synthetic_broadcast("try-next");
         one_frame(project);
-        const err_str = pytch_errors.sole_error_string();
-        assert.match(err_str, /has no Costumes/);
+        pytch_errors.assert_sole_error_matches(/has no Costumes/);
     });
 
     with_module("py/project/bad_costume.py", (import_module) => {
@@ -325,11 +322,11 @@ describe("Costume handling", () => {
 
     with_project("py/project/some_costumes.py", (import_project) => {
         [
-            { tag: "None", regex: /a number/ },
-            { tag: "string", regex: /a number/ },
-            { tag: "non-integer", regex: /an integer/ },
-            { tag: "out-of-range-low", regex: /in the range/ },
-            { tag: "out-of-range-high", regex: /in the range/ },
+            { tag: "None", error_regexp: /a number/ },
+            { tag: "string", error_regexp: /a number/ },
+            { tag: "non-integer", error_regexp: /an integer/ },
+            { tag: "out-of-range-low", error_regexp: /in the range/ },
+            { tag: "out-of-range-high", error_regexp: /in the range/ },
         ].forEach(spec => {
             it(`does something if appearance-index ${spec.tag}`, async () => {
                 let project = await import_project();
@@ -340,9 +337,10 @@ describe("Costume handling", () => {
 
                 project.rendering_instructions();
 
-                const err_str = pytch_errors.sole_error_string();
-                assert.match(err_str, /appearance-index must be/);
-                assert.match(err_str, spec.regex);
+                pytch_errors.assert_sole_error_matches_all([
+                    /appearance-index must be/,
+                    spec.error_regexp
+                ]);
             });
         });
     });
@@ -350,10 +348,10 @@ describe("Costume handling", () => {
     const bad_switch_test_specs = [
         { tag: 'costume',
           message: 'switch-costume',
-          err_test: /could not find Costume "angry" in class "Alien"/ },
+          error_regexp: /could not find Costume "angry" in class "Alien"/ },
         { tag: 'backdrop',
           message: 'switch-backdrop',
-          err_test: /could not find Backdrop "plastic" in class "Table"/ },
+          error_regexp: /could not find Backdrop "plastic" in class "Table"/ },
     ];
 
     with_project("py/project/switch_to_bad_costume.py", (import_project) => {
@@ -364,8 +362,7 @@ describe("Costume handling", () => {
                 project.do_synthetic_broadcast(spec.message);
                 one_frame(project);
 
-                let err_str = pytch_errors.sole_error_string();
-                assert.ok(spec.err_test.test(err_str));
+                pytch_errors.assert_sole_error_matches(spec.error_regexp);
             })})});
 
     with_project("py/project/default_appearance.py", (import_project) => {
@@ -394,8 +391,7 @@ describe("Costume handling", () => {
             project.do_synthetic_broadcast("show-yourself");
             one_frame(project);
 
-            let err_str = pytch_errors.sole_error_string();
-            assert.ok(/cannot show .* no Costumes/.test(err_str));
+            pytch_errors.assert_sole_error_matches(/cannot show .* no Costumes/);
         })});
 
     with_project("py/project/stage_without_backdrops.py", (import_project) => {

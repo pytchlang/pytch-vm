@@ -103,7 +103,6 @@ describe("error handling", () => {
         project.do_synthetic_broadcast("run");
         one_frame(project);
 
-        let err_str = pytch_errors.sole_error_string();
-        assert.match(err_str, /non-Pytch suspension/);
+        pytch_errors.assert_sole_error_matches(/non-Pytch suspension/);
     });
 });

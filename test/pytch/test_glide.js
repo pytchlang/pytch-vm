@@ -78,22 +78,22 @@ describe("Behaviour of glide-to method", () => {
         {
             label: "x-coord-string",
             fragment: "'foo', 0, 1.0",
-            err_match: /destination.*must be numbers/,
+            error_regexp: /destination.*must be numbers/,
         },
         {
             label: "y-coord-string",
             fragment: "0, 'foo', 1.0",
-            err_match: /destination.*must be numbers/,
+            error_regexp: /destination.*must be numbers/,
         },
         {
             label: "seconds-lambda",
             fragment: "0, 0, (lambda x: 42)",
-            err_match: /seconds.*must be a number/,
+            error_regexp: /seconds.*must be a number/,
         },
         {
             label: "seconds-negative",
             fragment: "0, 0, -42",
-            err_match: /seconds.*cannot be negative/,
+            error_regexp: /seconds.*cannot be negative/,
         },
     ].forEach(spec => {
         it(`handles bad input (${spec.label})`, async () => {
@@ -111,8 +111,7 @@ describe("Behaviour of glide-to method", () => {
             project.do_synthetic_broadcast("run");
             one_frame(project);
 
-            const err_str = pytch_errors.sole_error_string();
-            assert.match(err_str, spec.err_match);
+            pytch_errors.assert_sole_error_matches(spec.error_regexp);
         });
     });
 });
