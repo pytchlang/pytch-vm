@@ -224,12 +224,17 @@ const pytch_errors = (() => {
         regexps.forEach(re => assert.match(err_str, re));
     });
 
+    const assert_sole_error_matches = ((regexp) => {
+        assert_sole_error_matches_all([regexp]);
+    });
+
     return {
         append_error,
         drain_errors,
         sole_error,
         sole_error_string,
         assert_sole_error_matches_all,
+        assert_sole_error_matches,
     };
 })();
 
