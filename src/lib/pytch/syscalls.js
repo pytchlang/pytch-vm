@@ -143,6 +143,11 @@ var $builtinmodule = function (name) {
                 );
 
             let actor = py_class.$pytchActor;
+            if (actor == null)
+                throw new Sk.builtin.ValueError(
+                    "registered_instances(): class not registered with Pytch"
+                );
+
             let py_instances = actor.instances.map(instance => instance.py_object);
             return new Sk.builtin.list(py_instances);
         },
