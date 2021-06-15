@@ -159,8 +159,7 @@ describe("Ask and wait for answer", () => {
             project.do_synthetic_broadcast(spec.message);
             one_frame(project);
 
-            const err_str = pytch_errors.sole_error_string();
-            assert.match(err_str, /question must be a string/);
+            pytch_errors.assert_sole_error_matches(/question must be a string/);
         })
     );
 

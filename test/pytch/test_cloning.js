@@ -326,8 +326,7 @@ describe("cloning", () => {
         project.do_synthetic_broadcast("clone");
         one_frame(project);
 
-        const err_str = pytch_errors.sole_error_string();
-        assert.ok(/can only clone a Pytch-registered/.test(err_str));
+        pytch_errors.assert_sole_error_matches(/can only clone a Pytch-registered/);
     });
 
     it("handles failure of the_original()", async () => {
@@ -350,8 +349,7 @@ describe("cloning", () => {
         project.do_synthetic_broadcast("clone");
         one_frame(project);
 
-        const err_str = pytch_errors.sole_error_string();
-        assert.ok(/the_original.*failed/.test(err_str));
+        pytch_errors.assert_sole_error_matches(/the_original.*failed/);
     });
 
     it("puts clone just behind parent", async () => {

@@ -111,8 +111,7 @@ describe("Behaviour of glide-to method", () => {
             project.do_synthetic_broadcast("run");
             one_frame(project);
 
-            const err_str = pytch_errors.sole_error_string();
-            assert.match(err_str, spec.err_match);
+            pytch_errors.assert_sole_error_matches(spec.err_match);
         });
     });
 });

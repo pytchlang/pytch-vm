@@ -143,8 +143,7 @@ describe("Costume handling", () => {
                    project.do_synthetic_broadcast("cause-trouble");
                    one_frame(project);
 
-                   const err_str = pytch_errors.sole_error_string();
-                   assert.match(err_str, spec.regex);
+                   pytch_errors.assert_sole_error_matches(spec.regex);
                });
         });
     });
@@ -205,8 +204,7 @@ describe("Costume handling", () => {
                        const stdout = pytch_stdout.drain_stdout();
                        assert.equal(stdout, `${spec.exp_number}\n`);
                    } else {
-                       const err_str = pytch_errors.sole_error_string();
-                       assert.match(err_str, spec.error_regex);
+                       pytch_errors.assert_sole_error_matches(spec.error_regex);
                    }
                });
         });
@@ -225,8 +223,7 @@ describe("Costume handling", () => {
 
         project.do_synthetic_broadcast("try-next");
         one_frame(project);
-        const err_str = pytch_errors.sole_error_string();
-        assert.match(err_str, /has no Costumes/);
+        pytch_errors.assert_sole_error_matches(/has no Costumes/);
     });
 
     with_module("py/project/bad_costume.py", (import_module) => {
@@ -340,9 +337,10 @@ describe("Costume handling", () => {
 
                 project.rendering_instructions();
 
-                const err_str = pytch_errors.sole_error_string();
-                assert.match(err_str, /appearance-index must be/);
-                assert.match(err_str, spec.regex);
+                pytch_errors.assert_sole_error_matches_all([
+                    /appearance-index must be/,
+                    spec.regex
+                ]);
             });
         });
     });
@@ -364,8 +362,7 @@ describe("Costume handling", () => {
                 project.do_synthetic_broadcast(spec.message);
                 one_frame(project);
 
-                let err_str = pytch_errors.sole_error_string();
-                assert.ok(spec.err_test.test(err_str));
+                pytch_errors.assert_sole_error_matches(spec.err_test);
             })})});
 
     with_project("py/project/default_appearance.py", (import_project) => {
@@ -394,8 +391,7 @@ describe("Costume handling", () => {
             project.do_synthetic_broadcast("show-yourself");
             one_frame(project);
 
-            let err_str = pytch_errors.sole_error_string();
-            assert.ok(/cannot show .* no Costumes/.test(err_str));
+            pytch_errors.assert_sole_error_matches(/cannot show .* no Costumes/);
         })});
 
     with_project("py/project/stage_without_backdrops.py", (import_project) => {
