@@ -83,10 +83,18 @@ describe("misuse of instance-discovery API", () => {
                 @pytch.when_I_receive("non-class")
                 def bad_call_non_class(self):
                     registered_instances(42)
+
+                @pytch.when_I_receive("non-Pytch-class")
+                def bad_call_non_Pytch_class(self):
+                    pytch.Sprite.all_instances()
         `);
 
         project.do_synthetic_broadcast("non-class");
         one_frame(project);
         pytch_errors.assert_sole_error_matches(/must be called with class/);
+
+        project.do_synthetic_broadcast("non-Pytch-class");
+        one_frame(project);
+        pytch_errors.assert_sole_error_matches(/class not registered/);
     });
 });
