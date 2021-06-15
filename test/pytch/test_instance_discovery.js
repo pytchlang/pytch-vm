@@ -6,6 +6,8 @@ const {
     assert,
     many_frames,
     one_frame,
+    import_deindented,
+    pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -67,5 +69,24 @@ describe("instance discovery", () => {
             let project = await prepare_project();
             assert_result(project, 'get-stage', 42);
         });
+    });
+});
+
+describe("misuse of instance-discovery API", () => {
+    it("gives helpful error for non-Pytch-class", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            from pytch.syscalls import registered_instances
+
+            class Mistake(pytch.Sprite):
+                @pytch.when_I_receive("non-class")
+                def bad_call_non_class(self):
+                    registered_instances(42)
+        `);
+
+        project.do_synthetic_broadcast("non-class");
+        one_frame(project);
+        pytch_errors.assert_sole_error_matches(/must be called with class/);
     });
 });
