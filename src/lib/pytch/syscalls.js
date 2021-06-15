@@ -137,6 +137,11 @@ var $builtinmodule = function (name) {
 
     mod.registered_instances = skulpt_function(
         (py_class) => {
+            if (!Sk.builtin.checkClass(py_class))
+                throw new Sk.builtin.TypeError(
+                    "registered_instances(): must be called with class"
+                );
+
             let actor = py_class.$pytchActor;
             let py_instances = actor.instances.map(instance => instance.py_object);
             return new Sk.builtin.list(py_instances);
