@@ -260,22 +260,22 @@ class Sprite(Actor):
         "() Remove SELF from the project"
         self._pytch_parent_project.unregister_actor_instance(self)
 
-    def move_to_front_layer(self):
+    def go_to_front_layer(self):
         "() Move SELF to the front drawing layer"
         (self._pytch_parent_project
          .move_within_draw_layer_group(self, "absolute", -1))
 
-    def move_to_back_layer(self):
+    def go_to_back_layer(self):
         "() Move SELF to the back drawing layer"
         (self._pytch_parent_project
          .move_within_draw_layer_group(self, "absolute", 0))
 
-    def move_forward_layers(self, n_layers):
+    def go_forward_layers(self, n_layers):
         "(N) Move SELF forwards N drawing layers"
         (self._pytch_parent_project
          .move_within_draw_layer_group(self, "relative", n_layers))
 
-    def move_backward_layers(self, n_layers):
+    def go_backward_layers(self, n_layers):
         "(N) Move SELF backwards N drawing layers"
         (self._pytch_parent_project
          .move_within_draw_layer_group(self, "relative", -n_layers))
