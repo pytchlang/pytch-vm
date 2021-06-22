@@ -27,9 +27,9 @@ describe("Ask and wait for answer", () => {
             class Interviewer(pytch.Sprite):
                 @pytch.when_I_receive("ask")
                 def ask_name_and_age(self):
-                    name = pytch.ask_and_wait_for_answer("name?")
+                    name = pytch.ask_and_wait("name?")
                     print(f"Hello {name}!")
-                    age = pytch.ask_and_wait_for_answer("age?")
+                    age = pytch.ask_and_wait("age?")
                     print(f"Ha ha {age} is very old!")
         `);
 
@@ -86,14 +86,14 @@ describe("Ask and wait for answer", () => {
                 Costumes = []  # Invisible, so prompt is in question itself
                 @pytch.when_I_receive("banana-ask")
                 def ask_name(self):
-                    name = self.ask_and_wait_for_answer("name?")
+                    name = self.ask_and_wait("name?")
                     print(f"Hello {name}!")
 
             class Pear(pytch.Sprite):
                 Costumes = []
                 @pytch.when_I_receive("pear-ask")
                 def ask_age(self):
-                    age = self.ask_and_wait_for_answer("age?")
+                    age = self.ask_and_wait("age?")
                     print(f"You are {age}")
         `);
 
@@ -143,17 +143,17 @@ describe("Ask and wait for answer", () => {
                 class Banana(pytch.Sprite):
                     @pytch.when_I_receive("banana-ask")
                     def ask_name(self):
-                        self.ask_and_wait_for_answer(3.14)
+                        self.ask_and_wait(3.14)
 
                 class Pear(pytch.Sprite):
                     @pytch.when_I_receive("pear-ask")
                     def ask_name(self):
-                        pytch.ask_and_wait_for_answer(99)
+                        pytch.ask_and_wait(99)
 
                 class FruitBowl(pytch.Stage):
                     @pytch.when_I_receive("bowl-ask")
                     def ask_name(self):
-                        self.ask_and_wait_for_answer(lambda x: 42)
+                        self.ask_and_wait(lambda x: 42)
             `);
 
             project.do_synthetic_broadcast(spec.message);
@@ -174,12 +174,12 @@ describe("Ask and wait for answer", () => {
                 @pytch.when_I_receive("ask-hidden")
                 def ask_hidden(self):
                     self.hide()
-                    self.ask_and_wait_for_answer("name?")
+                    self.ask_and_wait("name?")
 
                 @pytch.when_I_receive("ask-shown")
                 def ask_shown(self):
                     self.show()
-                    self.ask_and_wait_for_answer("age?")
+                    self.ask_and_wait("age?")
         `);
 
         const assert_speech = new SpeechAssertions(
@@ -218,7 +218,7 @@ describe("Ask and wait for answer", () => {
             class Interviewer(pytch.Sprite):
                 @pytch.when_I_receive("ask")
                 def ask_name(self):
-                    name = pytch.ask_and_wait_for_answer("name?")
+                    name = pytch.ask_and_wait("name?")
         `);
 
         project.do_synthetic_broadcast("ask");

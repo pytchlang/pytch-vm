@@ -2,7 +2,7 @@ from pytch.syscalls import (
     play_sound,
     registered_instances,
     wait_seconds,
-    ask_and_wait_for_answer,
+    ask_and_wait,
 )
 
 from pytch.project import FRAMES_PER_SECOND
@@ -295,19 +295,19 @@ class Sprite(Actor):
         if (self._speech is not None) and (self._speech[0] == speech_id):
             self.say_nothing()
 
-    def ask_and_wait_for_answer(self, prompt):
+    def ask_and_wait(self, prompt):
         "(QUESTION) Ask question; wait for and return user's answer"
         if not isinstance(prompt, str):
             raise ValueError("the question must be a string")
         if self._shown:
             self.say(prompt)
-            answer = ask_and_wait_for_answer(None)
+            answer = ask_and_wait(None)
             # Scratch clears speech even if the prompt isn't the live
             # speech bubble; do likewise.
             self.say_nothing()
             return answer
         else:
-            return ask_and_wait_for_answer(prompt)
+            return ask_and_wait(prompt)
 
 
 class Stage(Actor):
@@ -353,8 +353,8 @@ class Stage(Actor):
         "The name of the backdrop SELF is currently showing"
         return self.appearance_name
 
-    def ask_and_wait_for_answer(self, prompt):
+    def ask_and_wait(self, prompt):
         "(QUESTION) Ask question; wait for and return user's answer"
         if not isinstance(prompt, str):
             raise ValueError("the question must be a string")
-        return ask_and_wait_for_answer(prompt)
+        return ask_and_wait(prompt)

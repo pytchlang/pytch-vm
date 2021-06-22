@@ -41,7 +41,7 @@ from .syscalls import (
     stop_all_sounds,
     wait_seconds,
     key_pressed,
-    ask_and_wait_for_answer,
+    ask_and_wait,
 )
 
 from ._completions_info import (
