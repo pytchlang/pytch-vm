@@ -5,7 +5,7 @@ from pytch import (
     when_green_flag_clicked,
     when_I_receive,
     when_key_pressed,
-    key_is_pressed,
+    key_pressed,
 )
 
 
@@ -33,7 +33,7 @@ class Ball(Sprite):
 
     @when_I_receive('check-keys')
     def check_keys(self):
-        self.keys_pressed = ''.join(kn for kn in 'abc' if key_is_pressed(kn))
+        self.keys_pressed = ''.join(kn for kn in 'abc' if key_pressed(kn))
 
 
 # --cut-here-for-auto-config--

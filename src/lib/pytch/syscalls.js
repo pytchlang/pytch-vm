@@ -154,7 +154,7 @@ var $builtinmodule = function (name) {
         `Return a list of all instances of the given class`,
     );
 
-    mod.key_is_pressed = skulpt_function(
+    mod.key_pressed = skulpt_function(
         (py_keyname) => {
             let js_keyname = Sk.ffi.remapToJs(py_keyname);
             return (Sk.pytch.keyboard.key_is_pressed(js_keyname)

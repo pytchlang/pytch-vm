@@ -40,7 +40,7 @@ from .syscalls import (
     play_sound,
     stop_all_sounds,
     wait_seconds,
-    key_is_pressed,
+    key_pressed,
     ask_and_wait_for_answer,
 )
 
