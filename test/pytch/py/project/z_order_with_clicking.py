@@ -18,7 +18,7 @@ class Ship(pytch.Sprite):
     def go_to_front(self):
         self.go_to_xy(0, 0)
         self.show()
-        self.move_to_front_layer()
+        self.go_to_front_layer()
 
     @pytch.when_I_receive("ship-hide")
     def _hide(self):
@@ -37,7 +37,7 @@ class Ball(pytch.Sprite):
     def go_to_front(self):
         self.go_to_xy(0, 0)
         self.show()
-        self.move_to_front_layer()
+        self.go_to_front_layer()
 
     @pytch.when_I_receive("ball-hide")
     def _hide(self):

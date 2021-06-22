@@ -171,14 +171,14 @@ Controlling the order Sprites are drawn
   on until the front layer is reached. By moving sprites between layers
   you can control which Sprites appear on top.
 
-  .. function:: self.move_to_front_layer()
-                self.move_to_back_layer()
+  .. function:: self.go_to_front_layer()
+                self.go_to_back_layer()
 
   These methods move a sprite to the very front or the very back of the
   layers.
 
-  .. function:: self.move_forward_layers(n)
-                self.move_backward_layers(n)
+  .. function:: self.go_forward_layers(n)
+                self.go_backward_layers(n)
 
   These methods move a sprite a certain number of layers forward or
   backward.
