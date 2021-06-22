@@ -17,7 +17,7 @@ configure_mocha();
 describe("Docstrings", () => {
     [
         { objName: "pytch.wait_seconds", expRegex: /number of seconds/ },
-        { objName: "pytch.Sprite.get_x", expRegex: /x-coord.*stage/ },
+        { objName: "pytch.Sprite.x_position", expRegex: /x-coord.*stage/ },
         { objName: "pytch.Stage.switch_backdrop", expRegex: /Switch .* BACKDROP/ },
         { objName: "pytch.Sprite.all_clones", expRegex: /all clones of/ },
     ].forEach(spec =>

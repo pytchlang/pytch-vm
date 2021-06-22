@@ -164,8 +164,9 @@ class Sprite(Actor):
         self._x = x
         self._y = y
 
-    def get_x(self):
-        "() Return SELF's x-coordinate on the stage"
+    @property
+    def x_position(self):
+        "SELF's x-coordinate on the stage"
         return self._x
 
     def set_x(self, x):
@@ -176,8 +177,9 @@ class Sprite(Actor):
         "(DX) Move SELF right DX on the stage (left if negative)"
         self._x += dx
 
-    def get_y(self):
-        "() Return SELF's y-coordinate on the stage"
+    @property
+    def y_position(self):
+        "SELF's y-coordinate on the stage"
         return self._y
 
     def set_y(self, y):
