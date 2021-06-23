@@ -122,10 +122,11 @@ Changing the sprite appearance
   .. function:: self.switch_costume(name)
 
   Select one of the costumes listed in this Sprite's *Costumes*
-  variable. The name can be either the complete filename, the filename
-  without the extension, or a custom label (as described in
-  :ref:`assets<costume_label_specifications>`). For example, you might
-  use ``self.switch_costume("smiling-kitten")`` to choose a new costume.
+  variable. The name is the costume's *label*, which is usually the
+  filename without the extension (see
+  :doc:`costume-specs` for full details). For
+  example, you might use ``self.switch_costume("smiling-kitten")`` to
+  choose a new costume.
 
   .. function:: self.switch_costume(costume_number)
      :noindex:
