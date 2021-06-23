@@ -65,3 +65,32 @@ will be 0; if it's currently showing its second backdrop,
 .. attribute:: self.backdrop_name
 
 The name of the currently-shown backdrop.
+
+
+Asking the user a question
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Pytch has a method matching Scratch's *ask and wait* block.  In
+Scratch, you can find what the user typed using the *answer* reporter
+block.  In Pytch, the user's answer is *returned* to your program from
+the ``ask_and_wait()`` method.
+
+.. function:: self.ask_and_wait(question)
+
+   Pop up an input box asking the *question*, and wait for the user to
+   type in their answer.  Your method is paused while the user is typing
+   their answer, and will continue once the user submits their answer.
+   The answer is returned, so you will usually assign it to a variable.
+   For example, this code assigns the user's answer to a variable
+   ``name`` and then prints out a greeting:
+
+   .. code:: python
+
+      class NightSky(pytch.Stage):
+          # [ ... Backdrops, Sounds, other methods, etc. ... ]
+          @pytch.when_stage_clicked
+          def ask_user_their_name(self):
+              name = self.ask_and_wait("What's your name?")
+              print(f"Hello, {name}!")
+
+   The greeting will appear in the "Output" tab of the Pytch IDE.
