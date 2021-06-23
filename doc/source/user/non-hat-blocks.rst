@@ -15,8 +15,8 @@ uses *methods* of the Sprite class.  These are discussed in
 :doc:`their own help page<sprite>`.
 
 
-Methods on a Stage
-------------------
+Methods on the Stage
+--------------------
 
 Some Scratch blocks are special to the Stage.  For these blocks, Pytch
 uses *methods* of the Stage class.  These are discussed in their own
