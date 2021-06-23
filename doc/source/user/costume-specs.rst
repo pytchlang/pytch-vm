@@ -57,8 +57,6 @@ the 'y' coordinate goes down, rather than the usual 'positive is up'
 convention for the stage.  This is to follow the usual convention for
 computer images, which uses (0, 0) as the top-left corner.*
 
-.. _costume_label_specifications:
-
 Specifying the label of the costume
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
