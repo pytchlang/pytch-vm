@@ -28,8 +28,8 @@ must refer to a Sound you have defined — see :doc:`sound-specs`.
 .. function:: self.switch_backdrop(backdrop_name)
 
 Make the Stage change its backdrop to the one with the given
-``backdrop_name``.  This must be the name of a Backdrop defined by the
-class's ``Backdrops`` variable — see :doc:`backdrop-specs`.
+``backdrop_name``.  This must be the *label* of a Backdrop defined by
+the class's ``Backdrops`` variable — see :doc:`backdrop-specs`.
 
 .. function:: self.switch_backdrop(backdrop_number)
    :noindex:
