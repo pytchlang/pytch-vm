@@ -239,24 +239,23 @@ you do not use ``()`` after them.
 Making sounds
 ~~~~~~~~~~~~~
 
-Sounds have to be loaded into the Sprite when it is created (see the
-:ref:`assets<sound_specifications>` document). Once a sound has been
-loaded you can get the sprite to play it.
+Sounds have to be loaded into the Sprite when it is created (see
+:doc:`sound-specs`). Once a sound has been loaded you can get the
+sprite to play it.
 
 .. function:: self.start_sound(sound_name)
 
-Start a sound playing. You can refer to the sound using the file name
-from the ``Sounds`` variable in the sprite, or using a label (see the
-:ref:`assets<sound_specifications>` document). Once the sound has
-started the Sprite will move on to its next instruction.
+Start a sound playing. You refer to the sound using its *label*, which
+is usually the filename without the extension (see :doc:`sound-specs`
+for full details). Once the sound has started the Sprite will move on
+to its next instruction.
 
 .. function:: self.play_sound_until_done(sound_name)
 
-Start a sound playing. You can refer to the sound using the file name
-from the ``Sounds`` variable in the sprite, or using a label (see the
-:ref:`assets<sound_specifications>` document). This method will not
-return until the entire sound has played, so the script it is contained
-in won't do its next instruction until then.
+Start a sound playing. You can refer to the sound using its *label*,
+as for ``start_sound()``. This method will not return until the entire
+sound has played, so the script it is contained in won't do its next
+instruction until then.
 
 
 Making and deleting copies of a Sprite
