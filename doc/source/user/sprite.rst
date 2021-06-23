@@ -381,3 +381,34 @@ remove it. The whole script will wait while the balloon is being shown.
 If a second script calls ``say_for_seconds()`` while a first script is
 already in the middle of ``say_for_seconds()``, the second script's
 speech replaces the first script's speech.
+
+
+Asking the user a question
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Pytch has a method matching Scratch's *ask and wait* block.  In
+Scratch, you can find what the user typed using the *answer* reporter
+block.  In Pytch, the user's answer is *returned* to your program from
+the ``ask_and_wait()`` method.
+
+.. function:: self.ask_and_wait(question)
+
+   Ask the *question*, and pop up an input box where the user can type
+   their answer.  If the Sprite is currently shown, the question is
+   asked with a speech bubble.  If the Sprite is hidden, the question is
+   asked as part of the input box.
+
+   Your method is paused while the user is typing their answer, and will
+   continue once the user submits their answer.  The answer is returned,
+   so you will usually assign it to a variable.  For example, this code
+   assigns the user's answer to a variable ``name`` and then greets the
+   user:
+
+   .. code:: python
+
+      class Banana(pytch.Sprite):
+          # [ ... Costumes, Sounds, other methods, etc. ... ]
+          @pytch.when_this_sprite_clicked
+          def ask_user_their_name(self):
+              name = self.ask_and_wait("What's your name?")
+              self.say(f"Hello, {name}!")
