@@ -177,12 +177,21 @@ describe("Attribute watchers", () => {
             attr_name: "score",
             error_regexp: /no attribute 'score'/,
         },
+        {
+            label: "property div-zero",
+            attr_name: "health",
+            error_regexp: /division or modulo by zero/,
+        },
     ].forEach(spec =>
         it(`gives useful error if getattr fails (${spec.label})`, async () => {
             const project = await import_deindented(`
 
                 import pytch
                 class Banana(pytch.Sprite):
+                    @property
+                    def health(self):
+                        return 1 / 0
+
                     @pytch.when_I_receive("watch")
                     def show_bad_attribute(self):
                         pytch.show_variable(self, "${spec.attr_name}")
