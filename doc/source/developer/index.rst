@@ -25,3 +25,4 @@ extension to Skulpt.
    sounds
    tutorials
    docstrings
+   attribute-watchers
