@@ -182,6 +182,11 @@ describe("Attribute watchers", () => {
             attr_name: "health",
             error_regexp: /division or modulo by zero/,
         },
+        {
+            label: "property infinite-recursion",
+            attr_name: "turtles",
+            error_regexp: /call stack size exceeded/,
+        },
     ].forEach(spec =>
         it(`gives useful error if getattr fails (${spec.label})`, async () => {
             const project = await import_deindented(`
@@ -191,6 +196,10 @@ describe("Attribute watchers", () => {
                     @property
                     def health(self):
                         return 1 / 0
+
+                    @property
+                    def turtles(self):
+                        return self.turtles
 
                     @pytch.when_I_receive("watch")
                     def show_bad_attribute(self):
