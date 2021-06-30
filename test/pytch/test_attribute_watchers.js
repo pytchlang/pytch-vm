@@ -35,19 +35,17 @@ describe("Attribute watchers", () => {
         project.do_synthetic_broadcast("watch-score");
         one_frame(project);
 
-        assert_renders_as(
-            "post-watch", project,
-            [["RenderAttributeWatcher", "score", "42", 176, null, null, -236]]
-        );
+        const score_render_instrn = [
+            "RenderAttributeWatcher", "score", "42", 176, null, null, -236
+        ];
+
+        assert_renders_as("post-watch", project, [score_render_instrn]);
 
         // Re-watching should make no difference.
 
         project.do_synthetic_broadcast("watch-score");
         one_frame(project);
 
-        assert_renders_as(
-            "post-second-watch", project,
-            [["RenderAttributeWatcher", "score", "42", 176, null, null, -236]]
-        );
+        assert_renders_as("post-second-watch", project, [score_render_instrn]);
     });
 });
