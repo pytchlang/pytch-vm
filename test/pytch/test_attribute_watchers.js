@@ -6,6 +6,7 @@ const {
     one_frame,
     many_frames,
     assert_renders_as,
+    pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -95,4 +96,25 @@ describe("Attribute watchers", () => {
 
         assert_renders_as("post-unwatch-health", project, []);
     });
+
+    [
+        // TODO: spec objects
+    ].forEach(spec =>
+        it(`rejects bad calls to _show_object_attribute (${spec.label})`, async () => {
+            const project = await import_deindented(`
+
+                import pytch
+                from pytch.syscalls import _show_object_attribute
+
+                class Banana(pytch.Sprite):
+                    @pytch.when_I_receive("show-attr")
+                    def show_score(self):
+                        _show_object_attribute(self, ${spec.args_tail})
+            `);
+
+            project.do_synthetic_broadcast("show-attr");
+            one_frame(project);
+
+            pytch_errors.assert_sole_error_matches(spec.error_regexp);
+        }));
 });
