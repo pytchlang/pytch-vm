@@ -257,6 +257,26 @@ describe("Attribute watchers", () => {
             assert.strictEqual(err.ctx.owner_name, "Banana");
         }));
 
+    it("gives useful error for global variable", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            class Banana(pytch.Sprite):
+                @pytch.when_I_receive("watch-score")
+                def show_score(self):
+                    pytch.show_variable(None, "score")
+        `);
+
+        project.do_synthetic_broadcast("watch-score");
+        one_frame(project);
+
+        const err = pytch_errors.sole_error();
+        assert.match(err.err.toString(), /has no attribute/);
+        assert.strictEqual(err.ctx.kind, "attribute-watcher");
+        assert.strictEqual(err.ctx.attribute_name, "score");
+        assert.strictEqual(err.ctx.owner_kind, "global");
+    })
+
     it(`reports best-effort error if getattr fails on non-Actor`, async () => {
         const project = await import_deindented(`
 
