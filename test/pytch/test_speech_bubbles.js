@@ -114,7 +114,7 @@ describe("Speech bubbles", () => {
             // check output.
             many_frames(project, 60);
             assert.strictEqual(pytch_stdout.drain_stdout(), "/mumble\n");
-        })
+        });
     });
 
     it("clears speech bubbles on red-stop", async () => {
