@@ -1828,6 +1828,26 @@ var $builtinmodule = function (name) {
                 w => (w.py_object === py_object
                       && w.attribute_name === attribute_name));
         }
+
+        show_object_attribute(py_object, py_attribute_name, label, position) {
+            const watcher = new ObjectAttributeWatcher(
+                py_object,
+                py_attribute_name,
+                label,
+                position
+            );
+
+            const existing_index = this.maybe_watcher_index(
+                watcher.py_object,
+                watcher.attribute_name
+            );
+
+            if (existing_index >= 0) {
+                this.object_attribute_watchers[existing_index] = watcher;
+            } else {
+                this.object_attribute_watchers.push(watcher);
+            }
+        }
     }
 
 
