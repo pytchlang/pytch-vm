@@ -190,5 +190,15 @@ var $builtinmodule = function (name) {
         `Add a watcher for an object attribute`,
     );
 
+    mod._hide_object_attribute = skulpt_function(
+        (py_object, py_attribute_name) => {
+            return new_pytch_suspension(
+                "hide-object-attribute",
+                { py_object, py_attribute_name },
+            );
+        },
+        `Remove a watcher for an object attribute`,
+    );
+
     return mod;
 };
