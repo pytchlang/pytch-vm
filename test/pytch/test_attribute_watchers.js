@@ -98,6 +98,44 @@ describe("Attribute watchers", () => {
         assert_renders_as("post-unwatch-health", project, []);
     });
 
+    it("can render a global variable", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            score = 42
+
+            class Banana(pytch.Sprite):
+                start_shown = False
+
+                @pytch.when_I_receive("watch-score")
+                def show_score(self):
+                    pytch.show_variable(None, "score")
+
+                @pytch.when_I_receive("unwatch-score")
+                def hide_score(self):
+                    pytch.hide_variable(None, "score")
+        `);
+
+        const score_render_instrn = [
+            "RenderAttributeWatcher", "score", "42", 176, null, null, -236
+        ];
+
+        project.do_synthetic_broadcast("watch-score");
+        one_frame(project);
+        assert_renders_as("post-watch", project, [score_render_instrn]);
+
+        // Re-watching should make no difference.
+        project.do_synthetic_broadcast("watch-score");
+        one_frame(project);
+        assert_renders_as("post-second-watch", project, [score_render_instrn]);
+
+        // Hide first instance-variable watcher.
+        project.do_synthetic_broadcast("unwatch-score");
+        one_frame(project);
+        assert_renders_as("post-unwatch-health", project, []);
+    });
+
     [
         {
             label: "non-string attr-name",
