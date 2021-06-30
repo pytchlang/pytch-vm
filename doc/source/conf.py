@@ -17,9 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'Pytch VM/IDE'
-copyright = '2020, Ben North'
-author = 'Ben North'
+project = 'Pytch VM'
+copyright = '2020–2021; Ben North and Trinity College Dublin'
+author = 'Ben North and Trinity College Dublin'
 
 
 # -- General configuration ---------------------------------------------------
