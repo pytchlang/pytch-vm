@@ -7,6 +7,7 @@ const {
     many_frames,
     assert_renders_as,
     pytch_errors,
+    assert,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -169,4 +170,28 @@ describe("Attribute watchers", () => {
 
         pytch_errors.assert_sole_error_matches(/attribute name must be string/);
     });
+
+    [
+        // TODO: Specs
+    ].forEach(spec =>
+        it(`gives useful error if getattr fails (${spec.label})`, async () => {
+            const project = await import_deindented(`
+
+                import pytch
+                class Banana(pytch.Sprite):
+                    @pytch.when_I_receive("watch")
+                    def show_bad_attribute(self):
+                        pytch.show_variable(self, "${spec.attr_name}")
+            `);
+
+            project.do_synthetic_broadcast("watch");
+
+            // Finding rendering instructions should throw error:
+            one_frame(project);
+
+            const err = pytch_errors.sole_error();
+            assert.match(err.err.toString(), spec.error_regexp);
+            assert.strictEqual(err.ctx.kind, "attribute-watcher");
+            assert.strictEqual(err.ctx.attribute_name, spec.attr_name);
+        }));
 });
