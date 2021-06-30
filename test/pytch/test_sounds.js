@@ -183,12 +183,12 @@ describe("bad sounds", () => {
         {
             label: "unknown string",
             fragment: '"violin"',
-            err_regexp: /could not find sound/,
+            error_regexp: /could not find sound/,
         },
         {
             label: "lambda",
             fragment: "lambda x: 42",
-            err_regexp: /must be given a string/,
+            error_regexp: /must be given a string/,
         },
     ].forEach(spec =>
         it(`rejects unknown sound (${spec.label})`, async () => {
@@ -222,7 +222,7 @@ describe("bad sounds", () => {
             const err = pytch_errors.sole_error();
 
             const err_str = err.err.toString();
-            assert.ok(spec.err_regexp.test(err_str));
+            assert.match(err_str, spec.error_regexp);
 
             // Traceback should have:
             //     Actor.play_sound_until_done()
