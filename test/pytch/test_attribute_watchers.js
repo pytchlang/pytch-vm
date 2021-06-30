@@ -39,5 +39,15 @@ describe("Attribute watchers", () => {
             "post-watch", project,
             [["RenderAttributeWatcher", "score", "42", 176, null, null, -236]]
         );
+
+        // Re-watching should make no difference.
+
+        project.do_synthetic_broadcast("watch-score");
+        one_frame(project);
+
+        assert_renders_as(
+            "post-second-watch", project,
+            [["RenderAttributeWatcher", "score", "42", 176, null, null, -236]]
+        );
     });
 });
