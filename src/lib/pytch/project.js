@@ -1492,6 +1492,21 @@ var $builtinmodule = function (name) {
             const str_value = py_str_value.v;
             return new RenderAttributeWatcher(this.label, str_value, this.position);
         }
+
+        partial_error_context() {
+            const maybe_actor_instance = this.py_object.$pytchActorInstance;
+            if (maybe_actor_instance != null) {
+                const actor = maybe_actor_instance.actor;
+                return {
+                    owner_kind: actor.class_kind_name,
+                    owner_name: actor.class_name,
+                };
+            } else {
+                return {
+                    owner_kind: "unknown",
+                };
+            }
+        }
     }
 
 
