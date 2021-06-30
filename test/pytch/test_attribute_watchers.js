@@ -98,7 +98,41 @@ describe("Attribute watchers", () => {
     });
 
     [
-        // TODO: spec objects
+        {
+            label: "non-string attr-name",
+            args_tail: "3.14",
+            error_regexp: /attribute name must be string/,
+        },
+        {
+            label: "non-string label",
+            args_tail: `"foo", 3.14`,
+            error_regexp: /label must be string/,
+        },
+        {
+            label: "non-tuple position",
+            args_tail: `"foo", "FOO:", []`,
+            error_regexp: /position must be tuple/,
+        },
+        {
+            label: "wrong-length position",
+            args_tail: `"foo", "FOO:", (1, 2, 3)`,
+            error_regexp: /position must have 4/,
+        },
+        {
+            label: "non-number/null position",
+            args_tail: `"foo", "FOO:", (1, 2, 3, "hello")`,
+            error_regexp: /elements .* must be number or null/,
+        },
+        {
+            label: "both left and right given",
+            args_tail: `"foo", "FOO:", (None, 2, None, 3.14)`,
+            error_regexp: /"left" and "right"/,
+        },
+        {
+            label: "both top and bottom given",
+            args_tail: `"foo", "FOO:", (42, None, 2, None)`,
+            error_regexp: /"top" and "bottom"/,
+        },
     ].forEach(spec =>
         it(`rejects bad calls to _show_object_attribute (${spec.label})`, async () => {
             const project = await import_deindented(`
