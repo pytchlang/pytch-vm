@@ -15,14 +15,12 @@ uses *methods* of the Sprite class.  These are discussed in
 :doc:`their own help page<sprite>`.
 
 
-Methods on a Stage
-------------------
+Methods on the Stage
+--------------------
 
 Some Scratch blocks are special to the Stage.  For these blocks, Pytch
-uses *methods* of the Stage class.  These are discussed in their own
-help page.
-
-TODO: Write that page and xref to it.
+uses *methods* of the Stage class.  These are discussed in :doc:`their own
+help page<stage>`.
 
 
 Functions in the pytch module
@@ -30,6 +28,4 @@ Functions in the pytch module
 
 Some Scratch blocks affect the whole project, for example *wait for 3
 seconds*.  For these blocks, Pytch uses *functions* in the ``pytch``
-module.  These are discussed in their own help page.
-
-TODO: Write that page and xref to it.
+module.  These are discussed in :doc:`their own help page<pytch-module-functions>`.
