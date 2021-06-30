@@ -218,4 +218,23 @@ describe("Attribute watchers", () => {
             assert.strictEqual(err.ctx.owner_kind, "Sprite");
             assert.strictEqual(err.ctx.owner_name, "Banana");
         }));
+
+    it(`reports best-effort error if getattr fails on non-Actor`, async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            class Banana(pytch.Sprite):
+                @pytch.when_I_receive("watch")
+                def show_bad_attribute(self):
+                    # String objects have no "height"
+                    pytch.show_variable("some-string", "height")
+        `);
+
+        project.do_synthetic_broadcast("watch");
+        one_frame(project);
+
+        const err = pytch_errors.sole_error();
+        assert.strictEqual(err.ctx.kind, "attribute-watcher");
+        assert.strictEqual(err.ctx.owner_kind, "unknown");
+    })
 });
