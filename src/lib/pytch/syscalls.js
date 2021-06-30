@@ -177,5 +177,18 @@ var $builtinmodule = function (name) {
         `(QUESTION) Ask question; wait for and return user's answer`,
     );
 
+    mod._show_object_attribute = skulpt_function(
+        (py_object, py_attribute_name, py_label, py_position) => {
+            const label = Sk.ffi.remapToJs(py_label);
+            const position = Sk.ffi.remapToJs(py_position);
+
+            return new_pytch_suspension(
+                "show-object-attribute",
+                { py_object, py_attribute_name, label, position },
+            );
+        },
+        `Add a watcher for an object attribute`,
+    );
+
     return mod;
 };
