@@ -284,10 +284,6 @@ class Sprite(Actor):
         "(TEXT) Give SELF a speech bubble saying TEXT"
         self._speech = (_new_speech_id(), "say", content)
 
-    def say_nothing(self):
-        "() Remove any speech bubble SELF has"
-        self._speech = None
-
     def say_for_seconds(self, content, seconds):
         "(TEXT, SECONDS) Give SELF speech bubble saying TEXT for SECONDS"
         self.say(content)
