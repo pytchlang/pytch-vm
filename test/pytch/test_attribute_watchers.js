@@ -225,11 +225,21 @@ describe("Attribute watchers", () => {
             attr_name: "turtles",
             error_regexp: /call stack size exceeded/,
         },
+        {
+            label: "str(value) gives error",
+            attr_name: "unprintable",
+            error_regexp: /'int' .* no attribute 'question'/,
+        },
     ].forEach(spec =>
         it(`gives useful error if getattr fails (${spec.label})`, async () => {
             const project = await import_deindented(`
 
                 import pytch
+
+                class Unprintable:
+                    def __str__(self):
+                        return (42).question
+
                 class Banana(pytch.Sprite):
                     @property
                     def health(self):
@@ -238,6 +248,10 @@ describe("Attribute watchers", () => {
                     @property
                     def turtles(self):
                         return self.turtles
+
+                    @property
+                    def unprintable(self):
+                        return Unprintable()
 
                     @pytch.when_I_receive("watch")
                     def show_bad_attribute(self):
