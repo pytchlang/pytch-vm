@@ -1501,6 +1501,10 @@ var $builtinmodule = function (name) {
                     owner_kind: actor.class_kind_name,
                     owner_name: actor.class_name,
                 };
+            } else if (this.py_object.$isPytchMainProgramModule) {
+                return {
+                    owner_kind: "global",
+                };
             } else {
                 return {
                     owner_kind: "unknown",
