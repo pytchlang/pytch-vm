@@ -224,6 +224,10 @@ var $builtinmodule = function (name) {
 
     mod._hide_object_attribute = skulpt_function(
         (py_object, py_attribute_name) => {
+            if (! Sk.builtin.checkString(py_attribute_name))
+                throw new Sk.builtin.TypeError(
+                    "_hide_object_attribute(): attribute name must be string");
+
             return new_pytch_suspension(
                 "hide-object-attribute",
                 { py_object, py_attribute_name },
