@@ -1462,6 +1462,16 @@ var $builtinmodule = function (name) {
             // received an answer from the VM's client.
             this.unanswered_questions = [];
 
+            // List of project's 'attribute watchers'.  Every frame, each
+            // attribute-watcher causes an attribute to be retrieved from an
+            // object, as specified by that watcher.  The object's attribute's
+            // value is then included in the project's rendering instructions,
+            // with the intent that it be shown in a similar way to a Scratch
+            // 'shown variable'.  Also in the rendering instruction is a label
+            // and stage position.
+            //
+            this.object_attribute_watchers = [];
+
             // List of 'layer groups'.  Each layer-group is a list.
             // The groups are drawn in order, so things in
             // lower-indexed layer-groups are hidden by things in
