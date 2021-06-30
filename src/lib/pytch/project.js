@@ -1819,6 +1819,15 @@ var $builtinmodule = function (name) {
                 return null;
             }
         }
+
+        /** Return the index into the OBJECT_ATTRIBUTE_WATCHERS array where an
+         * existing watcher for the given object and attribute_name can be found,
+         * or -1 if no such watcher exists. */
+        maybe_watcher_index(py_object, attribute_name) {
+            return this.object_attribute_watchers.findIndex(
+                w => (w.py_object === py_object
+                      && w.attribute_name === attribute_name));
+        }
     }
 
 
