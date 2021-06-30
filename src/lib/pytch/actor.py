@@ -294,7 +294,7 @@ class Sprite(Actor):
         wait_seconds(seconds)
         # Only erase utterance if it hasn't already been, and it's ours:
         if (self._speech is not None) and (self._speech[0] == speech_id):
-            self.say_nothing()
+            self.say("")
 
     def ask_and_wait(self, prompt):
         "(QUESTION) Ask question; wait for and return user's answer"
@@ -305,7 +305,7 @@ class Sprite(Actor):
             answer = ask_and_wait(None)
             # Scratch clears speech even if the prompt isn't the live
             # speech bubble; do likewise.
-            self.say_nothing()
+            self.say("")
             return answer
         else:
             return ask_and_wait(prompt)
