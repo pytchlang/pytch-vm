@@ -1793,9 +1793,7 @@ var $builtinmodule = function (name) {
                     const context = {
                         kind: "attribute-watcher",
                         attribute_name: watcher.attribute_name,
-                        // TODO: Include info as to instance (if sprite/stage) of what
-                        // kind/class; detect module-level attributes too; otherwise
-                        // say "some object"
+                        ...watcher.partial_error_context()
                     };
                     errors.push({err, context});
                 }
