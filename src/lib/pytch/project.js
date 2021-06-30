@@ -1440,7 +1440,12 @@ var $builtinmodule = function (name) {
     class ObjectAttributeWatcher {
         constructor(py_object, py_attribute_name, label, position) {
             this.py_object = py_object;
+
+            // Keep both Python string, for passing to getattr(), and JS string,
+            // for comparisons in maybe_watcher_index().
             this.py_attribute_name = py_attribute_name;
+            this.attribute_name = Sk.ffi.remapToJs(py_attribute_name);
+
             this.label = label;
             this.position = position;
         }
