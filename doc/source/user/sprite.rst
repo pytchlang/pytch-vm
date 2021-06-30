@@ -104,66 +104,66 @@ method.
 Setting the sprite size
   .. function:: self.set_size(size)
 
-  Set how large the sprite appears, as a proportion of the size of the
-  current costume image, where ``1`` is the normal size of the image.
-  For example, ``self.set_size(0.5)`` will set the sprite to be
-  half-sized.
+     Set how large the sprite appears, as a proportion of the size of the
+     current costume image, where ``1`` is the normal size of the image.
+     For example, ``self.set_size(0.5)`` will set the sprite to be
+     half-sized.
 
 
 Showing and hiding the sprite
   .. function:: self.show()
                 self.hide()
 
-  Make the sprite appear or disappear from the stage. Sprites that are
-  not showing can still be moved, change costume, and so on but you
-  won't see the effect until the sprite is shown again.
+     Make the sprite appear or disappear from the stage. Sprites that are
+     not showing can still be moved, change costume, and so on but you
+     won't see the effect until the sprite is shown again.
 
 Changing the sprite appearance
   .. function:: self.switch_costume(name)
 
-  Select one of the costumes listed in this Sprite's *Costumes*
-  variable. The name is the costume's *label*, which is usually the
-  filename without the extension (see
-  :doc:`costume-specs` for full details). For
-  example, you might use ``self.switch_costume("smiling-kitten")`` to
-  choose a new costume.
+     Select one of the costumes listed in this Sprite's *Costumes*
+     variable. The name is the costume's *label*, which is usually the
+     filename without the extension (see
+     :doc:`costume-specs` for full details). For
+     example, you might use ``self.switch_costume("smiling-kitten")`` to
+     choose a new costume.
 
   .. function:: self.switch_costume(costume_number)
      :noindex:
 
-  Select one of the costumes listed in this Sprite's *Costumes*
-  variable, by number.  Python starts counting entries in lists *at
-  zero*, so to switch to the first costume, you would use
-  ``self.switch_costume(0)``; to switch to the second costume, you would
-  use ``self.switch_costume(1)``, and so on.
+     Select one of the costumes listed in this Sprite's *Costumes*
+     variable, by number.  Python starts counting entries in lists *at
+     zero*, so to switch to the first costume, you would use
+     ``self.switch_costume(0)``; to switch to the second costume, you would
+     use ``self.switch_costume(1)``, and so on.
 
   .. function:: self.next_costume()
 
-  Switch to the costume after the current one.  If the Sprite is wearing
-  the last costume in its ``Costumes`` list, then go back to the first
-  one in the list.
+     Switch to the costume after the current one.  If the Sprite is wearing
+     the last costume in its ``Costumes`` list, then go back to the first
+     one in the list.
 
   .. function:: self.next_costume(n_steps)
      :noindex:
 
-  Switch to the costume ``n_steps`` after the current one.  If this
-  would take the Sprite beyond the end of its ``Costumes`` list, then
-  wrap round to the first entry again, as if the costumes were in a
-  circle.  You can use a negative number for ``n_steps`` to choose an
-  *earlier* costume in the list.  For example, ``self.next_costume(-1)``
-  will switch to the *previous* costume.
+     Switch to the costume ``n_steps`` after the current one.  If this
+     would take the Sprite beyond the end of its ``Costumes`` list, then
+     wrap round to the first entry again, as if the costumes were in a
+     circle.  You can use a negative number for ``n_steps`` to choose an
+     *earlier* costume in the list.  For example, ``self.next_costume(-1)``
+     will switch to the *previous* costume.
 
 Finding out what costume the Sprite is currently wearing
   .. attribute:: self.costume_number
 
-  The *zero-based* number of the costume currently being worn by the
-  Sprite.  Here, 'zero-based' means that the first costume in the
-  ``Costumes`` list is number 0; the second costume is number 1; and so
-  on.  This is the way that Python refers to list elements.
+     The *zero-based* number of the costume currently being worn by the
+     Sprite.  Here, 'zero-based' means that the first costume in the
+     ``Costumes`` list is number 0; the second costume is number 1; and so
+     on.  This is the way that Python refers to list elements.
 
   .. attribute:: self.costume_name
 
-  The name of the costume currently being worn by the Sprite.
+     The name of the costume currently being worn by the Sprite.
 
 Controlling the order Sprites are drawn
   When one sprite overlaps another it is the order that they are drawn
@@ -175,14 +175,14 @@ Controlling the order Sprites are drawn
   .. function:: self.go_to_front_layer()
                 self.go_to_back_layer()
 
-  These methods move a sprite to the very front or the very back of the
-  layers.
+     These methods move a sprite to the very front or the very back of the
+     layers.
 
   .. function:: self.go_forward_layers(n)
                 self.go_backward_layers(n)
 
-  These methods move a sprite a certain number of layers forward or
-  backward.
+     These methods move a sprite a certain number of layers forward or
+     backward.
 
 
 Moving a Sprite
@@ -197,41 +197,41 @@ creating the costume (see
 
 .. function:: self.go_to_xy(x, y)
 
-Move the sprite to a particular position on the stage.
+   Move the sprite to a particular position on the stage.
 
 .. function:: self.glide_to_xy(x, y, seconds)
 
-Glide the sprite smoothly to a particular position on the stage, taking
-the given number of seconds to do so.  The value for ``seconds`` does
-not have to be a whole number.
+   Glide the sprite smoothly to a particular position on the stage, taking
+   the given number of seconds to do so.  The value for ``seconds`` does
+   not have to be a whole number.
 
 .. function:: self.change_x(dx)
 
-Change the x-position of the sprite by a certain amount (for example,
-``self.change_x(10)`` will move the sprite 10 pixels to the right on the
-stage). The number of pixels can be negative.
+   Change the x-position of the sprite by a certain amount (for example,
+   ``self.change_x(10)`` will move the sprite 10 pixels to the right on the
+   stage). The number of pixels can be negative.
 
 .. function:: self.change_y(dy)
 
-Change the y-position of the sprite by a certain amount (for example,
-``self.change_y(10)`` will move the sprite 10 pixels up on the
-stage). The number can be negative.
+   Change the y-position of the sprite by a certain amount (for example,
+   ``self.change_y(10)`` will move the sprite 10 pixels up on the
+   stage). The number can be negative.
 
 .. function:: self.set_x(x)
 
-Move the sprite to a certain x-position on the stage while keeping its
-y-position the same.
+   Move the sprite to a certain x-position on the stage while keeping its
+   y-position the same.
 
 .. function:: self.set_y(y)
 
-Move the sprite to a certain y-position on the stage while keeping its
-x-position the same.
+   Move the sprite to a certain y-position on the stage while keeping its
+   x-position the same.
 
 .. property:: self.x_position
               self.y_position
 
-The current x or y position of the sprite.  These are *properties*, so
-you do not use ``()`` after them.
+   The current x or y position of the sprite.  These are *properties*, so
+   you do not use ``()`` after them.
 
 
 .. _methods_playing_sounds:
@@ -245,17 +245,17 @@ sprite to play it.
 
 .. function:: self.start_sound(sound_name)
 
-Start a sound playing. You refer to the sound using its *label*, which
-is usually the filename without the extension (see :doc:`sound-specs`
-for full details). Once the sound has started the Sprite will move on
-to its next instruction.
+   Start a sound playing. You refer to the sound using its *label*, which
+   is usually the filename without the extension (see :doc:`sound-specs`
+   for full details). Once the sound has started the Sprite will move on
+   to its next instruction.
 
 .. function:: self.play_sound_until_done(sound_name)
 
-Start a sound playing. You can refer to the sound using its *label*,
-as for ``start_sound()``. This method will not return until the entire
-sound has played, so the script it is contained in won't do its next
-instruction until then.
+   Start a sound playing. You can refer to the sound using its *label*,
+   as for ``start_sound()``. This method will not return until the entire
+   sound has played, so the script it is contained in won't do its next
+   instruction until then.
 
 
 Making and deleting copies of a Sprite
@@ -277,58 +277,58 @@ function:
 
 .. function:: pytch.create_clone_of(thing)
 
-Create a new clone of ``thing``.  You can create clones in two ways.
-You can clone the original or a copy of one of your Sprites, for example
-the copy which is calling the ``create_clone_of()`` function:
+   Create a new clone of ``thing``.  You can create clones in two ways.
+   You can clone the original or a copy of one of your Sprites, for example
+   the copy which is calling the ``create_clone_of()`` function:
 
-.. code-block:: python
+   .. code-block:: python
 
-   pytch.create_clone_of(self)
+      pytch.create_clone_of(self)
 
-Or you can create a clone of a particular class of Sprite:
+   Or you can create a clone of a particular class of Sprite:
 
-.. code-block:: python
+   .. code-block:: python
 
-   pytch.create_clone_of(Spaceship)
+      pytch.create_clone_of(Spaceship)
 
-In this case, Pytch makes a clone of the original instance of that
-sprite.
+   In this case, Pytch makes a clone of the original instance of that
+   sprite.
 
 Deleting clones
 ^^^^^^^^^^^^^^^
 
 .. function:: self.delete_this_clone()
 
-Remove the current clone. If this method is run by the original sprite
-then it has no effect, but if it is run by a clone then the clone
-immediately vanishes.
+   Remove the current clone. If this method is run by the original sprite
+   then it has no effect, but if it is run by a clone then the clone
+   immediately vanishes.
 
 Finding existing clones
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 .. function:: Class.the_original()
 
-This returns a reference to the *original* object that this clone is a
-copy of. This can be used to look up variables or send messages to the
-original object. If it is run by the original Sprite then it returns a
-reference to itself. Notice that this method is run using the class name
-(for example ``Kitten.the_original()``), not the ``self`` object.
+   This returns a reference to the *original* object that this clone is a
+   copy of. This can be used to look up variables or send messages to the
+   original object. If it is run by the original Sprite then it returns a
+   reference to itself. Notice that this method is run using the class name
+   (for example ``Kitten.the_original()``), not the ``self`` object.
 
 .. function:: Class.all_clones()
 
-Returns a list of all the existing clones of the Sprite that is
-mentioned (for example ``Kitten.all_clones()``). Notice that this method
-is run using the class name (for example ``Kitten.all_clones()``), not
-the ``self`` object.
+   Returns a list of all the existing clones of the Sprite that is
+   mentioned (for example ``Kitten.all_clones()``). Notice that this method
+   is run using the class name (for example ``Kitten.all_clones()``), not
+   the ``self`` object.
 
 .. function:: Class.all_instances()
 
-Like ``all_clones``, this returns a list of all clones of the Sprite
-that is mentioned (for example ``Kitten.all_clones()``), but
-``all_instances`` also includes the original Sprite in the list. This is
-useful if you want access to everything (both clones and
-originals). Notice that this method is run using the class name (for
-example ``Kitten.all_instances()``), not the ``self`` object.
+   Like ``all_clones``, this returns a list of all clones of the Sprite
+   that is mentioned (for example ``Kitten.all_clones()``), but
+   ``all_instances`` also includes the original Sprite in the list. This is
+   useful if you want access to everything (both clones and
+   originals). Notice that this method is run using the class name (for
+   example ``Kitten.all_instances()``), not the ``self`` object.
 
 
 Checking for sprites colliding
@@ -336,20 +336,20 @@ Checking for sprites colliding
 
 .. function:: self.touching(target_class)
 
-You can use this method to check whether this sprite is touching any
-instance of another class. For example ``self.touching(Dog)`` will
-return either True or False depending on whether the current Sprite is
-overlapping a ``Dog`` sprite.
+   You can use this method to check whether this sprite is touching any
+   instance of another class. For example ``self.touching(Dog)`` will
+   return either True or False depending on whether the current Sprite is
+   overlapping a ``Dog`` sprite.
 
-At the moment Pytch does not look at the actual image in the costume,
-just its overall size, so if the two costumes have blank sections but
-the costumes themselves are overlapping then this method will still
-return true. The current costume and the size set by ``set_size`` is
-taken into account when checking.
+   At the moment Pytch does not look at the actual image in the costume,
+   just its overall size, so if the two costumes have blank sections but
+   the costumes themselves are overlapping then this method will still
+   return true. The current costume and the size set by ``set_size`` is
+   taken into account when checking.
 
-Note that you check using a *class* name, so if the ``self`` sprite is
-touching any clone of the target class then ``touching`` will return
-true.
+   Note that you check using a *class* name, so if the ``self`` sprite is
+   touching any clone of the target class then ``touching`` will return
+   true.
 
 
 Showing and hiding speech bubbles
@@ -360,27 +360,27 @@ Stage.
 
 .. function:: self.say(content)
 
-Show a speech bubble next to the current Sprite, showing the text
-supplied. For exampler ``self.say("Hello there")``.  If the Sprite uses
-``self.hide()`` to disappear from the stage then the bubble will also
-disappear.  If the Sprite then re-appears (by using ``self.show()``),
-then the speech bubble will also re-appear.
+   Show a speech bubble next to the current Sprite, showing the text
+   supplied. For exampler ``self.say("Hello there")``.  If the Sprite uses
+   ``self.hide()`` to disappear from the stage then the bubble will also
+   disappear.  If the Sprite then re-appears (by using ``self.show()``),
+   then the speech bubble will also re-appear.
 
-To remove a Sprite's speech bubble, use the empty string for the
-``content`` argument, as in:
+   To remove a Sprite's speech bubble, use the empty string for the
+   ``content`` argument, as in:
 
-.. code-block:: python
+   .. code-block:: python
 
-   # Remove speech bubble:
-   self.say("")
+      # Remove speech bubble:
+      self.say("")
 
 .. function:: self.say_for_seconds(content, seconds)
 
-Show a speech balloon, wait for the number of seconds given, and then
-remove it. The whole script will wait while the balloon is being shown.
-If a second script calls ``say_for_seconds()`` while a first script is
-already in the middle of ``say_for_seconds()``, the second script's
-speech replaces the first script's speech.
+   Show a speech balloon, wait for the number of seconds given, and then
+   remove it. The whole script will wait while the balloon is being shown.
+   If a second script calls ``say_for_seconds()`` while a first script is
+   already in the middle of ``say_for_seconds()``, the second script's
+   speech replaces the first script's speech.
 
 
 Asking the user a question
