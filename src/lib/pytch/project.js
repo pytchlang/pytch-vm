@@ -1770,6 +1770,22 @@ var $builtinmodule = function (name) {
                 });
             });
 
+            this.object_attribute_watchers.forEach(watcher => {
+                try {
+                    const instruction = watcher.rendering_instruction();
+                    instructions.push(instruction);
+                } catch (err) {
+                    const context = {
+                        kind: "attribute-watcher",
+                        attribute_name: watcher.attribute_name,
+                        // TODO: Include info as to instance (if sprite/stage) of what
+                        // kind/class; detect module-level attributes too; otherwise
+                        // say "some object"
+                    };
+                    errors.push({err, context});
+                }
+            });
+
             if (errors.length === 0)
                 return instructions;
 
