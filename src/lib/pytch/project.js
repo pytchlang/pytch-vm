@@ -1438,6 +1438,12 @@ var $builtinmodule = function (name) {
     // Slight generalisation of Scratch "variable watcher"
 
     class ObjectAttributeWatcher {
+        constructor(py_object, py_attribute_name, label, position) {
+            this.py_object = py_object;
+            this.py_attribute_name = py_attribute_name;
+            this.label = label;
+            this.position = position;
+        }
     }
 
 
