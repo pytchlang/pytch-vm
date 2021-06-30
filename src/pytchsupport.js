@@ -99,6 +99,10 @@ Sk.pytchsupport.module_has_Project_instance = (mod => {
  */
 Sk.pytchsupport.maybe_auto_configure_project = (async mod => {
     // If the user has already made their own Project, leave it alone.
+    //
+    // TODO: Set the "$containingModule" property?  Or decide we will
+    // stop supporting non-auto-config'd Pytch programs?
+    //
     if (Sk.pytchsupport.module_has_Project_instance(mod))
         return;
 
