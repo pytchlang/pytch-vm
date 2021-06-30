@@ -180,8 +180,16 @@ describe("bad sounds", () => {
     });
 
     [
-        { label: "unknown string", fragment: '"violin"', err_regexp: /could not find sound/ },
-        { label: "lambda", fragment: "lambda x: 42", err_regexp: /must be given a string/ },
+        {
+            label: "unknown string",
+            fragment: '"violin"',
+            err_regexp: /could not find sound/,
+        },
+        {
+            label: "lambda",
+            fragment: "lambda x: 42",
+            err_regexp: /must be given a string/,
+        },
     ].forEach(spec =>
         it(`rejects unknown sound (${spec.label})`, async () => {
             const project = await import_deindented(`
