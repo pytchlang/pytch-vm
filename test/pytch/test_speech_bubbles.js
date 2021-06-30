@@ -115,6 +115,26 @@ describe("Speech bubbles", () => {
             many_frames(project, 60);
             assert.strictEqual(pytch_stdout.drain_stdout(), "/mumble\n");
         });
+
+        it("hides/shows speech bubble with sprite", async () => {
+            const project = await import_project();
+            const assert_speech = make_SpeechAssertions(project);
+            const exp_speech_instrn = ["Hello world", 0, 15];
+
+            assert_speech.is("startup", true, []);
+
+            project.do_synthetic_broadcast("talk")
+            many_frames(project, 5);
+            assert_speech.is("after-talk", true, [exp_speech_instrn]);
+
+            project.do_synthetic_broadcast("hide")
+            many_frames(project, 5);
+            assert_speech.is("after-hide", false, []);
+
+            project.do_synthetic_broadcast("show")
+            many_frames(project, 5);
+            assert_speech.is("after-show", true, [exp_speech_instrn]);
+        });
     });
 
     it("clears speech bubbles on red-stop", async () => {
