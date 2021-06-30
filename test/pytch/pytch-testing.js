@@ -391,6 +391,19 @@ const assert_renders_as = (label, project, exp_render_instrns) => {
                        + ` but expected (${exp_instr[2]}, ${exp_instr[3]})`));
             break;
         }
+        case "RenderAttributeWatcher": {
+            let pfx = `in RenderAttributeWatcher at index ${idx} of ${label}`;
+            assert.strictEqual(got_instr.label, exp_instr[1],
+                               (`${pfx}, got label "${got_instr.label}"`
+                                + ` but expected "${exp_instr[1]}"`));
+            assert.strictEqual(got_instr.value, exp_instr[2],
+                               (`${pfx}, got value "${got_instr.value}"`
+                                + ` but expected "${exp_instr[2]}"`));
+            assert.deepStrictEqual(got_instr.position, exp_instr.slice(3),
+                                   (`${pfx}, got position "${got_instr.position}"`
+                                    + ` but expected "${exp_instr.slice(3)}"`));
+            break;
+        }
         default:
             assert.ok(null,
                       `unknown instruction kind "${got_instr.kind}"`);
