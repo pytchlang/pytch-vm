@@ -47,7 +47,7 @@ take ownership of (‘drain’) the events in that queue.
 
 Have methods:
 
--  ``key_is_pressed(k)`` — predicate asking whether given key is
+-  ``key_pressed(k)`` — predicate asking whether given key is
    currently in the ‘down’ position
 
 -  ``drain_new_keydown_events()`` — obtain list of new up->down

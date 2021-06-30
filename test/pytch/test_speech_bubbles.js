@@ -31,8 +31,8 @@ describe("Speech bubbles", () => {
 
             assert_speech.is("startup", true, []);
 
-            // The effects of the say() and say_nothing() methods should persist
-            // until changed, so run for a few frames after each one.
+            // The effects of the say() method should persist until changed, so
+            // run for a few frames after each one.
 
             project.do_synthetic_broadcast("talk")
             for (let i = 0; i < 10; ++i) {
@@ -114,7 +114,27 @@ describe("Speech bubbles", () => {
             // check output.
             many_frames(project, 60);
             assert.strictEqual(pytch_stdout.drain_stdout(), "/mumble\n");
-        })
+        });
+
+        it("hides/shows speech bubble with sprite", async () => {
+            const project = await import_project();
+            const assert_speech = make_SpeechAssertions(project);
+            const exp_speech_instrn = ["Hello world", 0, 15];
+
+            assert_speech.is("startup", true, []);
+
+            project.do_synthetic_broadcast("talk")
+            many_frames(project, 5);
+            assert_speech.is("after-talk", true, [exp_speech_instrn]);
+
+            project.do_synthetic_broadcast("hide")
+            many_frames(project, 5);
+            assert_speech.is("after-hide", false, []);
+
+            project.do_synthetic_broadcast("show")
+            many_frames(project, 5);
+            assert_speech.is("after-show", true, [exp_speech_instrn]);
+        });
     });
 
     it("clears speech bubbles on red-stop", async () => {

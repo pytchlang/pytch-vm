@@ -171,14 +171,14 @@ Controlling the order Sprites are drawn
   on until the front layer is reached. By moving sprites between layers
   you can control which Sprites appear on top.
 
-  .. function:: self.move_to_front_layer()
-                self.move_to_back_layer()
+  .. function:: self.go_to_front_layer()
+                self.go_to_back_layer()
 
   These methods move a sprite to the very front or the very back of the
   layers.
 
-  .. function:: self.move_forward_layers(n)
-                self.move_backward_layers(n)
+  .. function:: self.go_forward_layers(n)
+                self.go_backward_layers(n)
 
   These methods move a sprite a certain number of layers forward or
   backward.
@@ -226,10 +226,11 @@ y-position the same.
 Move the sprite to a certain y-position on the stage while keeping its
 x-position the same.
 
-.. function:: self.get_x()
-              self.get_y()
+.. property:: self.x_position
+              self.y_position
 
-Return the current x or y position of the sprite.
+The current x or y position of the sprite.  These are *properties*, so
+you do not use ``()`` after them.
 
 
 .. _methods_playing_sounds:
@@ -360,15 +361,18 @@ Stage.
 .. function:: self.say(content)
 
 Show a speech balloon next to the current Sprite, showing the text
-supplied. For exampler ``self.say("Hello there")``. The balloon will be
-visible until ``say_nothing()`` is run by the same Sprite. If the Sprite
-uses ``hide`` to disappear from the stage then the balloon will also
-disappear.
+supplied. For exampler ``self.say("Hello there")``.  If the Sprite uses
+``self.hide()`` to disappear from the stage then the balloon will also
+disappear.  If the Sprite then re-appears (by using ``self.show()``),
+then the speech balloon will also re-appear.
 
-.. function:: self.say_nothing()
+To remove a Sprite's speech balloon, use the empty string for the
+``content`` argument, as in:
 
-Remove a speech balloon (if there is no speech balloon shown then this
-does nothing).
+.. code-block:: python
+
+   # Remove speech bubble:
+   self.say("")
 
 .. function:: self.say_for_seconds(content, seconds)
 

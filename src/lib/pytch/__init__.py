@@ -40,8 +40,8 @@ from .syscalls import (
     play_sound,
     stop_all_sounds,
     wait_seconds,
-    key_is_pressed,
-    ask_and_wait_for_answer,
+    key_pressed,
+    ask_and_wait,
 )
 
 from ._completions_info import (

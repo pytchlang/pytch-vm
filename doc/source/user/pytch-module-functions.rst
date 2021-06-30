@@ -17,5 +17,5 @@ TODO: Check and update the below list.
   ``@pytch.when_I_receive()`` decorator (hat-block); the script
   calling ``broadcast_and_wait()`` waits until all those scripts have
   finished before continuing
-* ``pytch.key_is_pressed(key_name)`` gives a true/false answer as to
+* ``pytch.key_pressed(key_name)`` gives a true/false answer as to
   whether the key with name ``key_name`` is currently pressed

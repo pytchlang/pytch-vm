@@ -21,6 +21,9 @@ objects obscure further-away ones.  This is managed by the
 Rendering instructions
 ~~~~~~~~~~~~~~~~~~~~~~
 
+TODO: Update for speech bubbles and also variable watchers in due
+course.
+
 Currently only ‘image’. Soon have text to allow rough equivalent to
 ‘say’ block.
 

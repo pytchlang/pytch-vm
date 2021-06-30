@@ -2,7 +2,7 @@ from pytch.syscalls import (
     play_sound,
     registered_instances,
     wait_seconds,
-    ask_and_wait_for_answer,
+    ask_and_wait,
 )
 
 from pytch.project import FRAMES_PER_SECOND
@@ -164,8 +164,9 @@ class Sprite(Actor):
         self._x = x
         self._y = y
 
-    def get_x(self):
-        "() Return SELF's x-coordinate on the stage"
+    @property
+    def x_position(self):
+        "SELF's x-coordinate on the stage"
         return self._x
 
     def set_x(self, x):
@@ -176,8 +177,9 @@ class Sprite(Actor):
         "(DX) Move SELF right DX on the stage (left if negative)"
         self._x += dx
 
-    def get_y(self):
-        "() Return SELF's y-coordinate on the stage"
+    @property
+    def y_position(self):
+        "SELF's y-coordinate on the stage"
         return self._y
 
     def set_y(self, y):
@@ -258,33 +260,32 @@ class Sprite(Actor):
         "() Remove SELF from the project"
         self._pytch_parent_project.unregister_actor_instance(self)
 
-    def move_to_front_layer(self):
+    def go_to_front_layer(self):
         "() Move SELF to the front drawing layer"
         (self._pytch_parent_project
          .move_within_draw_layer_group(self, "absolute", -1))
 
-    def move_to_back_layer(self):
+    def go_to_back_layer(self):
         "() Move SELF to the back drawing layer"
         (self._pytch_parent_project
          .move_within_draw_layer_group(self, "absolute", 0))
 
-    def move_forward_layers(self, n_layers):
+    def go_forward_layers(self, n_layers):
         "(N) Move SELF forwards N drawing layers"
         (self._pytch_parent_project
          .move_within_draw_layer_group(self, "relative", n_layers))
 
-    def move_backward_layers(self, n_layers):
+    def go_backward_layers(self, n_layers):
         "(N) Move SELF backwards N drawing layers"
         (self._pytch_parent_project
          .move_within_draw_layer_group(self, "relative", -n_layers))
 
     def say(self, content):
-        "(TEXT) Give SELF a speech bubble saying TEXT"
-        self._speech = (_new_speech_id(), "say", content)
-
-    def say_nothing(self):
-        "() Remove any speech bubble SELF has"
-        self._speech = None
+        "(TEXT) Say TEXT in speech bubble; remove if TEXT empty"
+        self._speech = (
+            None if content == ""
+            else (_new_speech_id(), "say", content)
+        )
 
     def say_for_seconds(self, content, seconds):
         "(TEXT, SECONDS) Give SELF speech bubble saying TEXT for SECONDS"
@@ -293,21 +294,21 @@ class Sprite(Actor):
         wait_seconds(seconds)
         # Only erase utterance if it hasn't already been, and it's ours:
         if (self._speech is not None) and (self._speech[0] == speech_id):
-            self.say_nothing()
+            self.say("")
 
-    def ask_and_wait_for_answer(self, prompt):
+    def ask_and_wait(self, prompt):
         "(QUESTION) Ask question; wait for and return user's answer"
         if not isinstance(prompt, str):
             raise ValueError("the question must be a string")
         if self._shown:
             self.say(prompt)
-            answer = ask_and_wait_for_answer(None)
+            answer = ask_and_wait(None)
             # Scratch clears speech even if the prompt isn't the live
             # speech bubble; do likewise.
-            self.say_nothing()
+            self.say("")
             return answer
         else:
-            return ask_and_wait_for_answer(prompt)
+            return ask_and_wait(prompt)
 
 
 class Stage(Actor):
@@ -353,8 +354,8 @@ class Stage(Actor):
         "The name of the backdrop SELF is currently showing"
         return self.appearance_name
 
-    def ask_and_wait_for_answer(self, prompt):
+    def ask_and_wait(self, prompt):
         "(QUESTION) Ask question; wait for and return user's answer"
         if not isinstance(prompt, str):
             raise ValueError("the question must be a string")
-        return ask_and_wait_for_answer(prompt)
+        return ask_and_wait(prompt)
