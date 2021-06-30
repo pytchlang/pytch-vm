@@ -1901,6 +1901,12 @@ var $builtinmodule = function (name) {
                       && w.attribute_name === attribute_name));
         }
 
+        effective_watcher_object(py_object) {
+            return Sk.builtin.checkNone(py_object)
+                ? this.$containingModule
+                : py_object;
+        }
+
         show_object_attribute(py_object, py_attribute_name, label, position) {
             const watcher = new ObjectAttributeWatcher(
                 py_object,
