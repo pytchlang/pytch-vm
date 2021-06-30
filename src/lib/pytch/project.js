@@ -1054,6 +1054,14 @@ var $builtinmodule = function (name) {
                 return [];
             }
 
+            case "hide-object-attribute": {
+                const { py_object, py_attribute_name } = syscall_args;
+
+                this.parent_project.hide_object_attribute(py_object, py_attribute_name);
+
+                return [];
+            }
+
             default:
                 throw Error(`unknown Pytch syscall "${syscall_kind}"`);
             }
