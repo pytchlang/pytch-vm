@@ -352,21 +352,21 @@ touching any clone of the target class then ``touching`` will return
 true.
 
 
-Showing and hiding speech balloons
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Showing and hiding speech bubbles
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Speech balloons can be used to get Sprites to show some text on the
+Speech bubbles can be used to get Sprites to show some text on the
 Stage.
 
 .. function:: self.say(content)
 
-Show a speech balloon next to the current Sprite, showing the text
+Show a speech bubble next to the current Sprite, showing the text
 supplied. For exampler ``self.say("Hello there")``.  If the Sprite uses
-``self.hide()`` to disappear from the stage then the balloon will also
+``self.hide()`` to disappear from the stage then the bubble will also
 disappear.  If the Sprite then re-appears (by using ``self.show()``),
-then the speech balloon will also re-appear.
+then the speech bubble will also re-appear.
 
-To remove a Sprite's speech balloon, use the empty string for the
+To remove a Sprite's speech bubble, use the empty string for the
 ``content`` argument, as in:
 
 .. code-block:: python
