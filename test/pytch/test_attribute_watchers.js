@@ -151,4 +151,22 @@ describe("Attribute watchers", () => {
 
             pytch_errors.assert_sole_error_matches(spec.error_regexp);
         }));
+
+    it("rejects bad call to _hide_object_attribute", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            from pytch.syscalls import _hide_object_attribute
+
+            class Banana(pytch.Sprite):
+                @pytch.when_I_receive("hide-attr")
+                def show_score(self):
+                    _hide_object_attribute(self, 42.0)
+        `);
+
+        project.do_synthetic_broadcast("hide-attr");
+        one_frame(project);
+
+        pytch_errors.assert_sole_error_matches(/attribute name must be string/);
+    });
 });
