@@ -27,10 +27,18 @@ describe("Attribute watchers", () => {
                     self.score = 42
                     pytch.show_variable(self, "score")
 
+                @pytch.when_I_receive("unwatch-score")
+                def hide_score(self):
+                    pytch.hide_variable(self, "score")
+
                 @pytch.when_I_receive("watch-health")
                 def show_health(self):
                     self.health = 99
                     pytch.show_variable(self, "health", right=220)
+
+                @pytch.when_I_receive("unwatch-health")
+                def hide_health(self):
+                    pytch.hide_variable(self, "health")
         `);
 
         // Initially there should be no watchers.
@@ -72,5 +80,19 @@ describe("Attribute watchers", () => {
 
         assert_renders_as("post-second-watch-health", project,
                           [score_render_instrn, health_render_instrn]);
+
+        // Hide first instance-variable watcher.
+
+        project.do_synthetic_broadcast("unwatch-score");
+        one_frame(project);
+
+        assert_renders_as("post-unwatch-score", project, [health_render_instrn]);
+
+        // Hide second instance-variable watcher.
+
+        project.do_synthetic_broadcast("unwatch-health");
+        one_frame(project);
+
+        assert_renders_as("post-unwatch-health", project, []);
     });
 });
