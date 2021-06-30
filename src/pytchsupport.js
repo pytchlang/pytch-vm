@@ -180,6 +180,11 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
     // propagate to our caller if so.
     await Sk.pytchsupport.maybe_auto_configure_project(module);
 
+    // Ensure other bits of the code (the motivating case being detection of
+    // when we're showing a module attribute, i.e., global variable) can tell
+    // this is the module of the user's main program.
+    module.$isPytchMainProgramModule = true;
+
     return module;
 });
 
