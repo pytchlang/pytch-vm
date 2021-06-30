@@ -1041,6 +1041,19 @@ var $builtinmodule = function (name) {
                 return [];
             }
 
+            case "show-object-attribute": {
+                const { py_object, py_attribute_name, label, position } = syscall_args;
+
+                this.parent_project.show_object_attribute(
+                    py_object,
+                    py_attribute_name,
+                    label,
+                    position
+                );
+
+                return [];
+            }
+
             default:
                 throw Error(`unknown Pytch syscall "${syscall_kind}"`);
             }
