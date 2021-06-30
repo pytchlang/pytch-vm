@@ -281,8 +281,11 @@ class Sprite(Actor):
          .move_within_draw_layer_group(self, "relative", -n_layers))
 
     def say(self, content):
-        "(TEXT) Give SELF a speech bubble saying TEXT"
-        self._speech = (_new_speech_id(), "say", content)
+        "(TEXT) Say TEXT in speech bubble; remove if TEXT empty"
+        self._speech = (
+            None if content == ""
+            else (_new_speech_id(), "say", content)
+        )
 
     def say_for_seconds(self, content, seconds):
         "(TEXT, SECONDS) Give SELF speech bubble saying TEXT for SECONDS"
