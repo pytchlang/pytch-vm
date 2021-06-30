@@ -361,10 +361,18 @@ Stage.
 .. function:: self.say(content)
 
 Show a speech balloon next to the current Sprite, showing the text
-supplied. For exampler ``self.say("Hello there")``. The balloon will be
-visible until ``say_nothing()`` is run by the same Sprite. If the Sprite
-uses ``hide`` to disappear from the stage then the balloon will also
-disappear.
+supplied. For exampler ``self.say("Hello there")``.  If the Sprite uses
+``self.hide()`` to disappear from the stage then the balloon will also
+disappear.  If the Sprite then re-appears (by using ``self.show()``),
+then the speech balloon will also re-appear.
+
+To remove a Sprite's speech balloon, use the empty string for the
+``content`` argument, as in:
+
+.. code-block:: python
+
+   # Remove speech bubble:
+   self.say("")
 
 .. function:: self.say_for_seconds(content, seconds)
 
