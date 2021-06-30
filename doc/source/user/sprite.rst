@@ -366,11 +366,6 @@ visible until ``say_nothing()`` is run by the same Sprite. If the Sprite
 uses ``hide`` to disappear from the stage then the balloon will also
 disappear.
 
-.. function:: self.say_nothing()
-
-Remove a speech balloon (if there is no speech balloon shown then this
-does nothing).
-
 .. function:: self.say_for_seconds(content, seconds)
 
 Show a speech balloon, wait for the number of seconds given, and then
