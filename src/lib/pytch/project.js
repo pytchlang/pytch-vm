@@ -1435,6 +1435,14 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // Slight generalisation of Scratch "variable watcher"
+
+    class ObjectAttributeWatcher {
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // Javascript-level "Project" class
 
     class Project {
