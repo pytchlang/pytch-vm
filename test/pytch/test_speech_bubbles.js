@@ -31,8 +31,8 @@ describe("Speech bubbles", () => {
 
             assert_speech.is("startup", true, []);
 
-            // The effects of the say() and say_nothing() methods should persist
-            // until changed, so run for a few frames after each one.
+            // The effects of the say() method should persist until changed, so
+            // run for a few frames after each one.
 
             project.do_synthetic_broadcast("talk")
             for (let i = 0; i < 10; ++i) {
