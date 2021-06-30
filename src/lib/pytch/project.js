@@ -1848,6 +1848,17 @@ var $builtinmodule = function (name) {
                 this.object_attribute_watchers.push(watcher);
             }
         }
+
+        hide_object_attribute(py_object, py_attribute_name) {
+            const existing_index = this.maybe_watcher_index(
+                py_object,
+                Sk.ffi.remapToJs(py_attribute_name)
+            );
+
+            if (existing_index !== -1) {
+                this.object_attribute_watchers.splice(existing_index, 1);
+            }
+        }
     }
 
 
