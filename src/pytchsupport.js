@@ -109,6 +109,7 @@ Sk.pytchsupport.maybe_auto_configure_project = (async mod => {
     let py_project;
     try {
         py_project = Sk.misceval.callsim(pytch_Project);
+        py_project.js_project.$containingModule = mod;
     } catch (err) {
         throw new Sk.pytchsupport.PytchBuildError({
             phase: "create-project",
