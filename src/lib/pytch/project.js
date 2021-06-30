@@ -1909,7 +1909,7 @@ var $builtinmodule = function (name) {
 
         show_object_attribute(py_object, py_attribute_name, label, position) {
             const watcher = new ObjectAttributeWatcher(
-                py_object,
+                this.effective_watcher_object(py_object),
                 py_attribute_name,
                 label,
                 position
@@ -1929,7 +1929,7 @@ var $builtinmodule = function (name) {
 
         hide_object_attribute(py_object, py_attribute_name) {
             const existing_index = this.maybe_watcher_index(
-                py_object,
+                this.effective_watcher_object(py_object),
                 Sk.ffi.remapToJs(py_attribute_name)
             );
 
