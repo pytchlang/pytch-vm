@@ -595,7 +595,10 @@ const configure_mocha = () => {
     afterEach(() => {
         const errors = pytch_errors.drain_errors();
 
-        const error_messages = errors.map(e => (new Sk.builtin.str(e.err)).v);
+        const error_messages = errors.map(e => JSON.stringify({
+            message: (new Sk.builtin.str(e.err)).v,
+            context: e.ctx,
+        }));
 
         assert.strictEqual(errors.length, 0,
                            ("undrained errors at end of test:\n"
