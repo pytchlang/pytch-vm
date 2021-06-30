@@ -9,7 +9,7 @@ class Banana(pytch.Sprite):
 
     @pytch.when_I_receive("silence")
     def fall_silent(self):
-        self.say_nothing()
+        self.say("")
 
     @pytch.when_I_receive("talk-briefly")
     def talk_briefly(self):
