@@ -172,7 +172,11 @@ describe("Attribute watchers", () => {
     });
 
     [
-        // TODO: Specs
+        {
+            label: "no such attr",
+            attr_name: "score",
+            error_regexp: /no attribute 'score'/,
+        },
     ].forEach(spec =>
         it(`gives useful error if getattr fails (${spec.label})`, async () => {
             const project = await import_deindented(`
