@@ -180,6 +180,20 @@ var $builtinmodule = function (name) {
 
     ////////////////////////////////////////////////////////////////////////////////
     //
+    // RenderAttributeWatcher: A request that a text box like a Scratch 'variable
+    // watcher' be drawn.
+
+    class RenderAttributeWatcher {
+        constructor(label, value, position) {
+            this.kind = "RenderAttributeWatcher";
+            this.label = label;
+            this.value = value;
+            this.position = position;
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //
     // BoundingBox: A rectangle which tightly encloses an image.
 
     class BoundingBox {
