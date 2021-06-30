@@ -219,8 +219,10 @@ describe("bad sounds", () => {
             project.do_synthetic_broadcast("go");
             many_frames(project, 2);
 
-            const err = pytch_errors.sole_error();
+            // (Can't use pytch_errors.assert_sole_error_matches() because
+            // also want to make assertion wrt traceback.)
 
+            const err = pytch_errors.sole_error();
             const err_str = err.err.toString();
             assert.match(err_str, spec.error_regexp);
 
