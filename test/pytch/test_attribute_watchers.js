@@ -215,5 +215,7 @@ describe("Attribute watchers", () => {
             assert.match(err.err.toString(), spec.error_regexp);
             assert.strictEqual(err.ctx.kind, "attribute-watcher");
             assert.strictEqual(err.ctx.attribute_name, spec.attr_name);
+            assert.strictEqual(err.ctx.owner_kind, "Sprite");
+            assert.strictEqual(err.ctx.owner_name, "Banana");
         }));
 });
