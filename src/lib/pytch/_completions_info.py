@@ -44,12 +44,8 @@ def _user_facing_completions():
             "non_yielding_loops",
         ],
         "Actor": actor_exclusions,
-        "Sprite": [
-            "Costumes",
-        ] + actor_exclusions,
-        "Stage": [
-            "Backdrops",
-        ] + actor_exclusions,
+        "Sprite": ["Costumes"] + actor_exclusions,
+        "Stage": ["Backdrops"] + actor_exclusions,
     }
 
     records_by_parent = {}

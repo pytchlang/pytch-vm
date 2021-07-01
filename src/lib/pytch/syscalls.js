@@ -170,8 +170,7 @@ var $builtinmodule = function (name) {
             const prompt_is_not_None = (py_prompt !== Sk.builtin.none.none$);
             if ((typeof prompt !== "string") && prompt_is_not_None)
                 throw new Sk.builtin.TypeError(
-                    "ask_and_wait(): question must be a string"
-                    + " or None");
+                    "ask_and_wait(): question must be a string or None");
 
             return new_pytch_suspension("ask-and-wait-for-answer", { prompt });
         },
