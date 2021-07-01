@@ -165,8 +165,7 @@ var $builtinmodule = function (name) {
     ////////////////////////////////////////////////////////////////////////////////
     //
     // RenderSpeechBubble: A request that a speech bubble be drawn with given
-    // content, such that the tip of
-    // its arrow at a particular location.
+    // content, such that the tip of its arrow is at a particular location.
 
     class RenderSpeechBubble {
         constructor(speaker_id, content, tip_x, tip_y) {
