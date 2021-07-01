@@ -1545,11 +1545,11 @@ var $builtinmodule = function (name) {
          * to arrive at the desired index in the new ordering.  So 'go
          * forward 3 layers' is
          *
-         *     move_kind "relative" index_or_offset (offset) 3,
+         *     move_kind "relative", index_or_offset (offset) 3,
          *
          * and 'go backward 2 layers' is
          *
-         *     move_kind "relative" index_or_offset (offset) -2.
+         *     move_kind "relative", index_or_offset (offset) -2.
          *
          * In either case, if the desired index is less than zero or
          * refers to a position beyond the end of the list, it is
