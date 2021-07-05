@@ -309,4 +309,50 @@ describe("Attribute watchers", () => {
         assert.strictEqual(err.ctx.kind, "attribute-watcher");
         assert.strictEqual(err.ctx.owner_kind, "unknown");
     })
+
+    it("removes watchers on deleted clones", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            class Banana(pytch.Sprite):
+                start_shown = False
+
+                @pytch.when_I_receive("make-clone")
+                def make_clone(self):
+                    pytch.create_clone_of(self)
+
+                @pytch.when_I_start_as_a_clone
+                def show_score(self):
+                    self.score = 42
+                    pytch.show_variable(self, "score")
+
+                @pytch.when_I_receive("delete-clone")
+                def delete_clone(self):
+                    self.delete_this_clone()
+        `);
+
+        // Initially there should be no watchers.
+        many_frames(project, 5);
+        assert_renders_as("start", project, []);
+
+        project.do_synthetic_broadcast("make-clone");
+
+        // One frame for the broadcast-launched thread to start and
+        // call create-clone, and one for the clone's thread to start.
+        many_frames(project, 2);
+
+        const score_render_instrn = [
+            "RenderAttributeWatcher", "score", "42", 176, null, null, -236
+        ];
+
+        assert_renders_as("post-clone", project, [score_render_instrn]);
+
+        // Deleting the clone should remove the watcher which was watching
+        // its "score" attribute.
+        project.do_synthetic_broadcast("delete-clone");
+        one_frame(project);
+
+        assert_renders_as("post-delete-clone", project, []);
+    });
+
 });
