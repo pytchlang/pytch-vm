@@ -165,8 +165,7 @@ var $builtinmodule = function (name) {
     ////////////////////////////////////////////////////////////////////////////////
     //
     // RenderSpeechBubble: A request that a speech bubble be drawn with given
-    // content, such that the tip of
-    // its arrow at a particular location.
+    // content, such that the tip of its arrow is at a particular location.
 
     class RenderSpeechBubble {
         constructor(speaker_id, content, tip_x, tip_y) {
@@ -1545,11 +1544,11 @@ var $builtinmodule = function (name) {
          * to arrive at the desired index in the new ordering.  So 'go
          * forward 3 layers' is
          *
-         *     move_kind "relative" index_or_offset (offset) 3,
+         *     move_kind "relative", index_or_offset (offset) 3,
          *
          * and 'go backward 2 layers' is
          *
-         *     move_kind "relative" index_or_offset (offset) -2.
+         *     move_kind "relative", index_or_offset (offset) -2.
          *
          * In either case, if the desired index is less than zero or
          * refers to a position beyond the end of the list, it is
