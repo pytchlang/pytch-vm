@@ -71,6 +71,18 @@ the label ``SCORE:``, a little way in from the top-right corner of the
 stage.
 
 
+Sprite variables and clones
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In Scratch, you can only show the original instance's value of a "for
+this Sprite only" variable.  In Pytch, you can show a clone's value of
+the variable.  When a clone is running a method, ``self`` refers to
+that clone.
+
+When a clone is deleted, any variable watchers showing variables
+belonging to that clone are removed.
+
+
 Project-level variables
 ~~~~~~~~~~~~~~~~~~~~~~~
 
