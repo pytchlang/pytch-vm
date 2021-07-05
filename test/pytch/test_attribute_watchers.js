@@ -99,74 +99,52 @@ describe("Attribute watchers", () => {
         assert_renders_as("post-unwatch-health", project, []);
     });
 
-    it("can render a global variable", async () => {
-        const project = await import_deindented(`
+    [
+        {
+            label: "global",
+            def_code_lines: ["score = 42"],
+            owner_code: "None",
+        },
+        {
+            label: "non-Actor-class",
+            def_code_lines: ["class GameState:", "    score = 42"],
+            owner_code: "GameState",
+        },
+    ].forEach(spec =>
+        it(`can render a ${spec.label} variable`, async () => {
+            const def_code = spec.def_code_lines.join("\n                ");
+            const project = await import_deindented(`
 
-            import pytch
+                import pytch
 
-            score = 42
+                ${def_code}
 
-            class Banana(pytch.Sprite):
-                start_shown = False
+                class Banana(pytch.Sprite):
+                    start_shown = False
 
-                @pytch.when_I_receive("watch-score")
-                def show_score(self):
-                    pytch.show_variable(None, "score")
+                    @pytch.when_I_receive("watch-score")
+                    def show_score(self):
+                        pytch.show_variable(${spec.owner_code}, "score")
 
-                @pytch.when_I_receive("unwatch-score")
-                def hide_score(self):
-                    pytch.hide_variable(None, "score")
-        `);
+                    @pytch.when_I_receive("unwatch-score")
+                    def hide_score(self):
+                        pytch.hide_variable(${spec.owner_code}, "score")
+            `);
 
-        project.do_synthetic_broadcast("watch-score");
-        one_frame(project);
-        assert_renders_as("post-watch", project, [score_render_instrn]);
+            project.do_synthetic_broadcast("watch-score");
+            one_frame(project);
+            assert_renders_as("post-watch", project, [score_render_instrn]);
 
-        // Re-watching should make no difference.
-        project.do_synthetic_broadcast("watch-score");
-        one_frame(project);
-        assert_renders_as("post-second-watch", project, [score_render_instrn]);
+            // Re-watching should make no difference.
+            project.do_synthetic_broadcast("watch-score");
+            one_frame(project);
+            assert_renders_as("post-second-watch", project, [score_render_instrn]);
 
-        // Hide first instance-variable watcher.
-        project.do_synthetic_broadcast("unwatch-score");
-        one_frame(project);
-        assert_renders_as("post-unwatch-health", project, []);
-    });
-
-    it("can render a non-Actor variable", async () => {
-        const project = await import_deindented(`
-
-            import pytch
-
-            class GameState:
-                score = 42
-
-            class Banana(pytch.Sprite):
-                start_shown = False
-
-                @pytch.when_I_receive("watch-score")
-                def show_score(self):
-                    pytch.show_variable(GameState, "score")
-
-                @pytch.when_I_receive("unwatch-score")
-                def hide_score(self):
-                    pytch.hide_variable(GameState, "score")
-        `);
-
-        project.do_synthetic_broadcast("watch-score");
-        one_frame(project);
-        assert_renders_as("post-watch", project, [score_render_instrn]);
-
-        // Re-watching should make no difference.
-        project.do_synthetic_broadcast("watch-score");
-        one_frame(project);
-        assert_renders_as("post-second-watch", project, [score_render_instrn]);
-
-        // Hide first instance-variable watcher.
-        project.do_synthetic_broadcast("unwatch-score");
-        one_frame(project);
-        assert_renders_as("post-unwatch-health", project, []);
-    });
+            // Hide watcher.
+            project.do_synthetic_broadcast("unwatch-score");
+            one_frame(project);
+            assert_renders_as("post-unwatch-health", project, []);
+        }));
 
     [
         {
