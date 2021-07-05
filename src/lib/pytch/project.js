@@ -1537,6 +1537,25 @@ var $builtinmodule = function (name) {
                 };
             }
         }
+
+        get object_is_live() {
+            // If we're watching an attribute of the main top-level module, then
+            // we're always live.
+            //
+            // Otherwise, if we're *not* watching a once-registered Actor
+            // instance, we're live.  E.g., maybe we're watching an attribute
+            // of a (non-Actor) GameState class.
+            //
+            // Otherwise (i.e., we *are* watching a once-registered Actor
+            // instance), we're live iff the instance is still registered, i.e.,
+            // it hasn't been deleted via delete_this_clone().
+
+            return (
+                this.py_object.$isPytchMainProgramModule
+                || (this.py_object.$pytchActorInstance == null)
+                || this.py_object.$pytchActorInstance.py_object_is_registered
+            );
+        };
     }
 
 
