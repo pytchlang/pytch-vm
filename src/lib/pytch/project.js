@@ -1532,6 +1532,8 @@ var $builtinmodule = function (name) {
                     owner_kind: "global",
                 };
             } else {
+                // TODO: Be more helpful if py_object is a class object,
+                // e.g., for "class GameState: score = 200" use-case?
                 return {
                     owner_kind: "unknown",
                 };
