@@ -1481,6 +1481,8 @@ var $builtinmodule = function (name) {
             this.py_attribute_name = py_attribute_name;
             this.attribute_name = Sk.ffi.remapToJs(py_attribute_name);
 
+            this.key = `${this.object_key_component}/${this.attribute_name}`;
+
             this.label = label;
             this.position = position;
         }
