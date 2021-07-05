@@ -17,6 +17,11 @@ configure_mocha();
 // Attribute watchers
 
 describe("Attribute watchers", () => {
+    // We'll use the same attribute name and value in a few tests:
+    const score_render_instrn = [
+        "RenderAttributeWatcher", "score", "42", 176, null, null, -236
+    ];
+
     it("can render a Sprite variable", async () => {
         const project = await import_deindented(`
 
@@ -49,10 +54,6 @@ describe("Attribute watchers", () => {
 
         project.do_synthetic_broadcast("watch-score");
         one_frame(project);
-
-        const score_render_instrn = [
-            "RenderAttributeWatcher", "score", "42", 176, null, null, -236
-        ];
 
         assert_renders_as("post-watch", project, [score_render_instrn]);
 
@@ -117,10 +118,6 @@ describe("Attribute watchers", () => {
                     pytch.hide_variable(None, "score")
         `);
 
-        const score_render_instrn = [
-            "RenderAttributeWatcher", "score", "42", 176, null, null, -236
-        ];
-
         project.do_synthetic_broadcast("watch-score");
         one_frame(project);
         assert_renders_as("post-watch", project, [score_render_instrn]);
@@ -155,10 +152,6 @@ describe("Attribute watchers", () => {
                 def hide_score(self):
                     pytch.hide_variable(GameState, "score")
         `);
-
-        const score_render_instrn = [
-            "RenderAttributeWatcher", "score", "42", 176, null, null, -236
-        ];
 
         project.do_synthetic_broadcast("watch-score");
         one_frame(project);
@@ -379,10 +372,6 @@ describe("Attribute watchers", () => {
         // One frame for the broadcast-launched thread to start and
         // call create-clone, and one for the clone's thread to start.
         many_frames(project, 2);
-
-        const score_render_instrn = [
-            "RenderAttributeWatcher", "score", "42", 176, null, null, -236
-        ];
 
         assert_renders_as("post-clone", project, [score_render_instrn]);
 
