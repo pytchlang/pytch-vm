@@ -1788,6 +1788,7 @@ var $builtinmodule = function (name) {
                 this.kill_all_threads_questions_sounds();
 
             this.maybe_retire_answered_question();
+            this.cull_watchers_of_deleted_clones();
 
             const project_state = {
                 maybe_live_question: this.maybe_live_question(),
