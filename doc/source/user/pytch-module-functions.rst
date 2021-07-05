@@ -110,3 +110,20 @@ Advanced usage
 In fact any attribute will do, so you can for example give the name of
 a *property* to compute the value dynamically.  This property will be
 accessed 60 times a second so should not do any heavy computation.
+
+So far we have given examples where the "variable owner", i.e., the
+first argument to ``pytch.show_variable()``, is a Sprite, or your
+Stage, or ``None`` to mean a global variable.  It can also be any
+other object in your program, for instance a non-Actor class:
+
+.. code-block:: python
+   :emphasize-lines: 1-2,8
+
+   class GameState:
+       score = 100
+
+   class Ship(pytch.Sprite):
+       # [...]
+       @pytch.when_this_sprite_clicked
+       def show_score(self):
+           pytch.show_variable(GameState, "score")
