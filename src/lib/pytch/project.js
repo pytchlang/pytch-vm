@@ -184,8 +184,9 @@ var $builtinmodule = function (name) {
     // watcher' be drawn.
 
     class RenderAttributeWatcher {
-        constructor(label, value, position) {
+        constructor(key, label, value, position) {
             this.kind = "RenderAttributeWatcher";
+            this.key = key;
             this.label = label;
             this.value = value;
             this.position = position;
