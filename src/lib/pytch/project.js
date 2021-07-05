@@ -1986,6 +1986,12 @@ var $builtinmodule = function (name) {
                 this.object_attribute_watchers.splice(existing_index, 1);
             }
         }
+
+        cull_watchers_of_deleted_clones() {
+            this.object_attribute_watchers = (
+                this.object_attribute_watchers.filter(
+                    w => w.object_is_live));
+        }
     }
 
 
