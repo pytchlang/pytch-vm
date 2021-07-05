@@ -1510,7 +1510,13 @@ var $builtinmodule = function (name) {
             const py_value = Sk.builtin.getattr(this.py_object, this.py_attribute_name);
             const py_str_value = Sk.builtin.str(py_value);
             const str_value = py_str_value.v;
-            return new RenderAttributeWatcher(this.label, str_value, this.position);
+
+            return new RenderAttributeWatcher(
+                this.key,
+                this.label,
+                str_value,
+                this.position
+            );
         }
 
         partial_error_context() {
