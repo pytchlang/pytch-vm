@@ -107,6 +107,9 @@ first argument to ``show_variable()``, for example:
 Advanced usage
 ~~~~~~~~~~~~~~
 
+Most Pytch programs will not need to use the techniques in this
+section.
+
 In fact any attribute will do, so you can for example give the name of
 a *property* to compute the value dynamically.  This property will be
 accessed 60 times a second so should not do any heavy computation.
