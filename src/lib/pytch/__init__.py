@@ -44,3 +44,8 @@ from .syscalls import (
 from ._completions_info import (
     _user_facing_completions,
 )
+
+from ._show_hide_variables import (
+    show_variable,
+    hide_variable
+)

@@ -177,5 +177,64 @@ var $builtinmodule = function (name) {
         `(QUESTION) Ask question; wait for and return user's answer`,
     );
 
+    mod._show_object_attribute = skulpt_function(
+        (py_object, py_attribute_name, py_label, py_position) => {
+            if (! Sk.builtin.checkString(py_attribute_name))
+                throw new Sk.builtin.TypeError(
+                    "_show_object_attribute(): attribute name must be string");
+
+            if (! Sk.builtin.checkString(py_label))
+                throw new Sk.builtin.TypeError(
+                    "_show_object_attribute(): label must be string");
+
+            const label = Sk.ffi.remapToJs(py_label);
+
+            if (! (py_position instanceof Sk.builtin.tuple))
+                throw new Sk.builtin.TypeError(
+                    "_show_object_attribute(): position must be tuple");
+
+            const position = Sk.ffi.remapToJs(py_position);
+
+            if (position.length !== 4)
+                throw new Sk.builtin.ValueError(
+                    "_show_object_attribute(): position must have 4 elements");
+
+            if (! position.every((x) => (x === null || typeof x === "number")))
+                throw new Sk.builtin.TypeError(
+                    "_show_object_attribute(): all elements of position"
+                    + " must be number or null");
+
+            if (position[0] !== null && position[2] !== null)
+                throw new Sk.builtin.ValueError(
+                    "_show_object_attribute(): cannot give"
+                    + ` both "top" and "bottom" args`);
+
+            if (position[1] !== null && position[3] !== null)
+                throw new Sk.builtin.ValueError(
+                    "_show_object_attribute(): cannot give"
+                    + ` both "left" and "right" args`);
+
+            return new_pytch_suspension(
+                "show-object-attribute",
+                { py_object, py_attribute_name, label, position },
+            );
+        },
+        `Add a watcher for an object attribute`,
+    );
+
+    mod._hide_object_attribute = skulpt_function(
+        (py_object, py_attribute_name) => {
+            if (! Sk.builtin.checkString(py_attribute_name))
+                throw new Sk.builtin.TypeError(
+                    "_hide_object_attribute(): attribute name must be string");
+
+            return new_pytch_suspension(
+                "hide-object-attribute",
+                { py_object, py_attribute_name },
+            );
+        },
+        `Remove a watcher for an object attribute`,
+    );
+
     return mod;
 };

@@ -99,6 +99,10 @@ Sk.pytchsupport.module_has_Project_instance = (mod => {
  */
 Sk.pytchsupport.maybe_auto_configure_project = (async mod => {
     // If the user has already made their own Project, leave it alone.
+    //
+    // TODO: Set the "$containingModule" property?  Or decide we will
+    // stop supporting non-auto-config'd Pytch programs?
+    //
     if (Sk.pytchsupport.module_has_Project_instance(mod))
         return;
 
@@ -109,6 +113,7 @@ Sk.pytchsupport.maybe_auto_configure_project = (async mod => {
     let py_project;
     try {
         py_project = Sk.misceval.callsim(pytch_Project);
+        py_project.js_project.$containingModule = mod;
     } catch (err) {
         throw new Sk.pytchsupport.PytchBuildError({
             phase: "create-project",
@@ -174,6 +179,11 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
     // Other sorts of PytchBuildError might be thrown by the following; let them
     // propagate to our caller if so.
     await Sk.pytchsupport.maybe_auto_configure_project(module);
+
+    // Ensure other bits of the code (the motivating case being detection of
+    // when we're showing a module attribute, i.e., global variable) can tell
+    // this is the module of the user's main program.
+    module.$isPytchMainProgramModule = true;
 
     return module;
 });
