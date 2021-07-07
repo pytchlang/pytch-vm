@@ -76,6 +76,7 @@ block.  In Pytch, the user's answer is *returned* to your program from
 the ``ask_and_wait()`` method.
 
 .. function:: self.ask_and_wait(question)
+   :noindex:
 
    Pop up an input box asking the *question*, and wait for the user to
    type in their answer.  Your method is paused while the user is typing
