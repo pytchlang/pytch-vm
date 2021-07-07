@@ -227,11 +227,15 @@ creating the costume (see
    Move the sprite to a certain y-position on the stage while keeping its
    x-position the same.
 
+
+Finding a Sprite's position
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. attribute:: self.x_position
                self.y_position
 
-   The current x or y position of the sprite.  These are *properties*, so
-   you do not use ``()`` after them.
+   The current *x* or *y* position of the sprite.  These are
+   *properties*, so you do not use ``()`` after them.
 
 
 .. _methods_playing_sounds:
