@@ -99,17 +99,29 @@ var $builtinmodule = function (name) {
     };
 
     mod.broadcast = skulpt_function(
-        (py_message) => broadcast_maybe_wait(py_message, false),
+        (py_message) => {
+            throwIfNoExecutingThread("broadcast");
+            return broadcast_maybe_wait(py_message, false);
+        },
         `(MESSAGE) Broadcast MESSAGE; continue executing`,
     );
 
     mod.broadcast_and_wait = skulpt_function(
-        (py_message) => broadcast_maybe_wait(py_message, true),
+        (py_message) => {
+            throwIfNoExecutingThread("broadcast_and_wait");
+            return broadcast_maybe_wait(py_message, true);
+        },
         `(MESSAGE) Broadcast MESSAGE; pause until all listeners finish`,
     );
 
     mod.play_sound = skulpt_function(
         (py_obj, py_sound_name, py_wait) => {
+            // Slight abuse of the "maybe_user_function_name" arg:
+            throwIfNoExecutingThread(
+                "play_sound",
+                "start_sound() or play_sound_until_done"
+            );
+
             let sound_name = Sk.ffi.remapToJs(py_sound_name);
             if (typeof sound_name !== "string")
                 throw new Sk.builtin.TypeError(
@@ -131,6 +143,8 @@ var $builtinmodule = function (name) {
 
     mod.wait_seconds = skulpt_function(
         (py_n_seconds) => {
+            throwIfNoExecutingThread("wait_seconds");
+
             let n_seconds = Sk.ffi.remapToJs(py_n_seconds);
             return new_pytch_suspension("wait-seconds", {n_seconds});
         },
@@ -141,6 +155,10 @@ var $builtinmodule = function (name) {
     // which was not created by Pytch's clone mechanism?
     mod.register_sprite_instance = skulpt_function(
         (py_instance, py_parent_instance) => {
+            throwIfNoExecutingThread(
+                "register_sprite_instance",
+                "create_clone_of"
+            );
             return new_pytch_suspension("register-instance",
                                         {py_instance, py_parent_instance});
         },
@@ -178,6 +196,8 @@ var $builtinmodule = function (name) {
 
     mod.ask_and_wait = skulpt_function(
         (py_prompt) => {
+            throwIfNoExecutingThread("ask_and_wait");
+
             const prompt = Sk.ffi.remapToJs(py_prompt);
             const prompt_is_not_None = (py_prompt !== Sk.builtin.none.none$);
             if ((typeof prompt !== "string") && prompt_is_not_None)
@@ -191,6 +211,8 @@ var $builtinmodule = function (name) {
 
     mod._show_object_attribute = skulpt_function(
         (py_object, py_attribute_name, py_label, py_position) => {
+            throwIfNoExecutingThread("_show_object_attribute", "show_variable");
+
             if (! Sk.builtin.checkString(py_attribute_name))
                 throw new Sk.builtin.TypeError(
                     "_show_object_attribute(): attribute name must be string");
@@ -236,6 +258,8 @@ var $builtinmodule = function (name) {
 
     mod._hide_object_attribute = skulpt_function(
         (py_object, py_attribute_name) => {
+            throwIfNoExecutingThread("_hide_object_attribute", "hide_variable");
+
             if (! Sk.builtin.checkString(py_attribute_name))
                 throw new Sk.builtin.TypeError(
                     "_hide_object_attribute(): attribute name must be string");
