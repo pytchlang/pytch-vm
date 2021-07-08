@@ -6,6 +6,7 @@ const {
     assert,
     assertBuildError,
     assertBuildErrorFun,
+    import_deindented,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -56,6 +57,75 @@ describe("build-error handling", () => {
                     return true;
                 }
             );
+        });
+    });
+
+    [
+        {
+            user_function: "show_variable",
+            args_fragment: "(None, \"foo\")",
+            syscall: "_show_object_attribute",
+        },
+        {
+            user_function: "hide_variable",
+            args_fragment: "(None, \"foo\")",
+            syscall: "_hide_object_attribute",
+        },
+        {
+            user_function: "broadcast",
+            args_fragment: "(\"hello-world\")",
+        },
+        {
+            user_function: "broadcast_and_wait",
+            args_fragment: "(\"hello-world\")",
+        },
+        {
+            user_function_owner: "Sprite",
+            user_function: "start_sound",
+            args_fragment: "(None, \"beep-beep\")",
+            syscall: "play_sound",
+        },
+        {
+            user_function_owner: "Sprite",
+            user_function: "play_sound_until_done",
+            args_fragment: "(None, \"beep-beep\")",
+            syscall: "play_sound",
+        },
+        {
+            user_function: "wait_seconds",
+            args_fragment: "(1.0)",
+        },
+        {
+            user_function: "create_clone_of",
+            args_fragment: "(None)",
+            syscall: "register_sprite_instance",
+        },
+        {
+            user_function: "ask_and_wait",
+            args_fragment: "(None)",
+        },
+    ].forEach(spec => {
+        it(`rejects ${spec.user_function}() at top level`, async () => {
+            const syscall = spec.syscall || spec.user_function;
+            const qualifier = (
+                spec.user_function_owner != null
+                    ? `${spec.user_function_owner}.`
+                    : ""
+            );
+            const assertDetails = assertBuildErrorFun(
+                "import",
+                Sk.builtin.RuntimeError,
+                new RegExp(
+                    `${syscall}\\(\\):`
+                    + " must be called while running a Pytch thread.*"
+                    + `did you call.*${spec.user_function}`
+                )
+            );
+            const do_import = import_deindented(`
+                import pytch
+                pytch.${qualifier}${spec.user_function}${spec.args_fragment}
+            `)
+            await assert.rejects(do_import, assertDetails);
         });
     });
 });
