@@ -127,7 +127,7 @@ describe("Multiple loop iterations per frame", () => {
         it(`rejects loop-yield-strategy call at top level (${spec.call_nub})`,
            async () => {
                const build_error_match = new RegExp(
-                   `cannot ${spec.call_nub} .* outside a Thread`);
+                   `${spec.call_nub}.* while running a Pytch thread`);
 
                const full_code = `
 

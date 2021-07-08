@@ -77,11 +77,8 @@ var $builtinmodule = function (name) {
 
     mod.push_loop_iterations_per_frame = skulpt_function(
         (py_iterations_per_frame) => {
+            throwIfNoExecutingThread("push_loop_iterations_per_frame");
             const thread = Sk.pytch.executing_thread;
-            if (thread == null)
-                throw new Sk.builtin.RuntimeError(
-                    "cannot push loop-iterations-per-frame outside a Thread");
-
             thread.push_loop_iterations_per_frame(py_iterations_per_frame.v);
         },
         `Push a new loop-control state onto the stack`,
@@ -89,11 +86,8 @@ var $builtinmodule = function (name) {
 
     mod.pop_loop_iterations_per_frame = skulpt_function(
         () => {
+            throwIfNoExecutingThread("pop_loop_iterations_per_frame");
             const thread = Sk.pytch.executing_thread;
-            if (thread == null)
-                throw new Sk.builtin.RuntimeError(
-                    "cannot pop loop-iterations-per-frame outside a Thread");
-
             thread.pop_loop_iterations_per_frame();
         },
         `Pop a loop-control state from the stack`,
