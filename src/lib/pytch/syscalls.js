@@ -41,6 +41,24 @@ var $builtinmodule = function (name) {
         return susp;
     };
 
+    const throwIfNoExecutingThread = (
+        (syscall_name, maybe_user_function_name) => {
+            if (Sk.pytch.executing_thread == null) {
+                const user_function_name = (
+                    maybe_user_function_name != null
+                        ? maybe_user_function_name
+                        : syscall_name
+                );
+                const message = (
+                    `${syscall_name}(): must be called while running a`
+                    + ` Pytch thread (did you call ${user_function_name}()`
+                    + ` at top level in your program?)`
+                );
+                throw new Sk.builtin.RuntimeError(message);
+            }
+        }
+    );
+
     mod.yield_until_next_frame = skulpt_function(
         () => {
             const executing_thread = Sk.pytch.executing_thread;
