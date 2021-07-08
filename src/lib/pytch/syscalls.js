@@ -41,6 +41,24 @@ var $builtinmodule = function (name) {
         return susp;
     };
 
+    const throwIfNoExecutingThread = (
+        (syscall_name, maybe_user_function_name) => {
+            if (Sk.pytch.executing_thread == null) {
+                const user_function_name = (
+                    maybe_user_function_name != null
+                        ? maybe_user_function_name
+                        : syscall_name
+                );
+                const message = (
+                    `${syscall_name}(): must be called while running a`
+                    + ` Pytch thread (did you call ${user_function_name}()`
+                    + ` at top level in your program?)`
+                );
+                throw new Sk.builtin.RuntimeError(message);
+            }
+        }
+    );
+
     mod.yield_until_next_frame = skulpt_function(
         () => {
             const executing_thread = Sk.pytch.executing_thread;
@@ -59,11 +77,8 @@ var $builtinmodule = function (name) {
 
     mod.push_loop_iterations_per_frame = skulpt_function(
         (py_iterations_per_frame) => {
+            throwIfNoExecutingThread("push_loop_iterations_per_frame");
             const thread = Sk.pytch.executing_thread;
-            if (thread == null)
-                throw new Sk.builtin.RuntimeError(
-                    "cannot push loop-iterations-per-frame outside a Thread");
-
             thread.push_loop_iterations_per_frame(py_iterations_per_frame.v);
         },
         `Push a new loop-control state onto the stack`,
@@ -71,11 +86,8 @@ var $builtinmodule = function (name) {
 
     mod.pop_loop_iterations_per_frame = skulpt_function(
         () => {
+            throwIfNoExecutingThread("pop_loop_iterations_per_frame");
             const thread = Sk.pytch.executing_thread;
-            if (thread == null)
-                throw new Sk.builtin.RuntimeError(
-                    "cannot pop loop-iterations-per-frame outside a Thread");
-
             thread.pop_loop_iterations_per_frame();
         },
         `Pop a loop-control state from the stack`,
@@ -87,17 +99,29 @@ var $builtinmodule = function (name) {
     };
 
     mod.broadcast = skulpt_function(
-        (py_message) => broadcast_maybe_wait(py_message, false),
+        (py_message) => {
+            throwIfNoExecutingThread("broadcast");
+            return broadcast_maybe_wait(py_message, false);
+        },
         `(MESSAGE) Broadcast MESSAGE; continue executing`,
     );
 
     mod.broadcast_and_wait = skulpt_function(
-        (py_message) => broadcast_maybe_wait(py_message, true),
+        (py_message) => {
+            throwIfNoExecutingThread("broadcast_and_wait");
+            return broadcast_maybe_wait(py_message, true);
+        },
         `(MESSAGE) Broadcast MESSAGE; pause until all listeners finish`,
     );
 
     mod.play_sound = skulpt_function(
         (py_obj, py_sound_name, py_wait) => {
+            // Slight abuse of the "maybe_user_function_name" arg:
+            throwIfNoExecutingThread(
+                "play_sound",
+                "start_sound() or play_sound_until_done"
+            );
+
             let sound_name = Sk.ffi.remapToJs(py_sound_name);
             if (typeof sound_name !== "string")
                 throw new Sk.builtin.TypeError(
@@ -119,6 +143,8 @@ var $builtinmodule = function (name) {
 
     mod.wait_seconds = skulpt_function(
         (py_n_seconds) => {
+            throwIfNoExecutingThread("wait_seconds");
+
             let n_seconds = Sk.ffi.remapToJs(py_n_seconds);
             return new_pytch_suspension("wait-seconds", {n_seconds});
         },
@@ -129,6 +155,10 @@ var $builtinmodule = function (name) {
     // which was not created by Pytch's clone mechanism?
     mod.register_sprite_instance = skulpt_function(
         (py_instance, py_parent_instance) => {
+            throwIfNoExecutingThread(
+                "register_sprite_instance",
+                "create_clone_of"
+            );
             return new_pytch_suspension("register-instance",
                                         {py_instance, py_parent_instance});
         },
@@ -166,6 +196,8 @@ var $builtinmodule = function (name) {
 
     mod.ask_and_wait = skulpt_function(
         (py_prompt) => {
+            throwIfNoExecutingThread("ask_and_wait");
+
             const prompt = Sk.ffi.remapToJs(py_prompt);
             const prompt_is_not_None = (py_prompt !== Sk.builtin.none.none$);
             if ((typeof prompt !== "string") && prompt_is_not_None)
@@ -179,6 +211,8 @@ var $builtinmodule = function (name) {
 
     mod._show_object_attribute = skulpt_function(
         (py_object, py_attribute_name, py_label, py_position) => {
+            throwIfNoExecutingThread("_show_object_attribute", "show_variable");
+
             if (! Sk.builtin.checkString(py_attribute_name))
                 throw new Sk.builtin.TypeError(
                     "_show_object_attribute(): attribute name must be string");
@@ -224,6 +258,8 @@ var $builtinmodule = function (name) {
 
     mod._hide_object_attribute = skulpt_function(
         (py_object, py_attribute_name) => {
+            throwIfNoExecutingThread("_hide_object_attribute", "hide_variable");
+
             if (! Sk.builtin.checkString(py_attribute_name))
                 throw new Sk.builtin.TypeError(
                     "_hide_object_attribute(): attribute name must be string");

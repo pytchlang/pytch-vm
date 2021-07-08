@@ -478,7 +478,14 @@ const assert_has_bbox = (
 
 const assertBuildError = (err, exp_phase, exp_inner_type, innerMsgRegExp) => {
     assert.ok(err instanceof Sk.pytchsupport.PytchBuildError);
-    assert.equal(err.phase, exp_phase);
+    assert.equal(
+        err.phase,
+        exp_phase,
+        (`expecting error to be thrown in phase "${exp_phase}"`
+         + ` but was thrown in phase "${err.phase}"`)
+    );
+
+    const innerMsg = new Sk.builtin.str(err.innerError).v;
 
     if (exp_inner_type != null) {
         const got_typename = err.innerError.tp$name;
@@ -486,11 +493,11 @@ const assertBuildError = (err, exp_phase, exp_inner_type, innerMsgRegExp) => {
 
         assert.ok(err.innerError instanceof exp_inner_type,
                   `expecting innerError to be of type ${exp_typename}`
-                  + ` but was of type ${got_typename}`);
+                  + ` but was of type ${got_typename}`
+                  + ` (with message "${innerMsg}")`);
     }
 
     if (innerMsgRegExp != null) {
-        const innerMsg = new Sk.builtin.str(err.innerError).v;
         assert.ok(
             innerMsgRegExp.test(innerMsg),
             (`innerError message "${innerMsg}"`
