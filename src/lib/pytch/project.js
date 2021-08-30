@@ -504,13 +504,13 @@ var $builtinmodule = function (name) {
         }
 
         create_threads_for_broadcast(thread_group, js_message) {
-            let event_handler_group = (this.event_handlers.message[js_message]
+            let event_handler_group = (this.event_handlers.message.get(js_message)
                                        || EventHandlerGroup.empty);
             event_handler_group.create_threads(thread_group, this.parent_project);
         }
 
         create_threads_for_keypress(thread_group, keyname) {
-            let event_handler_group = (this.event_handlers.keypress[keyname]
+            let event_handler_group = (this.event_handlers.keypress.get(keyname)
                                        || EventHandlerGroup.empty);
             event_handler_group.create_threads(thread_group, this.parent_project);
         }
