@@ -410,16 +410,16 @@ var $builtinmodule = function (name) {
 
             case "message":
                 let msg_handlers = this.event_handlers.message;
-                if (! msg_handlers.hasOwnProperty(event_data))
-                    msg_handlers[event_data] = new EventHandlerGroup();
-                msg_handlers[event_data].push(handler);
+                if (! msg_handlers.has(event_data))
+                    msg_handlers.set(event_data, new EventHandlerGroup());
+                msg_handlers.get(event_data).push(handler);
                 break;
 
             case "keypress":
                 let key_handlers = this.event_handlers.keypress;
-                if (! key_handlers.hasOwnProperty(event_data))
-                    key_handlers[event_data] = new EventHandlerGroup();
-                key_handlers[event_data].push(handler);
+                if (! key_handlers.has(event_data))
+                    key_handlers.set(event_data, new EventHandlerGroup());
+                key_handlers.get(event_data).push(handler);
                 break;
 
             case "clone":
