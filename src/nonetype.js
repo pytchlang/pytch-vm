@@ -69,3 +69,24 @@ Sk.builtin.NotImplemented = Sk.abstr.buildNativeClass("NotImplementedType", {
 Sk.builtin.NotImplemented.NotImplemented$ = /** @type {Sk.builtin.NotImplemented} */ (Object.create(Sk.builtin.NotImplemented.prototype, {
     v: { value: null, enumerable: true },
 }));
+
+
+const EllipsisType = Sk.abstr.buildNativeClass("ellipsis", {
+    constructor: function ellipsis() {
+        return Sk.builtin.Ellipsis;
+    }, 
+    slots : {
+        tp$new(args, kwargs) {
+            Sk.abstr.checkNoArgs("ellipsis", args, kwargs);
+            return Sk.builtin.Ellipsis;
+        },
+        $r() {
+            return new Sk.builtin.str("Ellipsis");
+        }
+    },
+    flags: {
+        sk$acceptable_as_base_class: false,
+    }
+});
+
+Sk.builtin.Ellipsis = Object.create(EllipsisType.prototype, {v: { value: "..." }});

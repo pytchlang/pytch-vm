@@ -20,7 +20,6 @@ v8.log
 src/internalpython.js
 /tmp.js
 Pipfile
-package-lock.json
 *~
 example/pytch/skulpt.js
 example/pytch/skulpt.min.js

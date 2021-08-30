@@ -24,8 +24,13 @@ var $builtinmodule = function (name) {
         "tm_yday": "day of year, range [1, 366]",
         "tm_isdst": "1 if summer time is in effect, 0 if not, and -1 if unknown"
     };
+    
+    var extra_fields = {
+        tm_zone: "abbreviation of timezone name",
+        tm_gmtoff: "offset from UTC in seconds",
+    };
 
-    var struct_time_f = Sk.builtin.make_structseq('time', 'struct_time', struct_time_fields);
+    var struct_time_f = Sk.builtin.make_structseq('time', 'struct_time', struct_time_fields, extra_fields);
 
     mod.struct_time = struct_time_f;
 
@@ -147,8 +152,17 @@ var $builtinmodule = function (name) {
 
     function date_to_struct_time(date, utc) {
         utc = utc || false;
+        let tm_info;
+        if (utc) {
+            tm_info = [new Sk.builtin.str("UTC"),new Sk.builtin.int_(0) ]
+        } else {
+            var offset = -(stdTimezoneOffset())/60;
+            var pad = offset < 0 ? "-" : "+";
+            var tm_zone = pad + ("" + Math.abs(offset)).padStart(2, "0");
+            tm_info = [new Sk.builtin.str(tm_zone), new Sk.builtin.int_(offset * 3600)];
+        }
         // y, m, d, hh, mm, ss, weekday, jday, dst
-        return new struct_time_f(
+        var struct_time = new struct_time_f(
             [
                 Sk.builtin.assk$(utc ? date.getUTCFullYear() : date.getFullYear()),
                 Sk.builtin.assk$((utc ? date.getUTCMonth() : date.getMonth()) + 1), // want January == 1
@@ -158,9 +172,12 @@ var $builtinmodule = function (name) {
                 Sk.builtin.assk$(utc ? date.getUTCSeconds() : date.getSeconds()),
                 Sk.builtin.assk$(((utc ? date.getUTCDay() : date.getDay()) + 6) % 7), // Want Monday == 0
                 Sk.builtin.assk$(getDayOfYear(date, utc)), // Want January, 1 == 1
-                Sk.builtin.assk$(utc ? 0 : (dst(date) ? 1 : 0)) // 1 for DST /0 for non-DST /-1 for unknown
-            ]
+                Sk.builtin.assk$(utc ? 0 : dst(date) ? 1 : 0), // 1 for DST /0 for non-DST /-1 for unknown
+            ],
+            tm_info
         );
+        
+        return struct_time;
     }
 
     function from_seconds(secs, asUtc) {
@@ -293,7 +310,7 @@ var $builtinmodule = function (name) {
 
         jsFormat = Sk.ffi.remapToJs(format);
 
-        return Sk.ffi.remapToPy(strftime(jsFormat, new Date(mktime_f(t).v*1000)));
+        return Sk.ffi.remapToPy(Sk.global.strftime(jsFormat, new Date(mktime_f(t).v*1000)));
     }
 
     mod.strftime = new Sk.builtin.func(strftime_f);
@@ -306,20 +323,17 @@ var $builtinmodule = function (name) {
 
     mod.tzset = new Sk.builtin.func(tzset_f);
 
-    function strptime_f(s, format)
-    {
-        Sk.builtin.pyCheckArgsLen("strptime", arguments.length, 1, 2);
-        Sk.builtin.pyCheckType("string", "string", Sk.builtin.checkString(s));
-        if (format !== undefined) {
-            Sk.builtin.pyCheckType("format", "string", Sk.builtin.checkString(format));
-        } else {
-            format = new Sk.builtin.str("%a %b %d %H:%M:%S %Y");
-        }
+    let _strptime_time = null;
 
-        let t = date_to_struct_time(strptime(Sk.ffi.remapToJs(s), Sk.ffi.remapToJs(format), true));
-        // We have no idea whether this was a DST time or not
-        t.v[8] = new Sk.builtin.int_(-1);
-        return t;
+    function strptime_f(...args) {
+        Sk.builtin.pyCheckArgsLen("strptime", args.length, 1, 2);
+        if (_strptime_time === null) {
+            return Sk.misceval.chain(Sk.importModule("_strptime", false, true), (s_mod) => {
+                _strptime_time = s_mod.tp$getattr(new Sk.builtin.str("_strptime_time"));
+                return _strptime_time.tp$call(args);
+            });
+        }
+        return _strptime_time.tp$call(args);
     }
 
     mod.strptime = new Sk.builtin.func(strptime_f);
