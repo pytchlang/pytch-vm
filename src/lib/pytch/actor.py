@@ -128,6 +128,7 @@ class Sprite(Actor):
     def __init__(self):
         self._x = 0
         self._y = 0
+        self._rotation = 0.0
         self._size = 1.0
         self._speech = None
 
@@ -322,6 +323,7 @@ class Stage(Actor):
     _x = 0
     _y = 0
     _size = 1.0
+    _rotation = 0.0
     _shown = True
     _speech = None
 
