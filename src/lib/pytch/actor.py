@@ -8,6 +8,10 @@ from pytch.syscalls import (
 from pytch.project import FRAMES_PER_SECOND
 
 
+# Close enough:
+MATH_PI = 3.141592653589793
+
+
 def _is_number(x):
     return isinstance(x, int) or isinstance(x, float)
 
