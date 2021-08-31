@@ -195,6 +195,12 @@ class Sprite(Actor):
         "(DY) Move SELF up DY on the stage (down if negative)"
         self._y += dy
 
+    def turn_degrees(self, d_angle):
+        "(ANGLE) Turn ANGLE degrees anticlockwise"
+        d_angle_radians = MATH_PI * d_angle / 180.0
+        self._rotation += d_angle_radians
+        self._rotation %= (2.0 * MATH_PI)
+
     def glide_to_xy(self, destination_x, destination_y, seconds):
         "(X, Y, SECONDS) Move SELF smoothly to (X, Y), taking SECONDS"
         destination_is_number = (
