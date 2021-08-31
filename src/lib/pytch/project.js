@@ -152,12 +152,15 @@ var $builtinmodule = function (name) {
     // (In due course, 'at a particular angle of rotation' will be added here.)
 
     class RenderImage {
-        constructor(x, y, scale, image, image_label) {
+        constructor(x, y, scale, rotation, image, image_cx, image_cy, image_label) {
             this.kind = "RenderImage";
             this.x = x;
             this.y = y;
             this.scale = scale;
+            this.rotation = rotation;
             this.image = image;
+            this.image_cx = image_cx;
+            this.image_cy = image_cy;
             this.image_label = image_label;
         }
     }
