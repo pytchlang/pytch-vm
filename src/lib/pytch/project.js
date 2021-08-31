@@ -738,20 +738,14 @@ var $builtinmodule = function (name) {
             const render_x = this.render_x;
             const render_y = this.render_y;
 
-            // The 'centre' of the image must end up at Stage coordinates
-            // (this.render_x, this.render_y).  The strange arithmetic here is
-            // because the centre-(x, y) coords of the image are most naturally
-            // expressed in the normal image frame, i.e., (0, 0) is at the top
-            // left, x increases rightwards, and y increases downwards.  We must
-            // remap this into the Stage frame, where y increases upwards.
-            //
-            const offset_x = -(size * appearance.centre_x);
-            const offset_y = size * appearance.centre_y;
             let costume_instructions = [
-                new RenderImage(render_x + offset_x,
-                                render_y + offset_y,
+                new RenderImage(render_x,
+                                render_y,
                                 size,
+                                this.render_rotation,
                                 appearance.image,
+                                appearance.centre_x,
+                                appearance.centre_y,
                                 appearance.label),
             ];
 
@@ -767,7 +761,7 @@ var $builtinmodule = function (name) {
                 // Position the tip of the speech-bubble's arrow in the centre
                 // of the top edge of the image.
                 let tip_x = render_x;
-                let tip_y = render_y + offset_y;
+                let tip_y = render_y + size * appearance.centre_y;
 
                 switch (kind) {
                 case "say": {
