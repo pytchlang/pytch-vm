@@ -700,6 +700,7 @@ var $builtinmodule = function (name) {
         get render_x() { return js_getattr(this.py_object, s_x); }
         get render_y() { return js_getattr(this.py_object, s_y); }
         get render_size() { return js_getattr(this.py_object, s_size); }
+        get render_rotation() { return js_getattr(this.py_object, s_rotation); }
 
         get render_appearance_index() {
             const appearance_index
