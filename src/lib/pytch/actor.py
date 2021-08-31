@@ -201,6 +201,10 @@ class Sprite(Actor):
         self._rotation += d_angle_radians
         self._rotation %= (2.0 * MATH_PI)
 
+    def point_degrees(self, angle):
+        "(ANGLE) Set rotation to ANGLE degrees"
+        self._rotation = MATH_PI * angle / 180.0
+
     def glide_to_xy(self, destination_x, destination_y, seconds):
         "(X, Y, SECONDS) Move SELF smoothly to (X, Y), taking SECONDS"
         destination_is_number = (
