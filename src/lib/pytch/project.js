@@ -19,6 +19,7 @@ var $builtinmodule = function (name) {
     const s_x = new Sk.builtin.str("_x");
     const s_y = new Sk.builtin.str("_y");
     const s_size = new Sk.builtin.str("_size");
+    const s_rotation = new Sk.builtin.str("_rotation");
     const s_appearance_index = new Sk.builtin.str("_appearance_index");
     const s_Appearances = new Sk.builtin.str("_Appearances");
     const s_speech = new Sk.builtin.str("_speech");
