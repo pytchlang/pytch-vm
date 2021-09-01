@@ -27,10 +27,8 @@ describe("Automatic switch-costume/show", () => {
         const shown = js_getattr(banana_0.py_object, "_shown");
         assert.equal(shown, true);
 
-        // Costume is 80 x 30 so with the auto-centre behaviour and y-flip, we
-        // expect the rendering at (-40, 15).
         assert_renders_as("startup", project,
-                          [["RenderImage", -40, 15, 1, "yellow-banana"]]);
+                          [["RenderImage", 0, 0, 1, "yellow-banana"]]);
     });
 
     it("starts off not showing a Sprite with no Costume", async () => {

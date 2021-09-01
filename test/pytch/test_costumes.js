@@ -410,7 +410,7 @@ describe("Costume handling", () => {
     it("obeys start_shown True when has Costumes", async () => {
         const project = await import_deindented(alien_code(true, true));
         assert_renders_as("start", project,
-                          [["RenderImage", -40, 15, 1, "firing-alien"]]);
+                          [["RenderImage", 0, 0, 1, "firing-alien"]]);
     });
 
     it("obeys start_shown False when has Costumes", async () => {
@@ -443,7 +443,7 @@ describe("Costume handling", () => {
         project.on_green_flag_clicked()
         one_frame(project)
         assert_renders_as("after-green-flag", project,
-                          [["RenderImage", -40, 15, 1, "firing-alien"]]);
+                          [["RenderImage", 0, 0, 1, "firing-alien"]]);
     });
 
 });

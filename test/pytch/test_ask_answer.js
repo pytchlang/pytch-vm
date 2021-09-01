@@ -184,7 +184,7 @@ describe("Ask and wait for answer", () => {
 
         const assert_speech = new SpeechAssertions(
             project,
-            ["RenderImage", -40, 15, 1, "yellow-banana"]
+            ["RenderImage", 0, 0, 1, "yellow-banana"]
         );
 
         assert_speech.is("startup", true, []);

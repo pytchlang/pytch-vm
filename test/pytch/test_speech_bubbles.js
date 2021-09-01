@@ -22,7 +22,7 @@ describe("Speech bubbles", () => {
     with_project("py/project/talking_banana.py", (import_project) => {
         const make_SpeechAssertions = (project) => new SpeechAssertions(
             project,
-            ["RenderImage", -40, 15, 1, "yellow-banana"]
+            ["RenderImage", 0, 0, 1, "yellow-banana"]
         );
 
         it("includes speech-bubble instructions", async () => {
@@ -185,7 +185,7 @@ describe("Speech bubbles", () => {
         one_frame(project);
         const assert_speech = new SpeechAssertions(
             project,
-            ["RenderImage", 0, 35, 1, "yellow-banana"]
+            ["RenderImage", 40, 20, 1, "yellow-banana"]
         );
         assert_speech.is("startup", true, [["Hello world", 40, 35]]);
     });

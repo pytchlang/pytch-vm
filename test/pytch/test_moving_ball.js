@@ -22,10 +22,7 @@ describe("moving ball example", () => {
 
             assert.equal(project.actors.length, 1);
 
-            // Ball should go to (100, 50) but its costume has center
-            // (8, 8) so, given different y sense of Stage and image,
-            // it's rendered at (92, 58).
-            assert_renders_as("start", project, ball_at(92, 58));
+            assert_renders_as("start", project, ball_at(100, 50));
 
             // Set things going.
             project.on_green_flag_clicked();
@@ -33,19 +30,19 @@ describe("moving ball example", () => {
             // On the next rendered frame, it should have moved right
             // by 50.
             one_frame(project);
-            assert_renders_as("green-flag", project, ball_at(142, 58));
+            assert_renders_as("green-flag", project, ball_at(150, 50));
 
             // For 30 frames (the half-second sleep), it should not
             // move.  We have already done one of those 30, so for the
             // next 29 frames it should not move.
             for (let i = 0; i < 29; ++i) {
                 one_frame(project);
-                assert_renders_as(`frame-${i}`, project, ball_at(142, 58));
+                assert_renders_as(`frame-${i}`, project, ball_at(150, 50));
             }
 
             // And now it should move another 60.
             one_frame(project);
-            assert_renders_as("frame-29", project, ball_at(202, 58));
+            assert_renders_as("frame-29", project, ball_at(210, 50));
 
             // Everything should have finished.
             assert.strictEqual(project.thread_groups.length, 0);
@@ -54,16 +51,16 @@ describe("moving ball example", () => {
         it("responds to key presses", async () => {
             let project = await import_project();
 
-            assert_renders_as("start", project, ball_at(92, 58));
+            assert_renders_as("start", project, ball_at(100, 50));
 
             mock_keyboard.press_key('w')
             one_frame(project)
-            assert_renders_as("frame-1", project, ball_at(92, 68));
+            assert_renders_as("frame-1", project, ball_at(100, 60));
 
             // Key 'w' is still down, but it is not freshly pressed, so
             // nothing should change.
             one_frame(project)
-            assert_renders_as("frame-2", project, ball_at(92, 68));
+            assert_renders_as("frame-2", project, ball_at(100, 60));
 
             // Release 'w'.
             mock_keyboard.release_key('w')
@@ -77,7 +74,7 @@ describe("moving ball example", () => {
             mock_keyboard.press_key('s')
             mock_keyboard.release_key('s')
             one_frame(project)
-            assert_renders_as("frame-3", project, ball_at(92, 68 + 10 + 10 - 100));
+            assert_renders_as("frame-3", project, ball_at(100, 60 + 10 + 10 - 100));
         });
 
         it("can tell which keys are pressed", async () => {
