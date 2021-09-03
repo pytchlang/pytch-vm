@@ -386,6 +386,14 @@ const assert_renders_as = (label, project, exp_render_instrns) => {
             assert.ok(got_instr.image_label == exp_instr[4],
                       `${pfx}, got image-label "${got_instr.image_label}"`
                       + ` but expected "${exp_instr[4]}"`);
+            if (exp_instr.length > 5) {
+                const got_degrees = 180.0 * got_instr.rotation / Math.PI;
+                const exp_degrees = exp_instr[5];
+                const diff = Math.abs(got_degrees - exp_degrees);
+                assert.ok(diff < 0.0001,
+                          `${pfx}, got rotation(°) ${got_degrees}`
+                          + ` but expected ${exp_degrees}`);
+            }
             break;
         }
         case "RenderSpeechBubble": {
