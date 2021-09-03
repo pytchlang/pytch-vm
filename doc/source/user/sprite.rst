@@ -335,6 +335,8 @@ Finding existing clones
    example ``Kitten.all_instances()``), not the ``self`` object.
 
 
+.. _collision_detection:
+
 Checking for sprites colliding
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
