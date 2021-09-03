@@ -43,10 +43,12 @@ describe("Sprite rotation", () => {
         assert_direction("point", 102);
         assert_direction("turn", 143);
 
+        // Check all new parts of the rendering instruction:
+        //     rotation, image-cx, image-cy
         assert_renders_as(
             "final",
             project,
-            [["RenderImage", 0, 0, 1, "yellow-banana", 143]]
+            [["RenderImage", 0, 0, 1, "yellow-banana", 143, 40, 15]]
         );
     });
 });
