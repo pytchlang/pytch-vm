@@ -1,3 +1,4 @@
 #!/bin/bash
 
-exec ../../node_modules/.bin/mocha-parallel-tests --reporter list --exclude=pytch-testing.js "$@" .
+cd "$(realpath "$(dirname "$0")")"
+exec ../../node_modules/.bin/mocha --parallel --reporter list --exclude=pytch-testing.js "$@" .
