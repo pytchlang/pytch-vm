@@ -333,6 +333,14 @@ class MockSoundPerformance {
 //
 // Specialised testing predicates.
 
+const assert_float_close = (actual, expected, tolerance) => {
+    const diff = Math.abs(actual - expected);
+    assert.ok(
+        diff < tolerance,
+        `expected ${actual} to be within ${tolerance} of ${expected}`
+    );
+}
+
 const assert_Appearance_equal = (
     got_appearance,
     exp_label,
@@ -684,6 +692,7 @@ module.exports = {
     mock_sound_manager,
     pytch_stdout,
     pytch_errors,
+    assert_float_close,
     assert_Appearance_equal,
     assert_renders_as,
     SpeechAssertions,
