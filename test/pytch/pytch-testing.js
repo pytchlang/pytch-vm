@@ -333,6 +333,14 @@ class MockSoundPerformance {
 //
 // Specialised testing predicates.
 
+const assert_float_close = (actual, expected, tolerance) => {
+    const diff = Math.abs(actual - expected);
+    assert.ok(
+        diff < tolerance,
+        `expected ${actual} to be within ${tolerance} of ${expected}`
+    );
+}
+
 const assert_Appearance_equal = (
     got_appearance,
     exp_label,
@@ -378,6 +386,23 @@ const assert_renders_as = (label, project, exp_render_instrns) => {
             assert.ok(got_instr.image_label == exp_instr[4],
                       `${pfx}, got image-label "${got_instr.image_label}"`
                       + ` but expected "${exp_instr[4]}"`);
+            if (exp_instr.length > 5) {
+                const got_degrees = 180.0 * got_instr.rotation / Math.PI;
+                const exp_degrees = exp_instr[5];
+                const diff = Math.abs(got_degrees - exp_degrees);
+                assert.ok(diff < 0.0001,
+                          `${pfx}, got rotation(°) ${got_degrees}`
+                          + ` but expected ${exp_degrees}`);
+            }
+            if (exp_instr.length > 6) {
+                const exp_cx = exp_instr[6];
+                const exp_cy = exp_instr[7];
+                assert.ok(((got_instr.image_cx == exp_cx)
+                           && (got_instr.image_cy == exp_cy)),
+                          `${pfx}, got image-centre coords`
+                          + ` (${got_instr.image_cx}, ${got_instr.image_cy})`
+                          + ` but expected (${exp_cx}, ${exp_cy})`);
+            }
             break;
         }
         case "RenderSpeechBubble": {
@@ -684,6 +709,7 @@ module.exports = {
     mock_sound_manager,
     pytch_stdout,
     pytch_errors,
+    assert_float_close,
     assert_Appearance_equal,
     assert_renders_as,
     SpeechAssertions,

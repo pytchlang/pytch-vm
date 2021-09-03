@@ -19,6 +19,7 @@ var $builtinmodule = function (name) {
     const s_x = new Sk.builtin.str("_x");
     const s_y = new Sk.builtin.str("_y");
     const s_size = new Sk.builtin.str("_size");
+    const s_rotation = new Sk.builtin.str("_rotation");
     const s_appearance_index = new Sk.builtin.str("_appearance_index");
     const s_Appearances = new Sk.builtin.str("_Appearances");
     const s_speech = new Sk.builtin.str("_speech");
@@ -151,12 +152,15 @@ var $builtinmodule = function (name) {
     // (In due course, 'at a particular angle of rotation' will be added here.)
 
     class RenderImage {
-        constructor(x, y, scale, image, image_label) {
+        constructor(x, y, scale, rotation, image, image_cx, image_cy, image_label) {
             this.kind = "RenderImage";
             this.x = x;
             this.y = y;
             this.scale = scale;
+            this.rotation = rotation;
             this.image = image;
+            this.image_cx = image_cx;
+            this.image_cy = image_cy;
             this.image_label = image_label;
         }
     }
@@ -696,6 +700,7 @@ var $builtinmodule = function (name) {
         get render_x() { return js_getattr(this.py_object, s_x); }
         get render_y() { return js_getattr(this.py_object, s_y); }
         get render_size() { return js_getattr(this.py_object, s_size); }
+        get render_rotation() { return js_getattr(this.py_object, s_rotation); }
 
         get render_appearance_index() {
             const appearance_index
@@ -733,20 +738,14 @@ var $builtinmodule = function (name) {
             const render_x = this.render_x;
             const render_y = this.render_y;
 
-            // The 'centre' of the image must end up at Stage coordinates
-            // (this.render_x, this.render_y).  The strange arithmetic here is
-            // because the centre-(x, y) coords of the image are most naturally
-            // expressed in the normal image frame, i.e., (0, 0) is at the top
-            // left, x increases rightwards, and y increases downwards.  We must
-            // remap this into the Stage frame, where y increases upwards.
-            //
-            const offset_x = -(size * appearance.centre_x);
-            const offset_y = size * appearance.centre_y;
             let costume_instructions = [
-                new RenderImage(render_x + offset_x,
-                                render_y + offset_y,
+                new RenderImage(render_x,
+                                render_y,
                                 size,
+                                this.render_rotation,
                                 appearance.image,
+                                appearance.centre_x,
+                                appearance.centre_y,
                                 appearance.label),
             ];
 
@@ -762,7 +761,7 @@ var $builtinmodule = function (name) {
                 // Position the tip of the speech-bubble's arrow in the centre
                 // of the top edge of the image.
                 let tip_x = render_x;
-                let tip_y = render_y + offset_y;
+                let tip_y = render_y + size * appearance.centre_y;
 
                 switch (kind) {
                 case "say": {

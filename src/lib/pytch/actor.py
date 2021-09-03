@@ -8,6 +8,10 @@ from pytch.syscalls import (
 from pytch.project import FRAMES_PER_SECOND
 
 
+# Close enough:
+MATH_PI = 3.141592653589793
+
+
 def _is_number(x):
     return isinstance(x, int) or isinstance(x, float)
 
@@ -124,6 +128,7 @@ class Sprite(Actor):
     def __init__(self):
         self._x = 0
         self._y = 0
+        self._rotation = 0.0
         self._size = 1.0
         self._speech = None
 
@@ -189,6 +194,21 @@ class Sprite(Actor):
     def change_y(self, dy):
         "(DY) Move SELF up DY on the stage (down if negative)"
         self._y += dy
+
+    def turn_degrees(self, d_angle):
+        "(ANGLE) Turn ANGLE degrees anticlockwise"
+        d_angle_radians = MATH_PI * d_angle / 180.0
+        self._rotation += d_angle_radians
+        self._rotation %= (2.0 * MATH_PI)
+
+    def point_degrees(self, angle):
+        "(ANGLE) Set rotation to ANGLE degrees"
+        self._rotation = MATH_PI * angle / 180.0
+
+    @property
+    def direction(self):
+        "The direction SELF is pointing (in degrees)"
+        return 180.0 * self._rotation / MATH_PI
 
     def glide_to_xy(self, destination_x, destination_y, seconds):
         "(X, Y, SECONDS) Move SELF smoothly to (X, Y), taking SECONDS"
@@ -318,6 +338,7 @@ class Stage(Actor):
     _x = 0
     _y = 0
     _size = 1.0
+    _rotation = 0.0
     _shown = True
     _speech = None
 

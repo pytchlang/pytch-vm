@@ -238,6 +238,43 @@ Finding a Sprite's position
    *properties*, so you do not use ``()`` after them.
 
 
+Turning a Sprite
+~~~~~~~~~~~~~~~~
+
+A sprite can turn round and point in different directions.
+
+.. warning::
+
+   This feature is experimental.  Currently, the ``touching()``
+   results (see :ref:`collision_detection`) will be inaccurate if a
+   sprite has turned from its starting direction.  Also,
+   ``when_this_sprite_clicked`` events will not be accurately
+   detected.
+
+.. function:: self.turn_degrees(angle)
+
+   Turn the sprite by the given angle (measured in degrees), in an
+   anticlockwise (counter-clockwise) direction.  To turn clockwise,
+   use a negative value for ``angle``.  This is the opposite
+   convention to Scratch, but "positive is anticlockwise" is the
+   common mathematical convention, so Pytch uses it.
+
+.. function:: self.point_degrees(angle)
+
+   Turn the sprite so it is pointing in the direction of the given
+   angle (measured in degrees).  An angle of zero means that the
+   sprite is drawn the same way up as the original image for the
+   costume it's currently wearing.  An angle of 90° means the sprite
+   points a quarter-turn anticlockwise (counter-clockwise) from its
+   original image.  To point a quarter-turn clockwise, use −90° (or
+   270°, which comes to the same thing).
+
+.. attribute:: self.direction
+
+   The direction the sprite is currently pointing, measured in
+   degrees.
+
+
 .. _methods_playing_sounds:
 
 Making sounds
@@ -334,6 +371,8 @@ Finding existing clones
    originals). Notice that this method is run using the class name (for
    example ``Kitten.all_instances()``), not the ``self`` object.
 
+
+.. _collision_detection:
 
 Checking for sprites colliding
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
