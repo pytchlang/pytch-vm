@@ -236,8 +236,8 @@ var $builtinmodule = function (name) {
 
             this.event_handlers = {
                 green_flag: new EventHandlerGroup(),
-                keypress: {},
-                message: {},
+                keypress: new Map(),
+                message: new Map(),
             };
 
             this.clone_handlers = [];
@@ -410,16 +410,16 @@ var $builtinmodule = function (name) {
 
             case "message":
                 let msg_handlers = this.event_handlers.message;
-                if (! msg_handlers.hasOwnProperty(event_data))
-                    msg_handlers[event_data] = new EventHandlerGroup();
-                msg_handlers[event_data].push(handler);
+                if (! msg_handlers.has(event_data))
+                    msg_handlers.set(event_data, new EventHandlerGroup());
+                msg_handlers.get(event_data).push(handler);
                 break;
 
             case "keypress":
                 let key_handlers = this.event_handlers.keypress;
-                if (! key_handlers.hasOwnProperty(event_data))
-                    key_handlers[event_data] = new EventHandlerGroup();
-                key_handlers[event_data].push(handler);
+                if (! key_handlers.has(event_data))
+                    key_handlers.set(event_data, new EventHandlerGroup());
+                key_handlers.get(event_data).push(handler);
                 break;
 
             case "clone":
@@ -504,13 +504,13 @@ var $builtinmodule = function (name) {
         }
 
         create_threads_for_broadcast(thread_group, js_message) {
-            let event_handler_group = (this.event_handlers.message[js_message]
+            let event_handler_group = (this.event_handlers.message.get(js_message)
                                        || EventHandlerGroup.empty);
             event_handler_group.create_threads(thread_group, this.parent_project);
         }
 
         create_threads_for_keypress(thread_group, keyname) {
-            let event_handler_group = (this.event_handlers.keypress[keyname]
+            let event_handler_group = (this.event_handlers.keypress.get(keyname)
                                        || EventHandlerGroup.empty);
             event_handler_group.create_threads(thread_group, this.parent_project);
         }
