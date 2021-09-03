@@ -19,7 +19,7 @@ if [ -e node_modules -o -e $LAYER_DIR ]; then
     exit 1
 fi
 
-npm install
+npm ci
 npm run build
 
 mkdir -p "$SKULPT_DIR"
