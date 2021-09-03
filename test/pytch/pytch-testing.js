@@ -394,6 +394,15 @@ const assert_renders_as = (label, project, exp_render_instrns) => {
                           `${pfx}, got rotation(°) ${got_degrees}`
                           + ` but expected ${exp_degrees}`);
             }
+            if (exp_instr.length > 6) {
+                const exp_cx = exp_instr[6];
+                const exp_cy = exp_instr[7];
+                assert.ok(((got_instr.image_cx == exp_cx)
+                           && (got_instr.image_cy == exp_cy)),
+                          `${pfx}, got image-centre coords`
+                          + ` (${got_instr.image_cx}, ${got_instr.image_cy})`
+                          + ` but expected (${exp_cx}, ${exp_cy})`);
+            }
             break;
         }
         case "RenderSpeechBubble": {
