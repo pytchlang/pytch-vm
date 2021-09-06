@@ -48,4 +48,27 @@ describe("Position properties", () => {
 
         assert.equal(pytch_stdout.drain_stdout(), exp_output);
     });
+
+    it("can retrieve size", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            class Banana(pytch.Sprite):
+                Costumes = ["yellow-banana.png"]
+                @pytch.when_I_receive("grow-and-shrink")
+                def grow_and_shrink(self):
+                    self.set_size(0.5)
+                    print(f"{self.size}")
+                    self.set_size(2.5)
+                    print(f"{self.size}")
+                    self.set_size(0.875)
+                    print(f"{self.size}")
+        `);
+
+        project.do_synthetic_broadcast("grow-and-shrink");
+        one_frame(project);
+
+        const exp_output = "0.5\n2.5\n0.875\n"
+        assert.equal(pytch_stdout.drain_stdout(), exp_output);
+    });
 });

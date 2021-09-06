@@ -109,6 +109,11 @@ Setting the sprite size
      For example, ``self.set_size(0.5)`` will set the sprite to be
      half-sized.
 
+Finding out the sprite's size
+  .. attribute:: self.size
+
+     The current size of the Sprite, where ``1`` is normal size,
+     ``0.5`` is half-size, ``2`` is double-size, and so on.
 
 Showing and hiding the sprite
   .. function:: self.show()

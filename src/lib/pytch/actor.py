@@ -242,6 +242,11 @@ class Sprite(Actor):
         "(SIZE) Set SELF's size to SIZE"
         self._size = size
 
+    @property
+    def size(self):
+        "SELF's current size"
+        return self._size
+
     def show(self):
         "() Make SELF visible"
         if not self.Costumes:
