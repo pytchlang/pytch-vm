@@ -17,5 +17,10 @@ const $builtinmodule = function (name) {
 
     const _str = (v) => new Sk.builtin.str(v);
 
+    glide_easing.named = new Sk.builtin.dict([
+        _str("linear"), _linear,
+        _str("ease-in-out"), _ease_in_out,
+    ]);
+
     return glide_easing;
 };
