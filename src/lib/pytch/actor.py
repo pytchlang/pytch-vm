@@ -211,7 +211,7 @@ class Sprite(Actor):
         "The direction SELF is pointing (in degrees)"
         return 180.0 * self._rotation / MATH_PI
 
-    def glide_to_xy(self, destination_x, destination_y, seconds):
+    def glide_to_xy(self, destination_x, destination_y, seconds, easing="linear"):
         "(X, Y, SECONDS) Move SELF smoothly to (X, Y), taking SECONDS"
         destination_is_number = (
             _is_number(destination_x) and _is_number(destination_y)
@@ -228,11 +228,14 @@ class Sprite(Actor):
         start_x = self._x
         start_y = self._y
 
+        easing_curve = glide_easing.named[easing]
+
         # On completion, we must be exactly at the target, and we want
         # the first frame to involve some movement, so count from 1 up
         # to n_frames (inclusive) rather than 0 up to n_frames - 1.
         for frame_idx in range(1, n_frames + 1):
-            t = frame_idx / n_frames  # t is in (0.0, 1.0]
+            t0 = frame_idx / n_frames  # t is in (0.0, 1.0]
+            t = easing_curve(t0)
             t_c = 1.0 - t  # 'complement'
             x = t * destination_x + t_c * start_x
             y = t * destination_y + t_c * start_y
