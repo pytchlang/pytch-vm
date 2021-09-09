@@ -1,6 +1,8 @@
 const $builtinmodule = function (name) {
     let glide_easing = {};
 
+    // TODO: Type checking on inputs?
+
     const _linear = new Sk.builtin.func((t) => t);
 
     const _ease_in_out = new Sk.builtin.func((t) => {
