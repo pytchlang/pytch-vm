@@ -7,6 +7,7 @@ from pytch.syscalls import (
 
 from pytch.project import FRAMES_PER_SECOND
 
+import pytch._glide_easing as glide_easing
 
 # Close enough:
 MATH_PI = 3.141592653589793
