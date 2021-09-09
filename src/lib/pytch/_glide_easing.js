@@ -15,5 +15,7 @@ const $builtinmodule = function (name) {
         return new Sk.builtin.float_(t_out);
     });
 
+    const _str = (v) => new Sk.builtin.str(v);
+
     return glide_easing;
 };
