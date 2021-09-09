@@ -228,6 +228,9 @@ class Sprite(Actor):
         start_x = self._x
         start_y = self._y
 
+        if easing not in glide_easing.named:
+            raise ValueError(f'"{easing}" not a known kind of easing')
+
         easing_curve = glide_easing.named[easing]
 
         # On completion, we must be exactly at the target, and we want
