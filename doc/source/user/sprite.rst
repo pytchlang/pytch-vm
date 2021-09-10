@@ -208,7 +208,11 @@ creating the costume (see
 
    Glide the sprite smoothly to a particular position on the stage, taking
    the given number of seconds to do so.  The value for ``seconds`` does
-   not have to be a whole number.
+   not have to be a whole number.  *Advanced/experimental:* You can also
+   give a fourth argument, to give the *easing* of the glide.  This can
+   be: the string ``"linear"``, to move at a constant speed; or the string
+   ``ease-in-out``, to start slowly, speed up, then slow back down as the
+   glide finishes.
 
 .. function:: self.change_x(dx)
 
