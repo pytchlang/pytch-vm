@@ -6,6 +6,12 @@ const $builtinmodule = function (name) {
     const _linear = new Sk.builtin.func((t) => t);
 
     const _ease_in_out = new Sk.builtin.func((t) => {
+        // We could perhaps accept integers etc. too, but the only
+        // real use case is for floats in [0.0, 1.0], so may as well
+        // avoid having to do things like convert BigInt to float.
+        if (!Sk.builtin.checkFloat(t))
+            throw new Sk.builtin.ValueError("input must be float");
+
         const t0 = t.v;
         const t0_sq = t0 * t0;
 
