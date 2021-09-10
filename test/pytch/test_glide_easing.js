@@ -14,7 +14,16 @@ configure_mocha();
 
 describe("Glide easing", () => {
     [
-        // TODO: Specs
+        {
+            easingName: "linear",
+            exp_t_fun: t => t,
+        },
+        {
+            easingName: "ease-in-out",
+            exp_t_fun: t => ((t < 0.5)
+                             ? (2.0 * t * t)
+                             : (1.0 - 0.5 * (-2 * t + 2) * (-2 * t + 2))),
+        },
     ].forEach(spec => {
         it(`computes ${spec.easingName}`, async () => {
             const project = await import_deindented(`
