@@ -13,6 +13,10 @@ configure_mocha();
 ////////////////////////////////////////////////////////////////////////////////
 
 describe("Glide easing", () => {
+    // For "linear", we're only really testing that we've successfully
+    // exposed the JavaScript function to Python.  For "ease-in-out",
+    // we are also checking the algebra in going from the form given
+    // here in the test to the one used in the module.
     [
         {
             easingName: "linear",
