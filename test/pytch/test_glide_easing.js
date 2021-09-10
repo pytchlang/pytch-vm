@@ -65,4 +65,23 @@ describe("Glide easing", () => {
         one_frame(project);
         pytch_errors.assert_sole_error_matches(/not a known kind/);
     });
+
+    it("rejects non-float input", async () => {
+        // Only the ease-in-out function actually checks its input.
+        const project = await import_deindented(`
+
+            import pytch
+            import pytch._glide_easing
+
+            cv = pytch._glide_easing.named["ease-in-out"]
+            try:
+                cv("hello world")
+            except Exception as e:
+                print(str(e))
+        `);
+        assert.strictEqual(
+            pytch_stdout.drain_stdout(),
+            "input must be float\n"
+        );
+    });
 });
