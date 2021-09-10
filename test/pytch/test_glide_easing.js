@@ -6,6 +6,8 @@ const {
     pytch_stdout,
     assert,
     assert_float_close,
+    one_frame,
+    pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -47,5 +49,20 @@ describe("Glide easing", () => {
                 assert_float_close(got_t, exp_t, 1.0e-15);
             });
         });
+    });
+
+    it("rejects unknown easing function", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            class Banana(pytch.Sprite):
+                Costumes = ["yellow-banana.png"]
+                @pytch.when_I_receive("run")
+                def bad_glide(self):
+                    self.glide_to_xy(0, 120, 0.5, "no-such-easing")
+        `);
+        project.do_synthetic_broadcast("run");
+        one_frame(project);
+        pytch_errors.assert_sole_error_matches(/not a known kind/);
     });
 });
