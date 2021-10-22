@@ -255,6 +255,7 @@ Sk.pytchsupport.PytchBuildError = Sk.abstr.buildNativeClass(
     "actors_of_module",
     "module_has_Project_instance",
     "maybe_auto_configure_project",
+    "import_with_auto_configure",
     //
     "PytchAssetLoadError",
     "PytchBuildError",
