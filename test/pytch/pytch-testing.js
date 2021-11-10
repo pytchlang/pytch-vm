@@ -703,6 +703,7 @@ module.exports = {
     assert,
     with_project,
     with_module,
+    deIndent,
     import_deindented,
     mock_mouse,
     mock_keyboard,
