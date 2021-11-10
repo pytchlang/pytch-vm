@@ -188,6 +188,51 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
     return module;
 });
 
+
+/**
+ * Import a module from code text, and auto-configure its project with
+ * an "image and sound loader" which simply records the names of the
+ * requested assets.
+ */
+Sk.pytchsupport.asset_names_of_project = async (code_text) => {
+    // This is clumsy; provide push/pop facility for Sk options?
+    const saved_pytch_async_load_image = Sk.pytch.async_load_image;
+    const saved_pytch_sound_manager = Sk.pytch.sound_manager;
+
+    let images = [];
+    const note_image_required = async (name) => {
+        images.push(name);
+        // Fudge this: Nothing will get called.
+        return {};
+    };
+
+    let sounds = [];
+    const note_sound_required = async (name) => {
+        sounds.push(name);
+        // Fudge this: won't get called in our case:
+        return {};
+    }
+    const do_nothing = (() => {});
+    const sound_noting_sound_manager = {
+        async_load_sound: (label, filename) => note_sound_required(filename),
+        stop_all_performances: do_nothing,
+        one_frame: do_nothing,
+    }
+
+    try {
+        Sk.pytch.async_load_image = note_image_required;
+        Sk.pytch.sound_manager = sound_noting_sound_manager;
+
+        const module = await Sk.pytchsupport.import_with_auto_configure(code_text);
+        return { status: "ok", assets: images.concat(sounds) };
+    } catch (err) {
+        return { status: "error", error: err };
+    } finally {
+        Sk.pytch.sound_manager = saved_pytch_sound_manager;
+        Sk.pytch.async_load_image = saved_pytch_async_load_image;
+    }
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
