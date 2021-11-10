@@ -46,4 +46,18 @@ describe("asset detection", () => {
                              "starry-sky.jpg",
                          ]);
     });
+
+    it("copes with code having error", async () => {
+        const code = deIndent(`
+            import pytch
+
+            class Banana(pytch.Sprite):
+                Costumes = [f"{1/0}.png"]
+        `);
+
+        const extraction_result
+              = await Sk.pytchsupport.asset_names_of_project(code);
+
+        assert.equal(extraction_result.status, "error");
+    })
 });
