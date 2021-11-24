@@ -26,10 +26,10 @@ mkdir -p "$SKULPT_DIR"
 
 (
     cd dist
-    cp --target-directory=../"$SKULPT_DIR" \
-           skulpt.min.js \
-           skulpt.min.js.map \
-           skulpt-stdlib.js
+    cp skulpt.min.js \
+       skulpt.min.js.map \
+       skulpt-stdlib.js \
+       ../"$SKULPT_DIR"
 )
 
 (
