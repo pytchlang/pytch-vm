@@ -901,6 +901,10 @@ var $builtinmodule = function (name) {
             return this.state == Thread.State.RAISED_EXCEPTION;
         }
 
+        requested_stop() {
+            return this.state == Thread.State.REQUESTED_STOP;
+        }
+
         get human_readable_sleeping_on() {
             switch (this.state) {
             case Thread.State.RUNNING:
@@ -1076,6 +1080,11 @@ var $builtinmodule = function (name) {
                 return [];
             }
 
+            case "stop-all-threads": {
+                this.state = Thread.State.REQUESTED_STOP;
+                return [];
+            }
+
             default:
                 throw Error(`unknown Pytch syscall "${syscall_kind}"`);
             }
@@ -1224,6 +1233,9 @@ var $builtinmodule = function (name) {
 
         // RAISED_EXCEPTION: The thread raised an exception.
         RAISED_EXCEPTION: "raised-exception",
+
+        // REQUESTED_STOP: The thread requested all threads be stopped.
+        REQUESTED_STOP: "requested-stop",
     };
 
 
@@ -1245,6 +1257,10 @@ var $builtinmodule = function (name) {
 
         raised_exception() {
             return this.threads.some(t => t.raised_exception());
+        }
+
+        requested_stop() {
+            return this.threads.some(t => t.requested_stop());
         }
 
         has_live_threads() {
@@ -1787,6 +1803,19 @@ var $builtinmodule = function (name) {
 
             if (this.thread_groups.some(tg => tg.raised_exception()))
                 this.kill_all_threads_questions_sounds();
+
+            // Tests in Scratch show that as well as stopping all scripts,
+            // the "Stop All" block:
+            //
+            //     Stops all sounds
+            //     Deletes all clones
+            //     Cancels all "ask and wait" questions
+            //     Clears all speech bubbles
+            //
+            // I.e., does the same as the red stop button.
+            //
+            if (this.thread_groups.some(tg => tg.requested_stop()))
+                this.on_red_stop_clicked();
 
             this.maybe_retire_answered_question();
             this.cull_watchers_of_deleted_clones();

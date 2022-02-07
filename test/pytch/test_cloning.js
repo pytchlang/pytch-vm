@@ -139,7 +139,8 @@ describe("cloning", () => {
 
             project.do_synthetic_broadcast("destroy-broom-clones");
             frame_then_assert_all_IDs([1]);
-        })});
+        });
+    });
 
     with_project("py/project/unregister_clone.py", (import_project) => {
         it("can unregister a clone", async () => {
@@ -246,8 +247,21 @@ describe("cloning", () => {
         })});
 
     with_project("py/project/launch_clones.py", (import_project) => {
-        ['on_red_stop_clicked', 'on_green_flag_clicked'].forEach(method =>
-            it(`${method} deletes all clones`, async () => {
+        [
+            {
+                label: "red-stop",
+                action: (project) => project.on_red_stop_clicked(),
+            },
+            {
+                label: "green-flag",
+                action: (project) => project.on_green_flag_clicked(),
+            },
+            {
+                label: "stop-all",
+                action: (project) => project.do_synthetic_broadcast("halt"),
+            },
+        ].forEach(spec =>
+            it(`${spec.label} deletes all clones`, async () => {
                 let project = await import_project();
                 let broom_actor = project.actor_by_class_name("Broom");
                 let n_brooms = () => broom_actor.instances.length;
@@ -257,9 +271,11 @@ describe("cloning", () => {
 
                 assert.strictEqual(n_brooms(), 5);
 
-                project[method]();
+                spec.action(project);
+                one_frame(project);
                 assert.strictEqual(n_brooms(), 1);
-            }))});
+            }));
+    });
 
     const codeForPear = `#
             class Pear(pytch.Sprite):

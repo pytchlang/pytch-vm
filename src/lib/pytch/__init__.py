@@ -39,6 +39,7 @@ from .syscalls import (
     wait_seconds,
     key_pressed,
     ask_and_wait,
+    stop_all,
 )
 
 from ._completions_info import (

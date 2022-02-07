@@ -272,5 +272,10 @@ var $builtinmodule = function (name) {
         `Remove a watcher for an object attribute`,
     );
 
+    mod.stop_all = skulpt_function(
+        () => new_pytch_suspension("stop-all-threads", {}),
+        `() Stop all currently-running scripts`,
+    );
+
     return mod;
 };

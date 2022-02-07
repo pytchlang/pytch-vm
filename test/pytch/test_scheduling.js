@@ -68,12 +68,28 @@ describe("scheduling", () => {
         });
 
         const halt_test_specs = [
-            { method: 'on_red_stop_clicked', exp_count: 10 },
-            { method: 'on_green_flag_clicked', exp_count: 5 },
+            {
+                label: "red-stop",
+                action: (project) => project.on_red_stop_clicked(),
+                exp_count: 10,
+            },
+            {
+                label: "green-flag",
+                action: (project) => project.on_green_flag_clicked(),
+                exp_count: 5,
+            },
+            {
+                label: "stop-all",
+                action: (project) => project.do_synthetic_broadcast("halt"),
+                // The "halt" b/cast handler runs concurrently with the
+                // start_counting() threads; they get one more frame of
+                // run-time before being deleted:
+                exp_count: 11,
+            },
         ];
 
         halt_test_specs.forEach(spec => {
-            it(`${spec.method} halts everything`, async () => {
+            it(`${spec.label} halts everything`, async () => {
                 let [project, assert_counters_both] = await two_threads_project();
 
                 project.on_green_flag_clicked();
@@ -84,7 +100,7 @@ describe("scheduling", () => {
 
                 // Everything should stop if we hit the red button, either
                 // explicitly, or implicitly as part of green-flag:
-                project[spec.method]();
+                spec.action(project);
                 many_frames(project, 5);
 
                 assert_counters_both(spec.exp_count);
