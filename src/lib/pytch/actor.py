@@ -321,6 +321,10 @@ class Sprite(Actor):
 
     def say(self, text):
         "(TEXT) Say TEXT in speech bubble; remove if TEXT empty"
+        if isinstance(text, (int, float)):
+            text = str(text)
+        if not isinstance(text, str):
+            raise ValueError("the TEXT argument must be a string or number")
         self._speech = (
             None if text == ""
             else (_new_speech_id(), "say", text)
