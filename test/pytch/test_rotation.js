@@ -6,6 +6,7 @@ const {
     assert_float_close,
     assert_renders_as,
     one_frame,
+    pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -51,4 +52,35 @@ describe("Sprite rotation", () => {
             [["RenderImage", 0, 0, 1, "yellow-banana", 143, 40, 15]]
         );
     });
+
+    [
+        {
+            label: "assign",
+            message: "try-point",
+        },
+        {
+            label: "aug-assign",
+            message: "try-turn",
+        },
+    ].forEach(spec =>
+        it(`gives advice if try ${spec.label} direction`, async () => {
+            const project = await import_deindented(`
+
+                import pytch
+                class Banana(pytch.Sprite):
+                    Costumes = ["yellow-banana.png"]
+                    @pytch.when_I_receive("try-point")
+                    def point(self):
+                        self.direction = 270
+                    @pytch.when_I_receive("try-turn")
+                    def turn(self):
+                        self.direction += 30
+            `);
+
+            project.do_synthetic_broadcast(spec.message);
+            one_frame(project);
+
+            const exp_error_re = /use point_degrees.*or turn_degrees/;
+            pytch_errors.assert_sole_error_matches(exp_error_re);
+        }));
 });
