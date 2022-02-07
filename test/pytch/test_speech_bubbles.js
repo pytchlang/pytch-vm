@@ -143,6 +143,10 @@ describe("Speech bubbles", () => {
             label: "red-stop",
             action: (project) => project.on_red_stop_clicked(),
         },
+        {
+            label: "stop-all",
+            action: (project) => project.do_synthetic_broadcast("halt"),
+        },
     ].forEach(spec =>
         it(`clears speech bubbles (${spec.label})`, async () => {
             const project = await import_deindented(`
@@ -153,6 +157,9 @@ describe("Speech bubbles", () => {
                     @pytch.when_I_receive("talk")
                     def talk(self):
                         self.say("Hello world")
+                    @pytch.when_I_receive("halt")
+                    def stop_everything(self):
+                        pytch.stop_all()
             `);
 
             const assert_bubble_contents = (exp_bubbles) => {
