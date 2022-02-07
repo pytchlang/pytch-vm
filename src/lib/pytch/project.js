@@ -901,6 +901,10 @@ var $builtinmodule = function (name) {
             return this.state == Thread.State.RAISED_EXCEPTION;
         }
 
+        requested_stop() {
+            return this.state == Thread.State.REQUESTED_STOP;
+        }
+
         get human_readable_sleeping_on() {
             switch (this.state) {
             case Thread.State.RUNNING:
