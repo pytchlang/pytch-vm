@@ -211,22 +211,29 @@ describe("Ask and wait for answer", () => {
         // Don't bother answering the second question.
     });
 
-    it("abandons questions on red stop", async () => {
-        const project = await import_deindented(`
+    [
+        {
+            label: "red-stop",
+            action: (project) => project.on_red_stop_clicked(),
+        },
+    ].forEach(spec =>
+        it(`abandons questions on ${spec.label}`, async () => {
+            const project = await import_deindented(`
 
-            import pytch
-            class Interviewer(pytch.Sprite):
-                @pytch.when_I_receive("ask")
-                def ask_name(self):
-                    name = pytch.ask_and_wait("name?")
-        `);
+                import pytch
+                class Interviewer(pytch.Sprite):
+                    @pytch.when_I_receive("ask")
+                    def ask_name(self):
+                        name = pytch.ask_and_wait("name?")
+            `);
 
-        project.do_synthetic_broadcast("ask");
-        one_frame(project);
-        assertLiveQuestion(project, "name?");
+            project.do_synthetic_broadcast("ask");
+            one_frame(project);
+            assertLiveQuestion(project, "name?");
 
-        project.on_red_stop_clicked();
-        assertNoLiveQuestion(project);
-    });
+            spec.action(project);
+            one_frame(project);
+            assertNoLiveQuestion(project);
+        }));
 
 });
