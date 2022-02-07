@@ -1224,6 +1224,9 @@ var $builtinmodule = function (name) {
 
         // RAISED_EXCEPTION: The thread raised an exception.
         RAISED_EXCEPTION: "raised-exception",
+
+        // REQUESTED_STOP: The thread requested all threads be stopped.
+        REQUESTED_STOP: "requested-stop",
     };
 
 
