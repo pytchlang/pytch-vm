@@ -17,8 +17,8 @@ inside ``Thread.one_frame()`` and passed to the following
 function-valued property of the ``Sk.pytch`` configuration object:
 
 - ``on_exception`` — function which is passed the JavaScript-level
-  error (often it is also a Python exception object) and an 'error
-  context' describing how the error occurred.
+  error (often it is also a Python exception object) and an ‘error
+  context’ describing how the error occurred.
 
 In tests, any errors are collected into a list. Some tests are expected
 to cause errors, and this can be verified by examining that list. Most
