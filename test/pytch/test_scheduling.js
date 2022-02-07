@@ -70,12 +70,12 @@ describe("scheduling", () => {
         const halt_test_specs = [
             {
                 label: "red-stop",
-                method: 'on_red_stop_clicked',
+                action: (project) => project.on_red_stop_clicked(),
                 exp_count: 10,
             },
             {
                 label: "green-flag",
-                method: 'on_green_flag_clicked',
+                action: (project) => project.on_green_flag_clicked(),
                 exp_count: 5,
             },
         ];
@@ -92,7 +92,7 @@ describe("scheduling", () => {
 
                 // Everything should stop if we hit the red button, either
                 // explicitly, or implicitly as part of green-flag:
-                project[spec.method]();
+                spec.action(project);
                 many_frames(project, 5);
 
                 assert_counters_both(spec.exp_count);
