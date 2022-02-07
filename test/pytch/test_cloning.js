@@ -139,7 +139,8 @@ describe("cloning", () => {
 
             project.do_synthetic_broadcast("destroy-broom-clones");
             frame_then_assert_all_IDs([1]);
-        })});
+        });
+    });
 
     with_project("py/project/unregister_clone.py", (import_project) => {
         it("can unregister a clone", async () => {
