@@ -69,17 +69,19 @@ describe("scheduling", () => {
 
         const halt_test_specs = [
             {
+                label: "red-stop",
                 method: 'on_red_stop_clicked',
                 exp_count: 10,
             },
             {
+                label: "green-flag",
                 method: 'on_green_flag_clicked',
                 exp_count: 5,
             },
         ];
 
         halt_test_specs.forEach(spec => {
-            it(`${spec.method} halts everything`, async () => {
+            it(`${spec.label} halts everything`, async () => {
                 let [project, assert_counters_both] = await two_threads_project();
 
                 project.on_green_flag_clicked();
