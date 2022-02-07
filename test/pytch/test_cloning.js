@@ -256,6 +256,10 @@ describe("cloning", () => {
                 label: "green-flag",
                 action: (project) => project.on_green_flag_clicked(),
             },
+            {
+                label: "stop-all",
+                action: (project) => project.do_synthetic_broadcast("halt"),
+            },
         ].forEach(spec =>
             it(`${spec.label} deletes all clones`, async () => {
                 let project = await import_project();
@@ -268,6 +272,7 @@ describe("cloning", () => {
                 assert.strictEqual(n_brooms(), 5);
 
                 spec.action(project);
+                one_frame(project);
                 assert.strictEqual(n_brooms(), 1);
             }));
     });

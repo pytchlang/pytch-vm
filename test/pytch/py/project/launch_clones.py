@@ -50,8 +50,15 @@ class Broom(Sprite):
         self.delete_this_clone()
 
 
+class Controller(Sprite):
+    @when_I_receive("halt")
+    def stop_everything(self):
+        pytch.stop_all()
+
+
 # --cut-here-for-auto-config--
 
 project = Project()
 project.register_sprite_class(Alien)
 project.register_sprite_class(Broom)
+project.register_sprite_class(Controller)
