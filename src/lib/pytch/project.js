@@ -1080,6 +1080,11 @@ var $builtinmodule = function (name) {
                 return [];
             }
 
+            case "stop-all-threads": {
+                this.state = Thread.State.REQUESTED_STOP;
+                return [];
+            }
+
             default:
                 throw Error(`unknown Pytch syscall "${syscall_kind}"`);
             }
