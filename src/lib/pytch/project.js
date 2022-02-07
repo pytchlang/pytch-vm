@@ -1254,6 +1254,10 @@ var $builtinmodule = function (name) {
             return this.threads.some(t => t.raised_exception());
         }
 
+        requested_stop() {
+            return this.threads.some(t => t.requested_stop());
+        }
+
         has_live_threads() {
             return (this.threads.length > 0);
         }
