@@ -1804,6 +1804,19 @@ var $builtinmodule = function (name) {
             if (this.thread_groups.some(tg => tg.raised_exception()))
                 this.kill_all_threads_questions_sounds();
 
+            // Tests in Scratch show that as well as stopping all scripts,
+            // the "Stop All" block:
+            //
+            //     Stops all sounds
+            //     Deletes all clones
+            //     Cancels all "ask and wait" questions
+            //     Clears all speech bubbles
+            //
+            // I.e., does the same as the red stop button.
+            //
+            if (this.thread_groups.some(tg => tg.requested_stop()))
+                this.on_red_stop_clicked();
+
             this.maybe_retire_answered_question();
             this.cull_watchers_of_deleted_clones();
 
