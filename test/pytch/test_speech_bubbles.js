@@ -192,7 +192,7 @@ describe("Speech bubbles", () => {
                 @pytch.when_I_receive("move-and-talk")
                 def move_and_talk(self):
                     self.go_to_xy(40, 20)
-                    self.say("Hello world")
+                    self.say(42.25)
         `);
 
         project.do_synthetic_broadcast("move-and-talk");
@@ -201,7 +201,24 @@ describe("Speech bubbles", () => {
             project,
             ["RenderImage", 40, 20, 1, "yellow-banana"]
         );
-        assert_speech.is("startup", true, [["Hello world", 40, 35]]);
+        assert_speech.is("startup", true, [["42.25", 40, 35]]);
+    });
+
+    it("rejects non-string non-number speech text", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            class Banana(pytch.Sprite):
+                Costumes = ["yellow-banana.png"]
+
+                @pytch.when_I_receive("try-talk")
+                def bad_talk(self):
+                    self.say(lambda x: x)
+        `);
+
+        project.do_synthetic_broadcast("try-talk");
+        one_frame(project);
+        pytch_errors.assert_sole_error_matches(/must be a string or number/);
     });
 
     it("identifies the speaker of each bubble", async () => {
