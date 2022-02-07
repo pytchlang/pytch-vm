@@ -9,6 +9,7 @@ const {
     many_frames,
     one_frame,
     assert_n_speaker_ids,
+    pytch_errors,
     pytch_stdout,
 } = require("./pytch-testing.js");
 configure_mocha();
@@ -216,5 +217,23 @@ describe("Speech bubbles", () => {
         many_frames(project, 2);
 
         assert_n_speaker_ids(project, 2);
+    });
+
+    it("rejects non-numeric duration argument", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Banana(pytch.Sprite):
+              Costumes = ["yellow-banana.png"]
+
+              @pytch.when_I_receive("try-say")
+              def bad_say_seconds(self):
+                self.say_for_seconds("hello", "three")
+        `);
+
+        project.do_synthetic_broadcast("try-say");
+        one_frame(project);
+        pytch_errors.assert_sole_error_matches(/must be a number/);
     });
 });
