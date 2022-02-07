@@ -319,18 +319,18 @@ class Sprite(Actor):
         (self._pytch_parent_project
          .move_within_draw_layer_group(self, "relative", -n_layers))
 
-    def say(self, content):
+    def say(self, text):
         "(TEXT) Say TEXT in speech bubble; remove if TEXT empty"
         self._speech = (
-            None if content == ""
-            else (_new_speech_id(), "say", content)
+            None if text == ""
+            else (_new_speech_id(), "say", text)
         )
 
-    def say_for_seconds(self, content, seconds):
+    def say_for_seconds(self, text, seconds):
         "(TEXT, SECONDS) Give SELF speech bubble saying TEXT for SECONDS"
         if not isinstance(seconds, (int, float)):
             raise ValueError("the SECONDS argument must be a number")
-        self.say(content)
+        self.say(text)
         speech_id = self._speech[0]
         wait_seconds(seconds)
         # Only erase utterance if it hasn't already been, and it's ours:
