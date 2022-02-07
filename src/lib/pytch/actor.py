@@ -328,6 +328,8 @@ class Sprite(Actor):
 
     def say_for_seconds(self, content, seconds):
         "(TEXT, SECONDS) Give SELF speech bubble saying TEXT for SECONDS"
+        if not isinstance(seconds, (int, float)):
+            raise ValueError("the SECONDS argument must be a number")
         self.say(content)
         speech_id = self._speech[0]
         wait_seconds(seconds)
