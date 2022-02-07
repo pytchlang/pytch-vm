@@ -6,6 +6,9 @@ allows automated testing outside the browser, via injection of mocks of
 various things. It also keeps us honest in terms of being explicit about
 what the external dependencies are.
 
+The ‘environment’ object is the property ``pytch`` of the global
+``Sk`` object.
+
 Error handling
 ~~~~~~~~~~~~~~
 
