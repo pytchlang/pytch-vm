@@ -19,6 +19,10 @@ TODO: Check and update the below list.
   finished before continuing
 * ``pytch.key_pressed(key_name)`` gives a true/false answer as to
   whether the key with name ``key_name`` is currently pressed
+* ``pytch.stop_all()`` stops all currently-executing scripts.  It also
+  stops all sounds, deletes all clones, abandons all "ask and wait"
+  questions, and clears all speech bubbles.  It does the same job as
+  the "red stop" button.
 
 
 Variable watchers
