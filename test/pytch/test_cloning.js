@@ -260,7 +260,8 @@ describe("cloning", () => {
 
                 project[method]();
                 assert.strictEqual(n_brooms(), 1);
-            }))});
+            }));
+    });
 
     const codeForPear = `#
             class Pear(pytch.Sprite):
