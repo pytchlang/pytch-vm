@@ -216,6 +216,10 @@ describe("Ask and wait for answer", () => {
             label: "red-stop",
             action: (project) => project.on_red_stop_clicked(),
         },
+        {
+            label: "stop-all",
+            action: (project) => project.do_synthetic_broadcast("halt"),
+        },
     ].forEach(spec =>
         it(`abandons questions on ${spec.label}`, async () => {
             const project = await import_deindented(`
@@ -225,6 +229,9 @@ describe("Ask and wait for answer", () => {
                     @pytch.when_I_receive("ask")
                     def ask_name(self):
                         name = pytch.ask_and_wait("name?")
+                    @pytch.when_I_receive("halt")
+                    def stop_everything(self):
+                        pytch.stop_all()
             `);
 
             project.do_synthetic_broadcast("ask");
