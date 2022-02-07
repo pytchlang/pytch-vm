@@ -68,8 +68,14 @@ describe("scheduling", () => {
         });
 
         const halt_test_specs = [
-            { method: 'on_red_stop_clicked', exp_count: 10 },
-            { method: 'on_green_flag_clicked', exp_count: 5 },
+            {
+                method: 'on_red_stop_clicked',
+                exp_count: 10,
+            },
+            {
+                method: 'on_green_flag_clicked',
+                exp_count: 5,
+            },
         ];
 
         halt_test_specs.forEach(spec => {
