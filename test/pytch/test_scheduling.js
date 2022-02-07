@@ -78,6 +78,14 @@ describe("scheduling", () => {
                 action: (project) => project.on_green_flag_clicked(),
                 exp_count: 5,
             },
+            {
+                label: "stop-all",
+                action: (project) => project.do_synthetic_broadcast("halt"),
+                // The "halt" b/cast handler runs concurrently with the
+                // start_counting() threads; they get one more frame of
+                // run-time before being deleted:
+                exp_count: 11,
+            },
         ];
 
         halt_test_specs.forEach(spec => {

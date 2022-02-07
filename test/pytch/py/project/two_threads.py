@@ -3,6 +3,7 @@ from pytch import (
     Sprite,
     Project,
     when_green_flag_clicked,
+    when_I_receive,
 )
 
 
@@ -30,8 +31,15 @@ class T2(Sprite):
             self.counter += 1
 
 
+class Controller(Sprite):
+    @when_I_receive("halt")
+    def stop_everything(self):
+        pytch.stop_all()
+
+
 # --cut-here-for-auto-config--
 
 project = Project()
 project.register_sprite_class(T1)
 project.register_sprite_class(T2)
+project.register_sprite_class(Controller)
