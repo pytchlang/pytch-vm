@@ -12,6 +12,10 @@ The ‘environment’ object is the property ``pytch`` of the global
 Error handling
 ~~~~~~~~~~~~~~
 
+If a Pytch thread raises a Python-level exception, this is caught
+inside ``Thread.one_frame()`` and passed to the following
+function-valued property of the ``Sk.pytch`` configuration object:
+
 - ``on_exception`` — function which is passed the JavaScript-level
   error (often it is also a Python exception object) and an 'error
   context' describing how the error occurred.
