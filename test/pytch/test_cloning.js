@@ -247,8 +247,17 @@ describe("cloning", () => {
         })});
 
     with_project("py/project/launch_clones.py", (import_project) => {
-        ['on_red_stop_clicked', 'on_green_flag_clicked'].forEach(method =>
-            it(`${method} deletes all clones`, async () => {
+        [
+            {
+                label: "red-stop",
+                action: (project) => project.on_red_stop_clicked(),
+            },
+            {
+                label: "green-flag",
+                action: (project) => project.on_green_flag_clicked(),
+            },
+        ].forEach(spec =>
+            it(`${spec.label} deletes all clones`, async () => {
                 let project = await import_project();
                 let broom_actor = project.actor_by_class_name("Broom");
                 let n_brooms = () => broom_actor.instances.length;
@@ -258,7 +267,7 @@ describe("cloning", () => {
 
                 assert.strictEqual(n_brooms(), 5);
 
-                project[method]();
+                spec.action(project);
                 assert.strictEqual(n_brooms(), 1);
             }));
     });
