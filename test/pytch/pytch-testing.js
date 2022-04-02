@@ -227,7 +227,10 @@ const mock_gpio_api = (() => {
         return send_now.map(r => r.response);
     };
 
+    const set_reset_response = (rr) => { reset_response = rr; };
+
     return {
+        set_reset_response,
         send_message,
         acquire_responses,
     };
