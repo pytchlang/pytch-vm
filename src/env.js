@@ -116,6 +116,11 @@ Sk.python3 = {
         get_mix_bus_gain: always_unity,
     };
 
+    let disconnected_gpio_api = {
+        send_message: () => {},
+        acquire_responses: () => [],
+    };
+
     Sk.default_pytch_environment = {
         async_load_image: bad_async_load_image,
         keyboard: inactive_keyboard,
