@@ -201,6 +201,7 @@ const mock_sound_manager = (() => {
 
 const mock_gpio_api = (() => {
     let responses = [];
+    let frame_idx = 0;
 
     const send_message = (message) => {
         message.forEach(command => {
@@ -213,6 +214,7 @@ const mock_gpio_api = (() => {
     const acquire_responses = () => {
         const acquired_responses = responses;
         responses = [];
+        ++frame_idx;
         return acquired_responses;
     };
 
