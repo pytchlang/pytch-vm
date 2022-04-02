@@ -1906,6 +1906,11 @@ var $builtinmodule = function (name) {
         }
 
         one_frame() {
+            this.do_gpio_reset_step();
+            if (this.gpio_reset_state.status === "pending")
+                // TODO: Fix duplication of return value type.
+                return { exception_was_raised: false, maybe_live_question: null };
+
             this.launch_keypress_handlers();
             this.launch_mouse_click_handlers();
 
