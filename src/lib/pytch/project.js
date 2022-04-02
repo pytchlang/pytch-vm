@@ -1904,6 +1904,7 @@ var $builtinmodule = function (name) {
                     else
                         this.gpio_reset_state = {
                             status: "failed",
+                            failureKind: "error-response",
                             errorDetail: reset_response.errorDetail,
                         };
                 } else {
@@ -1917,6 +1918,7 @@ var $builtinmodule = function (name) {
                         );
                         this.gpio_reset_state = {
                             status: "failed",
+                            failureKind: "timeout",
                             errorDetail,
                         };
                     }
