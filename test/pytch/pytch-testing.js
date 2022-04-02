@@ -199,6 +199,29 @@ const mock_sound_manager = (() => {
     };
 })();
 
+const mock_gpio_api = (() => {
+    let responses = [];
+
+    const send_message = (message) => {
+        message.forEach(command => {
+            if (command.kind === "reset") {
+                responses.push({ kind: "ok", seqnum: command.seqnum });
+            }
+        });
+    };
+
+    const acquire_responses = () => {
+        const acquired_responses = responses;
+        responses = [];
+        return acquired_responses;
+    };
+
+    return {
+        send_message,
+        acquire_responses,
+    };
+})();
+
 const pytch_stdout = (() => {
     let uncollected_stdout = "";
 
@@ -819,6 +842,7 @@ Sk.configure({
         keyboard: mock_keyboard,
         mouse: mock_mouse,
         sound_manager: mock_sound_manager,
+        gpio_api: mock_gpio_api,
         on_exception: pytch_errors.append_error,
     },
 });
