@@ -217,6 +217,9 @@ const mock_gpio_api = (() => {
                         },
                     });
                     break;
+                case "no-response":
+                    // Ignore it.
+                    break;
                 default:
                     throw new Error(
                         "internal test error:"
