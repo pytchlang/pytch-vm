@@ -45,4 +45,14 @@ describe("GPIO interaction", () => {
             assert.strictEqual(got_stdout, exp_stdout);
         });
     });
+
+    it("notes failure if response too slow", async () => {
+        mock_gpio_api.set_reset_response({ kind: "no-response" });
+
+        const project = await import_deindented("\nimport pytch\n");
+
+        many_frames(project, 50);
+        assert.strictEqual(project.gpio_reset_state.status, "failed");
+        assert.strictEqual(project.gpio_reset_state.failureKind, "timeout");
+    });
 });
