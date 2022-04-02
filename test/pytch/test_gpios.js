@@ -55,4 +55,16 @@ describe("GPIO interaction", () => {
         assert.strictEqual(project.gpio_reset_state.status, "failed");
         assert.strictEqual(project.gpio_reset_state.failureKind, "timeout");
     });
+
+    it("notes failure on error response", async () => {
+        mock_gpio_api.set_reset_response({ kind: "failure", delay: 3 });
+
+        const project = await import_deindented("\nimport pytch\n");
+
+        many_frames(project, 50);
+        const reset_state = project.gpio_reset_state;
+        assert.strictEqual(reset_state.status, "failed");
+        assert.strictEqual(reset_state.failureKind, "error-response");
+        assert.strictEqual(reset_state.errorDetail, "marzlevanes misaligned");
+    });
 });
