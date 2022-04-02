@@ -1884,6 +1884,7 @@ var $builtinmodule = function (name) {
                 this.gpio_reset_state = {
                     status: "pending",
                     seqnum: reset_command.seqnum,
+                    n_polls_done: 0,
                 };
             }
 
@@ -1905,6 +1906,20 @@ var $builtinmodule = function (name) {
                             status: "failed",
                             errorDetail: reset_response.errorDetail,
                         };
+                } else {
+                    // No matching responses.
+                    ++this.gpio_reset_state.n_polls_done;
+
+                    if (this.gpio_reset_state.n_polls_done == GPIO_MAX_N_RESET_POLLS) {
+                        const errorDetail = (
+                            `polled limit of ${this.gpio_reset_state.n_polls_done}`
+                            + " times with no response"
+                        );
+                        this.gpio_reset_state = {
+                            status: "failed",
+                            errorDetail,
+                        };
+                    }
                 }
             }
         }
