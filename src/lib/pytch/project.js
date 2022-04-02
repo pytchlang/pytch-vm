@@ -1644,6 +1644,13 @@ var $builtinmodule = function (name) {
     //
     // Interaction with GPIOs
 
+    // Make truly global to avoid one build's commands clashing with another's.
+    //
+    if (globalThis.pytch__gpio_next_seqnum == null)
+        globalThis.pytch__gpio_next_seqnum = 88000;
+
+    const GPIO_next_seqnum = () => ++globalThis.pytch__gpio_next_seqnum;
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
