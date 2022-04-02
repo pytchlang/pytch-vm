@@ -1890,6 +1890,8 @@ var $builtinmodule = function (name) {
                 );
 
                 if (matching_responses.length > 0) {
+                    if (matching_responses.length > 1)
+                        console.warn("multiple responses to reset; using first");
                     const reset_response = matching_responses[0];
                     const responseKind = reset_response.kind;
                     if (responseKind === "ok")
