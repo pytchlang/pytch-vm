@@ -201,21 +201,31 @@ const mock_sound_manager = (() => {
 
 const mock_gpio_api = (() => {
     let responses = [];
+    let pending_responses = [];
     let frame_idx = 0;
+    let reset_response = { kind: "success", delay: 0 };
 
     const send_message = (message) => {
         message.forEach(command => {
             if (command.kind === "reset") {
-                responses.push({ kind: "ok", seqnum: command.seqnum });
+                if (reset_response.kind === "success")
+                    pending_responses.push({
+                        send_at: frame_idx + reset_response.delay,
+                        response: {
+                            kind: "ok",
+                            seqnum: command.seqnum,
+                        },
+                    });
             }
         });
     };
 
     const acquire_responses = () => {
-        const acquired_responses = responses;
-        responses = [];
+        const send_now = pending_responses.filter(r => r.send_at === frame_idx);
+        pending_responses = pending_responses.filter(r => r.send_at > frame_idx);
+
         ++frame_idx;
-        return acquired_responses;
+        return send_now.map(r => r.response);
     };
 
     return {
