@@ -1875,6 +1875,36 @@ var $builtinmodule = function (name) {
             });
         }
 
+        do_gpio_reset_step() {
+            if (this.gpio_reset_state.status === "not-started") {
+                const reset_command = new GpioCommand({ kind: "reset" });
+                Sk.pytch.gpio_api.send_message([reset_command.as_command_obj()]);
+                this.gpio_reset_state = {
+                    status: "pending",
+                    seqnum: reset_command.seqnum,
+                };
+            }
+
+            if (this.gpio_reset_state.status === "pending") {
+                const gpio_responses = Sk.pytch.gpio_api.acquire_responses();
+                const matching_responses = gpio_responses.filter(
+                    r => r.seqnum === this.gpio_reset_state.seqnum
+                );
+
+                if (matching_responses.length > 0) {
+                    const reset_response = matching_responses[0];
+                    const responseKind = reset_response.kind;
+                    if (responseKind === "ok")
+                        this.gpio_reset_state = { status: "succeeded" };
+                    else
+                        this.gpio_reset_state = {
+                            status: "failed",
+                            errorDetail: reset_response.errorDetail,
+                        };
+                }
+            }
+        }
+
         one_frame() {
             this.launch_keypress_handlers();
             this.launch_mouse_click_handlers();
