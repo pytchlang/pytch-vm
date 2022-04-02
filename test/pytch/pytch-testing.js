@@ -217,6 +217,16 @@ const mock_gpio_api = (() => {
                         },
                     });
                     break;
+                case "failure":
+                    pending_responses.push({
+                        send_at: frame_idx + reset_response.delay,
+                        response: {
+                            kind: "error",
+                            seqnum: command.seqnum,
+                            errorDetail: "marzlevanes misaligned",
+                        },
+                    });
+                    break;
                 case "no-response":
                     // Ignore it.
                     break;
