@@ -873,6 +873,7 @@ module.exports = {
     mock_mouse,
     mock_keyboard,
     mock_sound_manager,
+    mock_gpio_api,
     pytch_stdout,
     pytch_errors,
     assert_float_close,
