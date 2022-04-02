@@ -224,7 +224,8 @@ const mock_gpio_api = (() => {
     const send_message = (message) => {
         message.forEach(command => {
             if (command.kind === "reset") {
-                if (reset_response.kind === "success")
+                switch (reset_response.kind) {
+                case "success":
                     pending_responses.push({
                         send_at: frame_idx + reset_response.delay,
                         response: {
@@ -232,6 +233,8 @@ const mock_gpio_api = (() => {
                             seqnum: command.seqnum,
                         },
                     });
+                    break;
+                }
             }
         });
     };
