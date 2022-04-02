@@ -1651,6 +1651,17 @@ var $builtinmodule = function (name) {
 
     const GPIO_next_seqnum = () => ++globalThis.pytch__gpio_next_seqnum;
 
+    class GpioCommand {
+        constructor(operation) {
+            this.seqnum = GPIO_next_seqnum();
+            this.operation = operation;
+        }
+
+        as_command_obj() {
+            return { ...this.operation, seqnum: this.seqnum };
+        }
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
