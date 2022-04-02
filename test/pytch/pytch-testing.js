@@ -217,6 +217,12 @@ const mock_gpio_api = (() => {
                         },
                     });
                     break;
+                default:
+                    throw new Error(
+                        "internal test error:"
+                        + " unknown reset-response kind"
+                        + ` "${reset_response.kind}"`
+                    );
                 }
             }
         });
