@@ -126,6 +126,7 @@ Sk.python3 = {
         keyboard: inactive_keyboard,
         mouse: inactive_mouse,
         sound_manager: do_nothing_sound_manager,
+        gpio_api: disconnected_gpio_api,
         current_live_project: do_nothing_project,
         on_exception: do_nothing,
         executing_thread: null,
