@@ -1653,6 +1653,8 @@ var $builtinmodule = function (name) {
 
     const GPIO_next_seqnum = () => ++globalThis.pytch__gpio_next_seqnum;
 
+    const GPIO_MAX_N_RESET_POLLS = 30;
+
     class GpioCommand {
         constructor(operation) {
             this.seqnum = GPIO_next_seqnum();
