@@ -1757,6 +1757,8 @@ var $builtinmodule = function (name) {
                 new DrawLayerGroup(),  // Sprites
                 new DrawLayerGroup(),  // Text (one day)
             ];
+
+            this.gpio_reset_state = { status: "not-started" };
         }
 
         actor_by_class_name(cls_name) {
