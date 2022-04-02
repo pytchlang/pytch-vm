@@ -200,7 +200,6 @@ const mock_sound_manager = (() => {
 })();
 
 const mock_gpio_api = (() => {
-    let responses = [];
     let pending_responses = [];
     let frame_idx = 0;
     let reset_response = { kind: "success", delay: 0 };
