@@ -2033,6 +2033,9 @@ var $builtinmodule = function (name) {
                 // TODO: Fix duplication of return value type.
                 return { exception_was_raised: false, maybe_live_question: null };
 
+            const gpio_responses = Sk.pytch.gpio_api.acquire_responses();
+            this.handle_gpio_responses(gpio_responses);
+
             this.launch_keypress_handlers();
             this.launch_mouse_click_handlers();
 
