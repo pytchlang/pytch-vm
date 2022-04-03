@@ -1728,6 +1728,7 @@ var $builtinmodule = function (name) {
                 this.state.errorDetail = response.errorDetail;
                 break;
             case "ok":
+            case "report-input":
                 this.state.status = "succeeded";
                 break;
             default:
