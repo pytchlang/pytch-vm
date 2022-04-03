@@ -1719,6 +1719,18 @@ var $builtinmodule = function (name) {
         as_command_obj() {
             return { ...this.operation, seqnum: this.seqnum };
         }
+
+        succeeded() {
+            return (this.state.status === "succeeded");
+        }
+
+        failed() {
+            return (this.state.status === "failed");
+        }
+
+        is_resolved() {
+            return this.succeeded() || this.failed();
+        }
     }
 
     class GpioCommandQueue {
