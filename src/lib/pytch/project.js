@@ -1707,6 +1707,9 @@ var $builtinmodule = function (name) {
         }
     }
 
+    class GpioCommandQueue {
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
