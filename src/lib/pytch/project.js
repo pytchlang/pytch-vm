@@ -1847,6 +1847,7 @@ var $builtinmodule = function (name) {
             ];
 
             this.gpio_reset_state = { status: "not-started" };
+            this.gpio_command_queue = new GpioCommandQueue();
         }
 
         actor_by_class_name(cls_name) {
