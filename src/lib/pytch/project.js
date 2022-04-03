@@ -2011,6 +2011,10 @@ var $builtinmodule = function (name) {
             }
         }
 
+        set_gpio_level(pin, level) {
+            this.enqueue_gpio_command({ kind: "set-output", pin, level });
+        }
+
         enqueue_gpio_command(operation) {
             return this.gpio_command_queue.enqueue_for_sending(operation);
         }
