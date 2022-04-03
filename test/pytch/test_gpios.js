@@ -104,4 +104,26 @@ describe("GPIO interaction", () => {
         many_frames(project, 5);
         pytch_errors.assert_sole_error_matches(/set-output.*GPIO reset failed/);
     });
+
+    it("can set pin as input", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class ReadPins(pytch.Sprite):
+                @pytch.when_I_receive("configure")
+                def configure_pins(self):
+                    pytch.set_gpio_as_input(110, "pull-up");
+                    print("done 110")
+                    pytch.set_gpio_as_input(111, "pull-down");
+                    print("done 111")
+                    pytch.set_gpio_as_input(112, "no-pull");
+                    print("done 112")
+        `);
+
+        project.do_synthetic_broadcast("configure");
+        pytch_stdout.poll_for_matching(project, /done 110/);
+        pytch_stdout.poll_for_matching(project, /done 111/);
+        pytch_stdout.poll_for_matching(project, /done 112/);
+    });
 });
