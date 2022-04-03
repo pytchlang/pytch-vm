@@ -2059,6 +2059,8 @@ var $builtinmodule = function (name) {
             this.cull_watchers_of_deleted_clones();
             this.cull_unregistered_instances();
 
+            this.gpio_command_queue.send_unsent();
+
             const project_state = {
                 exception_was_raised,
                 maybe_live_question: this.maybe_live_question(),
