@@ -207,6 +207,32 @@ const mock_gpio_api = (() => {
     const set_output_delay = 2;
     const set_input_delay = 2;
 
+    const handle_set_input = (command) => {
+        if (command.pin == 150) {
+            pending_responses.push({
+                send_at: frame_idx + set_input_delay,
+                response: {
+                    kind: "error",
+                    errorDetail: `pin 150 cannot be an input`,
+                    seqnum: command.seqnum,
+                },
+            });
+        }
+        else
+        {
+            pin_states.set(command.pin, { kind: "in", level: 0 });
+            pending_responses.push({
+                send_at: frame_idx + set_input_delay,
+                response: {
+                    kind: "report-input",
+                    seqnum: command.seqnum,
+                    pin: command.pin,
+                    level: 0,
+                },
+            });
+        }
+    };
+
     const send_message = (message) => {
         message.forEach(command => {
             switch (command.kind) {
@@ -258,35 +284,7 @@ const mock_gpio_api = (() => {
                 });
                 break;
             case "set-input":
-                if (command.pin == 150) {
-                    pending_responses.push({
-                        send_at: frame_idx + set_input_delay,
-                        response: {
-                            kind: "error",
-                            errorDetail: `pin 150 cannot be an input`,
-                            seqnum: command.seqnum,
-                        },
-                    });
-                }
-                else
-                {
-                    pin_states.set(
-                        command.pin,
-                        {
-                            kind: "in",
-                            level: 0,
-                        }
-                    );
-                    pending_responses.push({
-                        send_at: frame_idx + set_input_delay,
-                        response: {
-                            kind: "report-input",
-                            seqnum: command.seqnum,
-                            pin: command.pin,
-                            level: 0,
-                        },
-                    });
-                }
+                handle_set_input(command);
                 break;
             default:
                 throw new Error(
