@@ -203,6 +203,7 @@ const mock_gpio_api = (() => {
     let pending_responses = [];
     let frame_idx = 0;
     let reset_response = { kind: "success", delay: 0 };
+    let pin_states = new Map();
 
     const send_message = (message) => {
         message.forEach(command => {
@@ -238,6 +239,17 @@ const mock_gpio_api = (() => {
                         + ` "${reset_response.kind}"`
                     );
                 }
+                break;
+            case "set-output":
+                // TODO: Generate error when trying to set some
+                // designated pin to output.
+                pin_states.set(
+                    command.pin,
+                    {
+                        kind: "out",
+                        level: command.level,
+                    }
+                );
                 break;
             default:
                 throw new Error(
