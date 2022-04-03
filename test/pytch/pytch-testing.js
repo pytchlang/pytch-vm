@@ -275,8 +275,11 @@ const mock_gpio_api = (() => {
 
     const set_reset_response = (rr) => { reset_response = rr; };
 
+    const pin_state = (pin) => pin_states.get(pin);
+
     return {
         set_reset_response,
+        pin_state,
         send_message,
         acquire_responses,
     };
