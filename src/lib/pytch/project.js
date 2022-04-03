@@ -1734,6 +1734,20 @@ var $builtinmodule = function (name) {
             this.unsent_commands = [];
         }
 
+        handle_response(response, frame_idx) {
+            // Ignore "unsolicited response":
+            if (response.seqnum === 0)
+                return;
+
+            const command = this.commands_awaiting_response.get(response.seqnum);
+            if (command == null) {
+                // TODO: Warn `not expecting response w seqnum ${response.seqnum}`
+            } else {
+                command.handle_response(response, frame_idx);
+                this.commands_awaiting_response.delete(response.seqnum);
+                // TODO: Do something if command failed?
+            }
+        }
     }
 
 
