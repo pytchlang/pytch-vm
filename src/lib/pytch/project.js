@@ -1662,6 +1662,14 @@ var $builtinmodule = function (name) {
             this.state = { status: "not-sent" };
         }
 
+        ensure_status(tag, expected_status) {
+            if (this.state.status !== expected_status)
+                throw new Error(
+                    `${tag}: expecting status "${expected_status}"`
+                    + ` but have status "${this.state.status}"`
+                );
+        }
+
         as_command_obj() {
             return { ...this.operation, seqnum: this.seqnum };
         }
