@@ -41,6 +41,7 @@ from .syscalls import (
     ask_and_wait,
     stop_all,
     set_max_import_loop_iterations,
+    set_gpio_output,
 )
 
 from ._completions_info import (
