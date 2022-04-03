@@ -2018,6 +2018,12 @@ var $builtinmodule = function (name) {
         }
 
         enqueue_gpio_command(operation) {
+            if (this.gpio_reset_state.status !== "succeeded")
+                throw new Sk.builtin.RuntimeError(
+                    `cannot perform GPIO operation ${operation.kind}`
+                    + " because GPIO reset failed"
+                );
+
             return this.gpio_command_queue.enqueue_for_sending(operation);
         }
 
