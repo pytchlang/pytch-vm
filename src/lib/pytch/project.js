@@ -1151,6 +1151,18 @@ var $builtinmodule = function (name) {
                 return [];
             }
 
+            case "send-blocking-gpio-command": {
+                const { operation } = syscall_args;
+
+                const pending_command
+                      = this.parent_project.enqueue_gpio_command(operation);
+
+                this.state = Thread.State.AWAITING_GPIO_RESPONSE;
+                this.sleeping_on = pending_command;
+
+                return [];
+            }
+
             default:
                 throw Error(`unknown Pytch syscall "${syscall_kind}"`);
             }
