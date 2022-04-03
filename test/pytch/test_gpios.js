@@ -126,4 +126,20 @@ describe("GPIO interaction", () => {
         pytch_stdout.poll_for_matching(project, /done 111/);
         pytch_stdout.poll_for_matching(project, /done 112/);
     });
+
+    it("gives error for bad set-input pin", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class ReadPins(pytch.Sprite):
+                @pytch.when_I_receive("configure")
+                def configure_pins(self):
+                    pytch.set_gpio_as_input(150, "pull-up");
+        `);
+
+        project.do_synthetic_broadcast("configure");
+        many_frames(project, 10);
+        pytch_errors.assert_sole_error_matches(/pin 150 cannot be/);
+    });
 });
