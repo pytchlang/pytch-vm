@@ -353,5 +353,21 @@ var $builtinmodule = function (name) {
         `() Stop all currently-running scripts`,
     );
 
+    mod.set_gpio_output = skulpt_function(
+        (py_pin, py_value) => {
+            throwIfNoExecutingThread("set_gpio_output");
+            const project = Sk.pytch.executing_thread.parent_project;
+
+            // TODO: Input type validation.
+            const pin = Sk.ffi.remapToJs(py_pin);
+            const value = Sk.ffi.remapToJs(py_value);
+
+            project.set_gpio_level(pin, value);
+
+            return Sk.builtin.none.none$;
+        },
+        "(PIN, VALUE) Make a GPIO pin output a value",
+    );
+
     return mod;
 };
