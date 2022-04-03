@@ -1718,6 +1718,24 @@ var $builtinmodule = function (name) {
             this.unsent_commands.push(command);
         }
 
+        send_unsent(frame_idx) {
+            // Avoid sending an empty message.
+            if (this.unsent_commands.length === 0)
+                return;
+
+            const command_objs = this.unsent_commands.map(
+                c => c.as_command_obj()
+            );
+            Sk.pytch.gpio_api.send_message(command_objs);
+
+            this.unsent_commands.forEach(c => {
+                c.mark_sent(frame_idx);
+                this.commands_awaiting_response.set(c.seqnum, c);
+            });
+
+            this.unsent_commands = [];
+        }
+
     }
 
 
