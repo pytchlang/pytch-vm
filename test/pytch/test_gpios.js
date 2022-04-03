@@ -73,6 +73,14 @@ describe("GPIO interaction", () => {
         assert.strictEqual(reset_state.errorDetail, "marzlevanes misaligned");
     });
 
+    const set_output_code = `
+        import pytch
+        class Driver(pytch.Sprite):
+            @pytch.when_I_receive("set")
+            def set_pin(self):
+                pytch.set_gpio_output(1, 1);
+    `;
+
     it("can set output pin to value", async () => {
         const project = await import_deindented(`
 
