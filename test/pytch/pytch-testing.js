@@ -205,6 +205,7 @@ const mock_gpio_api = (() => {
     let reset_response = { kind: "success", delay: 0 };
     let pin_states = new Map();
     const set_output_delay = 2;
+    const set_input_delay = 2;
 
     const send_message = (message) => {
         message.forEach(command => {
@@ -255,6 +256,37 @@ const mock_gpio_api = (() => {
                     send_at: frame_idx + set_output_delay,
                     response: { kind: "ok", seqnum: command.seqnum },
                 });
+                break;
+            case "set-input":
+                if (command.pin == 150) {
+                    pending_responses.push({
+                        send_at: frame_idx + set_input_delay,
+                        response: {
+                            kind: "error",
+                            errorDetail: `pin 150 cannot be an input`,
+                            seqnum: command.seqnum,
+                        },
+                    });
+                }
+                else
+                {
+                    pin_states.set(
+                        command.pin,
+                        {
+                            kind: "in",
+                            level: 0,
+                        }
+                    );
+                    pending_responses.push({
+                        send_at: frame_idx + set_input_delay,
+                        response: {
+                            kind: "report-input",
+                            seqnum: command.seqnum,
+                            pin: command.pin,
+                            level: 0,
+                        },
+                    });
+                }
                 break;
             default:
                 throw new Error(
