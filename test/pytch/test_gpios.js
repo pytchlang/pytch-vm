@@ -82,14 +82,7 @@ describe("GPIO interaction", () => {
     `;
 
     it("can set output pin to value", async () => {
-        const project = await import_deindented(`
-
-            import pytch
-            class Driver(pytch.Sprite):
-                @pytch.when_I_receive("set")
-                def set_pin(self):
-                    pytch.set_gpio_output(1, 1);
-        `);
+        const project = await import_deindented(set_output_code);
 
         project.do_synthetic_broadcast("set");
         many_frames(project, 5);
@@ -105,14 +98,7 @@ describe("GPIO interaction", () => {
     it("raises exception on set_gpio_output if reset failed", async () => {
         mock_gpio_api.set_reset_response({ kind: "failure", delay: 3 });
 
-        const project = await import_deindented(`
-
-            import pytch
-            class Driver(pytch.Sprite):
-                @pytch.when_I_receive("set")
-                def set_pin(self):
-                    pytch.set_gpio_output(1, 1);
-        `);
+        const project = await import_deindented(set_output_code);
 
         project.do_synthetic_broadcast("set");
         many_frames(project, 5);
