@@ -1709,6 +1709,7 @@ var $builtinmodule = function (name) {
         constructor(operation) {
             this.seqnum = GPIO_next_seqnum();
             this.operation = operation;
+            this.state = { status: "not-sent" };
         }
 
         as_command_obj() {
