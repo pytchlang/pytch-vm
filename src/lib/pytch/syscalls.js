@@ -369,5 +369,19 @@ var $builtinmodule = function (name) {
         "(PIN, VALUE) Make a GPIO pin output a value",
     );
 
+    mod.set_gpio_as_input = skulpt_function(
+        (py_pin, py_pull_kind) => {
+            // TODO: Input type validation.
+            const pin = Sk.ffi.remapToJs(py_pin);
+            const pullKind = Sk.ffi.remapToJs(py_pull_kind);
+
+            return new_pytch_suspension(
+                "send-blocking-gpio-command",
+                { operation: { kind: "set-input", pin, pullKind } },
+            );
+        },
+        "(PIN, PULL_KIND) Set GPIO pin to be an input",
+    );
+
     return mod;
 };
