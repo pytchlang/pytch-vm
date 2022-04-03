@@ -2019,6 +2019,12 @@ var $builtinmodule = function (name) {
             return this.gpio_command_queue.enqueue_for_sending(operation);
         }
 
+        handle_gpio_responses(responses) {
+            responses.forEach(response => {
+                this.gpio_command_queue.handle_response(response);
+            });
+        }
+
         one_frame() {
             this.do_gpio_reset_step();
             if (this.gpio_reset_state.status === "pending")
