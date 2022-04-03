@@ -1762,6 +1762,12 @@ var $builtinmodule = function (name) {
             this.unsent_commands = [];
             this.commands_awaiting_response = new Map();
         }
+
+        enqueue_for_sending(operation) {
+            const command = new GpioCommand(operation);
+            this.unsent_commands.push(command);
+        }
+
     }
 
 
