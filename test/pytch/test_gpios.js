@@ -71,4 +71,25 @@ describe("GPIO interaction", () => {
         assert.strictEqual(reset_state.failureKind, "error-response");
         assert.strictEqual(reset_state.errorDetail, "marzlevanes misaligned");
     });
+
+    it("can set output pin to value", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            class Driver(pytch.Sprite):
+                @pytch.when_I_receive("set")
+                def set_pin(self):
+                    pytch.set_gpio_output(1, 1);
+        `);
+
+        project.do_synthetic_broadcast("set");
+        many_frames(project, 5);
+
+        const pin_1 = mock_gpio_api.pin_state(1)
+        assert.strictEqual(pin_1.kind, "out")
+        assert.strictEqual(pin_1.level, 1);
+
+        // TODO: Cleaner way to examine state of gpio command queue?
+        assert.strictEqual(project.gpio_command_queue.commands_awaiting_response.size, 0);
+    });
 });
