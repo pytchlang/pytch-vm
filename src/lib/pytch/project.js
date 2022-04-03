@@ -1708,6 +1708,10 @@ var $builtinmodule = function (name) {
     }
 
     class GpioCommandQueue {
+        constructor() {
+            this.unsent_commands = [];
+            this.commands_awaiting_response = new Map();
+        }
     }
 
 
