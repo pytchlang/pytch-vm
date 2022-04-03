@@ -966,6 +966,10 @@ var $builtinmodule = function (name) {
             case Thread.State.AWAITING_SOUND_COMPLETION:
                 return `performance of sound "${this.sleeping_on.tag}"`;
 
+            case Thread.State.AWAITING_GPIO_RESPONSE:
+                // TODO: More detail
+                return "a GPIO command";
+
             default:
                 // We should never ask for a human-readable summary of what a
                 // thread in state ZOMBIE or RAISED_EXCEPTION is waiting for.
