@@ -1293,6 +1293,10 @@ var $builtinmodule = function (name) {
         // instance's "sleeping_on" property.
         AWAITING_ANSWER_TO_QUESTION: "awaiting-answer-to-question",
 
+        // AWAITING_GPIO_RESPONSE: The thread has sent a GPIO command and needs
+        // to receive the response before proceeding.
+        AWAITING_GPIO_RESPONSE: "awaiting-gpio-response",
+
         // ZOMBIE: The thread has terminated but has not yet been cleared from
         // the list of live threads.
         ZOMBIE: "zombie",
