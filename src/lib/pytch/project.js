@@ -1020,6 +1020,18 @@ var $builtinmodule = function (name) {
                 this.skulpt_susp.data.set_success(this.sleeping_on.value);
                 break;
 
+            case Thread.State.AWAITING_GPIO_RESPONSE:
+                const gpio_command = this.sleeping_on;
+                if (gpio_command.succeeded())
+                    this.skulpt_susp.data.set_success(Sk.builtin.none.none$);
+                else {
+                    const err = new Sk.builtin.RuntimeError(
+                        `GPIO command failed: ${gpio_command.state.errorDetail}`
+                    );
+                    this.skulpt_susp.data.set_failure(err);
+                }
+                break;
+
             default:
                 // Should never wake up a RUNNING or RAISED_EXCEPTION thread.
                 throw Error(`thread in bad state "${this.state}"`);
