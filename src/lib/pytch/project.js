@@ -1027,6 +1027,9 @@ var $builtinmodule = function (name) {
                 if (gpio_command.succeeded())
                     this.skulpt_susp.data.set_success(Sk.builtin.none.none$);
                 else {
+                    // TODO: Describe the command that failed as well as the
+                    // error we got?  Or should "errorDetail" be self-contained?
+                    // That might be better.
                     const err = new Sk.builtin.RuntimeError(
                         `GPIO command failed: ${gpio_command.state.errorDetail}`
                     );
@@ -1176,6 +1179,10 @@ var $builtinmodule = function (name) {
 
                 this.state = Thread.State.AWAITING_GPIO_RESPONSE;
                 this.sleeping_on = pending_command;
+
+                // TODO: Warning in webapp if a command-set is
+                // outstanding for more than NNNN frames.  Hopefully
+                // can make NNNN small.  To be experimented with.
 
                 return [];
             }
