@@ -1720,6 +1720,7 @@ var $builtinmodule = function (name) {
         enqueue_for_sending(operation) {
             const command = new GpioCommand(operation);
             this.unsent_commands.push(command);
+            return command;
         }
 
         send_unsent(frame_idx) {
