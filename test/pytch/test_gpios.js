@@ -22,6 +22,10 @@ describe("GPIO interaction", () => {
     // with a delay, given that several tests make precise assertions
     // about what happens at each frame.
 
+    beforeEach(() => {
+        mock_gpio_api.set_reset_response({ kind: "success", delay: 0 });
+    });
+
     [0, 2].forEach((delay) => {
         it(`delays real start until reset success (delay ${delay})`, async () => {
             mock_gpio_api.set_reset_response({ kind: "success", delay });
