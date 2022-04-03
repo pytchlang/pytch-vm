@@ -988,6 +988,9 @@ var $builtinmodule = function (name) {
             case Thread.State.AWAITING_ANSWER_TO_QUESTION:
                 return this.sleeping_on.is_answered();
 
+            case Thread.State.AWAITING_GPIO_RESPONSE:
+                return this.sleeping_on.is_resolved();
+
             case Thread.State.ZOMBIE:
                 return false;
 
