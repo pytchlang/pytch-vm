@@ -2011,6 +2011,10 @@ var $builtinmodule = function (name) {
             }
         }
 
+        enqueue_gpio_command(operation) {
+            return this.gpio_command_queue.enqueue_for_sending(operation);
+        }
+
         one_frame() {
             this.do_gpio_reset_step();
             if (this.gpio_reset_state.status === "pending")
