@@ -1668,6 +1668,14 @@ var $builtinmodule = function (name) {
                 );
         }
 
+        mark_sent(frame_idx) {
+            this.ensure_status("mark_sent()", "not-sent");
+            this.state = {
+                status: "awaiting-response",
+                t_command_sent: frame_idx,
+            };
+        }
+
         as_command_obj() {
             return { ...this.operation, seqnum: this.seqnum };
         }
