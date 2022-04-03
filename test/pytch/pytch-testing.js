@@ -298,9 +298,29 @@ const pytch_stdout = (() => {
         return stdout;
     };
 
+    const poll_for_matching = (project, match_regexp) => {
+        let stdout = null;
+        let output_matched = false;
+
+        for (let n_polls = 0; n_polls != 100; ++n_polls) {
+            project.one_frame();
+            stdout = drain_stdout();
+            if (match_regexp.test(stdout)) {
+                output_matched = true;
+                break;
+            }
+        }
+
+        assert.ok(
+            output_matched,
+            `did not see output matching "${match_regexp}"`
+        );
+    }
+
     return {
         append_stdout,
         drain_stdout,
+        poll_for_matching,
     };
 })();
 
