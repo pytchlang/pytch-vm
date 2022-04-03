@@ -206,7 +206,8 @@ const mock_gpio_api = (() => {
 
     const send_message = (message) => {
         message.forEach(command => {
-            if (command.kind === "reset") {
+            switch (command.kind) {
+            case "reset":
                 switch (reset_response.kind) {
                 case "success":
                     pending_responses.push({
@@ -237,6 +238,12 @@ const mock_gpio_api = (() => {
                         + ` "${reset_response.kind}"`
                     );
                 }
+                break;
+            default:
+                throw new Error(
+                    "internal test error:"
+                    + ` unknown command kind "${command.kind}"`
+                );
             }
         });
     };
