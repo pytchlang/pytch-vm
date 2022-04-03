@@ -1678,6 +1678,30 @@ var $builtinmodule = function (name) {
             };
         }
 
+        handle_response(response, frame_idx) {
+            this.ensure_status("handle_response()", "awaiting-response");
+
+            // Properties common to both outcomes (set others below):
+            this.state = {
+                t_command_sent: this.state.t_command_sent,
+                t_response_received: frame_idx,
+            };
+
+            switch (response.kind) {
+            case "error":
+                this.state.status = "failed";
+                this.state.errorDetail = response.errorDetail;
+                break;
+            case "ok":
+                this.state.status = "succeeded";
+                break;
+            default:
+                throw new Error(
+                    `unexpected response-kind "${response.kind}"`
+                );
+            }
+        }
+
         as_command_obj() {
             return { ...this.operation, seqnum: this.seqnum };
         }
