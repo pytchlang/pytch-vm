@@ -204,6 +204,7 @@ const mock_gpio_api = (() => {
     let frame_idx = 0;
     let reset_response = { kind: "success", delay: 0 };
     let pin_states = new Map();
+    const set_output_delay = 2;
 
     const send_message = (message) => {
         message.forEach(command => {
@@ -250,6 +251,10 @@ const mock_gpio_api = (() => {
                         level: command.level,
                     }
                 );
+                pending_responses.push({
+                    send_at: frame_idx + set_output_delay,
+                    response: { kind: "ok", seqnum: command.seqnum },
+                });
                 break;
             default:
                 throw new Error(
