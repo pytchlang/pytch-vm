@@ -207,6 +207,39 @@ const mock_gpio_api = (() => {
     const set_output_delay = 2;
     const set_input_delay = 2;
 
+    const handle_reset = (command) => {
+        switch (reset_response.kind) {
+        case "success":
+            pending_responses.push({
+                send_at: frame_idx + reset_response.delay,
+                response: {
+                    kind: "ok",
+                    seqnum: command.seqnum,
+                },
+            });
+            break;
+        case "failure":
+            pending_responses.push({
+                send_at: frame_idx + reset_response.delay,
+                response: {
+                    kind: "error",
+                    seqnum: command.seqnum,
+                    errorDetail: "marzlevanes misaligned",
+                },
+            });
+            break;
+        case "no-response":
+            // Ignore it.
+            break;
+        default:
+            throw new Error(
+                "internal test error:"
+                    + " unknown reset-response kind"
+                    + ` "${reset_response.kind}"`
+            );
+        }
+    };
+
     const handle_set_input = (command) => {
         if (command.pin == 150) {
             pending_responses.push({
@@ -237,36 +270,7 @@ const mock_gpio_api = (() => {
         message.forEach(command => {
             switch (command.kind) {
             case "reset":
-                switch (reset_response.kind) {
-                case "success":
-                    pending_responses.push({
-                        send_at: frame_idx + reset_response.delay,
-                        response: {
-                            kind: "ok",
-                            seqnum: command.seqnum,
-                        },
-                    });
-                    break;
-                case "failure":
-                    pending_responses.push({
-                        send_at: frame_idx + reset_response.delay,
-                        response: {
-                            kind: "error",
-                            seqnum: command.seqnum,
-                            errorDetail: "marzlevanes misaligned",
-                        },
-                    });
-                    break;
-                case "no-response":
-                    // Ignore it.
-                    break;
-                default:
-                    throw new Error(
-                        "internal test error:"
-                        + " unknown reset-response kind"
-                        + ` "${reset_response.kind}"`
-                    );
-                }
+                handle_reset(command);
                 break;
             case "set-output":
                 // TODO: Generate error when trying to set some
