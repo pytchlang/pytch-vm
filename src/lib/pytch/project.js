@@ -2149,8 +2149,9 @@ var $builtinmodule = function (name) {
                 return { exception_was_raised: false, maybe_live_question: null };
 
             const gpio_responses = Sk.pytch.gpio_api.acquire_responses();
-            this.handle_gpio_responses(gpio_responses);
+            const gpio_error_outside_thread = this.handle_gpio_responses(gpio_responses);
 
+            if ( ! gpio_error_outside_thread) {
             this.launch_keypress_handlers();
             this.launch_mouse_click_handlers();
 
@@ -2161,11 +2162,12 @@ var $builtinmodule = function (name) {
                                                this.thread_groups);
 
             this.thread_groups = new_thread_groups;
+            }
 
             const exception_was_raised
                   = this.thread_groups.some(tg => tg.raised_exception());
 
-            if (exception_was_raised)
+            if (gpio_error_outside_thread || exception_was_raised)
                 this.kill_all_threads_questions_sounds();
 
             // Tests in Scratch show that as well as stopping all scripts,
