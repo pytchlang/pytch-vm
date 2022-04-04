@@ -43,6 +43,7 @@ from .syscalls import (
     set_max_import_loop_iterations,
     set_gpio_output,
     set_gpio_as_input,
+    get_gpio_value,
 )
 
 from ._completions_info import (
