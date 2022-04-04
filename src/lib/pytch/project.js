@@ -2087,6 +2087,24 @@ var $builtinmodule = function (name) {
         handle_gpio_responses(responses) {
             responses.forEach(response => {
                 this.gpio_command_queue.handle_response(response);
+
+                switch (response.kind) {
+                case "report-input":
+                    const pin = response.pin;
+                    const lvl = response.level;
+                    // TODO: Check lvl is 0 or 1.
+                    this.gpio_pin_levels.set(pin, lvl);
+                    break;
+                case "ok":
+                    // OK, thanks!
+                    break;
+                case "error":
+                    // TODO: Warn? Halt project similarly to render error?
+                    break;
+                default:
+                    // Split "error" from "unknown"?
+                    throw new Error(`unk op ${JSON.stringify(response)}`);
+                }
             });
         }
 
