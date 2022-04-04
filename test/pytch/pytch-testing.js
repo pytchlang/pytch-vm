@@ -241,8 +241,10 @@ const mock_gpio_api = (() => {
     };
 
     const handle_set_output = (command) => {
-        // TODO: Generate error when trying to set some
-        // designated pin to output.
+        // TODO: Generate error when trying to set some designated pin
+        // to output.  First need to design mechanism for reporting
+        // errors which can't be raised as exceptions in the calling
+        // thread.
         pin_states.set(
             command.pin,
             {
