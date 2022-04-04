@@ -1175,7 +1175,7 @@ var $builtinmodule = function (name) {
                 const { operation } = syscall_args;
 
                 const pending_command
-                      = this.parent_project.enqueue_gpio_command(operation);
+                      = this.parent_project.enqueue_gpio_command(operation, true);
 
                 this.state = Thread.State.AWAITING_GPIO_RESPONSE;
                 this.sleeping_on = pending_command;
