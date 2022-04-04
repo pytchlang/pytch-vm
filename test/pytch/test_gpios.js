@@ -119,12 +119,16 @@ describe("GPIO interaction", () => {
                     print("done 111")
                     pytch.set_gpio_as_input(112, "no-pull");
                     print("done 112")
+                    pytch.wait_seconds(0)  # Ensure next output new frame
+                    v = pytch.get_gpio_value(110)
+                    print(f"pin 110 is {v}")
         `);
 
         project.do_synthetic_broadcast("configure");
         pytch_stdout.poll_for_matching(project, /done 110/);
         pytch_stdout.poll_for_matching(project, /done 111/);
         pytch_stdout.poll_for_matching(project, /done 112/);
+        pytch_stdout.poll_for_matching(project, /pin 110 is 0/);
     });
 
     it("gives error for bad set-input pin", async () => {
