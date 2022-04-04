@@ -1769,8 +1769,8 @@ var $builtinmodule = function (name) {
             this.commands_awaiting_response = new Map();
         }
 
-        enqueue_for_sending(operation) {
-            const command = new GpioCommand(operation);
+        enqueue_for_sending(operation, has_thread_waiting) {
+            const command = new GpioCommand(operation, has_thread_waiting);
             this.unsent_commands.push(command);
             return command;
         }
