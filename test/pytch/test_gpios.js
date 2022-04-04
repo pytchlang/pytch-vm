@@ -131,6 +131,45 @@ describe("GPIO interaction", () => {
         pytch_stdout.poll_for_matching(project, /pin 110 is 0/);
     });
 
+    it("can read input pin", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class ReadPins(pytch.Sprite):
+                @pytch.when_I_receive("configure")
+                def configure_pin(self):
+                    pytch.set_gpio_as_input(110, "pull-up");
+                @pytch.when_I_receive("read")
+                def read_pin(self):
+                    val = pytch.get_gpio_value(110)
+                    print(f"val {val}")
+        `);
+
+        project.do_synthetic_broadcast("configure");
+        many_frames(project, 5);
+        for (let i = 0; i !== 5; ++i) {
+            project.do_synthetic_broadcast("read");
+            many_frames(project, 5);
+        }
+        mock_gpio_api.drive_pin(110, 1);
+        for (let i = 0; i !== 5; ++i) {
+            project.do_synthetic_broadcast("read");
+            many_frames(project, 5);
+        }
+
+        // The first batch of five "read"s should all print "val 0".
+        // Although we then drive the pin high, the message takes a
+        // few frames (set by "report_input_delay" in mock_gpio_api)
+        // to be handled by the Project, so the first of the second
+        // batch of "read"s should also print "val 0".  The remaining
+        // four "read"s of the second batch should then print "val 1".
+        assert.strictEqual(
+            pytch_stdout.drain_stdout(),
+            "val 0\n".repeat(6) + "val 1\n".repeat(4)
+        );
+    });
+
     it("gives error for bad set-input pin", async () => {
         const project = await import_deindented(`
 
