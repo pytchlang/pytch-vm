@@ -2072,7 +2072,8 @@ var $builtinmodule = function (name) {
         }
 
         set_gpio_level(pin, level) {
-            this.enqueue_gpio_command({ kind: "set-output", pin, level });
+            // This is "fire and forget"; the calling thread does not block.
+            this.enqueue_gpio_command({ kind: "set-output", pin, level }, false);
         }
 
         get_gpio_level(pin) {
