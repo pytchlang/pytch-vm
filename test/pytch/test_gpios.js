@@ -105,6 +105,25 @@ describe("GPIO interaction", () => {
         pytch_errors.assert_sole_error_matches(/set-output.*GPIO reset failed/);
     });
 
+    it("gives error for bad set-output pin", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class WritePins(pytch.Sprite):
+                @pytch.when_I_receive("drive")
+                def configure_pins(self):
+                    pytch.set_gpio_output(180, 1);
+        `);
+
+        project.do_synthetic_broadcast("drive");
+        many_frames(project, 10);
+
+        const rich_err = pytch_errors.sole_error();
+        assert.strictEqual(rich_err.ctx.kind, "delayed_gpio");
+        assert.match(rich_err.err.toString(), /pin 180 cannot be an output/);
+    });
+
     it("can set pin as input", async () => {
         const project = await import_deindented(`
 
