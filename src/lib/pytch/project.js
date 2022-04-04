@@ -2084,6 +2084,7 @@ var $builtinmodule = function (name) {
 
         handle_gpio_responses(responses) {
             responses.forEach(response => {
+                // TODO: Make this tell us whether response was handled?
                 this.gpio_command_queue.handle_response(response);
 
                 switch (response.kind) {
