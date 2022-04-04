@@ -2073,8 +2073,13 @@ var $builtinmodule = function (name) {
         }
 
         get_gpio_level(pin) {
-            // TODO: Validation
-            return this.gpio_pin_levels.get(pin);
+            const maybe_level = this.gpio_pin_levels.get(pin);
+            if (maybe_level == null)
+                throw new Sk.builtin.RuntimeError(
+                    `pin ${pin} has not been set as input`
+                );
+
+            return maybe_level;
         }
 
         enqueue_gpio_command(operation) {
