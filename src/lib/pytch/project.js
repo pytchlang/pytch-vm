@@ -1851,6 +1851,7 @@ var $builtinmodule = function (name) {
             ];
 
             this.gpio_reset_state = { status: "not-started" };
+            this.gpio_pin_levels = new Map();
             this.gpio_command_queue = new GpioCommandQueue();
         }
 
