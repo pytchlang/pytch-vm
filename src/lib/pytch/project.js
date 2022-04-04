@@ -2084,14 +2084,14 @@ var $builtinmodule = function (name) {
             return maybe_level;
         }
 
-        enqueue_gpio_command(operation) {
+        enqueue_gpio_command(operation, has_thread_waiting) {
             if (this.gpio_reset_state.status !== "succeeded")
                 throw new Sk.builtin.RuntimeError(
                     `cannot perform GPIO operation ${operation.kind}`
                     + " because GPIO reset failed"
                 );
 
-            return this.gpio_command_queue.enqueue_for_sending(operation);
+            return this.gpio_command_queue.enqueue_for_sending(operation, has_thread_waiting);
         }
 
         handle_gpio_responses(responses) {
