@@ -1798,18 +1798,21 @@ var $builtinmodule = function (name) {
             this.unsent_commands = [];
         }
 
+        // Return whether an error response must be handled by caller.
         handle_response(response, frame_idx) {
             // Ignore "unsolicited response":
             if (response.seqnum === 0)
-                return;
+                return true;
 
             const command = this.commands_awaiting_response.get(response.seqnum);
             if (command == null) {
+                // Ignore any errors arising from this response; maybe it's from
+                // a previous build:
                 // TODO: Warn `not expecting response w seqnum ${response.seqnum}`
+                return false;
             } else {
-                command.handle_response(response, frame_idx);
                 this.commands_awaiting_response.delete(response.seqnum);
-                // TODO: Do something if command failed?
+                return command.handle_response(response, frame_idx);
             }
         }
     }
