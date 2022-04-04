@@ -2074,6 +2074,11 @@ var $builtinmodule = function (name) {
             this.enqueue_gpio_command({ kind: "set-output", pin, level });
         }
 
+        get_gpio_level(pin) {
+            // TODO: Validation
+            return this.gpio_pin_levels.get(pin);
+        }
+
         enqueue_gpio_command(operation) {
             if (this.gpio_reset_state.status !== "succeeded")
                 throw new Sk.builtin.RuntimeError(
