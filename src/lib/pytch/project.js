@@ -1721,6 +1721,7 @@ var $builtinmodule = function (name) {
             };
         }
 
+        // Return whether an error response must be handled by caller.
         handle_response(response, frame_idx) {
             this.ensure_status("handle_response()", "awaiting-response");
 
@@ -1734,11 +1735,15 @@ var $builtinmodule = function (name) {
             case "error":
                 this.state.status = "failed";
                 this.state.errorDetail = response.errorDetail;
-                break;
+                // Will this error be handled by turning into exception in
+                // user code?  If not, the caller must handle it.
+                return ( ! this.has_thread_waiting);
             case "ok":
             case "report-input":
                 this.state.status = "succeeded";
-                break;
+                // Doesn't actually matter what we return here, since this is
+                // not an error response:
+                return false;
             default:
                 throw new Error(
                     `unexpected response-kind "${response.kind}"`
