@@ -146,4 +146,20 @@ describe("GPIO interaction", () => {
         many_frames(project, 10);
         pytch_errors.assert_sole_error_matches(/pin 150 cannot be/);
     });
+
+    it("get-value gives error for non-input pin", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class ReadPins(pytch.Sprite):
+                @pytch.when_I_receive("read")
+                def configure_pins(self):
+                    pytch.get_gpio_value(110)
+        `);
+
+        project.do_synthetic_broadcast("read");
+        many_frames(project, 10);
+        pytch_errors.assert_sole_error_matches(/pin 110 has not been set/);
+    });
 });
