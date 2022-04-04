@@ -340,11 +340,14 @@ const pytch_stdout = (() => {
 
     const poll_for_matching = (project, match_regexp) => {
         let stdout = null;
+        let nonempty_stdouts = [];
         let output_matched = false;
 
         for (let n_polls = 0; n_polls != 100; ++n_polls) {
             project.one_frame();
             stdout = drain_stdout();
+            if (stdout !== "")
+                nonempty_stdouts.push(stdout)
             if (match_regexp.test(stdout)) {
                 output_matched = true;
                 break;
@@ -353,7 +356,8 @@ const pytch_stdout = (() => {
 
         assert.ok(
             output_matched,
-            `did not see output matching "${match_regexp}"`
+            `did not see output matching "${match_regexp}";`
+            + ` got ${JSON.stringify(nonempty_stdouts)}`
         );
     }
 
