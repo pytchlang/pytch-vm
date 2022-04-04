@@ -383,5 +383,18 @@ var $builtinmodule = function (name) {
         "(PIN, PULL_KIND) Set GPIO pin to be an input",
     );
 
+    mod.get_gpio_value = skulpt_function(
+        (py_pin) => {
+            throwIfNoExecutingThread("get_gpio_value");
+            const project = Sk.pytch.executing_thread.parent_project;
+
+            // TODO: Input type validation.
+            const pin = Sk.ffi.remapToJs(py_pin);
+            const lvl = project.get_gpio_level(pin);
+            return new Sk.builtin.int_(lvl);
+        },
+        "(PIN) Read the value of an input GPIO pin",
+    );
+
     return mod;
 };
