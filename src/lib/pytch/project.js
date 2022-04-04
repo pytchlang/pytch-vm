@@ -1737,6 +1737,9 @@ var $builtinmodule = function (name) {
                 this.state.errorDetail = response.errorDetail;
                 // Will this error be handled by turning into exception in
                 // user code?  If not, the caller must handle it.
+                //
+                // TODO: What if thread terminates before response arrives, e.g.,
+                // with red-stop, or exception elsewhere, or pytch.stop_all()?
                 return ( ! this.has_thread_waiting);
             case "ok":
             case "report-input":
