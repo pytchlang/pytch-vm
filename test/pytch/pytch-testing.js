@@ -206,6 +206,7 @@ const mock_gpio_api = (() => {
     let pin_states = new Map();
     const set_output_delay = 2;
     const set_input_delay = 2;
+    const report_input_delay = 3;
 
     const handle_reset = (command) => {
         switch (reset_response.kind) {
@@ -284,6 +285,21 @@ const mock_gpio_api = (() => {
         }
     };
 
+    const drive_pin = (pin, level) => {
+        let state = pin_states.get(pin);
+        if (state == null)
+            throw new Error(
+                "internal test error:"
+                + ` pin ${pin} not set as input`
+            );
+
+        state.level = level;
+        pending_responses.push({
+            send_at: frame_idx + report_input_delay,
+            response: { kind: "report-input", seqnum: 0, pin, level },
+        });
+    };
+
     const send_message = (message) => {
         message.forEach(command => {
             switch (command.kind) {
@@ -319,6 +335,7 @@ const mock_gpio_api = (() => {
 
     return {
         set_reset_response,
+        drive_pin,
         pin_state,
         send_message,
         acquire_responses,
