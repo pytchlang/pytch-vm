@@ -1698,9 +1698,10 @@ var $builtinmodule = function (name) {
     const GPIO_MAX_N_RESET_POLLS = 30;
 
     class GpioCommand {
-        constructor(operation) {
+        constructor(operation, has_thread_waiting) {
             this.seqnum = GPIO_next_seqnum();
             this.operation = operation;
+            this.has_thread_waiting = has_thread_waiting;
             this.state = { status: "not-sent" };
         }
 
