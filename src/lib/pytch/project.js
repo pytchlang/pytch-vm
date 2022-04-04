@@ -2154,16 +2154,16 @@ var $builtinmodule = function (name) {
             const gpio_error_outside_thread = this.handle_gpio_responses(gpio_responses);
 
             if ( ! gpio_error_outside_thread) {
-            this.launch_keypress_handlers();
-            this.launch_mouse_click_handlers();
+                this.launch_keypress_handlers();
+                this.launch_mouse_click_handlers();
 
-            this.thread_groups.forEach(tg => tg.maybe_cull_threads());
-            this.thread_groups.forEach(tg => tg.maybe_wake_threads());
+                this.thread_groups.forEach(tg => tg.maybe_cull_threads());
+                this.thread_groups.forEach(tg => tg.maybe_wake_threads());
 
-            let new_thread_groups = map_concat(tg => tg.one_frame(),
-                                               this.thread_groups);
+                let new_thread_groups = map_concat(tg => tg.one_frame(),
+                                                   this.thread_groups);
 
-            this.thread_groups = new_thread_groups;
+                this.thread_groups = new_thread_groups;
             }
 
             const exception_was_raised
