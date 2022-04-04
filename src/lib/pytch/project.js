@@ -2105,9 +2105,9 @@ var $builtinmodule = function (name) {
         }
 
         handle_gpio_responses(responses) {
+            let error_outside_thread = false;
             responses.forEach(response => {
-                // TODO: Make this tell us whether response was handled?
-                this.gpio_command_queue.handle_response(response);
+                const error_needs_handling = this.gpio_command_queue.handle_response(response);
 
                 switch (response.kind) {
                 case "report-input":
@@ -2120,13 +2120,26 @@ var $builtinmodule = function (name) {
                     // OK, thanks!
                     break;
                 case "error":
-                    // TODO: Warn? Halt project similarly to render error?
+                    if (error_needs_handling) {
+                        const err = new Sk.builtin.RuntimeError(
+                            `GPIO error: ${response.errorDetail}`
+                        );
+                        // TODO: Any further context possible? Capture stack
+                        // trace when original command was sent, and include
+                        // that in context?
+                        const ctx = { kind: "delayed_gpio" };
+
+                        Sk.pytch.on_exception(err, ctx);
+                        error_outside_thread = true;
+                    }
                     break;
                 default:
                     // Split "error" from "unknown"?
                     throw new Error(`unk op ${JSON.stringify(response)}`);
                 }
             });
+
+            return error_outside_thread;
         }
 
         one_frame() {
