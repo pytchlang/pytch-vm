@@ -242,21 +242,30 @@ const mock_gpio_api = (() => {
     };
 
     const handle_set_output = (command) => {
-        // TODO: Generate error when trying to set some designated pin
-        // to output.  First need to design mechanism for reporting
-        // errors which can't be raised as exceptions in the calling
-        // thread.
-        pin_states.set(
-            command.pin,
-            {
-                kind: "out",
-                level: command.level,
-            }
-        );
-        pending_responses.push({
-            send_at: frame_idx + set_output_delay,
-            response: { kind: "ok", seqnum: command.seqnum },
-        });
+        if (command.pin == 180) {
+            pending_responses.push({
+                send_at: frame_idx + set_input_delay,
+                response: {
+                    kind: "error",
+                    errorDetail: `pin 180 cannot be an output`,
+                    seqnum: command.seqnum,
+                },
+            });
+        }
+        else
+        {
+            pin_states.set(
+                command.pin,
+                {
+                    kind: "out",
+                    level: command.level,
+                }
+            );
+            pending_responses.push({
+                send_at: frame_idx + set_output_delay,
+                response: { kind: "ok", seqnum: command.seqnum },
+            });
+        }
     }
 
     const handle_set_input = (command) => {
