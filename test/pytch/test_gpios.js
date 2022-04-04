@@ -105,7 +105,11 @@ describe("GPIO interaction", () => {
         pytch_errors.assert_sole_error_matches(/set-output.*GPIO reset failed/);
     });
 
-    it("gives error for bad set-output pin", async () => {
+    [
+        { tag: "self-check of test", pin: 150, expectError: false, assertFun: (n) => (n === 10) },
+        { tag: "bad pin", pin: 180, expectError: true, assertFun: (n) => (n > 0 && n < 10) },
+    ].forEach(spec => {
+    it(`gives error for bad set-output pin (${spec.tag})`, async () => {
         const project = await import_deindented(`
 
             import pytch
@@ -113,15 +117,24 @@ describe("GPIO interaction", () => {
             class WritePins(pytch.Sprite):
                 @pytch.when_I_receive("drive")
                 def configure_pins(self):
-                    pytch.set_gpio_output(180, 1);
+                    pytch.set_gpio_output(${spec.pin}, 1);
+                    while True:
+                        print("hello")
         `);
 
         project.do_synthetic_broadcast("drive");
         many_frames(project, 10);
 
-        const rich_err = pytch_errors.sole_error();
-        assert.strictEqual(rich_err.ctx.kind, "delayed_gpio");
-        assert.match(rich_err.err.toString(), /pin 180 cannot be an output/);
+        if (spec.expectError) {
+            const rich_err = pytch_errors.sole_error();
+            assert.strictEqual(rich_err.ctx.kind, "delayed_gpio");
+            assert.match(rich_err.err.toString(), /pin 180 cannot be an output/);
+        }
+
+        const stdout = pytch_stdout.drain_stdout();
+        const n_stdout_lines = stdout.trim().split("\n").length;
+        assert.ok(spec.assertFun(n_stdout_lines));
+    });
     });
 
     it("can set pin as input", async () => {
