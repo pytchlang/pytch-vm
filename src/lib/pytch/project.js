@@ -2022,7 +2022,9 @@ var $builtinmodule = function (name) {
 
         do_gpio_reset_step() {
             if (this.gpio_reset_state.status === "not-started") {
-                const reset_command = new GpioCommand({ kind: "reset" });
+                // We manually check for responses, so doesn't really matter
+                // what we claim about whether a thread is waiting:
+                const reset_command = new GpioCommand({ kind: "reset" }, false);
                 Sk.pytch.gpio_api.send_message([reset_command.as_command_obj()]);
                 this.gpio_reset_state = {
                     status: "pending",
