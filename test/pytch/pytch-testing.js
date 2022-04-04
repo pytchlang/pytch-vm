@@ -240,6 +240,22 @@ const mock_gpio_api = (() => {
         }
     };
 
+    const handle_set_output = (command) => {
+        // TODO: Generate error when trying to set some
+        // designated pin to output.
+        pin_states.set(
+            command.pin,
+            {
+                kind: "out",
+                level: command.level,
+            }
+        );
+        pending_responses.push({
+            send_at: frame_idx + set_output_delay,
+            response: { kind: "ok", seqnum: command.seqnum },
+        });
+    }
+
     const handle_set_input = (command) => {
         if (command.pin == 150) {
             pending_responses.push({
@@ -273,19 +289,7 @@ const mock_gpio_api = (() => {
                 handle_reset(command);
                 break;
             case "set-output":
-                // TODO: Generate error when trying to set some
-                // designated pin to output.
-                pin_states.set(
-                    command.pin,
-                    {
-                        kind: "out",
-                        level: command.level,
-                    }
-                );
-                pending_responses.push({
-                    send_at: frame_idx + set_output_delay,
-                    response: { kind: "ok", seqnum: command.seqnum },
-                });
+                handle_set_output(command);
                 break;
             case "set-input":
                 handle_set_input(command);
