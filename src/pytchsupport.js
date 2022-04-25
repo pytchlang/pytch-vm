@@ -367,6 +367,62 @@ Sk.pytchsupport.TigerPythonSyntaxAnalysis = Sk.abstr.buildNativeClass(
 
 ////////////////////////////////////////////////////////////////////////////////
 
+Sk.pytchsupport.WebSocket_GpioApi = (WS, url) => {
+    return (() => {
+        let ws = null;
+        let outbound_messages = [];
+        let received_responses = [];
+
+        const send_message = (msg) => {
+            outbound_messages.push(msg);
+
+            if (ws == null
+                || ws.readyState == WS.CLOSING
+                || ws.readyState === WS.CLOSED
+            ) {
+                ws = new WS(url);
+                ws.onopen = handle_open;
+                ws.onerror = handle_error;
+                ws.onmessage = handle_message;
+            }
+
+            if (ws.readyState == WS.OPEN)
+                send_unsent();
+        };
+
+        const send_unsent = () => {
+            outbound_messages.forEach((msg) => ws.send(JSON.stringify(msg)));
+            outbound_messages = [];
+        };
+
+        const handle_open = (event) => send_unsent();
+
+        const handle_error = (event) => {
+            console.warn("error from WS", event);
+            ws = null;
+        };
+
+        const handle_message = (event) => {
+            const message = JSON.parse(event.data);
+            received_responses.push(...message);
+        };
+
+        const acquire_responses = () => {
+            const responses = received_responses;
+            received_responses = [];
+            return responses;
+        };
+
+        return {
+            send_message,
+            acquire_responses,
+        };
+    })();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 [
     "skulpt_function",
     "pytch_in_module",
