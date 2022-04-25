@@ -239,6 +239,11 @@ describe("GPIO interaction", () => {
 describe("GPIO WebSocket", () => {
     const ws = require("ws");
 
+    // TODO: Any way to do this less clunkily?
+    let saved_gpio_api = null;
+    before(() => { saved_gpio_api = Sk.pytch.gpio_api; });
+    after(() => { Sk.pytch.gpio_api = saved_gpio_api; });
+
     it("works", async () => {
         Sk.pytch.gpio_api = Sk.pytchsupport.WebSocket_GpioApi(ws, "ws://localhost:8055/");
 
