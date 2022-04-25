@@ -897,6 +897,13 @@ const call_method = (py_obj, js_methodname, js_args) => {
 //
 // Small utilities.
 
+const async_many_frames = async (project, n_frames = 40) => {
+    for (let i = 0; i < n_frames; ++i) {
+        project.one_frame()
+        await new Promise((r) => setTimeout(r, 5));
+    }
+}
+
 const many_frames = (project, n, options = {}) => {
     let last_frame_raised_exception = false;
     for (let i = 0; i < n; ++i) {
@@ -1078,6 +1085,7 @@ module.exports = {
     py_getattr,
     js_getattr,
     call_method,
+    async_many_frames,
     many_frames,
     one_frame,
     broadcast_and_step,
