@@ -5,6 +5,7 @@ const {
     import_deindented,
     one_frame,
     many_frames,
+    async_many_frames,
     assert,
     mock_gpio_api,
     pytch_stdout,
@@ -232,5 +233,49 @@ describe("GPIO interaction", () => {
         project.do_synthetic_broadcast("read");
         many_frames(project, 10);
         pytch_errors.assert_sole_error_matches(/pin 110 has not been set/);
+    });
+});
+
+describe("GPIO WebSocket", () => {
+    const ws = require("ws");
+
+    it("works", async () => {
+        Sk.pytch.gpio_api = Sk.pytchsupport.WebSocket_GpioApi(ws, "ws://localhost:8055/");
+
+        const project = await import_deindented(`
+
+            import pytch
+
+            class ReadPins(pytch.Sprite):
+                @pytch.when_I_receive("read")
+                def configure_pins(self):
+                    pytch.set_gpio_as_input(4, "pull-up")
+                    pin4 = pytch.get_gpio_value(4)
+                    print(f"read {pin4}")
+                @pytch.when_I_receive("drive")
+                def drive_pin(self):
+                    pin4 = pytch.get_gpio_value(4)
+                    print(f"read {pin4}")
+                    pytch.set_gpio_output(5, 0);
+                    while True:
+                        pin4 = pytch.get_gpio_value(4)
+                        if pin4 == 0:
+                            break;
+                    print("read 0")
+                    pytch.set_gpio_output(5, 1);
+                    while True:
+                        pin4 = pytch.get_gpio_value(4)
+                        if pin4 == 1:
+                            break;
+                    print("read 1")
+        `);
+
+        project.do_synthetic_broadcast("read");
+        await async_many_frames(project);
+        assert.strictEqual(pytch_stdout.drain_stdout().trim(), "read 1");
+
+        project.do_synthetic_broadcast("drive");
+        await async_many_frames(project);
+        assert.strictEqual(pytch_stdout.drain_stdout().trim(), "read 1\nread 0\nread 1");
     });
 });
