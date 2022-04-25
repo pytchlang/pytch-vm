@@ -26,3 +26,4 @@ extension to Skulpt.
    tutorials
    docstrings
    attribute-watchers
+   physical-computing
