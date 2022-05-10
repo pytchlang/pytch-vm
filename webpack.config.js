@@ -11,7 +11,7 @@ const CompressionWebpackPlugin = require('compression-webpack-plugin');
 
 const git = new GitRevisionPlugin({branch: true});
 
-const styleexcludes = /(node_modules)|(support)|(gen)|(tokenize.js)|(symtable.js)|(compile.js)|(ast.js)|(internalpython.js)/;
+const styleexcludes = /(node_modules)|(support)|(gen)|(tokenize.js)|(symtable.js)|(compile.js)|(ast.js)|(internalpython.js)|(tigerpython-parser.js)/;
 
 if (!shell.which('git')) {
     console.log(chalk.red("WARNING: Cannot find git!  Unsure if working directory is clean."));
