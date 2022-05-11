@@ -259,7 +259,6 @@ const async_load_mock_image = (url) => {
 // properties.  Some of the images used in tests won't truly exist.
 
 const image_size_from_url = new Map([
-    ["question-mark.png", [32, 32]],
     ["marching-alien.png", [60, 20]],
     ["firing-alien.png", [80, 30]],
     ["ball.png", [16, 16]],
