@@ -1,6 +1,8 @@
 import pytch
 
 class Problem(pytch.Sprite):
+    Costumes = ["ball.png"]
+
     @property
     def _x(self):
         raise RuntimeError("oh no")
@@ -14,6 +16,8 @@ class Problem(pytch.Sprite):
         self.show()
 
 class Counter(pytch.Sprite):
+    Costumes = ["ball.png"]
+
     @pytch.when_I_receive("go")
     def init(self):
         self.n = 0;
