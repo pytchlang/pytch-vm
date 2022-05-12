@@ -119,10 +119,7 @@ class Actor:
 class Sprite(Actor):
     "The starting class for all your sprites"
 
-    Costumes = [
-        ('question-mark',
-         'question-mark.png', 16, 16),
-    ]
+    Costumes = []
 
     _appearance_hyponym = 'Costume'
 

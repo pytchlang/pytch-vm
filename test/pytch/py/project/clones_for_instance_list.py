@@ -22,6 +22,8 @@ class Galaxies(Stage):
 
 
 class Alien(Sprite):
+    Costumes = ["ball.png"]
+
     def __init__(self):
         Sprite.__init__(self)
         self.generated_id = next_global_id()
