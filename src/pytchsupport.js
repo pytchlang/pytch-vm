@@ -169,6 +169,20 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
         // Throw error during "import" phase if code does not "import pytch".
         const ignoredResult = Sk.pytchsupport.pytch_in_module(module);
     } catch (err) {
+        if (err instanceof Sk.builtin.SyntaxError) {
+            const errs = globalThis.TPyParser.findAllErrors(code_text);
+            if (errs.length > 0) {
+                const innerError = new Sk.pytchsupport.TigerPythonSyntaxAnalysis({
+                    errors: errs,
+                });
+                throw new Sk.pytchsupport.PytchBuildError({
+                    phase: "import",
+                    phaseDetail: null,
+                    innerError,
+                });
+            }
+        }
+
         throw new Sk.pytchsupport.PytchBuildError({
             phase: "import",
             phaseDetail: null,
