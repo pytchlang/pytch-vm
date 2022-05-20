@@ -292,6 +292,36 @@ Sk.pytchsupport.PytchBuildError = Sk.abstr.buildNativeClass(
 );
 
 
+/**
+ * Exception subclass representing a list of syntax errors found by
+ * TigerPython.
+ *
+ * The first arg should be an object with property "errors", which is
+ * a list of Tiger Python error objects.
+ */
+Sk.pytchsupport.TigerPythonSyntaxAnalysis = Sk.abstr.buildNativeClass(
+    // TODO: Use double-f-prefix as test case for situation where
+    // Tiger Python (with my changes) is happy (is it?) but Skulpt
+    // rejects it.
+    //
+    "TigerPythonSyntaxAnalysis",
+    {
+        constructor: function TigerPythonSyntaxAnalysis(details) {
+            const msg = `TigerPython: ${details.errors.length} message/s`;
+            Sk.builtin.Exception.apply(this, [msg]);
+            this.syntax_errors = details.errors.map(e =>
+                Object.assign(
+                    new Sk.builtin.SyntaxError(e.msg, "<stdin>.py", e.line),
+                    {
+                        tiger_python_errorcode: e.code,
+                        tiger_python_offset: e.offset,
+                    }));
+        },
+        base: Sk.builtin.Exception,
+    }
+);
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
 [
