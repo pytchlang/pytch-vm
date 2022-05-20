@@ -46,4 +46,22 @@ const assertTigerPythonAnalysis = (expErrors) => (err) => {
 }
 
 describe("Syntax errors", () => {
+    it("identifies multiple syntax errors", async () => {
+        const do_import = import_deindented(`
+            import pytch
+            class Apple(pytch.Sprite):
+                def peel(self):
+                    for x in range
+                    foo = bar(]
+        `);
+
+        await assert.rejects(
+            do_import,
+            assertTigerPythonAnalysis([
+                { re: /colon .* is required/, line: 3 },
+                { re: /body .* missing/, line: 3 },
+                { re: /mismatched bracket/, line: 4 },
+            ])
+        );
+    });
 });
