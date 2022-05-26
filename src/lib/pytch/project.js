@@ -379,7 +379,7 @@ var $builtinmodule = function (name) {
         }
 
         async async_load_sounds() {
-            let raw_descriptors = js_getattr(this.py_cls, s_Sounds);
+            let raw_descriptors = js_get_Array_attr(this.py_cls, s_Sounds);
 
             let sound_descriptors
                 = raw_descriptors.map(d => this.validate_sound_descriptor(d));
