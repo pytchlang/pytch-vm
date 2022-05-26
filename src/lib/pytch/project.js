@@ -47,6 +47,22 @@ var $builtinmodule = function (name) {
     const js_getattr = (py_obj, py_attr_name) => (
         Sk.ffi.remapToJs(Sk.builtin.getattr(py_obj, py_attr_name)));
 
+    /** Get attribute value as JavaScript object, requiring that it be
+      * an Array.  This means the underlying Python attribute value
+      * must be a list or tuple.
+      */
+    const js_get_Array_attr = (py_obj, py_attr_name) => {
+        const val = js_getattr(py_obj, py_attr_name);
+
+        // The error message here is a bit of a lie; we will also
+        // accept a Python tuple.
+        if (!(val instanceof Array))
+            throw new Sk.builtin.ValueError(
+                `${py_attr_name.v} must be a list`);
+
+        return val;
+    };
+
     const path_stem = (path) => {
         const pieces = path.split("/");
         const basename = pieces[pieces.length - 1];
@@ -311,13 +327,7 @@ var $builtinmodule = function (name) {
 
         async async_load_appearances() {
             let attr_name = this.appearances_attr_name;
-            let raw_descriptors = js_getattr(this.py_cls, attr_name);
-
-            // The error message here is a bit of a lie; we will also
-            // accept a Python tuple.
-            if (!(raw_descriptors instanceof Array))
-                throw new Sk.builtin.ValueError(
-                    `${attr_name.v} must be a list`);
+            let raw_descriptors = js_get_Array_attr(this.py_cls, attr_name);
 
             let appearance_descriptors
                 = raw_descriptors.map(
@@ -369,7 +379,7 @@ var $builtinmodule = function (name) {
         }
 
         async async_load_sounds() {
-            let raw_descriptors = js_getattr(this.py_cls, s_Sounds);
+            let raw_descriptors = js_get_Array_attr(this.py_cls, s_Sounds);
 
             let sound_descriptors
                 = raw_descriptors.map(d => this.validate_sound_descriptor(d));

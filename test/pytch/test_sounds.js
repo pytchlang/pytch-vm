@@ -10,6 +10,7 @@ const {
     mock_sound_manager,
     import_deindented,
     pytch_errors,
+    assertBuildErrorFun,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -177,6 +178,18 @@ describe("bad sounds", () => {
             assert.ok(/could not load Sound/.test(err_msg));
             assert.equal(caught_exception.kind, "Sound");
         });
+    });
+
+    it("gives useful error message for non-list Sounds", async () => {
+        await assert.rejects(
+            import_deindented(`
+                import pytch
+                class Alien(pytch.Sprite):
+                    Sounds = ("whoosh.mp3")
+            `),
+            assertBuildErrorFun("register-actor",
+                                Sk.builtin.ValueError,
+                                /Sounds must be a list/));
     });
 
     [
