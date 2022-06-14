@@ -1,3 +1,20 @@
+/**
+This file is an Executable Form of the Tiger Python Parser,
+which is Copyright 2019, 2020, 2021 Tobias Kohn.
+
+The Pytch team have made minor modifications.
+
+The Source Code Form of this software is available from
+https://github.com/pytchlang/TigerPython-Parser
+
+The Source Code Form is governed by the terms of the
+Mozilla Public License 2.0, a copy of which is included
+in the above GitHub repo.
+
+See the licence for the rights you have as a recipient of
+this software.
+**/
+
 let TPyParser;
 (function(){
 'use strict';const ba=Object.freeze({assumingES6:!0,productionMode:!0,linkerVersion:"1.0.1",fileLevelThis:this}),ea=Math.imul,ha=Math.fround,ia=Math.clz32;let ka;function ma(a){for(const b in a)return b}class na{constructor(a){this.fE=a}toString(){return String.fromCharCode(this.fE)}}function oa(){throw new TypeError("Cannot call isInstance() on a Class representing a JS trait/object");}function h(a,b){return new a.qz(b)}function l(a,b){return pa(a,b,0)}
