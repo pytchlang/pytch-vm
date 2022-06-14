@@ -169,6 +169,8 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
         // Throw error during "import" phase if code does not "import pytch".
         const ignoredResult = Sk.pytchsupport.pytch_in_module(module);
     } catch (err) {
+        // If we get a SyntaxError, see if Tiger Python can give us a
+        // more-useful explanation of the problem than "bad input".
         if (err instanceof Sk.builtin.SyntaxError) {
             let errs = [];
             try {
