@@ -21,7 +21,7 @@ describe("build-error handling", () => {
             // can directly use it as the first arg to assert.rejects().
             await assert.rejects(
                 import_project(),
-                assertBuildErrorFun("import", Sk.builtin.SyntaxError, /import pytch/)
+                assertBuildErrorFun("import", Sk.builtin.ImportError, /import pytch/)
             );
         });
     });

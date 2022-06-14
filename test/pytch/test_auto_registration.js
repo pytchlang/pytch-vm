@@ -26,7 +26,7 @@ describe("auto-registration", () => {
         it("detects lack of \"import pytch\"", async () => {
             let module = await import_module();
             assert.throws(() => Sk.pytchsupport.pytch_in_module(module),
-                          /SyntaxError.*does not do "import pytch"/);
+                          /ImportError.*does not do "import pytch"/);
         });
     });
 
