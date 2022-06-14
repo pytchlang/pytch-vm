@@ -170,7 +170,14 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
         const ignoredResult = Sk.pytchsupport.pytch_in_module(module);
     } catch (err) {
         if (err instanceof Sk.builtin.SyntaxError) {
-            const errs = globalThis.TPyParser.findAllErrors(code_text);
+            let errs = [];
+            try {
+                errs = globalThis.TPyParser.findAllErrors(code_text);
+            } catch (tpy_err) {
+                // Leave "errs" as empty list to be correctly handled by next "if".
+                console.log("TigerPython threw error", tpy_err);
+            }
+
             if (errs.length > 0) {
                 const innerError = new Sk.pytchsupport.TigerPythonSyntaxAnalysis({
                     errors: errs,
