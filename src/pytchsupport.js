@@ -38,9 +38,7 @@ Sk.pytchsupport.pytch_in_module = (mod => {
     if (mod.$d.hasOwnProperty('pytch'))
         return mod.$d.pytch;
     else
-        throw new Sk.builtin.SyntaxError('module does not do "import pytch"');
-
-    // TODO: Would an ImportError be better here?
+        throw new Sk.builtin.ImportError('module does not do "import pytch"');
 });
 
 
