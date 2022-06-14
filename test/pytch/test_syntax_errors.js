@@ -4,6 +4,7 @@ const {
     configure_mocha,
     import_deindented,
     assert,
+    assertBuildErrorFun,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -63,5 +64,25 @@ describe("Syntax errors", () => {
                 { re: /mismatched bracket/, line: 4 },
             ])
         );
+    });
+
+    it("gives Skulpt error for double-f prefix", async () => {
+        // My quick bodge-fix to TigerPython to allow it to handle
+        // f-strings lets a double-f prefix slip through.  Check that
+        // we at least get Skulpt's error in this situation.
+
+        const do_import = import_deindented(`
+            import pytch
+            class Apple(pytch.Sprite):
+                def peel(self):
+                    x = ff"hello bad string prefix"
+        `);
+
+        const assertDetails = assertBuildErrorFun(
+            "import",
+            Sk.builtin.SyntaxError,
+            /bad input/);
+
+        await assert.rejects(do_import, assertDetails);
     });
 });

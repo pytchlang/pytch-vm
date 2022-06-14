@@ -323,10 +323,6 @@ Sk.pytchsupport.PytchBuildError = Sk.abstr.buildNativeClass(
  * a list of Tiger Python error objects.
  */
 Sk.pytchsupport.TigerPythonSyntaxAnalysis = Sk.abstr.buildNativeClass(
-    // TODO: Use double-f-prefix as test case for situation where
-    // Tiger Python (with my changes) is happy (is it?) but Skulpt
-    // rejects it.
-    //
     "TigerPythonSyntaxAnalysis",
     {
         constructor: function TigerPythonSyntaxAnalysis(details) {
