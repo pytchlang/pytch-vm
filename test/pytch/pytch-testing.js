@@ -593,6 +593,13 @@ const many_frames = (project, n, options = {}) => {
         last_frame_raised_exception = state.exception_was_raised;
     }
 
+    if (options.expect_last_frame_to_raise_exception) {
+        assert.ok(
+            last_frame_raised_exception,
+            "last frame should have raised exception but did not"
+        );
+    }
+
     // The default behaviour is to do the call, so check for either
     // absent "call_rendering_instructions" property or truthy
     // "call_rendering_instructions" property.
