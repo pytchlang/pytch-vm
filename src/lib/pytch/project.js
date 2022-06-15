@@ -1811,7 +1811,10 @@ var $builtinmodule = function (name) {
 
             this.thread_groups = new_thread_groups;
 
-            if (this.thread_groups.some(tg => tg.raised_exception()))
+            const exception_was_raised
+                  = this.thread_groups.some(tg => tg.raised_exception());
+
+            if (exception_was_raised)
                 this.kill_all_threads_questions_sounds();
 
             // Tests in Scratch show that as well as stopping all scripts,
