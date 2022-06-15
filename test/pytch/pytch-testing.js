@@ -587,8 +587,11 @@ const call_method = (py_obj, js_methodname, js_args) => {
 // Small utilities.
 
 const many_frames = (project, n, options = {}) => {
-    for (let i = 0; i < n; ++i)
-        project.one_frame();
+    let last_frame_raised_exception = false;
+    for (let i = 0; i < n; ++i) {
+        const state = project.one_frame();
+        last_frame_raised_exception = state.exception_was_raised;
+    }
 
     // The default behaviour is to do the call, so check for either
     // absent "call_rendering_instructions" property or truthy
