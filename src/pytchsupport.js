@@ -38,9 +38,7 @@ Sk.pytchsupport.pytch_in_module = (mod => {
     if (mod.$d.hasOwnProperty('pytch'))
         return mod.$d.pytch;
     else
-        throw new Sk.builtin.SyntaxError('module does not do "import pytch"');
-
-    // TODO: Would an ImportError be better here?
+        throw new Sk.builtin.ImportError('module does not do "import pytch"');
 });
 
 
@@ -169,6 +167,29 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
         // Throw error during "import" phase if code does not "import pytch".
         const ignoredResult = Sk.pytchsupport.pytch_in_module(module);
     } catch (err) {
+        // If we get a SyntaxError, see if Tiger Python can give us a
+        // more-useful explanation of the problem than "bad input".
+        if (err instanceof Sk.builtin.SyntaxError) {
+            let errs = [];
+            try {
+                errs = globalThis.TPyParser.findAllErrors(code_text);
+            } catch (tpy_err) {
+                // Leave "errs" as empty list to be correctly handled by next "if".
+                console.log("TigerPython threw error", tpy_err);
+            }
+
+            if (errs.length > 0) {
+                const innerError = new Sk.pytchsupport.TigerPythonSyntaxAnalysis({
+                    errors: errs,
+                });
+                throw new Sk.pytchsupport.PytchBuildError({
+                    phase: "import",
+                    phaseDetail: null,
+                    innerError,
+                });
+            }
+        }
+
         throw new Sk.pytchsupport.PytchBuildError({
             phase: "import",
             phaseDetail: null,
@@ -286,6 +307,32 @@ Sk.pytchsupport.PytchBuildError = Sk.abstr.buildNativeClass(
 
             Sk.builtin.Exception.apply(this, args);
             Object.assign(this, details);
+        },
+        base: Sk.builtin.Exception,
+    }
+);
+
+
+/**
+ * Exception subclass representing a list of syntax errors found by
+ * TigerPython.
+ *
+ * The first arg should be an object with property "errors", which is
+ * a list of Tiger Python error objects.
+ */
+Sk.pytchsupport.TigerPythonSyntaxAnalysis = Sk.abstr.buildNativeClass(
+    "TigerPythonSyntaxAnalysis",
+    {
+        constructor: function TigerPythonSyntaxAnalysis(details) {
+            const msg = `TigerPython: ${details.errors.length} message/s`;
+            Sk.builtin.Exception.apply(this, [msg]);
+            this.syntax_errors = details.errors.map(e =>
+                Object.assign(
+                    new Sk.builtin.SyntaxError(e.msg, "<stdin>.py", e.line),
+                    {
+                        tiger_python_errorcode: e.code,
+                        tiger_python_offset: e.offset,
+                    }));
         },
         base: Sk.builtin.Exception,
     }

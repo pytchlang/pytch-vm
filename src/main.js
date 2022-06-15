@@ -85,5 +85,6 @@ require("./generic_alias.js");
 require("./builtindict.js");
 require("./constants.js");
 require("./pytchsupport.js");
+require("./tigerpython-parser.js");
 
 /* jshint ignore:end */
