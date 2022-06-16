@@ -25,7 +25,7 @@ describe("error handling", () => {
 
             let errs = pytch_errors.drain_errors();
             assert.strictEqual(errs.length, 0);
-            one_frame(project);
+            one_frame(project, { expect_last_frame_to_raise_exception: true });
 
             let err = pytch_errors.sole_error();
             let err_str = err.err.toString();
@@ -47,7 +47,7 @@ describe("error handling", () => {
                   = (exp_n_ticks) => assert.equal(n_ticks(), exp_n_ticks);
 
             project.do_synthetic_broadcast("go");
-            one_frame(project);
+            one_frame(project, { expect_last_frame_to_raise_exception: false });
 
             // We should have done the first iteration of the 'while'.
             assert_n_ticks(1);
@@ -101,7 +101,7 @@ describe("error handling", () => {
         `);
 
         project.do_synthetic_broadcast("run");
-        one_frame(project);
+        one_frame(project, { expect_last_frame_to_raise_exception: true });
 
         pytch_errors.assert_sole_error_matches(/non-Pytch suspension/);
     });
