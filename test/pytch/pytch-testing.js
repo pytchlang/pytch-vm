@@ -600,6 +600,14 @@ const many_frames = (project, n, options = {}) => {
         );
     }
 
+    // Distinguish "option not present" from "option present and false":
+    if (options.expect_last_frame_to_raise_exception === false) {
+        assert.ok(
+            !last_frame_raised_exception,
+            "last frame should not have raised exception but did"
+        );
+    }
+
     // The default behaviour is to do the call, so check for either
     // absent "call_rendering_instructions" property or truthy
     // "call_rendering_instructions" property.
