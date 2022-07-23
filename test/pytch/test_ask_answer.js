@@ -151,6 +151,8 @@ describe("Ask and wait for answer", () => {
                         pytch.ask_and_wait(99)
 
                 class FruitBowl(pytch.Stage):
+                    Backdrops = ["solid-white-stage.png"]
+
                     @pytch.when_I_receive("bowl-ask")
                     def ask_name(self):
                         self.ask_and_wait(lambda x: 42)
