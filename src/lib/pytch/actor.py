@@ -370,7 +370,14 @@ class Stage(Actor):
         if not self.Backdrops:
             # In contrast to Sprites, a Stage is always shown and so
             # must have at least one Backdrop.
-            raise ValueError('no Backdrops in Stage')
+            try:
+                cls_name = self.__class__.__name__
+            except:
+                cls_name = "[Unknown]"
+
+            raise ValueError(
+                f'there are no Backdrops in Stage class "{cls_name}"'
+            )
 
         self._appearance_index = 0
 
