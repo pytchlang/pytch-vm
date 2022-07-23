@@ -128,4 +128,21 @@ describe("build-error handling", () => {
             await assert.rejects(do_import, assertDetails);
         });
     });
+
+    it("gives error if no Backdrops in Stage", async () => {
+        const import_project = import_deindented(`
+            import pytch
+            class Banana(pytch.Stage):
+                pass
+        `);
+
+        await assert.rejects(
+            import_project,
+            assertBuildErrorFun(
+                "register-actor",
+                Sk.builtin.ValueError,
+                /no Backdrops .* Stage class "Banana"/
+            )
+        );
+    });
 });

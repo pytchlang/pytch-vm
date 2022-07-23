@@ -16,6 +16,8 @@ def next_global_id():
 
 
 class Galaxies(Stage):
+    Backdrops = ["solid-white-stage.png"]
+
     def __init__(self):
         Stage.__init__(self)
         self.generated_id = 42

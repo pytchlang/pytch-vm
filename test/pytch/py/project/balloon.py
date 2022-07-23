@@ -10,7 +10,7 @@ from pytch import (
 
 
 class Stage(Stage):
-    pass
+    Backdrops = ["solid-white-stage.png"]
 
 
 class Balloon(Sprite):

@@ -17,6 +17,8 @@ def next_global_id():
 
 
 class WhiteSheet(Stage):
+    Backdrops = ["solid-white-stage.png"]
+
     @when_green_flag_clicked
     def init(self):
         # Special value which will never be returned by next_global_id()

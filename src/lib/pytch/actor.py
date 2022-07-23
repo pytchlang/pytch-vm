@@ -356,7 +356,7 @@ class Sprite(Actor):
 class Stage(Actor):
     "The starting class for your stage"
 
-    Backdrops = [('solid-white', 'solid-white-stage.png')]
+    Backdrops = []
     _x = 0
     _y = 0
     _size = 1.0
@@ -367,10 +367,17 @@ class Stage(Actor):
     _appearance_hyponym = 'Backdrop'
 
     def __init__(self):
+        # In contrast to Sprites, a Stage is always shown and so
+        # must have at least one Backdrop.
         if not self.Backdrops:
-            # In contrast to Sprites, a Stage is always shown and so
-            # must have at least one Backdrop.
-            raise ValueError('no Backdrops in Stage')
+            try:
+                cls_name = self.__class__.__name__
+            except:
+                cls_name = "[Unknown]"
+
+            raise ValueError(
+                f'there are no Backdrops in Stage class "{cls_name}"'
+            )
 
         self._appearance_index = 0
 

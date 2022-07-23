@@ -6,6 +6,8 @@ from pytch import (
 
 
 class Scenery(Stage):
+    Backdrops = ["solid-white-stage.png"]
+
     def __init__(self):
         Stage.__init__(self)
         self.colour = 'red'
