@@ -292,10 +292,17 @@ class MockImage {
 // Sounds: Do not actually load anything from the network.  Instead keep a
 // map of URL to duration in frames, and create a mock sound with the right
 // properties.
+//
+// To simulate errors, a request for a filename (URL) in the map
+// sound_error_from_url will throw the corresponding error.
 
 const sound_duration_from_url = new Map([
     ["trumpet.mp3", 20],
     ["violin.mp3", 10],
+]);
+
+const sound_error_from_url = new Map([
+    ["corrupt-sound-file.mp3", new Error("could not decode audio data")],
 ]);
 
 class MockSound {
@@ -307,9 +314,19 @@ class MockSound {
     }
 
     static maybe_create(parent_sound_manager, tag, url) {
-        return (sound_duration_from_url.has(url)
+        const maybe_success_sound = (
+            sound_duration_from_url.has(url)
                 ? new MockSound(parent_sound_manager, tag, url)
                 : null);
+
+        if (maybe_success_sound != null)
+            return maybe_success_sound;
+
+        const maybe_error = sound_error_from_url.get(url);
+        if (maybe_error != null)
+            throw maybe_error;
+
+        return null;
     }
 
     launch_new_performance() {
