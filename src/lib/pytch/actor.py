@@ -367,9 +367,9 @@ class Stage(Actor):
     _appearance_hyponym = 'Backdrop'
 
     def __init__(self):
+        # In contrast to Sprites, a Stage is always shown and so
+        # must have at least one Backdrop.
         if not self.Backdrops:
-            # In contrast to Sprites, a Stage is always shown and so
-            # must have at least one Backdrop.
             try:
                 cls_name = self.__class__.__name__
             except:
