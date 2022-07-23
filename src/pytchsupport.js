@@ -268,6 +268,7 @@ Sk.pytchsupport.asset_names_of_project = async (code_text) => {
  *
  *     kind: either "Image" or "Sound"
  *     path: a string giving the location of the not-found asset
+ *     message: (optional) a string giving more information
  */
 Sk.pytchsupport.PytchAssetLoadError = Sk.abstr.buildNativeClass(
     "PytchAssetLoadError",
@@ -275,7 +276,11 @@ Sk.pytchsupport.PytchAssetLoadError = Sk.abstr.buildNativeClass(
         constructor: function PytchAssetLoadError(...args) {
             // Convert args into form expected by Exception.
             const details = args[0];
-            args = [`could not load ${details.kind} "${details.path}"`];
+            let msg = `could not load ${details.kind} "${details.path}"`;
+            if (details.message != null)
+                msg += `: ${details.message}`;
+
+            args = [msg];
 
             Sk.builtin.Exception.apply(this, args);
             Object.assign(this, details);
