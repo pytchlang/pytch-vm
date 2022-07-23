@@ -180,6 +180,21 @@ describe("bad sounds", () => {
         });
     });
 
+    it("wraps bare error in PytchAssetLoadError", async () => {
+        const import_project = import_deindented(`
+            import pytch
+            class Banana(pytch.Sprite):
+                Sounds = ["corrupt-sound-file.mp3"]
+        `);
+        await assert.rejects(
+            import_project,
+            assertBuildErrorFun(
+                "register-actor",
+                Sk.pytchsupport.PytchAssetLoadError,
+                /could not decode audio/)
+        );
+    });
+
     it("gives useful error message for non-list Sounds", async () => {
         await assert.rejects(
             import_deindented(`
