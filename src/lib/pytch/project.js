@@ -386,9 +386,9 @@ var $builtinmodule = function (name) {
 
             let async_sounds = sound_descriptors.map(async d => {
                 try {
-                let sound = await (Sk.pytch.sound_manager
-                                   .async_load_sound(...d));
-                return [d[0], sound];
+                    const sound = await (Sk.pytch.sound_manager
+                                         .async_load_sound(...d));
+                    return [d[0], sound];
                 } catch (err) {
                     // Convert error to PytchAssetLoadError if it isn't
                     // already one.  We get a PytchAssetLoadError if,
