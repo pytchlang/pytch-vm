@@ -385,9 +385,27 @@ var $builtinmodule = function (name) {
                 = raw_descriptors.map(d => this.validate_sound_descriptor(d));
 
             let async_sounds = sound_descriptors.map(async d => {
+                try {
                 let sound = await (Sk.pytch.sound_manager
                                    .async_load_sound(...d));
                 return [d[0], sound];
+                } catch (err) {
+                    // Convert error to PytchAssetLoadError if it isn't
+                    // already one.  We get a PytchAssetLoadError if,
+                    // for example, there is no asset with that name.
+                    // We get a non-PytchAssetLoadError if, for example,
+                    // there is an asset but it is corrupt or of an
+                    // unsupported format.
+                    if (err instanceof Sk.pytchsupport.PytchAssetLoadError) {
+                        throw err;
+                    } else {
+                        throw new Sk.pytchsupport.PytchAssetLoadError({
+                            kind: "Sound",
+                            path: d[1],
+                            message: `(Technical details: ${err})`,
+                        });
+                    }
+                }
             });
 
             let sounds = await Promise.all(async_sounds);
