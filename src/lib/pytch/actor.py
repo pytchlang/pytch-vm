@@ -356,7 +356,7 @@ class Sprite(Actor):
 class Stage(Actor):
     "The starting class for your stage"
 
-    Backdrops = [('solid-white', 'solid-white-stage.png')]
+    Backdrops = []
     _x = 0
     _y = 0
     _size = 1.0
