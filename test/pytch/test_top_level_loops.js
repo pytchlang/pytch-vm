@@ -6,6 +6,7 @@ const {
     js_getattr,
     one_frame,
     assert,
+    assertBuildErrorFun,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -55,4 +56,23 @@ describe("Use of for/while loops at module top-level", () => {
             assert.strictEqual(current_x(), 0 + 1 + 2 + 3 + 4);
         })
     );
+
+    it("handles top-level infinite loop", async () => {
+        const import_project = import_deindented(`
+
+            import pytch
+
+            while True:
+                pass
+        `);
+
+        await assert.rejects(
+            import_project,
+            assertBuildErrorFun(
+                "import",
+                Sk.builtin.RuntimeError,
+                /loop iterations.*maximum allowed/
+            )
+        );
+    });
 });
