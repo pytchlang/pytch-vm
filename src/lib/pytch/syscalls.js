@@ -32,6 +32,7 @@ var $builtinmodule = function (name) {
             case "success":
                 return result.value;
             case "failure":
+                console.log(`[${Sk.pytch.executing_thread.numeric_id}] resuming with failure: ${result.error}`);
                 throw result.error;
             default:
                 throw Error("unknown result-kind");
@@ -73,6 +74,13 @@ var $builtinmodule = function (name) {
                     : Sk.builtin.none.none$);
         },
         `Pause until the next frame`,
+    );
+
+    mod._console_log = skulpt_function(
+        (py_obj) => {
+            console.log((new Sk.builtin.str(py_obj)).v);
+        },
+        `emit to JS console`,
     );
 
     mod.push_loop_iterations_per_frame = skulpt_function(

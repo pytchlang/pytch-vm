@@ -40,6 +40,7 @@ from .syscalls import (
     key_pressed,
     ask_and_wait,
     stop_all,
+    _console_log,
 )
 
 from ._completions_info import (

@@ -312,6 +312,12 @@ var $builtinmodule = function (name) {
         register_py_instance(py_instance, maybe_py_parent) {
             let actor_instance = new PytchActorInstance(this, py_instance);
             py_instance.$pytchActorInstance = actor_instance;
+            const sfx = (
+                (maybe_py_parent == null)
+                    ? "ex nihilo"
+                    : `from (${maybe_py_parent.$pytchActorInstance.actor.class_name}/${maybe_py_parent.$pytchActorInstance.numeric_id})`);
+            console.log(`Actor.register_py_instance(${actor_instance.actor.class_name}/${actor_instance.numeric_id}) `
+                       + sfx);
             this.instances.push(actor_instance);
 
             let maybe_parent_instance
@@ -509,6 +515,7 @@ var $builtinmodule = function (name) {
 
         unregister_instance(instance) {
             let instance_idx = this.instances.indexOf(instance);
+            console.log(`Actor.unregister_instance(${instance.numeric_id}): ${instance_idx}`);
 
             // Only allow de-registration of actual clones.  The test
             // 'instance_idx > 0' fails for two kinds of result from the
@@ -900,6 +907,7 @@ var $builtinmodule = function (name) {
 
     class Thread {
         constructor(thread_group, py_callable, py_arg, parent_project) {
+            this.numeric_id = 4000 + next_global_id();
             this.thread_group = thread_group;
 
             // Fake a skulpt-suspension-like object so we can treat it the
@@ -915,6 +923,8 @@ var $builtinmodule = function (name) {
             this.callable_name = js_getattr(py_callable, Sk.builtin.str.$name);
 
             this.loop_iteration_batching_states = [new LoopIterationBatchingState(1)];
+
+            console.log(`[${this.numeric_id}] created ${this.callable_name} of ${this.actor_instance.numeric_id}`);
         }
 
         is_running() {
@@ -1013,9 +1023,12 @@ var $builtinmodule = function (name) {
 
         maybe_cull() {
             if (! this.actor_instance.py_object_is_registered) {
+                console.log(`[${this.numeric_id}]: culling`);
                 this.state = Thread.State.ZOMBIE;
                 this.sleeping_on = null;
             }
+            else
+                console.log(`[${this.numeric_id}]: not culling`);
         }
 
         enact_syscall(syscall_kind, syscall_args) {
@@ -1130,8 +1143,12 @@ var $builtinmodule = function (name) {
         }
 
         one_frame() {
-            if (! this.is_running())
+            if (! this.is_running()) {
+                console.log(`one_frame(${this.numeric_id}): not running`);
                 return [];
+            }
+
+            console.log(`one_frame(${this.numeric_id}): running`);
 
             try {
                 Sk.pytch.executing_thread = this;
@@ -1151,6 +1168,7 @@ var $builtinmodule = function (name) {
                     // Python-land code ran to completion; thread is finished.
                     this.state = Thread.State.ZOMBIE;
                     this.skulpt_susp = null;
+                    console.log(`one_frame(${this.numeric_id}): finished; now zombie`);
                     return [];
                 } else {
                     // Python-land code invoked a syscall.
@@ -1174,6 +1192,7 @@ var $builtinmodule = function (name) {
                     try {
                         return this.enact_syscall(susp.data.subtype, syscall_args);
                     } catch (err) {
+                        console.log(`one_frame(${this.numeric_id}): caught syscall error: ${err}`);
                         // Defer the error until next time the innermost
                         // Python-level code runs.
                         susp.data.set_failure(err);
@@ -1398,8 +1417,10 @@ var $builtinmodule = function (name) {
         register(instance, maybe_parent) {
             if (maybe_parent != null) {
                 const parent_index = this.instances.indexOf(maybe_parent);
-                if (parent_index === -1)
+                if (parent_index === -1) {
+                    console.log(`register(): instance ${instance.numeric_id}; no parent instance ${maybe_parent.numeric_id}`);
                     throw Error("could not find parent instance in draw-layer-group");
+                }
 
                 // For the new instance to show as just behind its parent, we
                 // want to insert it just before the parent in the array.
@@ -1818,6 +1839,8 @@ var $builtinmodule = function (name) {
         }
 
         one_frame() {
+            console.log("one_frame()");
+
             this.launch_keypress_handlers();
             this.launch_mouse_click_handlers();
 
