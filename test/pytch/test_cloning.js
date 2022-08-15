@@ -484,4 +484,72 @@ describe("cloning", () => {
         project.do_synthetic_broadcast("go");
         many_frames(project, 5);
     });
+
+    it("handles clone of deleted instance (simpler)", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Frog(pytch.Sprite):
+                @pytch.when_I_receive("go")
+                def start(self):
+                    pytch.create_clone_of(self)
+                    pytch.broadcast_and_wait("1")
+                    pytch.broadcast_and_wait("2")
+
+                @pytch.when_I_receive("1")
+                def step_1(self):
+                    self.delete_this_clone()
+                    pytch.create_clone_of(self)
+
+                @pytch.when_I_receive("2")
+                def step_2(self):
+                    pytch.create_clone_of(self)
+        `);
+
+        const frog_cls = project.actor_by_class_name("Frog");
+        const frame_and_asserts = (exp_n_frogs, exp_n_threads) => {
+            one_frame(project);
+            assert.strictEqual(frog_cls.instances.length, exp_n_frogs);
+            assert.strictEqual(project.threads_info().length, exp_n_threads);
+        };
+
+        project.do_synthetic_broadcast("go");
+
+        // start() should make a clone:
+        frame_and_asserts(2, 1);
+
+        // start() should broadcast "1", creating two threads, but
+        // step_1() should not run yet:
+        frame_and_asserts(2, 3);
+
+        // step_1() should cause the original and the clone to both
+        // clone themselves, and the first-generation clone should
+        // delete itself.  But for the original, delete_this_clone()
+        // should be a nop.
+        frame_and_asserts(3, 3);
+
+        // The step_1() thread on the original should resume and
+        // immediately finish.  The step_1() thread on the deleted
+        // clone should be culled.
+        frame_and_asserts(3, 1);
+
+        // start() should wake up and broadcast "2", launching three
+        // threads (one per instance), but step_2() should not
+        // actually run yet:
+        frame_and_asserts(3, 4);
+
+        // step_2() should run for each of those three instances, and
+        // create new clones of each.  The threads have yet to resume
+        // and finish.
+        frame_and_asserts(6, 4);
+
+        // All the threads running step_2() should resume and finish,
+        // leaving just the thread running start() on the original.
+        frame_and_asserts(6, 1);
+
+        // start() on the original should resume and immediately
+        // finish.
+        frame_and_asserts(6, 0);
+    });
 });
