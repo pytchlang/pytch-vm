@@ -540,6 +540,18 @@ var $builtinmodule = function (name) {
                                                                   this.instances[0]);
         }
 
+        cull_unregistered_instances() {
+            const instances_to_cull = this.instances.filter(
+                i => (! i.py_object_is_registered)
+            );
+            this.instances = this.instances.filter(
+                i => i.py_object_is_registered
+            );
+            instances_to_cull.forEach(
+                i => this.parent_project.unregister_for_drawing(i)
+            );
+        }
+
         launch_sound_performance(name) {
             let sound = this._sound_from_name.get(name);
 
