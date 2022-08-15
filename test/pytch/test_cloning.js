@@ -421,4 +421,29 @@ describe("cloning", () => {
         // item in the render list.)
         assert_render_locations([[40, 40], [40, 0], [0, 40], [0, 0]])
     });
+
+    it("handles clone of deleted instance", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Banana(pytch.Sprite):
+                @pytch.when_I_receive("go")
+                def start(self):
+                    pytch.broadcast("make-clone")
+                    pytch.broadcast("make-clone")
+                    pytch.broadcast("make-clone")
+
+                @pytch.when_I_receive("make-clone")
+                def make_clone(self):
+                    pytch.create_clone_of(self)
+
+                @pytch.when_I_start_as_a_clone
+                def delete_self(self):
+                    self.delete_this_clone()
+        `);
+
+        project.do_synthetic_broadcast("go");
+        many_frames(project, 5);
+    });
 });
