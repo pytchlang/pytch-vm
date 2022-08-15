@@ -423,6 +423,43 @@ describe("cloning", () => {
         assert_render_locations([[40, 40], [40, 0], [0, 40], [0, 0]])
     });
 
+    it("handles repeated delete of same clone", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Replicator(pytch.Sprite):
+                @pytch.when_I_receive("go")
+                def start(self):
+                    pytch.create_clone_of(self)
+                    pytch.create_clone_of(self)
+                    pytch.create_clone_of(self)
+
+                @pytch.when_I_receive("del")
+                def del_1(self):
+                    self.delete_this_clone()
+
+                @pytch.when_I_receive("del")
+                def del_2(self):
+                    self.delete_this_clone()
+        `);
+
+        const replicator_cls = project.actor_by_class_name("Replicator");
+        const frame_and_assert = (exp_n_replicators) => {
+            one_frame(project);
+            const got_n_replicators = replicator_cls.instances.length;
+            assert.equal(got_n_replicators, exp_n_replicators);
+        };
+
+        project.do_synthetic_broadcast("go");
+        frame_and_assert(2);
+        frame_and_assert(3);
+        frame_and_assert(4);
+
+        project.do_synthetic_broadcast("del");
+        frame_and_assert(1);
+    });
+
     it("handles clone of deleted instance", async () => {
         const project = await import_deindented(`
 
