@@ -508,26 +508,13 @@ var $builtinmodule = function (name) {
         }
 
         unregister_instance(instance) {
-            let instance_idx = this.instances.indexOf(instance);
+            if (this.instances.indexOf(instance) === -1)
+                throw new Error("instance not found");
 
-            // Only allow de-registration of actual clones.  The test
-            // 'instance_idx > 0' fails for two kinds of result from the
-            // indexOf() call:
-            //
-            // If instance_idx == 0, then we have found this instance but it is
-            // the 'original' instance of this actor-class.  So it can't be
-            // deleted; it's not a true clone.
-            //
-            // If instance_idx == -1, then we could not find this instance at
-            // all.  This seems like an error, but can happen if two threads
-            // both try to unregister the same sprite in the same
-            // scheduler-time-slice.
-            //
-            if (instance_idx > 0) {
-                this.instances.splice(instance_idx, 1);
+            // Only unregister a true clone, i.e., one which is not the
+            // original instance (which lives at index 0 in the array).
+            if (instance !== this.instances[0])
                 instance.py_object_is_registered = false;
-                this.parent_project.unregister_for_drawing(instance);
-            }
         }
 
         create_threads_for_green_flag(thread_group) {
