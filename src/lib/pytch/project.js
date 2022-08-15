@@ -1849,6 +1849,7 @@ var $builtinmodule = function (name) {
 
             this.maybe_retire_answered_question();
             this.cull_watchers_of_deleted_clones();
+            this.cull_unregistered_instances();
 
             const project_state = {
                 exception_was_raised,
