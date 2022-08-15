@@ -507,6 +507,26 @@ var $builtinmodule = function (name) {
             }
         }
 
+        // Mark the given instance as unregistered.  The actual removal
+        // of the instance from our instances array is deferred until
+        // end of frame, via a call to cull_unregistered_instances().
+        //
+        // Only marking as unregistered (rather than removing from the
+        // instances array right now) avoids problems with an instance
+        // existing for only some of a frame.  E.g., if an instance
+        // deletes itself and clones itself in the same frame.  It also
+        // makes the unregister_instance() method idempotent.
+        //
+        // A downside is that the code sequence
+        //
+        //     self.delete_this_clone()
+        //     pytch.create_clone_of(self)
+        //
+        // is valid and succeeds in making the clone, which might be
+        // counter-intuitive.  We could make delete_this_clone()
+        // terminate the calling thread?
+        //
+        // TODO: Consider this further.
         unregister_instance(instance) {
             if (this.instances.indexOf(instance) === -1)
                 throw new Error("instance not found");
