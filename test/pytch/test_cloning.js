@@ -210,14 +210,15 @@ describe("cloning", () => {
             project.do_synthetic_broadcast("create-clone");
             many_frames(project, 10);
 
-            let beacon_instances = project.actor_by_class_name("Beacon").instances;
-            assert.strictEqual(beacon_instances.length, 2);
+            const beacon_cls = project.actor_by_class_name("Beacon")
+            const beacon_instances = () => beacon_cls.instances;
+            assert.strictEqual(beacon_instances().length, 2);
 
             let originality_tag = (x => x.js_attr("is_the_original"));
-            assert.strictEqual(originality_tag(beacon_instances[0]), "yes");
-            assert.strictEqual(originality_tag(beacon_instances[1]), "no");
+            assert.strictEqual(originality_tag(beacon_instances()[0]), "yes");
+            assert.strictEqual(originality_tag(beacon_instances()[1]), "no");
 
-            let pre_destruction_counter = beacon_instances[0].js_attr("counter");
+            let pre_destruction_counter = beacon_instances()[0].js_attr("counter");
             // We have executed 10 frames; the create_clone_of() call takes one
             // frame, so we've only incremented the counter 9 times.
             assert.strictEqual(pre_destruction_counter, 9);
@@ -227,12 +228,12 @@ describe("cloning", () => {
             many_frames(project, 10);
 
             // There should be just the original Beacon instance.
-            assert.strictEqual(beacon_instances.length, 1);
+            assert.strictEqual(beacon_instances().length, 1);
 
             // Re-extracting the original Beacon should give us the self-same
             // object we already have.
             let beacon_0 = project.instance_0_by_class_name("Beacon");
-            assert.strictEqual(beacon_0, beacon_instances[0]);
+            assert.strictEqual(beacon_0, beacon_instances()[0]);
 
             // And that original Beacon should have kept running after
             // the delete_this_clone() call.
@@ -242,7 +243,7 @@ describe("cloning", () => {
 
             // And in the other thread running on the main instance, which has
             // had ten more iterations of the "increment" loop:
-            let post_destruction_counter = beacon_instances[0].js_attr("counter");
+            let post_destruction_counter = beacon_instances()[0].js_attr("counter");
             assert.strictEqual(post_destruction_counter, 19);
         })});
 
