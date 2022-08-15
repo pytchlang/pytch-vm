@@ -2054,6 +2054,10 @@ var $builtinmodule = function (name) {
                 this.object_attribute_watchers.filter(
                     w => w.object_is_live));
         }
+
+        cull_unregistered_instances() {
+            this.actors.forEach(a => a.cull_unregistered_instances());
+        }
     }
 
 
