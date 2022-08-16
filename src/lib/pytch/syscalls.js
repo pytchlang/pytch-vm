@@ -165,6 +165,17 @@ var $builtinmodule = function (name) {
         `Register a sprite instance`,
     );
 
+    mod.unregister_running_instance = skulpt_function(
+        () => {
+            throwIfNoExecutingThread(
+                "unregister_running_instance",
+                "delete_this_clone"
+            );
+            return new_pytch_suspension("unregister-running-instance");
+        },
+        `Unregister a sprite instance`,
+    );
+
     mod.registered_instances = skulpt_function(
         (py_class) => {
             if (!Sk.builtin.checkClass(py_class))

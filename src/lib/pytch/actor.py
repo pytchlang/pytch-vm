@@ -1,6 +1,7 @@
 from pytch.syscalls import (
     play_sound,
     registered_instances,
+    unregister_running_instance,
     wait_seconds,
     ask_and_wait,
 )
@@ -294,7 +295,7 @@ class Sprite(Actor):
 
     def delete_this_clone(self):
         "() Remove SELF from the project"
-        self._pytch_parent_project.unregister_actor_instance(self)
+        unregister_running_instance()
 
     def go_to_front_layer(self):
         "() Move SELF to the front drawing layer"

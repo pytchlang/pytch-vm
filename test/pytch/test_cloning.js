@@ -8,6 +8,7 @@ const {
     one_frame,
     import_deindented,
     pytch_errors,
+    pytch_stdout,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -210,14 +211,15 @@ describe("cloning", () => {
             project.do_synthetic_broadcast("create-clone");
             many_frames(project, 10);
 
-            let beacon_instances = project.actor_by_class_name("Beacon").instances;
-            assert.strictEqual(beacon_instances.length, 2);
+            const beacon_cls = project.actor_by_class_name("Beacon")
+            const beacon_instances = () => beacon_cls.instances;
+            assert.strictEqual(beacon_instances().length, 2);
 
             let originality_tag = (x => x.js_attr("is_the_original"));
-            assert.strictEqual(originality_tag(beacon_instances[0]), "yes");
-            assert.strictEqual(originality_tag(beacon_instances[1]), "no");
+            assert.strictEqual(originality_tag(beacon_instances()[0]), "yes");
+            assert.strictEqual(originality_tag(beacon_instances()[1]), "no");
 
-            let pre_destruction_counter = beacon_instances[0].js_attr("counter");
+            let pre_destruction_counter = beacon_instances()[0].js_attr("counter");
             // We have executed 10 frames; the create_clone_of() call takes one
             // frame, so we've only incremented the counter 9 times.
             assert.strictEqual(pre_destruction_counter, 9);
@@ -227,12 +229,12 @@ describe("cloning", () => {
             many_frames(project, 10);
 
             // There should be just the original Beacon instance.
-            assert.strictEqual(beacon_instances.length, 1);
+            assert.strictEqual(beacon_instances().length, 1);
 
             // Re-extracting the original Beacon should give us the self-same
             // object we already have.
             let beacon_0 = project.instance_0_by_class_name("Beacon");
-            assert.strictEqual(beacon_0, beacon_instances[0]);
+            assert.strictEqual(beacon_0, beacon_instances()[0]);
 
             // And that original Beacon should have kept running after
             // the delete_this_clone() call.
@@ -242,7 +244,7 @@ describe("cloning", () => {
 
             // And in the other thread running on the main instance, which has
             // had ten more iterations of the "increment" loop:
-            let post_destruction_counter = beacon_instances[0].js_attr("counter");
+            let post_destruction_counter = beacon_instances()[0].js_attr("counter");
             assert.strictEqual(post_destruction_counter, 19);
         })});
 
@@ -420,5 +422,155 @@ describe("cloning", () => {
         // list.  (The original stays at the very front, i.e., the very last
         // item in the render list.)
         assert_render_locations([[40, 40], [40, 0], [0, 40], [0, 0]])
+    });
+
+    it("handles repeated delete of same clone", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Replicator(pytch.Sprite):
+                @pytch.when_I_receive("go")
+                def start(self):
+                    pytch.create_clone_of(self)
+                    pytch.create_clone_of(self)
+                    pytch.create_clone_of(self)
+
+                @pytch.when_I_receive("del")
+                def del_1(self):
+                    self.delete_this_clone()
+                    print("del_1")
+
+                @pytch.when_I_receive("del")
+                def del_2(self):
+                    self.delete_this_clone()
+                    print("del_2")
+        `);
+
+        const replicator_cls = project.actor_by_class_name("Replicator");
+        const frame_and_assert = (exp_n_replicators) => {
+            one_frame(project);
+            const got_n_replicators = replicator_cls.instances.length;
+            assert.equal(got_n_replicators, exp_n_replicators);
+        };
+
+        project.do_synthetic_broadcast("go");
+        frame_and_assert(2);
+        frame_and_assert(3);
+        frame_and_assert(4);
+
+        project.do_synthetic_broadcast("del");
+        // On the next frame, all except the original Replicator should
+        // unregister themselves.
+        frame_and_assert(1);
+
+        // Only the original instance should continue to run after
+        // returning from the delete_this_clone() call, which for it
+        // is a (yielding) no-op.
+        frame_and_assert(1);
+
+        // We should see two lines of output, although we don't want to
+        // make assumptions about which order.
+        let output_lines = pytch_stdout.drain_stdout().trim().split("\n");
+        output_lines.sort();
+        assert.deepStrictEqual(output_lines, ["del_1", "del_2"]);
+    });
+
+    it("handles clone of deleted instance", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Banana(pytch.Sprite):
+                @pytch.when_I_receive("go")
+                def start(self):
+                    pytch.broadcast("make-clone")
+                    pytch.broadcast("make-clone")
+                    pytch.broadcast("make-clone")
+
+                @pytch.when_I_receive("make-clone")
+                def make_clone(self):
+                    pytch.create_clone_of(self)
+
+                @pytch.when_I_start_as_a_clone
+                def delete_self(self):
+                    self.delete_this_clone()
+        `);
+
+        project.do_synthetic_broadcast("go");
+        many_frames(project, 5);
+    });
+
+    it("handles clone of deleted instance (simpler)", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class Frog(pytch.Sprite):
+                @pytch.when_I_receive("go")
+                def start(self):
+                    pytch.create_clone_of(self)
+                    pytch.broadcast_and_wait("1")
+                    pytch.broadcast_and_wait("2")
+
+                @pytch.when_I_receive("1")
+                def step_1a(self):
+                    self.delete_this_clone()
+
+                @pytch.when_I_receive("1")
+                def step_1b(self):
+                    pytch.create_clone_of(self)
+
+                @pytch.when_I_receive("2")
+                def step_2(self):
+                    pytch.create_clone_of(self)
+        `);
+
+        const frog_cls = project.actor_by_class_name("Frog");
+        const frame_and_asserts = (exp_n_frogs, exp_n_threads) => {
+            one_frame(project);
+            assert.strictEqual(frog_cls.instances.length, exp_n_frogs);
+            assert.strictEqual(project.threads_info().length, exp_n_threads);
+        };
+
+        project.do_synthetic_broadcast("go");
+
+        // start() should make a clone:
+        frame_and_asserts(2, 1);
+
+        // start() should broadcast "1", creating four threads, but
+        // neither step_1a() nor step_1b() should run yet:
+        frame_and_asserts(2, 5);
+
+        // step_1a() should cause the original and the clone to both
+        // pause inside the delete_this_clone() syscall.  For the clone,
+        // the instance will be unregistered and the thread culled.  For
+        // the original, nothing will happen.  step_1b() will create
+        // clones of both instances.  There is a net gain of one
+        // instance.
+        frame_and_asserts(3, 4);
+
+        // The step_1a() thread on the original should resume and
+        // immediately finish.  The step_1b() threads should both
+        // finish.
+        frame_and_asserts(3, 1);
+
+        // start() should wake up and broadcast "2", launching three
+        // threads (one per instance), but step_2() should not
+        // actually run yet:
+        frame_and_asserts(3, 4);
+
+        // step_2() should run for each of those three instances, and
+        // create new clones of each.  The threads have yet to resume
+        // and finish.
+        frame_and_asserts(6, 4);
+
+        // All the threads running step_2() should resume and finish,
+        // leaving just the thread running start() on the original.
+        frame_and_asserts(6, 1);
+
+        // start() on the original should resume and immediately
+        // finish.
+        frame_and_asserts(6, 0);
     });
 });

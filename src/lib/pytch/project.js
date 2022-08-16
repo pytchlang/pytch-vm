@@ -507,27 +507,34 @@ var $builtinmodule = function (name) {
             }
         }
 
+        // Mark the given instance as unregistered.  The actual removal
+        // of the instance from our instances array is deferred until
+        // end of frame, via a call to cull_unregistered_instances().
+        //
+        // Only marking as unregistered (rather than removing from the
+        // instances array right now) avoids problems with an instance
+        // existing for only some of a frame.  E.g., if an instance
+        // deletes itself and clones itself in the same frame.  It also
+        // makes the unregister_instance() method idempotent.
+        //
+        // A downside is that the code sequence
+        //
+        //     self.delete_this_clone()
+        //     pytch.create_clone_of(self)
+        //
+        // is valid and succeeds in making the clone, which might be
+        // counter-intuitive.  We could make delete_this_clone()
+        // terminate the calling thread?
+        //
+        // TODO: Consider this further.
         unregister_instance(instance) {
-            let instance_idx = this.instances.indexOf(instance);
+            if (this.instances.indexOf(instance) === -1)
+                throw new Error("instance not found");
 
-            // Only allow de-registration of actual clones.  The test
-            // 'instance_idx > 0' fails for two kinds of result from the
-            // indexOf() call:
-            //
-            // If instance_idx == 0, then we have found this instance but it is
-            // the 'original' instance of this actor-class.  So it can't be
-            // deleted; it's not a true clone.
-            //
-            // If instance_idx == -1, then we could not find this instance at
-            // all.  This seems like an error, but can happen if two threads
-            // both try to unregister the same sprite in the same
-            // scheduler-time-slice.
-            //
-            if (instance_idx > 0) {
-                this.instances.splice(instance_idx, 1);
+            // Only unregister a true clone, i.e., one which is not the
+            // original instance (which lives at index 0 in the array).
+            if (instance !== this.instances[0])
                 instance.py_object_is_registered = false;
-                this.parent_project.unregister_for_drawing(instance);
-            }
         }
 
         create_threads_for_green_flag(thread_group) {
@@ -551,6 +558,18 @@ var $builtinmodule = function (name) {
             this.instances.splice(1);
             this.parent_project.unregister_nearly_all_for_drawing(this,
                                                                   this.instances[0]);
+        }
+
+        cull_unregistered_instances() {
+            const instances_to_cull = this.instances.filter(
+                i => (! i.py_object_is_registered)
+            );
+            this.instances = this.instances.filter(
+                i => i.py_object_is_registered
+            );
+            instances_to_cull.forEach(
+                i => this.parent_project.unregister_for_drawing(i)
+            );
         }
 
         launch_sound_performance(name) {
@@ -1075,6 +1094,17 @@ var $builtinmodule = function (name) {
                                                          this.parent_project));
 
                 return [thread_group];
+            }
+
+            case "unregister-running-instance": {
+                this.actor_instance.unregister_self();
+
+                if (! this.actor_instance.py_object_is_registered) {
+                    this.state = Thread.State.ZOMBIE;
+                    this.sleeping_on = null;
+                }
+
+                return [];
             }
 
             case "ask-and-wait-for-answer": {
@@ -1850,6 +1880,7 @@ var $builtinmodule = function (name) {
 
             this.maybe_retire_answered_question();
             this.cull_watchers_of_deleted_clones();
+            this.cull_unregistered_instances();
 
             const project_state = {
                 exception_was_raised,
@@ -2054,6 +2085,10 @@ var $builtinmodule = function (name) {
             this.object_attribute_watchers = (
                 this.object_attribute_watchers.filter(
                     w => w.object_is_live));
+        }
+
+        cull_unregistered_instances() {
+            this.actors.forEach(a => a.cull_unregistered_instances());
         }
     }
 
