@@ -25,6 +25,19 @@ Creating a clone
    Sprites section<create_clone_of_for_Sprites>` for further details.
 
 
+Sounds
+------
+
+Most sound functionality is accessed through ``Sprite`` methods.  See
+:ref:`the relevant part of the Sprites
+section<methods_playing_sounds>` for details.  However, the function
+to stop all sounds from playing is in the ``pytch`` module:
+
+.. function:: pytch.stop_all_sounds()
+
+   Stop all sounds from playing.
+
+
 Sensing whether a particular key is pressed
 -------------------------------------------
 
