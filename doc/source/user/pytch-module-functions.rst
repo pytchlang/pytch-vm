@@ -3,10 +3,6 @@ Functions in the pytch module
 
 TODO: Check and update the below list.
 
-* ``pytch.broadcast(message_string)`` broadcasts the message
-  ``message_string``, launching any scripts with a matching
-  ``@pytch.when_I_receive()`` decorator (hat-block); the script calling
-  ``broadcast()`` continues, with the responses happening concurrently
 * ``pytch.broadcast_and_wait(message_string)`` broadcasts the message
   ``message_string``, launching any scripts with a matching
   ``@pytch.when_I_receive()`` decorator (hat-block); the script
@@ -29,6 +25,17 @@ Pausing a script
    ``n_seconds`` seconds before resuming.  This is done by counting
    frames, so complicated scripts which render at less than 60fps will
    wait for the wrong amount of time; fixing this is on the roadmap.
+
+
+Broadcasting messages
+---------------------
+
+.. function:: pytch.broadcast(message_string)
+
+   Broadcast the message ``message_string``, launching any scripts
+   with a matching ``@pytch.when_I_receive()`` decorator (hat-block).
+   The script calling ``broadcast()`` continues, with the responses
+   happening concurrently.
 
 
 Variable watchers
