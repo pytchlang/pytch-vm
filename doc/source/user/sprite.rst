@@ -319,6 +319,8 @@ When a clone is created it starts at the same position and wearing the
 same costume as the original, but it can run its own scripts to change
 its behaviour. The "self" variable always refers to the *current* clone.
 
+.. _create_clone_of_for_Sprites:
+
 Creating new clones
 ^^^^^^^^^^^^^^^^^^^
 
