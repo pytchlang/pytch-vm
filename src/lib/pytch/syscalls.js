@@ -66,6 +66,15 @@ var $builtinmodule = function (name) {
             // Handle case of no executing Pytch Thread, which happens if we're
             // called at the top level of a module.  Be a no-op in this case.
             if (executing_thread == null) {
+                const n_iters_done = ++Sk.pytch.n_loop_iterations_during_import;
+                const max_n_iters = Sk.pytch.max_n_loop_iterations_during_import;
+
+                if (n_iters_done > max_n_iters) {
+                    const msg = "loop iterations exceeded maximum allowed";
+
+                    throw new Sk.builtin.RuntimeError(msg);
+                }
+
                 return Sk.builtin.none.none$;
             }
 
