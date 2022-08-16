@@ -1,6 +1,8 @@
 Functions in the pytch module
 =============================
 
+Various functions, which do not need to refer to a particular Sprite,
+are available in the ``pytch`` module.
 
 
 Pausing a script
