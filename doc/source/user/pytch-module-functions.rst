@@ -3,11 +3,6 @@ Functions in the pytch module
 
 TODO: Check and update the below list.
 
-* ``pytch.broadcast_and_wait(message_string)`` broadcasts the message
-  ``message_string``, launching any scripts with a matching
-  ``@pytch.when_I_receive()`` decorator (hat-block); the script
-  calling ``broadcast_and_wait()`` waits until all those scripts have
-  finished before continuing
 * ``pytch.key_pressed(key_name)`` gives a true/false answer as to
   whether the key with name ``key_name`` is currently pressed
 * ``pytch.stop_all()`` stops all currently-executing scripts.  It also
@@ -36,6 +31,13 @@ Broadcasting messages
    with a matching ``@pytch.when_I_receive()`` decorator (hat-block).
    The script calling ``broadcast()`` continues, with the responses
    happening concurrently.
+
+.. function:: pytch.broadcast_and_wait(message_string)
+
+   Broadcast the message ``message_string``, launching any scripts
+   with a matching ``@pytch.when_I_receive()`` decorator (hat-block).
+   The script calling ``broadcast_and_wait()`` waits until all those
+   scripts have finished before continuing.
 
 
 Variable watchers
