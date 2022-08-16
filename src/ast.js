@@ -283,8 +283,14 @@ function new_identifier(n, c) {
   parameter 'n' is the tokeniser object for the outer loop.
 */
 function astForPytchYield(n) {
+    // Pretend that the auto-inserted pytch.yield_until_next_frame() call
+    // comes from the first statement of the "while" or "for" loop.  This
+    // makes it easier for clients (e.g., the webapp) to interpret the
+    // location of an error in pytch.yield_until_next_frame(), e.g., if the
+    // plausibility test for a suspected infinite loop fails.
     var l = n.lineno;
     var c = n.col_offset;
+
     var attr = new Sk.astnodes.Attribute(new Sk.astnodes.Name(new Sk.builtin.str("pytch"),
                                                               Sk.astnodes.Load,
                                                               l, c),
