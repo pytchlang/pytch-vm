@@ -3,8 +3,6 @@ Functions in the pytch module
 
 TODO: Check and update the below list.
 
-* ``pytch.key_pressed(key_name)`` gives a true/false answer as to
-  whether the key with name ``key_name`` is currently pressed
 * ``pytch.stop_all()`` stops all currently-executing scripts.  It also
   stops all sounds, deletes all clones, abandons all "ask and wait"
   questions, and clears all speech bubbles.  It does the same job as
@@ -20,6 +18,15 @@ Pausing a script
    ``n_seconds`` seconds before resuming.  This is done by counting
    frames, so complicated scripts which render at less than 60fps will
    wait for the wrong amount of time; fixing this is on the roadmap.
+
+
+Sensing whether a particular key is pressed
+-------------------------------------------
+
+.. function:: pytch.key_pressed(key_name)
+
+   Give a ``True``/``False`` answer as to whether the key with name
+   ``key_name`` is currently pressed.
 
 
 Broadcasting messages
