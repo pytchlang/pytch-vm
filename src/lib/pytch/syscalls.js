@@ -70,7 +70,16 @@ var $builtinmodule = function (name) {
                 const max_n_iters = Sk.pytch.max_n_loop_iterations_during_import;
 
                 if (n_iters_done > max_n_iters) {
-                    const msg = "loop iterations exceeded maximum allowed";
+                    const msg = (
+                        `your program has tried to execute ${n_iters_done}`
+                            + " loop iterations, which exceeds the maximum allowed"
+                            + ` of ${max_n_iters}, so it seems likely that you`
+                            + " have an infinite loop outside an event handler"
+                            + " somewhere; if you have a long-running but finite"
+                            + " loop, then you can call, for example,"
+                            + " pytch.set_max_import_loop_iterations(10000)"
+                            + " to increase the limit"
+                    );
 
                     throw new Sk.builtin.RuntimeError(msg);
                 }
