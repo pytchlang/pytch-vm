@@ -3,10 +3,6 @@ Functions in the pytch module
 
 TODO: Check and update the below list.
 
-* ``pytch.stop_all()`` stops all currently-executing scripts.  It also
-  stops all sounds, deletes all clones, abandons all "ask and wait"
-  questions, and clears all speech bubbles.  It does the same job as
-  the "red stop" button.
 
 
 Pausing a script
@@ -45,6 +41,18 @@ Broadcasting messages
    with a matching ``@pytch.when_I_receive()`` decorator (hat-block).
    The script calling ``broadcast_and_wait()`` waits until all those
    scripts have finished before continuing.
+
+
+Stopping all scripts
+--------------------
+
+.. function:: pytch.stop_all()
+
+   Stop all currently-executing scripts.  Also stop all sounds,
+   delete all clones, abandon all "ask and wait" questions, and
+   clear all speech bubbles.
+
+   ``pytch.stop_all()`` does the same job as the "red stop" button.
 
 
 Variable watchers
