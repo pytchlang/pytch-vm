@@ -438,6 +438,8 @@ Stage.
    speech replaces the first script's speech.
 
 
+.. _Sprite_method_ask_and_wait:
+
 Asking the user a question
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
