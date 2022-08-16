@@ -1,8 +1,6 @@
 Functions in the pytch module
 =============================
 
-TODO: Check and update the below list.
-
 
 
 Pausing a script
