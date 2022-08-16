@@ -350,8 +350,9 @@ Deleting clones
 .. function:: self.delete_this_clone()
 
    Remove the current clone. If this method is run by the original sprite
-   then it has no effect, but if it is run by a clone then the clone
-   immediately vanishes.
+   then it has no effect at all.  If it is run by a clone, then the clone
+   vanishes at the end of the current frame, and execution of the handler
+   which called ``delete_this_clone()`` is halted.
 
 Finding existing clones
 ^^^^^^^^^^^^^^^^^^^^^^^
