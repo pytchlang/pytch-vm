@@ -1096,6 +1096,17 @@ var $builtinmodule = function (name) {
                 return [thread_group];
             }
 
+            case "unregister-running-instance": {
+                this.actor_instance.unregister_self();
+
+                if (! this.actor_instance.py_object_is_registered) {
+                    this.state = Thread.State.ZOMBIE;
+                    this.sleeping_on = null;
+                }
+
+                return [];
+            }
+
             case "ask-and-wait-for-answer": {
                 const { prompt } = syscall_args;
                 const question = this.parent_project.enqueue_question(prompt);
