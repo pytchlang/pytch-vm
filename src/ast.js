@@ -283,8 +283,8 @@ function new_identifier(n, c) {
   parameter 'n' is the tokeniser object for the outer loop.
 */
 function astForPytchYield(n) {
-    var l = `'(auto-added yield in loop started on line ${n.lineno})'`;
-    var c = `'(auto-added yield in loop started on column ${n.col_offset})'`;
+    var l = n.lineno;
+    var c = n.col_offset;
     var attr = new Sk.astnodes.Attribute(new Sk.astnodes.Name(new Sk.builtin.str("pytch"),
                                                               Sk.astnodes.Load,
                                                               l, c),
