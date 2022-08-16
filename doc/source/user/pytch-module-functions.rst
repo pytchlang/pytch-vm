@@ -38,6 +38,27 @@ to stop all sounds from playing is in the ``pytch`` module:
    Stop all sounds from playing.
 
 
+Asking the user a question
+--------------------------
+
+This is usually done with :ref:`a Sprite
+method<Sprite_method_ask_and_wait>`, but the following function is
+also available if required.
+
+.. function:: pytch.ask_and_wait(prompt)
+
+   Ask the user a question, using a pop-up input box.  The given
+   ``prompt`` (if not ``None``) is shown as part of the input box.
+   The script calling ``pytch.ask_and_wait()`` pauses until the user
+   answers the question.
+
+   The user's answer is returned to the calling script.
+
+   If a question is already being asked, the new question is put in a
+   queue, to be asked once all existing questions have been answered
+   by the user.
+
+
 Sensing whether a particular key is pressed
 -------------------------------------------
 
