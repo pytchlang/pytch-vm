@@ -134,3 +134,48 @@ other object in your program, for instance a non-Actor class:
        @pytch.when_this_sprite_clicked
        def show_score(self):
            pytch.show_variable(GameState, "score")
+
+
+Suspiciously long-running loops outside event handlers
+------------------------------------------------------
+
+Most users will not need to use the functionality described in this
+section.
+
+In Pytch, it is common to have an infinite loop (e.g., ``while True``)
+inside an event handler.  Such a loop runs at one iteration per
+display frame.
+
+But an infinite loop at the top level of your program will prevent
+your project even starting.  For example,
+
+.. code-block:: python
+
+   import pytch
+
+   while True:
+       pass
+
+Pytch detects this situation, and raises an error.  It is impossible
+for Pytch to tell when a loop is truly infinite, though, and so it
+raises this error if more than 1000 iterations of loops happen when
+launching your program.  Rarely, you might genuinely have a program
+which needs a longer-running loop at top-level.  If so, you can raise
+the limit as follows.
+
+.. function:: pytch.set_max_import_loop_iterations(n_iters)
+
+   Set the maximum number of loop iterations permitted at top level
+   before an error is raised.
+
+For example:
+
+.. code-block:: python
+
+   import pytch
+
+   # Without the following line, the loop below would raise an error.
+   pytch.set_max_import_loop_iterations(2000)
+
+   for i in range(1200):
+       pass
