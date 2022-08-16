@@ -279,7 +279,7 @@ function new_identifier(n, c) {
 
 /*
   This is the AST for a function call to pytch.yield_until_next_frame().  We
-  insert one of these at the end of every loop when we are in Pytch mode.  The
+  insert one of these at the start of every loop when we are in Pytch mode.  The
   parameter 'n' is the tokeniser object for the outer loop.
 */
 function astForPytchYield(n) {
