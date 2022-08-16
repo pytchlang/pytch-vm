@@ -8,6 +8,7 @@ const {
     one_frame,
     import_deindented,
     pytch_errors,
+    pytch_stdout,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -438,10 +439,12 @@ describe("cloning", () => {
                 @pytch.when_I_receive("del")
                 def del_1(self):
                     self.delete_this_clone()
+                    print("del_1")
 
                 @pytch.when_I_receive("del")
                 def del_2(self):
                     self.delete_this_clone()
+                    print("del_2")
         `);
 
         const replicator_cls = project.actor_by_class_name("Replicator");
@@ -457,7 +460,20 @@ describe("cloning", () => {
         frame_and_assert(4);
 
         project.do_synthetic_broadcast("del");
+        // On the next frame, all except the original Replicator should
+        // unregister themselves.
         frame_and_assert(1);
+
+        // Only the original instance should continue to run after
+        // returning from the delete_this_clone() call, which for it
+        // is a (yielding) no-op.
+        frame_and_assert(1);
+
+        // We should see two lines of output, although we don't want to
+        // make assumptions about which order.
+        let output_lines = pytch_stdout.drain_stdout().trim().split("\n");
+        output_lines.sort();
+        assert.deepStrictEqual(output_lines, ["del_1", "del_2"]);
     });
 
     it("handles clone of deleted instance", async () => {
