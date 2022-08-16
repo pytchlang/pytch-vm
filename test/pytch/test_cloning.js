@@ -498,8 +498,11 @@ describe("cloning", () => {
                     pytch.broadcast_and_wait("2")
 
                 @pytch.when_I_receive("1")
-                def step_1(self):
+                def step_1a(self):
                     self.delete_this_clone()
+
+                @pytch.when_I_receive("1")
+                def step_1b(self):
                     pytch.create_clone_of(self)
 
                 @pytch.when_I_receive("2")
@@ -519,19 +522,21 @@ describe("cloning", () => {
         // start() should make a clone:
         frame_and_asserts(2, 1);
 
-        // start() should broadcast "1", creating two threads, but
-        // step_1() should not run yet:
-        frame_and_asserts(2, 3);
+        // start() should broadcast "1", creating four threads, but
+        // neither step_1a() nor step_1b() should run yet:
+        frame_and_asserts(2, 5);
 
-        // step_1() should cause the original and the clone to both
-        // clone themselves, and the first-generation clone should
-        // delete itself.  But for the original, delete_this_clone()
-        // should be a nop.
-        frame_and_asserts(3, 3);
+        // step_1a() should cause the original and the clone to both
+        // pause inside the delete_this_clone() syscall.  For the clone,
+        // the instance will be unregistered and the thread culled.  For
+        // the original, nothing will happen.  step_1b() will create
+        // clones of both instances.  There is a net gain of one
+        // instance.
+        frame_and_asserts(3, 4);
 
-        // The step_1() thread on the original should resume and
-        // immediately finish.  The step_1() thread on the deleted
-        // clone should be culled.
+        // The step_1a() thread on the original should resume and
+        // immediately finish.  The step_1b() threads should both
+        // finish.
         frame_and_asserts(3, 1);
 
         // start() should wake up and broadcast "2", launching three
