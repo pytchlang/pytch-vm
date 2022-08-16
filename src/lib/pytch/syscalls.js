@@ -65,14 +65,54 @@ var $builtinmodule = function (name) {
 
             // Handle case of no executing Pytch Thread, which happens if we're
             // called at the top level of a module.  Be a no-op in this case.
-            if (executing_thread == null)
+            if (executing_thread == null) {
+                const n_iters_done = ++Sk.pytch.n_loop_iterations_during_import;
+                const max_n_iters = Sk.pytch.max_n_loop_iterations_during_import;
+
+                if (n_iters_done > max_n_iters) {
+                    const msg = (
+                        `your program has tried to execute ${n_iters_done}`
+                            + " loop iterations, which exceeds the maximum allowed"
+                            + ` of ${max_n_iters}, so it seems likely that you`
+                            + " have an infinite loop outside an event handler"
+                            + " somewhere; if you have a long-running but finite"
+                            + " loop, then you can call, for example,"
+                            + " pytch.set_max_import_loop_iterations(10000)"
+                            + " to increase the limit"
+                    );
+
+                    throw new Sk.builtin.RuntimeError(msg);
+                }
+
                 return Sk.builtin.none.none$;
+            }
 
             return (executing_thread.should_yield()
                     ? new_pytch_suspension("next-frame", {})
                     : Sk.builtin.none.none$);
         },
         `Pause until the next frame`,
+    );
+
+    mod.set_max_import_loop_iterations = skulpt_function(
+        (py_max_n_iters) => {
+            Sk.builtin.pyCheckType(
+                "max_n_iters",
+                "number",
+                Sk.builtin.checkNumber(py_max_n_iters)
+            );
+
+            const max_n_iters = Sk.ffi.remapToJs(py_max_n_iters);
+
+            if (! Number.isInteger(max_n_iters))
+                throw new Sk.builtin.ValueError("max_n_iters must be integer");
+
+            if (max_n_iters < 0)
+                throw new Sk.builtin.ValueError("max_n_iters must be non-negative");
+
+            Sk.pytch.max_n_loop_iterations_during_import = max_n_iters;
+        },
+        `(MAX_N_ITERS) Set max allowed import-time loop iterations`,
     );
 
     mod.push_loop_iterations_per_frame = skulpt_function(
