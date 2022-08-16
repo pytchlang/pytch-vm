@@ -16,6 +16,15 @@ Pausing a script
    wait for the wrong amount of time; fixing this is on the roadmap.
 
 
+Creating a clone
+----------------
+
+.. function:: pytch.create_clone_of(thing)
+
+   Create a new clone of ``thing``.  See :ref:`the description in the
+   Sprites section<create_clone_of_for_Sprites>` for further details.
+
+
 Sensing whether a particular key is pressed
 -------------------------------------------
 
