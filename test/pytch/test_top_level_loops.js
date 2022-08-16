@@ -75,4 +75,51 @@ describe("Use of for/while loops at module top-level", () => {
             )
         );
     });
+
+    [
+        {
+            label: "string",
+            fragment: "'foo'",
+            error_type: Sk.builtin.TypeError,
+            error_re: /must be a number/,
+        },
+        {
+            label: "lambda",
+            fragment: "lambda x: 42",
+            error_type: Sk.builtin.TypeError,
+            error_re: /must be a number/,
+        },
+        {
+            label: "non-integer",
+            fragment: "2.25",
+            error_type: Sk.builtin.ValueError,
+            error_re: /must be integer/,
+        },
+        {
+            label: "negative",
+            fragment: "-1",
+            error_type: Sk.builtin.ValueError,
+            error_re: /must be non-negative/,
+        },
+    ].forEach(spec => {
+        it("set_max_import_loop_iterations() rejects bad arg"
+           + ` (${spec.label})`,
+           async () => {
+               const import_project = import_deindented(`
+
+                   import pytch
+                   pytch.set_max_import_loop_iterations(${spec.fragment})
+               `);
+
+               await assert.rejects(
+                   import_project,
+                   assertBuildErrorFun(
+                       "import",
+                       spec.error_type,
+                       spec.error_re
+                   )
+               );
+           }
+        );
+    });
 });
