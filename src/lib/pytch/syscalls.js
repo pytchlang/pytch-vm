@@ -85,6 +85,14 @@ var $builtinmodule = function (name) {
         `Pause until the next frame`,
     );
 
+    mod.set_max_import_loop_iterations = skulpt_function(
+        (py_max_n_iters) => {
+            const max_n_iters = Sk.ffi.remapToJs(py_max_n_iters);
+            Sk.pytch.max_n_loop_iterations_during_import = max_n_iters;
+        },
+        `(MAX_N_ITERS) Set max allowed import-time loop iterations`,
+    );
+
     mod.push_loop_iterations_per_frame = skulpt_function(
         (py_iterations_per_frame) => {
             throwIfNoExecutingThread("push_loop_iterations_per_frame");
