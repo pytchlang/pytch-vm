@@ -87,7 +87,20 @@ var $builtinmodule = function (name) {
 
     mod.set_max_import_loop_iterations = skulpt_function(
         (py_max_n_iters) => {
+            Sk.builtin.pyCheckType(
+                "max_n_iters",
+                "number",
+                Sk.builtin.checkNumber(py_max_n_iters)
+            );
+
             const max_n_iters = Sk.ffi.remapToJs(py_max_n_iters);
+
+            if (! Number.isInteger(max_n_iters))
+                throw new Sk.builtin.ValueError("max_n_iters must be integer");
+
+            if (max_n_iters < 0)
+                throw new Sk.builtin.ValueError("max_n_iters must be non-negative");
+
             Sk.pytch.max_n_loop_iterations_during_import = max_n_iters;
         },
         `(MAX_N_ITERS) Set max allowed import-time loop iterations`,
