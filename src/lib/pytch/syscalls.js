@@ -65,8 +65,9 @@ var $builtinmodule = function (name) {
 
             // Handle case of no executing Pytch Thread, which happens if we're
             // called at the top level of a module.  Be a no-op in this case.
-            if (executing_thread == null)
+            if (executing_thread == null) {
                 return Sk.builtin.none.none$;
+            }
 
             return (executing_thread.should_yield()
                     ? new_pytch_suspension("next-frame", {})
