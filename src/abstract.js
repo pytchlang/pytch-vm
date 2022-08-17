@@ -355,11 +355,34 @@ Sk.abstr.sequenceContains = function (seq, ob, canSuspend) {
     return canSuspend ? r : Sk.misceval.retryOptionalSuspensionOrThrow(r);
 };
 
-Sk.abstr.sequenceConcat = function (seq1, seq2) {
-    if (seq1.sq$concat) {
-        return seq1.sq$concat(seq2);
+Sk.abstr.sequenceConcat = function (s, o) {
+    if (s.sq$concat) {
+        return s.sq$concat(o);
     }
-    throw new Sk.builtin.TypeError("'" + Sk.abstr.typeName(seq1) + "' object can't be concatenated");
+    // user defined classes don't have a sq$concat only nb$add
+    if (Sk.builtin.checkSequence(s) && Sk.builtin.checkSequence(o)) {
+        const res = binary_op_(s, o, "Add");
+        if (res !== undefined) {
+            return res;
+        }
+    }
+    throw new Sk.builtin.TypeError("'" + Sk.abstr.typeName(s) + "' object can't be concatenated");
+};
+
+Sk.abstr.sequenceInPlaceConcat = function (s, o) {
+    if (s.sq$inplace_concat) {
+        return s.sq$inplace_concat(o);
+    } else if (s.sq$concat) {
+        return s.sq$concat(o);
+    }
+    // user defined classes don't have a sq$concat only nb$add
+    if (Sk.builtin.checkSequence(s) && Sk.builtin.checkSequence(o)) {
+        const res = binary_iop_(s, o, "Add");
+        if (res !== undefined) {
+            return res;
+        }
+    }
+    throw new Sk.builtin.TypeError("'" + Sk.abstr.typeName(s) + "' object can't be concatenated");
 };
 
 /**
@@ -975,6 +998,8 @@ Sk.abstr.setUpBuiltinMro = function (child) {
         Object.defineProperty(child, "sk$baseClass", { value: true, writable: true });
         Object.defineProperty(child.prototype, "sk$builtinBase", { value: child, writable: true });
     }
+    // assume solid base - this can be overridden later in flags
+    Object.defineProperty(child, "sk$solidBase", { value: true, writable: true });
     const mro = [child];
     while (base !== null) {
         mro.push(base);
@@ -1230,7 +1255,7 @@ Sk.abstr.setUpSlots = function (klass, slots) {
  * - getsets: getset objects `{$get: Function, $set: Function, $doc: string}`,
  * - classmethods: classmethod objects `{$meth: Function, $flags: callmethod, $doc: string, $textsic: string|null}`,
  *
- * - flags: Object allocated directly onto class like `klass.sk$acceptable_as_base_class`
+ * - flags: Object allocated directly onto class like `klass.sk$unacceptableBase`
  * - proto: Object allocated onto the prototype useful for private methods
  * ```
  * See most builtin type objects for examples

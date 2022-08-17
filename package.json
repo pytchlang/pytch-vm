@@ -66,8 +66,8 @@
     "readline-sync": "^1.4.9",
     "setimmediate": "^1.0.5",
     "shelljs": "^0.8.5",
-    "strftime": "^0.10.0",
-    "terser": "^5.7.0",
+    "strftime": "^0.10.1",
+    "terser": "^5.14.2",
     "webpack": "^4.32.0",
     "webpack-cli": "^3.3.2"
   },
@@ -75,6 +75,6 @@
     "node": ">=10.4"
   },
   "dependencies": {
-    "jsbi": "^3.1.4"
+    "jsbi": "^3.2.3"
   }
 }

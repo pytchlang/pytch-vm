@@ -141,6 +141,9 @@ Sk.builtin.tuple = Sk.abstr.buildNativeClass("tuple", {
         sk$asarray() {
             return this.v.slice(0);
         },
+        valueOf() {
+            return this.v;
+        },
     },
     methods: /**@lends {Sk.builtin.tuple.prototype}*/ {
         __getnewargs__: {
@@ -207,5 +210,5 @@ var tuple_iter_ = Sk.abstr.buildIteratorClass("tuple_iterator", {
     methods: {
         __length_hint__: Sk.generic.iterLengthHintWithArrayMethodDef,
     },
-    flags: { sk$acceptable_as_base_class: false },
+    flags: { sk$unacceptableBase: true },
 });
