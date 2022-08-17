@@ -1785,11 +1785,6 @@ var $builtinmodule = function (name) {
                 other_instance => instance.is_touching(other_instance));
         }
 
-        unregister_actor_instance(py_actor_instance) {
-            let actor_instance = py_actor_instance.$pytchActorInstance;
-            actor_instance.unregister_self();
-        }
-
         on_green_flag_clicked() {
             // Stop the world before re-launching anything.
             this.on_red_stop_clicked();
@@ -2128,13 +2123,6 @@ var $builtinmodule = function (name) {
                 return Sk.misceval.promiseToSuspension(do_register);
             },
             `Register the STAGE_CLS class with SELF`,
-        );
-
-        $loc.unregister_actor_instance = skulpt_function(
-            (self, py_obj) => {
-                self.js_project.unregister_actor_instance(py_obj);
-            },
-            `Unregister the given object from SELF`,
         );
 
         $loc.move_within_draw_layer_group = skulpt_function(
