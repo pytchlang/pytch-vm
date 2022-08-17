@@ -1,28 +1,101 @@
 Functions in the pytch module
 =============================
 
-TODO: Check and update the below list.
+Various functions, which do not need to refer to a particular Sprite,
+are available in the ``pytch`` module.
 
-* ``pytch.wait_seconds(n_seconds)`` makes the script calling
-  ``wait_seconds()`` do nothing for ``n_seconds`` seconds before
-  resuming; currently this is done by counting frames, so complicated
-  scripts which render at less than 60fps will wait for the wrong
-  amount of time; fixing this is on the roadmap
-* ``pytch.broadcast(message_string)`` broadcasts the message
-  ``message_string``, launching any scripts with a matching
-  ``@pytch.when_I_receive()`` decorator (hat-block); the script calling
-  ``broadcast()`` continues, with the responses happening concurrently
-* ``pytch.broadcast_and_wait(message_string)`` broadcasts the message
-  ``message_string``, launching any scripts with a matching
-  ``@pytch.when_I_receive()`` decorator (hat-block); the script
-  calling ``broadcast_and_wait()`` waits until all those scripts have
-  finished before continuing
-* ``pytch.key_pressed(key_name)`` gives a true/false answer as to
-  whether the key with name ``key_name`` is currently pressed
-* ``pytch.stop_all()`` stops all currently-executing scripts.  It also
-  stops all sounds, deletes all clones, abandons all "ask and wait"
-  questions, and clears all speech bubbles.  It does the same job as
-  the "red stop" button.
+
+Pausing a script
+----------------
+
+.. function:: pytch.wait_seconds(n_seconds)
+
+   Make the script calling ``wait_seconds()`` do nothing for
+   ``n_seconds`` seconds before resuming.  This is done by counting
+   frames, so complicated scripts which render at less than 60fps will
+   wait for the wrong amount of time; fixing this is on the roadmap.
+
+
+Creating a clone
+----------------
+
+.. function:: pytch.create_clone_of(thing)
+
+   Create a new clone of ``thing``.  See :ref:`the description in the
+   Sprites section<create_clone_of_for_Sprites>` for further details.
+
+
+Sounds
+------
+
+Most sound functionality is accessed through ``Sprite`` methods.  See
+:ref:`the relevant part of the Sprites
+section<methods_playing_sounds>` for details.  However, the function
+to stop all sounds from playing is in the ``pytch`` module:
+
+.. function:: pytch.stop_all_sounds()
+
+   Stop all sounds from playing.
+
+
+Asking the user a question
+--------------------------
+
+This is usually done with :ref:`a Sprite
+method<Sprite_method_ask_and_wait>`, but the following function is
+also available if required.
+
+.. function:: pytch.ask_and_wait(prompt)
+
+   Ask the user a question, using a pop-up input box.  The given
+   ``prompt`` (if not ``None``) is shown as part of the input box.
+   The script calling ``pytch.ask_and_wait()`` pauses until the user
+   answers the question.
+
+   The user's answer is returned to the calling script.
+
+   If a question is already being asked, the new question is put in a
+   queue, to be asked once all existing questions have been answered
+   by the user.
+
+
+Sensing whether a particular key is pressed
+-------------------------------------------
+
+.. function:: pytch.key_pressed(key_name)
+
+   Give a ``True``/``False`` answer as to whether the key with name
+   ``key_name`` is currently pressed.
+
+
+Broadcasting messages
+---------------------
+
+.. function:: pytch.broadcast(message_string)
+
+   Broadcast the message ``message_string``, launching any scripts
+   with a matching ``@pytch.when_I_receive()`` decorator (hat-block).
+   The script calling ``broadcast()`` continues, with the responses
+   happening concurrently.
+
+.. function:: pytch.broadcast_and_wait(message_string)
+
+   Broadcast the message ``message_string``, launching any scripts
+   with a matching ``@pytch.when_I_receive()`` decorator (hat-block).
+   The script calling ``broadcast_and_wait()`` waits until all those
+   scripts have finished before continuing.
+
+
+Stopping all scripts
+--------------------
+
+.. function:: pytch.stop_all()
+
+   Stop all currently-executing scripts.  Also stop all sounds,
+   delete all clones, abandon all "ask and wait" questions, and
+   clear all speech bubbles.
+
+   ``pytch.stop_all()`` does the same job as the "red stop" button.
 
 
 Variable watchers
@@ -134,3 +207,48 @@ other object in your program, for instance a non-Actor class:
        @pytch.when_this_sprite_clicked
        def show_score(self):
            pytch.show_variable(GameState, "score")
+
+
+Suspiciously long-running loops outside event handlers
+------------------------------------------------------
+
+Most users will not need to use the functionality described in this
+section.
+
+In Pytch, it is common to have an infinite loop (e.g., ``while True``)
+inside an event handler.  Such a loop runs at one iteration per
+display frame.
+
+But an infinite loop at the top level of your program will prevent
+your project even starting.  For example,
+
+.. code-block:: python
+
+   import pytch
+
+   while True:
+       pass
+
+Pytch detects this situation, and raises an error.  It is impossible
+for Pytch to tell when a loop is truly infinite, though, and so it
+raises this error if more than 1000 iterations of loops happen when
+launching your program.  Rarely, you might genuinely have a program
+which needs a longer-running loop at top-level.  If so, you can raise
+the limit as follows.
+
+.. function:: pytch.set_max_import_loop_iterations(n_iters)
+
+   Set the maximum number of loop iterations permitted at top level
+   before an error is raised.
+
+For example:
+
+.. code-block:: python
+
+   import pytch
+
+   # Without the following line, the loop below would raise an error.
+   pytch.set_max_import_loop_iterations(2000)
+
+   for i in range(1200):
+       pass

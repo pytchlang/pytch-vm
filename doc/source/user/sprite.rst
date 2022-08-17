@@ -319,6 +319,8 @@ When a clone is created it starts at the same position and wearing the
 same costume as the original, but it can run its own scripts to change
 its behaviour. The "self" variable always refers to the *current* clone.
 
+.. _create_clone_of_for_Sprites:
+
 Creating new clones
 ^^^^^^^^^^^^^^^^^^^
 
@@ -350,8 +352,9 @@ Deleting clones
 .. function:: self.delete_this_clone()
 
    Remove the current clone. If this method is run by the original sprite
-   then it has no effect, but if it is run by a clone then the clone
-   immediately vanishes.
+   then it has no effect at all.  If it is run by a clone, then the clone
+   vanishes at the end of the current frame, and execution of the handler
+   which called ``delete_this_clone()`` is halted.
 
 Finding existing clones
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -434,6 +437,8 @@ Stage.
    already in the middle of ``say_for_seconds()``, the second script's
    speech replaces the first script's speech.
 
+
+.. _Sprite_method_ask_and_wait:
 
 Asking the user a question
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
