@@ -228,7 +228,7 @@ describe("Attribute watchers", () => {
         {
             label: "property div-zero",
             attr_name: "health",
-            error_regexp: /division or modulo by zero/,
+            error_regexp: /division by zero/,
         },
         {
             label: "property infinite-recursion",
