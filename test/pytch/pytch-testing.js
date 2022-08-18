@@ -553,6 +553,33 @@ const assertSyntaxError = (gotErr, gotErrIdx, expErr) => {
 
 ////////////////////////////////////////////////////////////////////////////////
 //
+// Assert that a Tiger Python analysis report is as expected.  (Curried.)
+
+const assertTigerPythonAnalysis = (expErrors) => (err) => {
+    assert.ok(err instanceof Sk.pytchsupport.PytchBuildError);
+
+    assert.equal(err.phase, "import");
+    assert.equal(err.innerError.tp$name, "TigerPythonSyntaxAnalysis");
+
+    const got_errors = err.innerError.syntax_errors;
+
+    assert.equal(
+        got_errors.length,
+        expErrors.length,
+        `expecting ${expErrors.length} error/s but got ${got_errors.length}`
+    );
+
+    expErrors.forEach((expErr, i) => {
+        assertSyntaxError(got_errors[i], i, expErr);
+    });
+
+    // Allow usage as validation function for assert.rejects():
+    return true;
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
 // Assert that a particular kind of build error was thrown.
 
 const assertBuildError = (err, exp_phase, exp_inner_type, innerMsgRegExp) => {
@@ -789,6 +816,7 @@ module.exports = {
     assert_n_speaker_ids,
     assert_has_bbox,
     assertSyntaxError,
+    assertTigerPythonAnalysis,
     assertBuildError,
     assertBuildErrorFun,
     assertNoLiveQuestion,
