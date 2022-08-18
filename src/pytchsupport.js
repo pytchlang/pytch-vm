@@ -334,10 +334,15 @@ Sk.pytchsupport.TigerPythonSyntaxAnalysis = Sk.abstr.buildNativeClass(
             const msg = `TigerPython: ${details.errors.length} message/s`;
             Sk.builtin.Exception.apply(this, [msg]);
             this.syntax_errors = details.errors.map(e => {
+                // TigerPython reports line numbers using 0-based
+                // indexing, but Skulpt uses 1-based indexing.  Convert
+                // the TigerPython value to Skulpt's convention.
+                const line_1b = e.line + 1;
+
                 let err = new Sk.builtin.SyntaxError(
                     e.msg,
                     "<stdin>.py",
-                    e.line
+                    line_1b
                 );
 
                 err.tiger_python_errorcode = e.code;
