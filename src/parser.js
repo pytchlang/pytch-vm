@@ -188,7 +188,7 @@ Parser.prototype.classify = function (type, value, context) {
             }
         }
 
-        throw new Sk.builtin.SyntaxError("bad token " + descr, this.filename, context[0][0], context);
+        throw new Sk.builtin.SyntaxError("bad token " + descr, this.filename, context[0][0], context[0][1]);
     }
     return ilabel;
 };
