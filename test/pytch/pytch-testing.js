@@ -513,6 +513,7 @@ const assert_has_bbox = (
     assert_prop_eq("y_max", exp_ymax);
 };
 
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Assert that a SyntaxError is as expected.
@@ -713,6 +714,7 @@ const appearance_by_name = (actor, appearance_name) => {
 
     return matches[0];
 };
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //
