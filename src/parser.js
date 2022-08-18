@@ -71,7 +71,7 @@ function findInDfa (a, obj) {
 
 // Add a token; return true if we're done
 Parser.prototype.addtoken = function (type, value, context) {
-    var errline;
+    var errline, erroffset;
     var itsfirst;
     var itsdfa;
     var state;
@@ -152,7 +152,8 @@ Parser.prototype.addtoken = function (type, value, context) {
         } else {
             // no transition
             errline = context[0][0];
-            throw new Sk.builtin.SyntaxError("bad input", this.filename, errline, context);
+            erroffset = context[0][1];
+            throw new Sk.builtin.SyntaxError("bad input", this.filename, errline, erroffset);
         }
     }
 };
