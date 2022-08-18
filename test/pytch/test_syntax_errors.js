@@ -25,9 +25,9 @@ describe("Syntax errors", () => {
         await assert.rejects(
             do_import,
             assertTigerPythonAnalysis([
-                { re: /colon .* is required/, line: 3 },
-                { re: /body .* missing/, line: 3 },
-                { re: /mismatched bracket/, line: 4 },
+                { re: /colon .* is required/, line: 4, offset: 22 },
+                { re: /body .* missing/, line: 4, offset: 22 },
+                { re: /mismatched bracket/, line: 5, offset: 18 },
             ])
         );
     });
