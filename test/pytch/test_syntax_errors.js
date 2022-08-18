@@ -4,47 +4,14 @@ const {
     configure_mocha,
     import_deindented,
     assert,
+    assertSyntaxError,
+    assertTigerPythonAnalysis,
     assertBuildErrorFun,
 } = require("./pytch-testing.js");
 configure_mocha();
 
 
 ////////////////////////////////////////////////////////////////////////////////
-
-const assertTigerPythonAnalysis = (expErrors) => (err) => {
-    assert.ok(err instanceof Sk.pytchsupport.PytchBuildError);
-    assert.equal(err.phase, "import");
-    assert.equal(err.innerError.tp$name, "TigerPythonSyntaxAnalysis");
-
-    const got_errors = err.innerError.syntax_errors;
-
-    assert.equal(
-        got_errors.length,
-        expErrors.length,
-        `expecting ${expErrors.length} error/s but got ${got_errors.length}`
-    );
-
-    expErrors.forEach((expErr, i) => {
-        const gotErr = got_errors[i];
-
-        // The string ": expected" in message confuses Mocha; replace colons.
-        const got_message = gotErr.args.v[0].v.replace(/:/g, "[COLON]");
-        assert.ok(
-            expErr.re.test(got_message),
-            `error[${i}]'s message "${got_message}" did not match /${expErr.re.source}/`
-        );
-
-        const got_line = gotErr.traceback[0].lineno;
-        assert.equal(
-            got_line,
-            expErr.line,
-            `expecting error[${i}] ("${got_message}") to be reported`
-                + ` on line ${expErr.line} but got ${gotErr.line}`
-        );
-    });
-
-    return true;
-}
 
 describe("Syntax errors", () => {
     it("identifies multiple syntax errors", async () => {
@@ -59,9 +26,9 @@ describe("Syntax errors", () => {
         await assert.rejects(
             do_import,
             assertTigerPythonAnalysis([
-                { re: /colon .* is required/, line: 3 },
-                { re: /body .* missing/, line: 3 },
-                { re: /mismatched bracket/, line: 4 },
+                { re: /colon .* is required/, line: 4, offset: 22 },
+                { re: /body .* missing/, line: 4, offset: 22 },
+                { re: /mismatched bracket/, line: 5, offset: 18 },
             ])
         );
     });
@@ -84,5 +51,50 @@ describe("Syntax errors", () => {
             /bad input/);
 
         await assert.rejects(do_import, assertDetails);
+    });
+
+    [
+        {
+            label: "TigerPython",
+            disableTigerPython: false,
+            validationFun: assertTigerPythonAnalysis([
+                               { re: /extra symbol/, line: 5, offset: 4 },
+                           ]),
+        },
+        {
+            label: "Skulpt",
+            disableTigerPython: true,
+            validationFun: (e) => assertSyntaxError(
+                                      e.innerError,
+                                      0,
+                                      { re: /bad input/, line: 5, offset: 4 }
+                                  ),
+        },
+    ].forEach(spec => {
+        it("raises SyntaxError with correct indexing (TigerPython)", async () => {
+            // Lines should be numbered from 1, offset is measured
+            // from 0.  So program text below has an error at location
+            // as follows:
+            //
+            //     1 |# line 1
+            //     2 |import pytch
+            //     3 |
+            //     4 |if True:
+            //     5 |    <
+            //            |
+            //       |01234
+
+            const import_project = import_deindented(`
+                # line 1
+                import pytch
+
+                if True:
+                    <
+            `);
+
+            Sk.pytch._disable_TigerPython = spec.disableTigerPython;
+            await assert.rejects(import_project, spec.validationFun);
+            Sk.pytch._disable_TigerPython = false;
+        });
     });
 });

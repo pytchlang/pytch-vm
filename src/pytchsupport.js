@@ -171,7 +171,8 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
     } catch (err) {
         // If we get a SyntaxError, see if Tiger Python can give us a
         // more-useful explanation of the problem than "bad input".
-        if (err instanceof Sk.builtin.SyntaxError) {
+        const TigerPython_enabled = (! Sk.pytch._disable_TigerPython);
+        if (TigerPython_enabled && (err instanceof Sk.builtin.SyntaxError)) {
             let errs = [];
             try {
                 errs = globalThis.TPyParser.findAllErrors(code_text);
@@ -333,13 +334,26 @@ Sk.pytchsupport.TigerPythonSyntaxAnalysis = Sk.abstr.buildNativeClass(
         constructor: function TigerPythonSyntaxAnalysis(details) {
             const msg = `TigerPython: ${details.errors.length} message/s`;
             Sk.builtin.Exception.apply(this, [msg]);
-            this.syntax_errors = details.errors.map(e =>
-                Object.assign(
-                    new Sk.builtin.SyntaxError(e.msg, "<stdin>.py", e.line),
-                    {
-                        tiger_python_errorcode: e.code,
-                        tiger_python_offset: e.offset,
-                    }));
+            this.syntax_errors = details.errors.map(e => {
+                // TigerPython reports line numbers using 0-based
+                // indexing, but Skulpt uses 1-based indexing.  Convert
+                // the TigerPython value to Skulpt's convention.
+                const line_1b = e.line + 1;
+
+                // The "offset" is 0-based also, but this is also
+                // Skulpt's convention, so no adjustment is required.
+
+                let err = new Sk.builtin.SyntaxError(
+                    e.msg,
+                    "<stdin>.py",
+                    line_1b,
+                    e.offset
+                );
+
+                err.tiger_python_errorcode = e.code;
+
+                return err;
+            });
         },
         base: Sk.builtin.Exception,
     }

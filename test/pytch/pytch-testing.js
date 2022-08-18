@@ -513,6 +513,72 @@ const assert_has_bbox = (
     assert_prop_eq("y_max", exp_ymax);
 };
 
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// Assert that a SyntaxError is as expected.
+
+const assertSyntaxError = (gotErr, gotErrIdx, expErr) => {
+    assert.ok(gotErr instanceof Sk.builtin.SyntaxError);
+
+    const labelSuffix = (gotErrIdx != null) ? `[${gotErrIdx}]` : "";
+    const label = `error${labelSuffix}`;
+
+    // The string ": expected" in message confuses Mocha; replace colons.
+    const got_message = gotErr.$msg.v.replace(/:/g, "[COLON]");
+    assert.ok(
+        expErr.re.test(got_message),
+        `${label}'s message "${got_message}" did not match /${expErr.re.source}/`
+    );
+
+    const got_line = gotErr.$lineno;
+    assert.equal(
+        got_line,
+        expErr.line,
+        `expecting ${label} ("${got_message}") to be reported`
+            + ` on line ${expErr.line} but got ${got_line}`
+    );
+
+    const got_offset = gotErr.$offset;
+    assert.equal(
+        got_offset,
+        expErr.offset,
+        `expecting ${label} ("${got_message}") to be reported`
+            + ` at offset ${expErr.offset} but got ${got_offset}`
+    );
+
+    // Allow usage as validation function for assert.rejects():
+    return true;
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// Assert that a Tiger Python analysis report is as expected.  (Curried.)
+
+const assertTigerPythonAnalysis = (expErrors) => (err) => {
+    assert.ok(err instanceof Sk.pytchsupport.PytchBuildError);
+
+    assert.equal(err.phase, "import");
+    assert.equal(err.innerError.tp$name, "TigerPythonSyntaxAnalysis");
+
+    const got_errors = err.innerError.syntax_errors;
+
+    assert.equal(
+        got_errors.length,
+        expErrors.length,
+        `expecting ${expErrors.length} error/s but got ${got_errors.length}`
+    );
+
+    expErrors.forEach((expErr, i) => {
+        assertSyntaxError(got_errors[i], i, expErr);
+    });
+
+    // Allow usage as validation function for assert.rejects():
+    return true;
+};
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Assert that a particular kind of build error was thrown.
@@ -649,6 +715,7 @@ const appearance_by_name = (actor, appearance_name) => {
     return matches[0];
 };
 
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Hooks to run before/after every test.
@@ -750,6 +817,8 @@ module.exports = {
     SpeechAssertions,
     assert_n_speaker_ids,
     assert_has_bbox,
+    assertSyntaxError,
+    assertTigerPythonAnalysis,
     assertBuildError,
     assertBuildErrorFun,
     assertNoLiveQuestion,
