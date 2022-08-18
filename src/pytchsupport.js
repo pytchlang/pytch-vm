@@ -333,13 +333,18 @@ Sk.pytchsupport.TigerPythonSyntaxAnalysis = Sk.abstr.buildNativeClass(
         constructor: function TigerPythonSyntaxAnalysis(details) {
             const msg = `TigerPython: ${details.errors.length} message/s`;
             Sk.builtin.Exception.apply(this, [msg]);
-            this.syntax_errors = details.errors.map(e =>
-                Object.assign(
-                    new Sk.builtin.SyntaxError(e.msg, "<stdin>.py", e.line),
-                    {
-                        tiger_python_errorcode: e.code,
-                        tiger_python_offset: e.offset,
-                    }));
+            this.syntax_errors = details.errors.map(e => {
+                let err = new Sk.builtin.SyntaxError(
+                    e.msg,
+                    "<stdin>.py",
+                    e.line
+                );
+
+                err.tiger_python_errorcode = e.code;
+                err.tiger_python_offset = e.offset;
+
+                return err;
+            });
         },
         base: Sk.builtin.Exception,
     }
