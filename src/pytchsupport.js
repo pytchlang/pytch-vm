@@ -171,7 +171,8 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
     } catch (err) {
         // If we get a SyntaxError, see if Tiger Python can give us a
         // more-useful explanation of the problem than "bad input".
-        if (err instanceof Sk.builtin.SyntaxError) {
+        const TigerPython_enabled = (! Sk.pytch._disable_TigerPython);
+        if (TigerPython_enabled && (err instanceof Sk.builtin.SyntaxError)) {
             let errs = [];
             try {
                 errs = globalThis.TPyParser.findAllErrors(code_text);
