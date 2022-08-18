@@ -339,14 +339,17 @@ Sk.pytchsupport.TigerPythonSyntaxAnalysis = Sk.abstr.buildNativeClass(
                 // the TigerPython value to Skulpt's convention.
                 const line_1b = e.line + 1;
 
+                // The "offset" is 0-based also, but this is also
+                // Skulpt's convention, so no adjustment is required.
+
                 let err = new Sk.builtin.SyntaxError(
                     e.msg,
                     "<stdin>.py",
-                    line_1b
+                    line_1b,
+                    e.offset
                 );
 
                 err.tiger_python_errorcode = e.code;
-                err.tiger_python_offset = e.offset;
 
                 return err;
             });
