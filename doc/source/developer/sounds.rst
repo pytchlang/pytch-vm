@@ -42,7 +42,7 @@ and the property
 Created by the ``launch_new_performance()`` method of a ``Sound``. Has
 the properties
 
--  ``tag`` — diagnostic tag for human consumption; the ``name`` of the
+-  ``tag`` — diagnostic tag for human consumption; the ``tag`` of the
    ``Sound`` of which this is a performance
 
 -  ``has_ended`` — indicates whether the performance has ended or not
