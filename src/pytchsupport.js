@@ -239,8 +239,8 @@ Sk.pytchsupport.asset_names_of_project = async (code_text) => {
     const do_nothing = (() => {});
     const sound_noting_sound_manager = {
         async_load_sound: (label, filename) => note_sound_required(filename),
-        stop_all_performances: do_nothing,
         one_frame: do_nothing,
+        stop_all_performances: do_nothing,
     }
 
     try {
