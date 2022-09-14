@@ -130,6 +130,7 @@ const mock_mouse = (() => {
 })();
 
 const mock_sound_manager = (() => {
+    let gain_from_mix_bus_name_ = new Map();
     let running_performances_ = [];
 
     let running_performances = () => running_performances_;
