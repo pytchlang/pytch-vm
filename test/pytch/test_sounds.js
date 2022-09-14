@@ -9,6 +9,7 @@ const {
     assert,
     mock_sound_manager,
     import_deindented,
+    pytch_stdout,
     pytch_errors,
     assertBuildErrorFun,
 } = require("./pytch-testing.js");
@@ -33,6 +34,26 @@ describe("waiting and non-waiting sounds", () => {
 
     const with_unity_gain
           = (tags) => tags.map(tag => ({ tag, gain: 1.0 }));
+
+    [
+        { tag: "gt-1", arg: "2.0", exp_val: "1.000" },
+        { tag: "lt-0", arg: "-2.0", exp_val: "0.000" },
+    ].forEach(spec => {
+        it(`clamps sound volume (${spec.tag})`, async () => {
+            const project = await import_deindented(`
+                import pytch
+                class Banana(pytch.Sprite):
+                    @pytch.when_I_receive("set-volume")
+                    def set_volume_outside_range(self):
+                        self.set_sound_volume(${spec.arg})
+                        print("%.3f" % self.sound_volume)
+            `);
+
+            project.do_synthetic_broadcast("set-volume");
+            one_frame(project);
+            assert.equal(pytch_stdout.drain_stdout(), spec.exp_val + "\n");
+        });
+    });
 
     it("rejects invalid args to sound volume methods", async () => {
         const project = await import_deindented(`
