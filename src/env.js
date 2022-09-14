@@ -110,6 +110,7 @@ Sk.python3 = {
         one_frame: do_nothing,
         stop_all_performances: do_nothing,
         reset: do_nothing,
+        set_mix_bus_gain: do_nothing,
     };
 
     Sk.default_pytch_environment = {
