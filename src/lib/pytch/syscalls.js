@@ -195,7 +195,7 @@ var $builtinmodule = function (name) {
 
             Sk.pytch.sound_manager.set_mix_bus_gain(mix_bus_name, clamped_gain);
         },
-        `TODO`,
+        `(ACTOR, GAIN) Set the gain of the mix-bus associated with the Actor`,
     );
 
     mod.stop_all_sounds = skulpt_function(
