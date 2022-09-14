@@ -48,7 +48,7 @@ class Actor:
         play_sound(self, sound_name, True)
 
     def set_sound_volume(self, gain):
-        "TODO"
+        "(VOLUME) Set volume for sounds played by SELF to VOLUME"
         _set_actor_sound_mix_bus_gain(self, gain)
 
     def change_sound_volume(self, d_gain):
