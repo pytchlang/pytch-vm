@@ -159,6 +159,9 @@ const mock_sound_manager = (() => {
     });
 
     let register_running_performance = (performance => {
+        if (!gain_from_mix_bus_name_.has(performance.mix_bus_name))
+            gain_from_mix_bus_name_.set(performance.mix_bus_name, 1.0);
+
         running_performances_.push(performance);
     });
 
