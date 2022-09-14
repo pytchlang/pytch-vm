@@ -7,6 +7,9 @@ occasion of playing some sound. These map fairly closely to the Web
 Audio concepts of ``AudioBuffer`` and ``AudioBufferSource``
 respectively.
 
+Global "sound manager" object
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 There is a Skulpt/Pytch-global ``sound_manager`` object. It provides
 methods:
 
