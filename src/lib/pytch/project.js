@@ -581,7 +581,7 @@ var $builtinmodule = function (name) {
                     `could not find sound "${name}" in class "${cls_name}"`);
             }
 
-            return sound.launch_new_performance();
+            return sound.launch_new_performance(mix_bus_name);
         }
     }
 
