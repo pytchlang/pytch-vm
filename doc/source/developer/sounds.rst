@@ -22,6 +22,9 @@ methods:
 -  ``set_mix_bus_gain(mix_bus_name, gain)`` — set the gain of the
    mixing bus with the given ``mix_bus_name`` to ``gain``
 
+-  ``get_mix_bus_gain(mix_bus_name)`` — return the gain of the mixing
+   bus with the given ``mix_bus_name``
+
 -  ``one_frame()`` — do whatever housekeeping is required internally for
    the sound-manager
 
