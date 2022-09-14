@@ -143,6 +143,12 @@ const mock_sound_manager = (() => {
         gain_from_mix_bus_name_.set(mix_bus_name, gain);
     };
 
+    let get_mix_bus_gain = (mix_bus_name) => {
+        if (!gain_from_mix_bus_name_.has(mix_bus_name))
+            gain_from_mix_bus_name_.set(mix_bus_name, 1.0);
+        return gain_from_mix_bus_name_.get(mix_bus_name);
+    };
+
     let async_load_sound = ((tag, url) => {
         let maybe_sound = MockSound.maybe_create(mock_sound_manager, tag, url);
         if (maybe_sound === null) {
@@ -182,6 +188,7 @@ const mock_sound_manager = (() => {
         stop_all_performances,
         reset,
         set_mix_bus_gain,
+        get_mix_bus_gain,
     };
 })();
 
