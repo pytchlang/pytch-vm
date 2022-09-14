@@ -25,10 +25,10 @@ describe("waiting and non-waiting sounds", () => {
         one_frame(project);
     });
 
-    let assert_running_performances = (exp_tags => {
-        let got_tags = (mock_sound_manager.running_performances()
-                        .map(p => p.tag));
-        assert.deepStrictEqual(got_tags, exp_tags);
+    let assert_running_performances = (exp_sounds => {
+        let got_sounds = (mock_sound_manager.running_performances()
+                          .map(p => ({ tag: p.tag, gain: p.gain })));
+        assert.deepStrictEqual(got_sounds, exp_sounds);
     });
 
     with_project("py/project/make_noise.py", (import_project) => {
