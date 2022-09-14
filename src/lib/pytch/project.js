@@ -572,7 +572,7 @@ var $builtinmodule = function (name) {
             );
         }
 
-        launch_sound_performance(name) {
+        launch_sound_performance(mix_bus_name, name) {
             let sound = this._sound_from_name.get(name);
 
             if (typeof sound === "undefined") {
