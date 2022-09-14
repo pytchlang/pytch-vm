@@ -1059,7 +1059,8 @@ var $builtinmodule = function (name) {
 
             case "play-sound": {
                 let sound_name = syscall_args.sound_name;
-                let actor = syscall_args.py_obj.$pytchActorInstance.actor;
+                let actor_instance = syscall_args.py_obj.$pytchActorInstance;
+                let actor = actor_instance.actor;
                 let performance = actor.launch_sound_performance(sound_name);
 
                 if (syscall_args.wait) {
