@@ -1,5 +1,6 @@
 from pytch.syscalls import (
     play_sound,
+    _get_actor_sound_mix_bus_gain,
     _set_actor_sound_mix_bus_gain,
     registered_instances,
     unregister_running_instance,
@@ -49,6 +50,11 @@ class Actor:
     def set_sound_volume(self, gain):
         "TODO"
         _set_actor_sound_mix_bus_gain(self, gain)
+
+    @property
+    def sound_volume(self):
+        "TODO"
+        return _get_actor_sound_mix_bus_gain(self)
 
     @classmethod
     def ensure_have_appearance_names(cls):
