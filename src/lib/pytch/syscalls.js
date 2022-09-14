@@ -173,6 +173,22 @@ var $builtinmodule = function (name) {
         `(SOUND) Play a sound from an object; maybe wait`,
     );
 
+    mod._set_actor_sound_mix_bus_gain = skulpt_function(
+        (py_obj, py_gain) => {
+            if (!Sk.builtin.checkNumber(py_gain))
+                throw new Sk.builtin.TypeError(
+                    "set_sound_volume() must be given a number");
+
+            const gain = py_gain.v;
+            const clamped_gain = gain < 0.0 ? 0.0 : gain > 1.0 ? 1.0 : gain;
+
+            const mix_bus_name = py_obj.$pytchActorInstance.info_label;
+
+            Sk.pytch.sound_manager.set_mix_bus_gain(mix_bus_name, clamped_gain);
+        },
+        `TODO`,
+    );
+
     mod.stop_all_sounds = skulpt_function(
         () => {
             Sk.pytch.sound_manager.stop_all_performances();
