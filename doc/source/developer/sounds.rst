@@ -19,6 +19,9 @@ methods:
 -  ``reset()`` — set the sound-manager's state such that it is as if it
    was freshly constructed
 
+-  ``set_mix_bus_gain(mix_bus_name, gain)`` — set the gain of the
+   mixing bus with the given ``mix_bus_name`` to ``gain``
+
 -  ``one_frame()`` — do whatever housekeeping is required internally for
    the sound-manager
 
