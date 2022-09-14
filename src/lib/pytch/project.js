@@ -1061,7 +1061,12 @@ var $builtinmodule = function (name) {
                 let sound_name = syscall_args.sound_name;
                 let actor_instance = syscall_args.py_obj.$pytchActorInstance;
                 let actor = actor_instance.actor;
-                let performance = actor.launch_sound_performance(sound_name);
+                let mix_bus_name = actor_instance.info_label;
+
+                let performance = actor.launch_sound_performance(
+                    mix_bus_name,
+                    sound_name
+                );
 
                 if (syscall_args.wait) {
                     this.state = Thread.State.AWAITING_SOUND_COMPLETION;
