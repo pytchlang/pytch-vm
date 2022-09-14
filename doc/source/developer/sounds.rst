@@ -29,8 +29,9 @@ concerns, and in case we ever have multiple concurrent projects.
 Created by the sound-manager’s ``async_load_sound()`` method. Has the
 single method
 
--  ``launch_new_performance()`` — create and start playing a new
-   performance of this sound
+-  ``launch_new_performance(mix_bus_name)`` — create and start playing
+   a new performance of this sound on the mixing bus with the given
+   ``mix_bus_name``
 
 and the property
 
