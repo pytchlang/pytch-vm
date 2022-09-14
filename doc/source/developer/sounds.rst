@@ -16,6 +16,9 @@ methods:
 -  ``stop_all_performances()`` — cancel all running
    ``SoundPerformance``\ s
 
+-  ``reset()`` — set the sound-manager's state such that it is as if it
+   was freshly constructed
+
 -  ``one_frame()`` — do whatever housekeeping is required internally for
    the sound-manager
 
