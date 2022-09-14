@@ -65,7 +65,8 @@ single method
 
 and the property
 
--  ``tag`` — a short human-useful string for diagnostic purposes
+-  ``tag`` — a short human-useful string for diagnostic purposes, set
+   from the ``tag`` argument to ``async_load_sound()``
 
 ``SoundPerformance`` object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
