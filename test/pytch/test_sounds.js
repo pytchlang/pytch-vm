@@ -45,13 +45,13 @@ describe("waiting and non-waiting sounds", () => {
         // On the next frame, the sound should start, but the launching
         // thread shouldn't have run again yet.
         project_one_frame();
-        assert_running_performances(["trumpet"]);
+        assert_running_performances(with_unity_gain(["trumpet"]));
         assert.strictEqual(orchestra.js_attr("played_trumpet"), "no")
 
         // On the next frame, the sound should still be playing, and the
         // launching thread will have run to completion.
         project_one_frame();
-        assert_running_performances(["trumpet"]);
+        assert_running_performances(with_unity_gain(["trumpet"]));
         assert.strictEqual(orchestra.js_attr("played_trumpet"), "yes")
         assert.strictEqual(project.thread_groups.length, 0);
 
@@ -60,7 +60,7 @@ describe("waiting and non-waiting sounds", () => {
         let exp_remaining_trumpet_frames = 20 - 2;
         for (let i = 0; i != exp_remaining_trumpet_frames; ++i) {
             project_one_frame();
-            assert_running_performances(["trumpet"]);
+            assert_running_performances(with_unity_gain(["trumpet"]));
         }
 
         // And then silence should fall again:
@@ -78,7 +78,7 @@ describe("waiting and non-waiting sounds", () => {
         // On the next frame, the sound should start, and the launching
         // thread shouldn't have run again yet.
         project_one_frame();
-        assert_running_performances(["violin"]);
+        assert_running_performances(with_unity_gain(["violin"]));
         assert.strictEqual(orchestra.js_attr("played_violin"), "no")
 
         // For the rest of the length of the 'violin' sound, it should stay
@@ -86,7 +86,7 @@ describe("waiting and non-waiting sounds", () => {
         let exp_remaining_violin_frames = 10 - 1;
         for (let i = 0; i != exp_remaining_violin_frames; ++i) {
             project_one_frame();
-            assert_running_performances(["violin"]);
+            assert_running_performances(with_unity_gain(["violin"]));
             assert.strictEqual(orchestra.js_attr("played_violin"), "no")
             assert.strictEqual(project.thread_groups.length, 1);
         }
@@ -105,7 +105,7 @@ describe("waiting and non-waiting sounds", () => {
         project.do_synthetic_broadcast("play-violin");
         for (let i = 0; i != 4; ++i) {
             project_one_frame();
-            assert_running_performances(["violin"]);
+            assert_running_performances(with_unity_gain(["violin"]));
             assert.strictEqual(orchestra.js_attr("played_violin"), "no")
         }
 
@@ -136,13 +136,13 @@ describe("waiting and non-waiting sounds", () => {
         // On the next frame, the trumpet should start, but the launching
         // thread shouldn't have run again yet.
         project_one_frame();
-        assert_running_performances(["trumpet"]);
+        assert_running_performances(with_unity_gain(["trumpet"]));
         assert.strictEqual(orchestra.js_attr("played_both"), "no")
 
         // On the next frame, the violin should start, and the launching
         // thread should be sleeping.
         project_one_frame();
-        assert_running_performances(["trumpet", "violin"]);
+        assert_running_performances(with_unity_gain(["trumpet", "violin"]));
         assert.strictEqual(orchestra.js_attr("played_both"), "nearly")
 
         // For the rest of the length of the 'violin' sound, both sounds should
@@ -150,7 +150,7 @@ describe("waiting and non-waiting sounds", () => {
         let exp_remaining_violin_frames = 10 - 1;
         for (let i = 0; i != exp_remaining_violin_frames; ++i) {
             project_one_frame();
-            assert_running_performances(["trumpet", "violin"]);
+            assert_running_performances(with_unity_gain(["trumpet", "violin"]));
             assert.strictEqual(orchestra.js_attr("played_both"), "nearly")
             assert.strictEqual(project.thread_groups.length, 1);
         }
@@ -160,7 +160,7 @@ describe("waiting and non-waiting sounds", () => {
         let exp_remaining_trumpet_frames = (20 - 10 - 1);
         for (let i = 0; i != exp_remaining_trumpet_frames; ++i) {
             project_one_frame();
-            assert_running_performances(["trumpet"]);
+            assert_running_performances(with_unity_gain(["trumpet"]));
             assert.strictEqual(orchestra.js_attr("played_both"), "yes")
             assert.strictEqual(project.thread_groups.length, 0);
         }
