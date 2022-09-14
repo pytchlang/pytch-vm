@@ -237,10 +237,14 @@ Sk.pytchsupport.asset_names_of_project = async (code_text) => {
         return {};
     }
     const do_nothing = (() => {});
+    const always_unity = ((_mix_bus_name) => 1.0);
     const sound_noting_sound_manager = {
         async_load_sound: (label, filename) => note_sound_required(filename),
         one_frame: do_nothing,
         stop_all_performances: do_nothing,
+        reset: do_nothing,
+        set_mix_bus_gain: do_nothing,
+        get_mix_bus_gain: always_unity,
     }
 
     try {
