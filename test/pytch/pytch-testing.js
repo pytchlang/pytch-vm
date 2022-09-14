@@ -329,8 +329,8 @@ class MockSound {
         return null;
     }
 
-    launch_new_performance() {
-        let performance = new MockSoundPerformance(this.tag, this.duration);
+    launch_new_performance(mix_bus_name) {
+        let performance = new MockSoundPerformance(mix_bus_name, this.tag, this.duration);
         this.parent_sound_manager.register_running_performance(performance);
         return performance;
     }
