@@ -133,7 +133,11 @@ const mock_sound_manager = (() => {
     let gain_from_mix_bus_name_ = new Map();
     let running_performances_ = [];
 
-    let running_performances = () => running_performances_;
+    let running_performances = () => running_performances_.map(p =>
+        ({
+            ...p,
+            gain: gain_from_mix_bus_name_.get(p.mix_bus_name),
+        }));
 
     let reset = () => {
         gain_from_mix_bus_name_.clear();
