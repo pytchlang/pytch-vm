@@ -7,11 +7,29 @@ occasion of playing some sound. These map fairly closely to the Web
 Audio concepts of ``AudioBuffer`` and ``AudioBufferSource``
 respectively.
 
+Mix buses
+~~~~~~~~~
+
+We want to mimic the Scratch behaviour of each individual sprite
+instance having its own volume, which can be set independently, and
+which controls the gain of all (possibly concurrent) sounds played by
+that sprite instance.  In Pytch, the model is that when a sprite
+instance starts playing a sound, it does so into a "mix bus"
+associated with that sprite instance.  Each mix bus has a gain, which
+has a default value of 1.0, and can be set and read.  Gains less than
+0.0 or greater than 1.0 should not be used; this mimics Scratch
+behaviour.
+
+A mix bus is identified by its *name*, a string.  Pytch uses the
+sprite-instance's ``info_label`` for this, which consists of the class
+name and a numeric instance ID joined with a hyphen.
+
 Global "sound manager" object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There is a Skulpt/Pytch-global ``sound_manager`` object. It provides
-methods:
+There is a Skulpt/Pytch-global ``sound_manager`` object.  It keeps
+track of a collection of mix buses, ensuring that each one has its own
+gain.  The object provides methods:
 
 -  ``async_load_sound(name, url)`` — return (a Promise resolving to) a
    ``Sound`` object
