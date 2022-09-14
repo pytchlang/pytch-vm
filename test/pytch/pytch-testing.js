@@ -337,7 +337,8 @@ class MockSound {
 }
 
 class MockSoundPerformance {
-    constructor(tag, duration) {
+    constructor(mix_bus_name, tag, duration) {
+        this.mix_bus_name = mix_bus_name;
         this.tag = tag;
         this.n_frames_left = duration;
         this.has_ended = false;
