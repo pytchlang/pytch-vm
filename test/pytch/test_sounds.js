@@ -31,6 +31,9 @@ describe("waiting and non-waiting sounds", () => {
         assert.deepStrictEqual(got_sounds, exp_sounds);
     });
 
+    const with_unity_gain
+          = (tags) => tags.map(tag => ({ tag, gain: 1.0 }));
+
     with_project("py/project/make_noise.py", (import_project) => {
     it("can play trumpet", async () => {
         let project = await import_project();
