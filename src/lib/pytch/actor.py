@@ -58,7 +58,7 @@ class Actor:
 
     @property
     def sound_volume(self):
-        "TODO"
+        "Volume of sounds played by SELF"
         return _get_actor_sound_mix_bus_gain(self)
 
     @classmethod
