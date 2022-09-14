@@ -179,7 +179,7 @@ var $builtinmodule = function (name) {
             const gain = Sk.pytch.sound_manager.get_mix_bus_gain(mix_bus_name);
             return new Sk.builtin.float_(gain);
         },
-        `TODO`,
+        `(ACTOR) Get the gain of the mix-bus associated with the Actor`,
     );
 
     mod._set_actor_sound_mix_bus_gain = skulpt_function(
