@@ -34,6 +34,34 @@ describe("waiting and non-waiting sounds", () => {
     const with_unity_gain
           = (tags) => tags.map(tag => ({ tag, gain: 1.0 }));
 
+    it("rejects invalid args to sound volume methods", async () => {
+        const project = await import_deindented(`
+            import pytch
+            class Banana(pytch.Sprite):
+                @pytch.when_I_receive("bad-set-volume")
+                def bad_set_volume(self):
+                    self.set_sound_volume(1.0 + 2.0j)
+                @pytch.when_I_receive("bad-change-volume-complex")
+                def bad_change_volume_complex(self):
+                    self.change_sound_volume(1.0 + 2.0j)
+                @pytch.when_I_receive("bad-change-volume-string")
+                def bad_change_volume_string(self):
+                    self.change_sound_volume("hello")
+        `);
+
+        project.do_synthetic_broadcast("bad-set-volume");
+        one_frame(project);
+        pytch_errors.assert_sole_error_matches(/must be given a number/);
+
+        project.do_synthetic_broadcast("bad-change-volume-complex");
+        one_frame(project);
+        pytch_errors.assert_sole_error_matches(/must be given a number/);
+
+        project.do_synthetic_broadcast("bad-change-volume-string");
+        one_frame(project);
+        pytch_errors.assert_sole_error_matches(/unsupported operand type/);
+    });
+
     with_project("py/project/make_noise.py", (import_project) => {
     it("can play trumpet", async () => {
         let project = await import_project();
