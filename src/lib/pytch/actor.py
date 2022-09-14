@@ -51,6 +51,11 @@ class Actor:
         "TODO"
         _set_actor_sound_mix_bus_gain(self, gain)
 
+    def change_sound_volume(self, d_gain):
+        "TODO"
+        new_gain = self.sound_volume + d_gain
+        _set_actor_sound_mix_bus_gain(self, new_gain)
+
     @property
     def sound_volume(self):
         "TODO"
