@@ -161,6 +161,7 @@ Sk.pytchsupport.maybe_auto_configure_project = (async mod => {
 Sk.pytchsupport.import_with_auto_configure = (async code_text => {
     let module;
     try {
+        Sk.pytch.sound_manager.reset();
         Sk.pytch.n_loop_iterations_during_import = 0;
         Sk.pytch.max_n_loop_iterations_during_import = 1000;
         module = await Sk.misceval.asyncToPromise(
