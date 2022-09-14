@@ -135,6 +135,10 @@ const mock_sound_manager = (() => {
 
     let running_performances = () => running_performances_;
 
+    let reset = () => {
+        gain_from_mix_bus_name_.clear();
+    };
+
     let async_load_sound = ((tag, url) => {
         let maybe_sound = MockSound.maybe_create(mock_sound_manager, tag, url);
         if (maybe_sound === null) {
@@ -172,6 +176,7 @@ const mock_sound_manager = (() => {
         register_running_performance,
         one_frame,
         stop_all_performances,
+        reset,
     };
 })();
 
