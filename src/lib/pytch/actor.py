@@ -52,7 +52,7 @@ class Actor:
         _set_actor_sound_mix_bus_gain(self, gain)
 
     def change_sound_volume(self, d_gain):
-        "TODO"
+        "(D_VOLUME) Make sounds played by SELF be D_VOLUME louder"
         new_gain = self.sound_volume + d_gain
         _set_actor_sound_mix_bus_gain(self, new_gain)
 
