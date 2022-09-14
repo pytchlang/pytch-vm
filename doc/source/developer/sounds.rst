@@ -31,8 +31,8 @@ There is a Skulpt/Pytch-global ``sound_manager`` object.  It keeps
 track of a collection of mix buses, ensuring that each one has its own
 gain.  The object provides methods:
 
--  ``async_load_sound(name, url)`` — return (a Promise resolving to) a
-   ``Sound`` object
+-  ``async_load_sound(tag, url_or_path)`` — return (a Promise resolving
+   to) a ``Sound`` object
 
 -  ``stop_all_performances()`` — cancel all running
    ``SoundPerformance``\ s
