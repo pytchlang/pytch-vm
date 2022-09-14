@@ -109,6 +109,7 @@ Sk.python3 = {
         async_load_sound: bad_async_load_sound,
         one_frame: do_nothing,
         stop_all_performances: do_nothing,
+        reset: do_nothing,
     };
 
     Sk.default_pytch_environment = {
