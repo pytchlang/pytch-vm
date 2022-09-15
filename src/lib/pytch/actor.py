@@ -1,5 +1,7 @@
 from pytch.syscalls import (
     play_sound,
+    _get_actor_sound_mix_bus_gain,
+    _set_actor_sound_mix_bus_gain,
     registered_instances,
     unregister_running_instance,
     wait_seconds,
@@ -44,6 +46,20 @@ class Actor:
     def play_sound_until_done(self, sound_name):
         "(SOUND) Play SOUND; pause until it finishes playing"
         play_sound(self, sound_name, True)
+
+    def set_sound_volume(self, gain):
+        "(VOLUME) Set volume for sounds played by SELF to VOLUME"
+        _set_actor_sound_mix_bus_gain(self, gain)
+
+    def change_sound_volume(self, d_gain):
+        "(D_VOLUME) Make sounds played by SELF be D_VOLUME louder"
+        new_gain = self.sound_volume + d_gain
+        _set_actor_sound_mix_bus_gain(self, new_gain)
+
+    @property
+    def sound_volume(self):
+        "Volume of sounds played by SELF"
+        return _get_actor_sound_mix_bus_gain(self)
 
     @classmethod
     def ensure_have_appearance_names(cls):

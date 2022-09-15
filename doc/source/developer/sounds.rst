@@ -7,14 +7,44 @@ occasion of playing some sound. These map fairly closely to the Web
 Audio concepts of ``AudioBuffer`` and ``AudioBufferSource``
 respectively.
 
-There is a Skulpt/Pytch-global ``sound_manager`` object. It provides
-methods:
+Mix buses
+~~~~~~~~~
 
--  ``async_load_sound(name, url)`` — return (a Promise resolving to) a
-   ``Sound`` object
+We want to mimic the Scratch behaviour of each individual sprite
+instance having its own volume, which can be set independently, and
+which controls the gain of all (possibly concurrent) sounds played by
+that sprite instance.  In Pytch, the model is that when a sprite
+instance starts playing a sound, it does so into a "mix bus"
+associated with that sprite instance.  Each mix bus has a gain, which
+has a default value of 1.0, and can be set and read.  Gains less than
+0.0 or greater than 1.0 should not be used; this mimics Scratch
+behaviour.
+
+A mix bus is identified by its *name*, a string.  Pytch uses the
+sprite-instance's ``info_label`` for this, which consists of the class
+name and a numeric instance ID joined with a hyphen.
+
+Global "sound manager" object
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There is a Skulpt/Pytch-global ``sound_manager`` object.  It keeps
+track of a collection of mix buses, ensuring that each one has its own
+gain.  The object provides methods:
+
+-  ``async_load_sound(tag, url_or_path)`` — return (a Promise resolving
+   to) a ``Sound`` object
 
 -  ``stop_all_performances()`` — cancel all running
    ``SoundPerformance``\ s
+
+-  ``reset()`` — set the sound-manager's state such that it is as if it
+   was freshly constructed
+
+-  ``set_mix_bus_gain(mix_bus_name, gain)`` — set the gain of the
+   mixing bus with the given ``mix_bus_name`` to ``gain``
+
+-  ``get_mix_bus_gain(mix_bus_name)`` — return the gain of the mixing
+   bus with the given ``mix_bus_name``
 
 -  ``one_frame()`` — do whatever housekeeping is required internally for
    the sound-manager
@@ -29,12 +59,14 @@ concerns, and in case we ever have multiple concurrent projects.
 Created by the sound-manager’s ``async_load_sound()`` method. Has the
 single method
 
--  ``launch_new_performance()`` — create and start playing a new
-   performance of this sound
+-  ``launch_new_performance(mix_bus_name)`` — create and start playing
+   a new performance of this sound on the mixing bus with the given
+   ``mix_bus_name``
 
 and the property
 
--  ``tag`` — a short human-useful string for diagnostic purposes
+-  ``tag`` — a short human-useful string for diagnostic purposes, set
+   from the ``tag`` argument to ``async_load_sound()``
 
 ``SoundPerformance`` object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -42,7 +74,7 @@ and the property
 Created by the ``launch_new_performance()`` method of a ``Sound``. Has
 the properties
 
--  ``tag`` — diagnostic tag for human consumption; the ``name`` of the
+-  ``tag`` — diagnostic tag for human consumption; the ``tag`` of the
    ``Sound`` of which this is a performance
 
 -  ``has_ended`` — indicates whether the performance has ended or not

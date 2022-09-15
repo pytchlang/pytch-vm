@@ -572,7 +572,7 @@ var $builtinmodule = function (name) {
             );
         }
 
-        launch_sound_performance(name) {
+        launch_sound_performance(mix_bus_name, name) {
             let sound = this._sound_from_name.get(name);
 
             if (typeof sound === "undefined") {
@@ -581,7 +581,7 @@ var $builtinmodule = function (name) {
                     `could not find sound "${name}" in class "${cls_name}"`);
             }
 
-            return sound.launch_new_performance();
+            return sound.launch_new_performance(mix_bus_name);
         }
     }
 
@@ -1059,8 +1059,14 @@ var $builtinmodule = function (name) {
 
             case "play-sound": {
                 let sound_name = syscall_args.sound_name;
-                let actor = syscall_args.py_obj.$pytchActorInstance.actor;
-                let performance = actor.launch_sound_performance(sound_name);
+                let actor_instance = syscall_args.py_obj.$pytchActorInstance;
+                let actor = actor_instance.actor;
+                let mix_bus_name = actor_instance.info_label;
+
+                let performance = actor.launch_sound_performance(
+                    mix_bus_name,
+                    sound_name
+                );
 
                 if (syscall_args.wait) {
                     this.state = Thread.State.AWAITING_SOUND_COMPLETION;

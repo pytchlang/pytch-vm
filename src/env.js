@@ -105,10 +105,15 @@ Sk.python3 = {
         throw Error("please set sound_manager.async_load_sound");
     };
 
+    const always_unity = (_mix_bus_name) => 1.0;
+
     let do_nothing_sound_manager = {
         async_load_sound: bad_async_load_sound,
         one_frame: do_nothing,
         stop_all_performances: do_nothing,
+        reset: do_nothing,
+        set_mix_bus_gain: do_nothing,
+        get_mix_bus_gain: always_unity,
     };
 
     Sk.default_pytch_environment = {

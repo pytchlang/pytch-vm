@@ -161,6 +161,7 @@ Sk.pytchsupport.maybe_auto_configure_project = (async mod => {
 Sk.pytchsupport.import_with_auto_configure = (async code_text => {
     let module;
     try {
+        Sk.pytch.sound_manager.reset();
         Sk.pytch.n_loop_iterations_during_import = 0;
         Sk.pytch.max_n_loop_iterations_during_import = 1000;
         module = await Sk.misceval.asyncToPromise(
@@ -237,10 +238,14 @@ Sk.pytchsupport.asset_names_of_project = async (code_text) => {
         return {};
     }
     const do_nothing = (() => {});
+    const always_unity = ((_mix_bus_name) => 1.0);
     const sound_noting_sound_manager = {
         async_load_sound: (label, filename) => note_sound_required(filename),
-        stop_all_performances: do_nothing,
         one_frame: do_nothing,
+        stop_all_performances: do_nothing,
+        reset: do_nothing,
+        set_mix_bus_gain: do_nothing,
+        get_mix_bus_gain: always_unity,
     }
 
     try {

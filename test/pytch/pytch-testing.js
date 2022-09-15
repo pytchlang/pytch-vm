@@ -130,9 +130,28 @@ const mock_mouse = (() => {
 })();
 
 const mock_sound_manager = (() => {
+    let gain_from_mix_bus_name_ = new Map();
     let running_performances_ = [];
 
-    let running_performances = () => running_performances_;
+    let running_performances = () => running_performances_.map(p =>
+        ({
+            ...p,
+            gain: gain_from_mix_bus_name_.get(p.mix_bus_name),
+        }));
+
+    let reset = () => {
+        gain_from_mix_bus_name_.clear();
+    };
+
+    let set_mix_bus_gain = (mix_bus_name, gain) => {
+        gain_from_mix_bus_name_.set(mix_bus_name, gain);
+    };
+
+    let get_mix_bus_gain = (mix_bus_name) => {
+        if (!gain_from_mix_bus_name_.has(mix_bus_name))
+            gain_from_mix_bus_name_.set(mix_bus_name, 1.0);
+        return gain_from_mix_bus_name_.get(mix_bus_name);
+    };
 
     let async_load_sound = ((tag, url) => {
         let maybe_sound = MockSound.maybe_create(mock_sound_manager, tag, url);
@@ -144,6 +163,9 @@ const mock_sound_manager = (() => {
     });
 
     let register_running_performance = (performance => {
+        if (!gain_from_mix_bus_name_.has(performance.mix_bus_name))
+            gain_from_mix_bus_name_.set(performance.mix_bus_name, 1.0);
+
         running_performances_.push(performance);
     });
 
@@ -171,6 +193,9 @@ const mock_sound_manager = (() => {
         register_running_performance,
         one_frame,
         stop_all_performances,
+        reset,
+        set_mix_bus_gain,
+        get_mix_bus_gain,
     };
 })();
 
@@ -329,15 +354,16 @@ class MockSound {
         return null;
     }
 
-    launch_new_performance() {
-        let performance = new MockSoundPerformance(this.tag, this.duration);
+    launch_new_performance(mix_bus_name) {
+        let performance = new MockSoundPerformance(mix_bus_name, this.tag, this.duration);
         this.parent_sound_manager.register_running_performance(performance);
         return performance;
     }
 }
 
 class MockSoundPerformance {
-    constructor(tag, duration) {
+    constructor(mix_bus_name, tag, duration) {
+        this.mix_bus_name = mix_bus_name;
         this.tag = tag;
         this.n_frames_left = duration;
         this.has_ended = false;
