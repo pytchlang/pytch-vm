@@ -165,8 +165,6 @@ var $builtinmodule = function (name) {
     // location at a particular scale.  The 'location' is that of the top-left
     // corner.  The 'image label' is ignored in real rendering but is useful for
     // testing.
-    //
-    // (In due course, 'at a particular angle of rotation' will be added here.)
 
     class RenderImage {
         constructor(x, y, scale, rotation, image, image_cx, image_cy, image_label) {
