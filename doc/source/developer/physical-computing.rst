@@ -330,3 +330,37 @@ well-defined behaviour on some of its pins.  Something like: Pin 1
 back with some known delay to pin 4 (input).  Pin 5 always reads high;
 pin 6 always reads low.  Pin 7 gives error when set to input; pin 8
 gives error when attempting to drive it as output.
+
+Hat block responding to edges on GPIO inputs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Would like to support something like
+
+.. code-block:: python
+
+   @when_gpio_goes_high(pin_number, pull_kind)
+   @when_gpio_goes_low(pin_number, pull_kind)
+
+which are all edge-triggered.  Hopefully we can rely on the glitch
+filter of ``pigpio`` to do debouncing.
+
+Maybe pull-kind should be optional, with 'when goes high' defaulting
+to pull-down, and 'when goes low' defaulting to pull-up.
+
+How to ensure the relevant GPIOs are set as inputs?  What happens if
+the user then tries to override them to outputs?
+
+As part of the build and auto-configure process,
+``Project.register_handler()`` is called for every method which is
+marked as handling an event.  We could gather the requirements on GPIO
+pins.  Handle inconsistent requirements; think only inconsistency
+which might arise is if a pin is used with more than one different
+pull-kind.
+
+As part of ``do_gpio_reset_step()`` we could send the 'make these pins
+be input' commands and block until all responses received.
+
+Alternative is to make the user do ``set_gpio_as_input()`` calls at
+top level, but that (a) is annoying for the user, and (b) would be
+trickier to implement, since we have no ``Project`` at the point those
+calls would run.
