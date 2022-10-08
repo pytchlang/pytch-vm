@@ -5,6 +5,8 @@ from pytch import (
     when_green_flag_clicked,
     when_I_receive,
     when_key_pressed,
+    when_gpio_goes_high,
+    when_gpio_goes_low,
 )
 
 
@@ -26,6 +28,22 @@ class FlagClickCounter(Sprite):
     @when_key_pressed('x')
     def forget_a_click(self):
         self.n_clicks -= 1
+
+    @when_gpio_goes_low(5)
+    def pin_5_HL_default(self):
+        pass
+
+    @when_gpio_goes_low(6, "pull-down")
+    def pin_6_HL_pd(self):
+        pass
+
+    @when_gpio_goes_high(7)
+    def pin_7_LH_default(self):
+        pass
+
+    @when_gpio_goes_high(8, "no-pull")
+    def pin_8_LH_pu(self):
+        pass
 
 
 # --cut-here-for-auto-config--
