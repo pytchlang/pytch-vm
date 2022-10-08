@@ -191,4 +191,23 @@ describe("pytch.hat_blocks module", () => {
             )
         );
     });
+
+    it("rejects bad edge-kind arg to gpio edge handler", async () => {
+        const import_project = import_deindented(`
+            import pytch
+            from pytch.hat_blocks import _when_gpio_sees_edge
+            class Banana(pytch.Sprite):
+                _when_gpio_sees_edge(3, "foo")
+                def foo(self):
+                    pass
+        `);
+        await assert.rejects(
+            import_project,
+            assertBuildErrorFun(
+                "import",
+                Sk.builtin.ValueError,
+                /edge_kind must be/
+            )
+        );
+    });
 });
