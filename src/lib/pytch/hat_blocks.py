@@ -41,3 +41,20 @@ def when_this_sprite_clicked(fun):
 def when_stage_clicked(fun):
     "Run your method when the user clicks the Stage"
     return _append_handler(fun, 'click')
+
+
+class _when_gpio_sees_edge:
+    def __init__(self, pin, edge_kind, pull_kind=None):
+        self.pin = pin
+        self.edge_kind = edge_kind
+        if pull_kind is None:
+            pull_kind = (
+                "pull-down" if edge_kind == "low-to-high"
+                else "pull-up"
+            )
+        self.pull_kind = pull_kind
+
+    def __call__(self, fun):
+        return _append_handler(
+            fun, 'gpio-edge', (self.pin, self.edge_kind, self.pull_kind)
+        )
