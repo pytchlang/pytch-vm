@@ -60,7 +60,8 @@ describe("pytch.hat_blocks module", () => {
             let forget_a_click = new EventsHandledBy(py_FlagClickCounter, "forget_a_click");
             assert.strictEqual(forget_a_click.n_events, 1);
             assert.ok(forget_a_click.includes("keypress", "x"));
-        })});
+        });
+    });
 
     with_project("py/project/sprite_on_stage.py", (import_project) => {
         let sprite_on_stage = async () => {
@@ -82,5 +83,6 @@ describe("pytch.hat_blocks module", () => {
             let hello = new EventsHandledBy(table.py_cls, "say_hello_table");
             assert.strictEqual(hello.n_events, 1);
             assert.ok(hello.includes("click", null));
-        })});
+        });
+    });
 });
