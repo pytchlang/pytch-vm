@@ -1866,6 +1866,10 @@ var $builtinmodule = function (name) {
                 new DrawLayerGroup(),  // Text (one day)
             ];
 
+            // Map from pin number to set of pull-kinds.  If any such
+            // set has more than one pull-kind in it, that's an error.
+            this.gpio_hat_block_inputs = new Map();
+
             this.gpio_reset_state = { status: "not-started" };
             this.gpio_pin_levels = new Map();
             this.gpio_command_queue = new GpioCommandQueue();
