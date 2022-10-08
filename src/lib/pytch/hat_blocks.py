@@ -52,7 +52,13 @@ class _when_gpio_sees_edge:
 
         self.pin = pin
 
+        if edge_kind not in ["high-to-low", "low-to-high"]:
+            raise ValueError(
+                'edge_kind must be "high-to-low" or "low-to-high"'
+            )
+
         self.edge_kind = edge_kind
+
         if pull_kind is None:
             pull_kind = (
                 "pull-down" if edge_kind == "low-to-high"
