@@ -15,6 +15,36 @@ configure_mocha();
 // Module 'pytch.hat_blocks'
 
 describe("pytch.hat_blocks module", () => {
+    // Compare the "event data" part of event descriptor.  Only has to
+    // cope with null, string, or list of same:
+    const eventDataEqual = (x, y) => {
+        if (x === y)
+            return true;
+
+        if (x == null || y == null)
+            return false;
+
+        if (typeof x === "number" || typeof y === "number")
+            // If they were both numbers and also were equal, first
+            // test would have passed.
+            return false;
+
+        if (typeof x === "string" || typeof y === "string")
+            // If they were both strings and also were equal, first
+            // test would have passed.
+            return false;
+
+        if (!(Array.isArray(x) && Array.isArray(y)))
+            throw new Error("unhandled type/s");
+
+        if (x.length !== y.length)
+            return false;
+        for (let i = 0; i !== x.length; ++i)
+            if (! eventDataEqual(x[i], y[i]))
+                return false;
+        return true;
+    };
+
     class EventsHandledBy {
         constructor(py_cls, js_method_name) {
             let method = py_getattr(py_cls, js_method_name);
