@@ -58,3 +58,8 @@ class _when_gpio_sees_edge:
         return _append_handler(
             fun, 'gpio-edge', (self.pin, self.edge_kind, self.pull_kind)
         )
+
+
+def when_gpio_goes_high(pin, pull_kind=None):
+    "(PIN, PULL_KIND) Run your method when PIN goes high"
+    return _when_gpio_sees_edge(pin, "low-to-high", pull_kind)
