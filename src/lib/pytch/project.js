@@ -2039,6 +2039,12 @@ var $builtinmodule = function (name) {
             });
         }
 
+        register_gpio_hat_block_input(pin, pull_kind) {
+            if (! this.gpio_hat_block_inputs.has(pin))
+                this.gpio_hat_block_inputs.set(pin, new Set());
+            this.gpio_hat_block_inputs.get(pin).add(pull_kind);
+        }
+
         do_gpio_reset_step() {
             if (this.gpio_reset_state.status === "not-started") {
                 // We manually check for responses, so doesn't really matter
