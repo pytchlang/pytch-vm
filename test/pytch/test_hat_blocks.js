@@ -156,6 +156,28 @@ describe("pytch.hat_blocks module", () => {
         });
     });
 
+    [
+        // TODO: Specs with "tag", "hat_code", "exp_error_type", "exp_error_re" props
+    ].forEach(spec =>
+        it(`rejects arg to gpio edge handler (${spec.tag})`,
+           async () => {
+               const import_project = import_deindented(`
+                   import pytch
+                   from pytch.hat_blocks import _when_gpio_sees_edge
+                   class Banana(pytch.Sprite):
+                       @${spec.hat_code}
+                       def foo(self):
+                           pass
+               `);
+               await assert.rejects(
+                   import_project,
+                   assertBuildErrorFun(
+                       "import",
+                       spec.exp_error_type,
+                       spec.exp_error_re));
+           })
+    );
+
     it("rejects bad pull-kind arg to gpio edge handler", async () => {
         const import_project = import_deindented(`
             import pytch
