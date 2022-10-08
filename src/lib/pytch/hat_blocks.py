@@ -45,7 +45,13 @@ def when_stage_clicked(fun):
 
 class _when_gpio_sees_edge:
     def __init__(self, pin, edge_kind, pull_kind=None):
+        if not isinstance(pin, int):
+            raise TypeError("pin must be integer")
+
+        # Let the GPIO server validate the value.
+
         self.pin = pin
+
         self.edge_kind = edge_kind
         if pull_kind is None:
             pull_kind = (
