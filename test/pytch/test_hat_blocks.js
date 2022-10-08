@@ -45,6 +45,31 @@ describe("pytch.hat_blocks module", () => {
         return true;
     };
 
+    it("eventDataEqual() works", () => {
+        [
+            [null, null, true],
+            [null, 3, false],
+            [null, "foo", false],
+            [null, [1, 2], false],
+            [3, 3.0, true],
+            [3, 4, false],
+            [3, "foo", false],
+            [3, "3", false],
+            [3, [1, 2], false],
+            ["foo", "foo", true],
+            ["foo", "bar", false],
+            ["foo", [1, 2], false],
+            [[1, 2], [1, 2], true],
+            [[1, 2], [1, 2, 3], false],
+            [[1, 2], [1, 3], false],
+            [[1, "foo", [1, 2]], [1, "foo", [1, 2]], true],
+            [[1, "foo", [1, 2]], [1, "foo", [1, 7]], false],
+        ].forEach(([x, y, expEq]) => {
+            assert.equal(eventDataEqual(x, y), expEq);
+            assert.equal(eventDataEqual(y, x), expEq);
+        });
+    });
+
     class EventsHandledBy {
         constructor(py_cls, js_method_name) {
             let method = py_getattr(py_cls, js_method_name);
