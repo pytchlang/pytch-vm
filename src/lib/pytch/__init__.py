@@ -19,6 +19,8 @@ from .hat_blocks import (
     when_I_start_as_a_clone,
     when_this_sprite_clicked,
     when_stage_clicked,
+    when_gpio_goes_high,
+    when_gpio_goes_low,
 )
 
 from .clone import (
