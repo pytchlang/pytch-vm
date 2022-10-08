@@ -9,6 +9,7 @@ const {
     import_deindented,
     one_frame,
     mock_keyboard,
+    assertBuildErrorFun,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -183,5 +184,23 @@ describe("pytch.hat_blocks module", () => {
                 assert.strictEqual(sprite_instance.js_attr("pressed"), true);
             });
         });
+    });
+
+    it("rejects bad pull-kind arg to gpio edge handler", async () => {
+        const import_project = import_deindented(`
+            import pytch
+            class Banana(pytch.Sprite):
+                @pytch.when_gpio_goes_high(5, "sideways")
+                def foo(self):
+                    pass
+        `);
+        await assert.rejects(
+            import_project,
+            assertBuildErrorFun(
+                "import",
+                Sk.builtin.ValueError,
+                /pull_kind must be/
+            )
+        );
     });
 });
