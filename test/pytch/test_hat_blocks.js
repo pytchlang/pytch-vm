@@ -115,6 +115,20 @@ describe("pytch.hat_blocks module", () => {
             assert.strictEqual(forget_a_click.n_events, 1);
             assert.ok(forget_a_click.includes("keypress", "x"));
         });
+
+        it("registers GPIO edge handlers", async () => {
+            let py_FlagClickCounter = await single_sprite_project();
+            [
+                { method: "pin_5_HL_default", exp_data: [5, "high-to-low", "pull-up"] },
+                { method: "pin_6_HL_pd", exp_data: [6, "high-to-low", "pull-down"] },
+                { method: "pin_7_LH_default", exp_data: [7, "low-to-high", "pull-down"] },
+                { method: "pin_8_LH_pu", exp_data: [8, "low-to-high", "no-pull"] },
+            ].forEach(spec => {
+                let events = new EventsHandledBy(py_FlagClickCounter, spec.method);
+                assert.strictEqual(events.n_events, 1);
+                assert.ok(events.includes("gpio-edge", spec.exp_data));
+            });
+        });
     });
 
     with_project("py/project/sprite_on_stage.py", (import_project) => {
