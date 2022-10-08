@@ -454,6 +454,10 @@ var $builtinmodule = function (name) {
                 key_handlers.get(event_data).push(handler);
                 break;
 
+            case "gpio-edge":
+                // TODO
+                break;
+
             case "clone":
                 this.clone_handlers.push(handler_py_func);
                 break;
