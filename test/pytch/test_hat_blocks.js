@@ -9,7 +9,6 @@ const {
 } = require("./pytch-testing.js");
 configure_mocha();
 
-
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Module 'pytch.hat_blocks'
@@ -85,7 +84,7 @@ describe("pytch.hat_blocks module", () => {
         includes(evt_type, evt_data) {
             return (this.events_handled
                     .some(([type, data]) =>
-                          (type === evt_type && data === evt_data)));
+                          (type === evt_type && eventDataEqual(data, evt_data))));
         }
     }
 
