@@ -63,3 +63,8 @@ class _when_gpio_sees_edge:
 def when_gpio_goes_high(pin, pull_kind=None):
     "(PIN, PULL_KIND) Run your method when PIN goes high"
     return _when_gpio_sees_edge(pin, "low-to-high", pull_kind)
+
+
+def when_gpio_goes_low(pin, pull_kind=None):
+    "(PIN, PULL_KIND) Run your method when PIN goes low"
+    return _when_gpio_sees_edge(pin, "high-to-low", pull_kind)
