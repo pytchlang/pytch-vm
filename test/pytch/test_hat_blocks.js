@@ -157,7 +157,24 @@ describe("pytch.hat_blocks module", () => {
     });
 
     [
-        // TODO: Specs with "tag", "hat_code", "exp_error_type", "exp_error_re" props
+        {
+            tag: "pull-kind",
+            hat_code: "pytch.when_gpio_goes_high(5, 'sideways')",
+            exp_error_type: Sk.builtin.ValueError,
+            exp_error_re: /pull_kind must be/,
+        },
+        {
+            tag: "pin",
+            hat_code: "pytch.when_gpio_goes_high('foo')",
+            exp_error_type: Sk.builtin.TypeError,
+            exp_error_re: /pin must be/,
+        },
+        {
+            tag: "edge-kind",
+            hat_code: "_when_gpio_sees_edge(3, 'foo')",
+            exp_error_type: Sk.builtin.ValueError,
+            exp_error_re: /edge_kind must be/,
+        },
     ].forEach(spec =>
         it(`rejects arg to gpio edge handler (${spec.tag})`,
            async () => {
