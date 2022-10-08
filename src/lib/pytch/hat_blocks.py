@@ -52,6 +52,12 @@ class _when_gpio_sees_edge:
                 "pull-down" if edge_kind == "low-to-high"
                 else "pull-up"
             )
+
+        if pull_kind not in ["pull-up", "pull-down", "no-pull"]:
+            raise ValueError(
+                'pull_kind must be "pull-up", "pull-down", or "no-pull"'
+            )
+
         self.pull_kind = pull_kind
 
     def __call__(self, fun):
