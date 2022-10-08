@@ -173,4 +173,22 @@ describe("pytch.hat_blocks module", () => {
             )
         );
     });
+
+    it("rejects bad pin arg to gpio edge handler", async () => {
+        const import_project = import_deindented(`
+            import pytch
+            class Banana(pytch.Sprite):
+                @pytch.when_gpio_goes_high("foo")
+                def foo(self):
+                    pass
+        `);
+        await assert.rejects(
+            import_project,
+            assertBuildErrorFun(
+                "import",
+                Sk.builtin.TypeError,
+                /pin must be/
+            )
+        );
+    });
 });
