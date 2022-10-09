@@ -1805,6 +1805,36 @@ var $builtinmodule = function (name) {
             this.unsent_commands = [];
         }
 
+        /** Handle all the given responses, returning an array of
+         * resolved commands and also an array of pin-level updates (as
+         * gathered from responses to "set-input" commands and also from
+         * unsolicited "report-level" responses).
+         *
+         * Responses to commands we're not aware of are ignored.  This
+         * can happen if we get a very delayed response from a previous
+         * project build.
+         */
+        handle_responses(responses, frame_idx) {
+            let resolved_commands = [];
+            let pin_level_updates = [];
+            responses.forEach(response => {
+                const maybe_command = this.handle_response(response, frame_idx);
+                if (maybe_command != null)
+                    resolved_commands.push(maybe_command)
+
+                // Responses of kind "report-input" can be either an
+                // actual response to a set-input command, or an
+                // unsolicited response.  Either way, extract the new
+                // pin level information.
+                if (response.kind === "report-input")
+                    pin_level_updates.push({
+                        pin: response.pin,
+                        level: response.level,
+                    });
+            });
+            return { resolved_commands, pin_level_updates };
+        }
+
         // Return null if the response is either unsolicited or for a
         // command we don't know about; if the response is for a command
         // we do know about, return that command's updated GpioCommand.
