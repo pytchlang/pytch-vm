@@ -1803,6 +1803,20 @@ var $builtinmodule = function (name) {
             this.unsent_commands = [];
         }
 
+        // Return array of commands which received a response as part of
+        // the given `responses`.  This array can be shorter than the
+        // `responses` if some elements of `responses` are unsolicited
+        // "responses".
+        handle_responses(responses, frame_idx) {
+            let resolved_commands = [];
+            responses.forEach(r => {
+                const maybe_command = this.handle_response(r, frame_idx);
+                if (maybe_command != null)
+                    resolved_commands.push(maybe_command)
+            });
+            return resolved_commands;
+        }
+
         // Return null if the response is either unsolicited or for a
         // command we don't know about; if the response is for a command
         // we do know about, return that command's updated GpioCommand.
