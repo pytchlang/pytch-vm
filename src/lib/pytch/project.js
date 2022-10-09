@@ -1805,22 +1805,27 @@ var $builtinmodule = function (name) {
             this.unsent_commands = [];
         }
 
-        // Return whether an error response must be handled by caller.
+        // Return null if the response is either unsolicited or for a
+        // command we don't know about; if the response is for a command
+        // we do know about, return that command's updated GpioCommand.
         handle_response(response, frame_idx) {
             // Ignore "unsolicited response":
             if (response.seqnum === 0)
-                return true;
+                return null;
 
+            // This can give us null; the response might be a delayed
+            // response to a command which was sent as part of a
+            // previous Project instance.
             const command = this.commands_awaiting_response.get(response.seqnum);
-            if (command == null) {
-                // Ignore any errors arising from this response; maybe it's from
-                // a previous build:
-                // TODO: Warn `not expecting response w seqnum ${response.seqnum}`
-                return false;
-            } else {
+
+            if (command != null) {
                 this.commands_awaiting_response.delete(response.seqnum);
-                return command.handle_response(response, frame_idx);
+                command.handle_response(response, frame_idx);
             }
+
+            // Whether commands_awaiting_response.get() gave us null or
+            // an actual command, this is correct:
+            return command;
         }
     }
 
