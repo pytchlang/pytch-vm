@@ -2155,6 +2155,13 @@ var $builtinmodule = function (name) {
             }
         }
 
+        record_gpio_input_level(response) {
+            const pin = response.pin;
+            const lvl = response.level;
+            // TODO: Check lvl is 0 or 1.
+            this.gpio_pin_levels.set(pin, lvl);
+        }
+
         handle_gpio_responses(responses) {
             let error_outside_thread = false;
             responses.forEach(response => {
