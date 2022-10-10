@@ -257,6 +257,7 @@ var $builtinmodule = function (name) {
             this.event_handlers = {
                 green_flag: new EventHandlerGroup(),
                 keypress: new Map(),
+                gpio_edge: new Map(),
                 message: new Map(),
             };
 
@@ -455,7 +456,15 @@ var $builtinmodule = function (name) {
                 break;
 
             case "gpio-edge":
-                // TODO
+                let gpio_edge_handlers = this.event_handlers.gpio_edge;
+                const [pin, edge_kind, pull_kind] = event_data;
+                if (! gpio_edge_handlers.has(pin))
+                    gpio_edge_handlers.set(pin, new Map());
+                let pin_edge_handlers = gpio_edge_handlers.get(pin)
+                if (! pin_edge_handlers.has(edge_kind))
+                    pin_edge_handlers.set(edge_kind, new EventHandlerGroup());
+                pin_edge_handlers.get(edge_kind).push(handler);
+                this.parent_project.register_gpio_hat_block_input(pin, pull_kind);
                 break;
 
             case "clone":
@@ -1035,7 +1044,7 @@ var $builtinmodule = function (name) {
                     // error we got?  Or should "errorDetail" be self-contained?
                     // That might be better.
                     const err = new Sk.builtin.RuntimeError(
-                        `GPIO command failed: ${gpio_command.state.errorDetail}`
+                        `GPIO command failed: ${gpio_command.response.errorDetail}`
                     );
                     this.skulpt_susp.data.set_failure(err);
                 }
@@ -1727,6 +1736,8 @@ var $builtinmodule = function (name) {
         handle_response(response, frame_idx) {
             this.ensure_status("handle_response()", "awaiting-response");
 
+            this.response = response;
+
             // Properties common to both outcomes (set others below):
             this.state = {
                 t_command_sent: this.state.t_command_sent,
@@ -1735,20 +1746,15 @@ var $builtinmodule = function (name) {
 
             switch (response.kind) {
             case "error":
+                // TODO: What if Pytch thread terminates before response
+                // arrives, e.g., with red-stop, or exception elsewhere, or
+                // pytch.stop_all()?
                 this.state.status = "failed";
-                this.state.errorDetail = response.errorDetail;
-                // Will this error be handled by turning into exception in
-                // user code?  If not, the caller must handle it.
-                //
-                // TODO: What if thread terminates before response arrives, e.g.,
-                // with red-stop, or exception elsewhere, or pytch.stop_all()?
-                return ( ! this.has_thread_waiting);
+                return;
             case "ok":
             case "report-input":
                 this.state.status = "succeeded";
-                // Doesn't actually matter what we return here, since this is
-                // not an error response:
-                return false;
+                return;
             default:
                 throw new Error(
                     `unexpected response-kind "${response.kind}"`
@@ -1777,6 +1783,10 @@ var $builtinmodule = function (name) {
         constructor() {
             this.unsent_commands = [];
             this.commands_awaiting_response = new Map();
+        }
+
+        n_waiting_commands() {
+            return this.commands_awaiting_response.size;
         }
 
         enqueue_for_sending(operation, has_thread_waiting) {
@@ -1809,12 +1819,15 @@ var $builtinmodule = function (name) {
         // "responses".
         handle_responses(responses, frame_idx) {
             let resolved_commands = [];
+            let unsolicited_responses = [];
             responses.forEach(r => {
                 const maybe_command = this.handle_response(r, frame_idx);
                 if (maybe_command != null)
                     resolved_commands.push(maybe_command)
+                if (r.seqnum === 0)
+                    unsolicited_responses.push(r);
             });
-            return resolved_commands;
+            return { resolved_commands, unsolicited_responses };
         }
 
         // Return null if the response is either unsolicited or for a
@@ -1838,6 +1851,100 @@ var $builtinmodule = function (name) {
             // Whether commands_awaiting_response.get() gave us null or
             // an actual command, this is correct:
             return command;
+        }
+    }
+
+    class GpioResetProcess {
+        constructor(parent_project) {
+            const set_input_batch_result
+                  = parent_project.gpio_hat_block_set_input_operations();
+
+            if (set_input_batch_result.status === "fail") {
+                const error_msg = set_input_batch_result.message;
+                const error = new Sk.builtin.RuntimeError(error_msg);
+                this.pending_errors = [error];
+                this.status = "failed";
+                this.failureKind = "set-input-computation";
+                return;
+            }
+
+            const set_input_operations = set_input_batch_result.operations;
+
+            this.command_batch_queue = [[{ kind: "reset" }]];
+
+            // Only include the set-input batch if it's non-empty:
+            if (set_input_operations.length !== 0)
+                this.command_batch_queue.push(set_input_operations);
+
+            this.status = "pending";
+            this.n_polls_done = 0;
+            this.command_queue = new GpioCommandQueue();
+            this.resolved_commands = [];
+            this.pending_errors = [];
+        }
+
+        // Leaves this.status ready for inspection, and any errors
+        // ready to be retrieved by this.acquire_errors().
+        one_frame() {
+            if (this.status === "succeeded" || this.status === "failed")
+                return;
+
+            // We must be in "pending".
+
+            if (this.n_polls_done === GPIO_MAX_N_RESET_POLLS)
+            {
+                const error = new Sk.builtin.RuntimeError("GPIO reset timed out");
+
+                this.status = "failed";
+                this.failureKind = "timeout";
+                this.pending_errors.push(error);
+                return;
+            }
+
+            const responses = Sk.pytch.gpio_api.acquire_responses();
+
+            // Ignore the returned "unsolicited_responses":
+            const { resolved_commands } = this.command_queue.handle_responses(responses);
+            this.resolved_commands.push(...resolved_commands);
+
+            if (this.command_queue.n_waiting_commands() === 0)
+            {
+                if (this.command_batch_queue.length === 0)
+                {
+                    const failed_commands = this.resolved_commands.filter(
+                        cmd => cmd.state.status === "failed"
+                    );
+                    const all_succeeded = failed_commands.length === 0;
+                    if (all_succeeded)
+                        this.status = "succeeded";
+                    else {
+                        const new_errors = failed_commands.map(
+                            c => new Sk.builtin.RuntimeError(
+                                `encountered error "${c.response.errorDetail}"`
+                                + " during GPIO reset"
+                            )
+                        );
+
+                        this.status = "failed";
+                        this.failureKind = "command-failed";
+                        this.pending_errors.push(...new_errors);
+                    }
+                }
+                else
+                {
+                    const batch = this.command_batch_queue.shift();
+                    batch.forEach(cmd => this.command_queue.enqueue_for_sending(cmd, false));
+                    this.command_queue.send_unsent(/* todo: frame-idx */);
+                }
+            }
+
+            ++this.n_polls_done;
+        }
+
+        acquire_errors() {
+            const errors = this.pending_errors;
+            this.pending_errors = [];
+            return errors;
         }
     }
 
@@ -1889,7 +1996,11 @@ var $builtinmodule = function (name) {
             // set has more than one pull-kind in it, that's an error.
             this.gpio_hat_block_inputs = new Map();
 
-            this.gpio_reset_state = { status: "not-started" };
+            // Will be constructed on first call to one_frame(); can't
+            // do so now because we don't yet know which GPIO pins
+            // will be used in when-gpio-sees-edge hat-blocks.
+            this.gpio_reset_process = null;
+
             this.gpio_pin_levels = new Map();
             this.gpio_command_queue = new GpioCommandQueue();
         }
@@ -2064,11 +2175,36 @@ var $builtinmodule = function (name) {
             this.gpio_hat_block_inputs.get(pin).add(pull_kind);
         }
 
+        gpio_hat_block_set_input_operations() {
+            let operations = [];
+            for (const [pin, pull_kinds] of this.gpio_hat_block_inputs.entries()) {
+                if (pull_kinds.size > 1) {
+                    const kinds_strs = Array.from(pull_kinds.values(), pk => `"${pk}"`);
+                    const kind_list_str = kinds_strs.join(", ");
+                    const message = (`different hat-blocks specify inconsistent`
+                                     + ` pull-kinds for pin ${pin}: ${kind_list_str}`);
+                    return { status: "fail", message };
+
+                    // TODO: Gather all inconsistencies, rather than
+                    // just bailing on first one.
+                }
+
+                const pullKind = pull_kinds.values().next().value;
+                operations.push({ kind: "set-input", pin, pullKind });
+            }
+
+            return { status: "ok", operations };
+        }
+
+        gpio_init_command_batches() {
+        }
+
         do_gpio_reset_step() {
             if (this.gpio_reset_state.status === "not-started") {
+                // TODO: Use operations_result.operations.
+
                 // We manually check for responses, so doesn't really matter
                 // what we claim about whether a thread is waiting:
-                const reset_command = new GpioCommand({ kind: "reset" }, false);
                 Sk.pytch.gpio_api.send_message([reset_command.as_command_obj()]);
                 this.gpio_reset_state = {
                     status: "pending",
@@ -2131,14 +2267,22 @@ var $builtinmodule = function (name) {
         }
 
         enqueue_gpio_command(operation, has_thread_waiting) {
-            const reset_status = this.gpio_reset_state.status;
+            // We should only ever get here if the GPIO reset process
+            // succeeded, because the GpioResetProcess only allows
+            // execution to proceed to main body of Project.one_frame()
+            // if GPIO reset "succeeded", and only in the main body of
+            // Project.one_frame() do threads get to run, and only from
+            // threads can we be called.
+            //
+            // TODO: Check that argument.
+
+            const reset_status = this.gpio_reset_process.status;
             switch (reset_status) {
             case "succeeded":
                 return this.gpio_command_queue.enqueue_for_sending(
                     operation, has_thread_waiting
                 );
 
-            case "not-started":
             case "pending":
                 throw new Sk.builtin.RuntimeError(
                     `cannot perform GPIO operation ${operation.kind}`
@@ -2151,6 +2295,7 @@ var $builtinmodule = function (name) {
                     `cannot perform GPIO operation ${operation.kind}`
                     + " because GPIO reset failed: "
                     + this.gpio_reset_state.errorDetail
+                    + " (this should not happen)"
                 );
             }
         }
@@ -2164,21 +2309,24 @@ var $builtinmodule = function (name) {
 
         handle_gpio_responses(responses) {
             let error_outside_thread = false;
-            responses.forEach(response => {
-                const error_needs_handling = this.gpio_command_queue.handle_response(response);
 
-                switch (response.kind) {
-                case "report-input":
-                    const pin = response.pin;
-                    const lvl = response.level;
-                    // TODO: Check lvl is 0 or 1.
-                    this.gpio_pin_levels.set(pin, lvl);
+            const { resolved_commands, unsolicited_responses }
+                  = this.gpio_command_queue.handle_responses(responses);
+
+            resolved_commands.forEach(command => {
+                const response = command.response;
+                const status = command.state.status;
+                switch (status) {
+                case "succeeded":
+                    if (response.kind === "report-input")
+                        this.record_gpio_input_level(response);
                     break;
-                case "ok":
-                    // OK, thanks!
-                    break;
-                case "error":
-                    if (error_needs_handling) {
+                case "failed":
+                    // If the command has a thread waiting on it, then
+                    // the error will be picked up and raised when that
+                    // thread wakes up.  If not, we have to raise an
+                    // error ourselves.
+                    if (! command.has_thread_waiting) {
                         const err = new Sk.builtin.RuntimeError(
                             `GPIO error: ${response.errorDetail}`
                         );
@@ -2192,24 +2340,61 @@ var $builtinmodule = function (name) {
                     }
                     break;
                 default:
-                    // Split "error" from "unknown"?
-                    throw new Error(`unk op ${JSON.stringify(response)}`);
+                    throw new Error(`unknown GpioCommand status "${status}"`);
                 }
+            });
+
+            unsolicited_responses.forEach(response => {
+                if (response.kind === "report-input")
+                    this.record_gpio_input_level(response);
             });
 
             return error_outside_thread;
         }
 
-        one_frame() {
-            this.do_gpio_reset_step();
-            if (this.gpio_reset_state.status === "pending")
-                // TODO: Fix duplication of return value type.
+        one_gpio_reset_frame() {
+            if (this.gpio_reset_process == null)
+                this.gpio_reset_process = new GpioResetProcess(this);
+
+            this.gpio_reset_process.one_frame();
+
+            // We expect no errors, but pass on any that did happen:
+            const gpio_errors = this.gpio_reset_process.acquire_errors();
+            const gpio_err_ctx = { kind: "build", phase: "gpio-setup" };
+            gpio_errors.forEach(err => Sk.pytch.on_exception(err, gpio_err_ctx));
+
+            if (gpio_errors.length !== 0) {
+                // TODO: Assert status "failed"?
+                return { exception_was_raised: true, maybe_live_question: null };
+            }
+
+            // TODO: Assert status not "failed"?  That contradicts next
+            // TODO; hmm.  Need to be clearer about when a GPIO failure
+            // stops Project.one_frame() proceeding beyond the initial
+            // call to one_gpio_reset_frame().
+
+            if (this.gpio_reset_process.status === "pending")
                 return { exception_was_raised: false, maybe_live_question: null };
 
-            const gpio_responses = Sk.pytch.gpio_api.acquire_responses();
-            const gpio_error_outside_thread = this.handle_gpio_responses(gpio_responses);
+            // TODO: Do we need to request an early return under status
+            // "failed" too?  Might be useful to know that
+            // Project.one_frame() only enters its main body if GPIO
+            // reset has succeeded.
 
-            if ( ! gpio_error_outside_thread) {
+            return null;
+        }
+
+        one_frame() {
+            const maybe_early_return_value = this.one_gpio_reset_frame();
+            if (maybe_early_return_value != null)
+                return maybe_early_return_value;
+
+            // TODO: Assert gpio_reset_process.status === "succeeded"?
+
+            const gpio_responses = Sk.pytch.gpio_api.acquire_responses();
+            let exception_was_raised = this.handle_gpio_responses(gpio_responses);
+
+            if (! exception_was_raised) {
                 this.launch_keypress_handlers();
                 this.launch_mouse_click_handlers();
 
@@ -2222,10 +2407,10 @@ var $builtinmodule = function (name) {
                 this.thread_groups = new_thread_groups;
             }
 
-            const exception_was_raised
-                  = this.thread_groups.some(tg => tg.raised_exception());
+            if (this.thread_groups.some(tg => tg.raised_exception()))
+                exception_was_raised = true;
 
-            if (gpio_error_outside_thread || exception_was_raised)
+            if (exception_was_raised)
                 this.kill_all_threads_questions_sounds();
 
             // Tests in Scratch show that as well as stopping all scripts,
@@ -2247,6 +2432,7 @@ var $builtinmodule = function (name) {
 
             this.gpio_command_queue.send_unsent();
 
+            // If more properties added here, update one_gpio_reset_frame().
             const project_state = {
                 // TODO: Add stats on GPIO operations, pin states, etc.?
                 exception_was_raised,

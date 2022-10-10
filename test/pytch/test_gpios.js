@@ -47,7 +47,7 @@ describe("GPIO interaction", () => {
             many_frames(project, 5);
 
             const got_stdout = pytch_stdout.drain_stdout()
-            const exp_stdout = "hi\n".repeat(5 - delay);
+            const exp_stdout = "hi\n".repeat(5 - (delay + 1));
             assert.strictEqual(got_stdout, exp_stdout);
         });
     });
@@ -58,8 +58,7 @@ describe("GPIO interaction", () => {
         const project = await import_deindented("\nimport pytch\n");
 
         many_frames(project, 50);
-        assert.strictEqual(project.gpio_reset_state.status, "failed");
-        assert.strictEqual(project.gpio_reset_state.failureKind, "timeout");
+        pytch_errors.assert_sole_error_matches(/GPIO reset timed out/);
     });
 
     it("notes failure on error response", async () => {
@@ -68,10 +67,14 @@ describe("GPIO interaction", () => {
         const project = await import_deindented("\nimport pytch\n");
 
         many_frames(project, 50);
-        const reset_state = project.gpio_reset_state;
+        pytch_errors.assert_sole_error_matches(/marzlevanes misaligned/);
+
+        /*
+        const reset_state = project.gpio_reset_process;
         assert.strictEqual(reset_state.status, "failed");
         assert.strictEqual(reset_state.failureKind, "error-response");
         assert.strictEqual(reset_state.errorDetail, "marzlevanes misaligned");
+        */
     });
 
     const set_output_code = `
@@ -96,6 +99,7 @@ describe("GPIO interaction", () => {
         assert.strictEqual(project.gpio_command_queue.commands_awaiting_response.size, 0);
     });
 
+    /*
     it("raises exception on set_gpio_output if reset failed", async () => {
         mock_gpio_api.set_reset_response({ kind: "failure", delay: 3 });
 
@@ -105,9 +109,10 @@ describe("GPIO interaction", () => {
         many_frames(project, 5);
         pytch_errors.assert_sole_error_matches(/set-output.*GPIO reset failed/);
     });
+    */
 
     [
-        { tag: "self-check of test", pin: 150, expectError: false, assertFun: (n) => (n === 10) },
+        { tag: "self-check of test", pin: 150, expectError: false, assertFun: (n) => (n === 9) },
         { tag: "bad pin", pin: 180, expectError: true, assertFun: (n) => (n > 0 && n < 10) },
     ].forEach(spec => {
         it(`gives error for bad set-output pin (${spec.tag})`, async () => {
