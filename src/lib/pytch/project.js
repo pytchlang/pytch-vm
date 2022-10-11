@@ -2242,57 +2242,6 @@ var $builtinmodule = function (name) {
             return { status: "ok", operations };
         }
 
-        do_gpio_reset_step() {
-            if (this.gpio_reset_state.status === "not-started") {
-                // We manually check for responses, so doesn't really matter
-                // what we claim about whether a thread is waiting:
-                const reset_command = new GpioCommand({ kind: "reset" }, false);
-                Sk.pytch.gpio_api.send_message([reset_command.as_command_obj()]);
-                this.gpio_reset_state = {
-                    status: "pending",
-                    seqnum: reset_command.seqnum,
-                    n_polls_done: 0,
-                };
-            }
-
-            if (this.gpio_reset_state.status === "pending") {
-                const gpio_responses = Sk.pytch.gpio_api.acquire_responses();
-                const matching_responses = gpio_responses.filter(
-                    r => r.seqnum === this.gpio_reset_state.seqnum
-                );
-
-                if (matching_responses.length > 0) {
-                    if (matching_responses.length > 1)
-                        console.warn("multiple responses to reset; using first");
-                    const reset_response = matching_responses[0];
-                    const responseKind = reset_response.kind;
-                    if (responseKind === "ok")
-                        this.gpio_reset_state = { status: "succeeded" };
-                    else
-                        this.gpio_reset_state = {
-                            status: "failed",
-                            failureKind: "error-response",
-                            errorDetail: reset_response.errorDetail,
-                        };
-                } else {
-                    // No matching responses.
-                    ++this.gpio_reset_state.n_polls_done;
-
-                    if (this.gpio_reset_state.n_polls_done == GPIO_MAX_N_RESET_POLLS) {
-                        const errorDetail = (
-                            `polled limit of ${this.gpio_reset_state.n_polls_done}`
-                            + " times with no response"
-                        );
-                        this.gpio_reset_state = {
-                            status: "failed",
-                            failureKind: "timeout",
-                            errorDetail,
-                        };
-                    }
-                }
-            }
-        }
-
         set_gpio_level(pin, level) {
             // This is "fire and forget"; the calling thread does not block.
             this.enqueue_gpio_command({ kind: "set-output", pin, level }, false);
