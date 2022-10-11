@@ -1953,7 +1953,10 @@ var $builtinmodule = function (name) {
 
             const responses = Sk.pytch.gpio_api.acquire_responses();
             const { resolved_commands, pin_level_updates }
-                  = this.command_queue.handle_responses(responses);
+                  = this.command_queue.handle_responses(
+                      responses,
+                      this.parent_project.frame_idx,
+                    );
 
             this.resolved_commands.push(...resolved_commands);
             this.pin_level_updates.push(...pin_level_updates);
@@ -1984,7 +1987,7 @@ var $builtinmodule = function (name) {
                 } else {
                     const batch = this.command_batch_queue.shift();
                     batch.forEach(cmd => this.command_queue.enqueue_for_sending(cmd, false));
-                    this.command_queue.send_unsent(/* todo: frame-idx */);
+                    this.command_queue.send_unsent(this.parent_project.frame_idx);
                 }
             }
 
@@ -2307,7 +2310,10 @@ var $builtinmodule = function (name) {
             let error_outside_thread = false;
 
             const { resolved_commands, pin_level_updates }
-                  = this.gpio_command_queue.handle_responses(responses);
+                  = this.gpio_command_queue.handle_responses(
+                      responses,
+                      this.frame_idx
+                    );
 
             resolved_commands.forEach(command => {
                 if (command.state.status === "failed") {
@@ -2404,7 +2410,7 @@ var $builtinmodule = function (name) {
             this.cull_watchers_of_deleted_clones();
             this.cull_unregistered_instances();
 
-            this.gpio_command_queue.send_unsent();
+            this.gpio_command_queue.send_unsent(this.frame_idx);
 
             // If more properties added here, update one_gpio_reset_frame().
             const project_state = {
