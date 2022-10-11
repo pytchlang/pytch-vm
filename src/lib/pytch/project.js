@@ -255,6 +255,13 @@ var $builtinmodule = function (name) {
             this.parent_project = parent_project;
             this.instances = [];
 
+            // Event handlers:
+            //
+            // green_flag — handler-group;
+            // keypress — map from key name to handler-group;
+            // gpio_edge — map from pin number to map from edge kind to handler-group;
+            // message — map from message string to handler-group.
+            //
             this.event_handlers = {
                 green_flag: new EventHandlerGroup(),
                 keypress: new Map(),
