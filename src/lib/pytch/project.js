@@ -1906,6 +1906,12 @@ var $builtinmodule = function (name) {
      *
      * If `GPIO_MAX_N_RESET_POLLS` calls to `one_frame()` happen without
      * the state becoming "succeeded", this counts as failure.
+     *
+     * The following properties/methods on `parent_project` are used:
+     *
+     * gpio_hat_block_set_input_operations()
+     * record_gpio_input_level()
+     * frame_idx
      */
     class GpioResetProcess {
         constructor(parent_project) {
