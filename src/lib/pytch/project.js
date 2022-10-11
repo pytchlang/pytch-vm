@@ -2423,7 +2423,13 @@ var $builtinmodule = function (name) {
             // Now have gpio_reset_process.status === "succeeded".
 
             const gpio_responses = Sk.pytch.gpio_api.acquire_responses();
+
             let exception_was_raised = this.handle_gpio_responses(gpio_responses);
+            // If a GPIO exception was raised for delivery to a Pytch
+            // thread, then exception_was_raised will be false at this
+            // point.  We check below whether a Pytch thread received
+            // any kind of exception (including a GPIO one) and update
+            // exception_was_raised accordingly.
 
             if (! exception_was_raised) {
                 this.launch_keypress_handlers();
