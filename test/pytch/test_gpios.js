@@ -47,7 +47,7 @@ describe("GPIO interaction", () => {
             many_frames(project, 5);
 
             const got_stdout = pytch_stdout.drain_stdout()
-            const exp_stdout = "hi\n".repeat(5 - delay);
+            const exp_stdout = "hi\n".repeat(5 - (delay + 1));
             assert.strictEqual(got_stdout, exp_stdout);
         });
     });
