@@ -2221,6 +2221,27 @@ var $builtinmodule = function (name) {
             this.gpio_hat_block_inputs.get(pin).add(pull_kind);
         }
 
+        gpio_hat_block_set_input_operations() {
+            let operations = [];
+            for (const [pin, pull_kinds] of this.gpio_hat_block_inputs.entries()) {
+                if (pull_kinds.size > 1) {
+                    const kinds_strs = Array.from(pull_kinds.values(), pk => `"${pk}"`);
+                    const kind_list_str = kinds_strs.join(", ");
+                    const message = (`different hat-blocks specify inconsistent`
+                                     + ` pull-kinds for pin ${pin}: ${kind_list_str}`);
+                    return { status: "fail", message };
+
+                    // TODO: Gather all inconsistencies, rather than
+                    // just bailing on first one.
+                }
+
+                const pullKind = pull_kinds.values().next().value;
+                operations.push({ kind: "set-input", pin, pullKind });
+            }
+
+            return { status: "ok", operations };
+        }
+
         do_gpio_reset_step() {
             if (this.gpio_reset_state.status === "not-started") {
                 // We manually check for responses, so doesn't really matter
