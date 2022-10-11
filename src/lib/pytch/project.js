@@ -1935,6 +1935,61 @@ var $builtinmodule = function (name) {
             this.pin_level_updates = [];
             this.errors = [];
         }
+
+        // Leaves this.status ready for inspection, and any errors
+        // ready to be retrieved by this.acquire_errors().
+        one_frame() {
+            if (this.status === "succeeded" || this.status === "failed")
+                return;
+
+            // We must be in "pending".
+
+            if (this.n_polls_done === GPIO_MAX_N_RESET_POLLS) {
+                const error = new Sk.builtin.RuntimeError("GPIO reset timed out");
+                this.status = "failed";
+                this.errors.push(error);
+                return;
+            }
+
+            const responses = Sk.pytch.gpio_api.acquire_responses();
+            const { resolved_commands, pin_level_updates }
+                  = this.command_queue.handle_responses(responses);
+
+            this.resolved_commands.push(...resolved_commands);
+            this.pin_level_updates.push(...pin_level_updates);
+
+            if (this.command_queue.n_waiting_commands() === 0) {
+                if (this.command_batch_queue.length === 0) {
+                    const failed_commands = this.resolved_commands.filter(
+                        cmd => cmd.state.status === "failed"
+                    );
+
+                    const all_succeeded = failed_commands.length === 0;
+
+                    if (all_succeeded) {
+                        this.status = "succeeded";
+                        this.pin_level_updates.forEach(
+                            update => this.parent_project.record_gpio_input_level(update)
+                        );
+                    } else {
+                        const new_errors = failed_commands.map(
+                            c => new Sk.builtin.RuntimeError(
+                                `encountered error "${c.response.errorDetail}"`
+                                + " during GPIO reset"
+                            )
+                        );
+                        this.status = "failed";
+                        this.errors.push(...new_errors);
+                    }
+                } else {
+                    const batch = this.command_batch_queue.shift();
+                    batch.forEach(cmd => this.command_queue.enqueue_for_sending(cmd, false));
+                    this.command_queue.send_unsent(/* todo: frame-idx */);
+                }
+            }
+
+            ++this.n_polls_done;
+        }
     }
 
 
