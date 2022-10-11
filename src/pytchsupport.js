@@ -417,6 +417,7 @@ Sk.pytchsupport.WebSocket_GpioApi = (WS, url) => {
         return {
             send_message,
             acquire_responses,
+            _close: () => { ws.close(); },
         };
     })();
 }
