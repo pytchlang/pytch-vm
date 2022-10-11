@@ -1999,6 +1999,7 @@ var $builtinmodule = function (name) {
                         this.pin_level_updates.forEach(
                             update => this.parent_project.record_gpio_input_level(update)
                         );
+                        this.parent_project.discard_gpio_level_changes();
                     } else {
                         const new_errors = failed_commands.map(
                             c => new Sk.builtin.RuntimeError(
