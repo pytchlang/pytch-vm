@@ -152,6 +152,45 @@ describe("GPIO interaction", () => {
         pytch_stdout.poll_for_matching(project, /pin 110 is 0/);
     });
 
+    it("can launch handlers from pin edges", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class RespondToPinEdges(pytch.Sprite):
+                @pytch.when_gpio_goes_high(110)
+                def say_hello_110(self):
+                    print("LH on 110")
+                @pytch.when_gpio_goes_low(120)
+                def say_hello_120(self):
+                    print("HL on 120")
+        `);
+
+        many_frames(project, 10);
+        assert.strictEqual(pytch_stdout.drain_stdout(), "");
+
+        // The initial level of mock-gpio pins is 0, so driving pin
+        // 110 to 1 should launch the handler.
+        mock_gpio_api.drive_pin(110, 1);
+        many_frames(project, 10);
+        assert.strictEqual(pytch_stdout.drain_stdout(), "LH on 110\n");
+
+        // Should be no response to a high-to-low edge on pin 110.
+        mock_gpio_api.drive_pin(110, 0);
+        many_frames(project, 10);
+        assert.strictEqual(pytch_stdout.drain_stdout(), "");
+
+        // Should be no response to a low-to-high edge on pin 120.
+        mock_gpio_api.drive_pin(120, 1);
+        many_frames(project, 10);
+        assert.strictEqual(pytch_stdout.drain_stdout(), "");
+
+        // But a high-to-low edge on 120 should do something.
+        mock_gpio_api.drive_pin(120, 0);
+        many_frames(project, 10);
+        assert.strictEqual(pytch_stdout.drain_stdout(), "HL on 120\n");
+    });
+
     it("can read input pin", async () => {
         const project = await import_deindented(`
 
