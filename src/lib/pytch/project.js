@@ -2420,6 +2420,7 @@ var $builtinmodule = function (name) {
 
             this.gpio_command_queue.send_unsent();
 
+            // If more properties added here, update one_gpio_reset_frame().
             const project_state = {
                 // TODO: Add stats on GPIO operations, pin states, etc.?
                 exception_was_raised,
