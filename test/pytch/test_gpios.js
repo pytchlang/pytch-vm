@@ -58,8 +58,7 @@ describe("GPIO interaction", () => {
         const project = await import_deindented("\nimport pytch\n");
 
         many_frames(project, 50);
-        assert.strictEqual(project.gpio_reset_state.status, "failed");
-        assert.strictEqual(project.gpio_reset_state.failureKind, "timeout");
+        pytch_errors.assert_sole_error_matches(/GPIO reset timed out/);
     });
 
     it("notes failure on error response", async () => {
@@ -68,10 +67,7 @@ describe("GPIO interaction", () => {
         const project = await import_deindented("\nimport pytch\n");
 
         many_frames(project, 50);
-        const reset_state = project.gpio_reset_state;
-        assert.strictEqual(reset_state.status, "failed");
-        assert.strictEqual(reset_state.failureKind, "error-response");
-        assert.strictEqual(reset_state.errorDetail, "marzlevanes misaligned");
+        pytch_errors.assert_sole_error_matches(/marzlevanes misaligned/);
     });
 
     const set_output_code = `
