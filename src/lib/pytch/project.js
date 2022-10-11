@@ -2228,6 +2228,19 @@ var $builtinmodule = function (name) {
             });
         }
 
+        launch_gpio_edge_handlers() {
+            this.gpio_level_changes.forEach(edge => {
+                const group_name = `GPIO ${edge.kind} edge on pin ${edge.pin}`;
+                let thread_group = new ThreadGroup(group_name);
+                this.actors.forEach(
+                    a => a.create_threads_for_gpio_edge(thread_group, edge)
+                );
+                this.thread_groups.push(thread_group);
+            });
+
+            this.gpio_level_changes = [];
+        }
+
         // Check for the first shown sprite instance whose bounding box contains the
         // given point (stage_x, stage_y).  If one is found, launch any click
         // handlers it has.  (If no shown true sprite is found, the sole instance of
