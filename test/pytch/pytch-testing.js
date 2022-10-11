@@ -891,6 +891,12 @@ const async_many_frames = async (project, n_frames = 40) => {
  * otherwise (for example, if `options` does not have an
  * `expect_last_frame_to_raise_exception` property), make no
  * assertion.
+ *
+ * `include_gpio_reset_frames` — normally, frames spent getting the
+ * GPIO system ready are not counted towards the `n` frames requested;
+ * by supplying a truthy value for `include_gpio_reset_frames`, such
+ * frames are counted, allowing testing of the GPIO reset process
+ * itself.
 */
 const many_frames = (project, n, options = {}) => {
     let last_frame_raised_exception = false;
