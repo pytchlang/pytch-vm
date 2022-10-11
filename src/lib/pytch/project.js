@@ -2046,7 +2046,11 @@ var $builtinmodule = function (name) {
             // set has more than one pull-kind in it, that's an error.
             this.gpio_hat_block_inputs = new Map();
 
-            this.gpio_reset_state = { status: "not-started" };
+            // Will be constructed on first call to one_frame(); can't
+            // do so now because we don't yet know which GPIO pins
+            // will be used in when-gpio-sees-edge hat-blocks.
+            this.gpio_reset_process = null;
+
             this.gpio_pin_levels = new Map();
             this.gpio_command_queue = new GpioCommandQueue();
         }
