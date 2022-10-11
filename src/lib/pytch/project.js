@@ -1931,6 +1931,7 @@ var $builtinmodule = function (name) {
      * gpio_hat_block_set_input_operations()
      * record_gpio_input_level()
      * frame_idx
+     * discard_gpio_level_changes()
      */
     class GpioResetProcess {
         constructor(parent_project) {
@@ -1996,6 +1997,14 @@ var $builtinmodule = function (name) {
 
                     if (all_succeeded) {
                         this.status = "succeeded";
+
+                        // The parent project needs to know the starting
+                        // states of all input pins, but we do not want
+                        // a slew of when-gpio-sees-edge events to get
+                        // fired if the user has mashed at the input
+                        // pushbuttons before building the project.  So
+                        // record all the input levels, then discard the
+                        // pending changes.
                         this.pin_level_updates.forEach(
                             update => this.parent_project.record_gpio_input_level(update)
                         );
