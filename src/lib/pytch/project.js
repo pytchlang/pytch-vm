@@ -1046,7 +1046,7 @@ var $builtinmodule = function (name) {
                     // error we got?  Or should "errorDetail" be self-contained?
                     // That might be better.
                     const err = new Sk.builtin.RuntimeError(
-                        `GPIO command failed: ${gpio_command.state.errorDetail}`
+                        `GPIO command failed: ${gpio_command.response.errorDetail}`
                     );
                     this.skulpt_susp.data.set_failure(err);
                 }
