@@ -2013,6 +2013,9 @@ var $builtinmodule = function (name) {
             this.actors = [];
             this.thread_groups = [];
 
+            // We increment this.frame_idx as the *first* action within
+            // one_frame(), so start one step back from the value we
+            // want to hold during processing of the first frame.
             this.frame_idx = -1;
 
             // Queue of yet-to-be-answered questions; the one at the front of
