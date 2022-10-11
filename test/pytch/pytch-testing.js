@@ -894,8 +894,19 @@ const async_many_frames = async (project, n_frames = 40) => {
 */
 const many_frames = (project, n, options = {}) => {
     let last_frame_raised_exception = false;
+
     for (let i = 0; i < n; ++i) {
-        const state = project.one_frame();
+        let state;
+        if (options.include_gpio_reset_frames)
+            state = project.one_frame();
+        else {
+            // Always do at least one frame; might have to keep going
+            // for a few more until the GPIO reset has succeeded.
+            do {
+                state = project.one_frame();
+            } while (! project.gpio_reset_process.has_succeeded());
+        }
+
         last_frame_raised_exception = state.exception_was_raised;
     }
 
