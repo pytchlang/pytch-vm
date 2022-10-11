@@ -2239,6 +2239,10 @@ var $builtinmodule = function (name) {
             this.gpio_level_changes = [];
         }
 
+        discard_gpio_level_changes() {
+            this.gpio_level_changes = [];
+        }
+
         // Check for the first shown sprite instance whose bounding box contains the
         // given point (stage_x, stage_y).  If one is found, launch any click
         // handlers it has.  (If no shown true sprite is found, the sole instance of
