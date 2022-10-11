@@ -2070,6 +2070,7 @@ var $builtinmodule = function (name) {
             this.gpio_reset_process = null;
 
             this.gpio_pin_levels = new Map();
+            this.gpio_level_changes = [];
             this.gpio_command_queue = new GpioCommandQueue();
         }
 
