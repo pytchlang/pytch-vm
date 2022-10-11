@@ -258,6 +258,7 @@ var $builtinmodule = function (name) {
             this.event_handlers = {
                 green_flag: new EventHandlerGroup(),
                 keypress: new Map(),
+                gpio_edge: new Map(),
                 message: new Map(),
             };
 
