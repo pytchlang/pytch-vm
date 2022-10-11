@@ -2309,26 +2309,27 @@ var $builtinmodule = function (name) {
         }
 
         enqueue_gpio_command(operation, has_thread_waiting) {
-            const reset_status = this.gpio_reset_state.status;
+            const reset_status = this.gpio_reset_process.status;
+
+            // We should only ever get here if the GPIO reset process
+            // succeeded, because the GpioResetProcess only allows
+            // execution to proceed to main body of Project.one_frame()
+            // if GPIO reset "succeeded", and only in the main body of
+            // Project.one_frame() do threads get to run, and only from
+            // threads can we be called.
+
             switch (reset_status) {
             case "succeeded":
                 return this.gpio_command_queue.enqueue_for_sending(
                     operation, has_thread_waiting
                 );
 
-            case "not-started":
             case "pending":
+            case "failed":
                 throw new Sk.builtin.RuntimeError(
                     `cannot perform GPIO operation ${operation.kind}`
                     + ` because GPIO reset is ${reset_status}`
                     + " (this should not happen)"
-                );
-
-            case "failed":
-                throw new Sk.builtin.RuntimeError(
-                    `cannot perform GPIO operation ${operation.kind}`
-                    + " because GPIO reset failed: "
-                    + this.gpio_reset_state.errorDetail
                 );
             }
         }
