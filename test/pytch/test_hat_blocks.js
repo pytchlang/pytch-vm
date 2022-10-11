@@ -8,6 +8,8 @@ const {
     py_getattr,
     import_deindented,
     assertBuildErrorFun,
+    one_frame,
+    pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -194,4 +196,24 @@ describe("pytch.hat_blocks module", () => {
                        spec.exp_error_re));
            })
     );
+
+    it("rejects inconsistent pull-kinds", async () => {
+        const project = await import_deindented(`
+            import pytch
+            # The default pull-kinds for the two hat blocks
+            # are different.
+            class Banana(pytch.Sprite):
+                @pytch.when_gpio_goes_high(4)
+                def foo_lh(self):
+                    pass
+                @pytch.when_gpio_goes_low(4)
+                def foo_hl(self):
+                    pass
+        `);
+
+        one_frame(project);
+        pytch_errors.assert_sole_error_matches(
+            /inconsistent pull-kinds for pin 4/
+        );
+    });
 });
