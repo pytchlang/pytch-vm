@@ -584,6 +584,11 @@ var $builtinmodule = function (name) {
             return (handlers == null) ? EventHandlerGroup.empty : handlers;
         }
 
+        create_threads_for_gpio_edge(thread_group, edge) {
+            this.gpio_edge_handler_group(edge)
+                .create_threads(thread_group, this.parent_project);
+        }
+
         delete_all_clones() {
             this.instances.splice(1);
             this.parent_project.unregister_nearly_all_for_drawing(this,
