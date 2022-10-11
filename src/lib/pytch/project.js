@@ -1734,9 +1734,14 @@ var $builtinmodule = function (name) {
             };
         }
 
-        // Return whether an error response must be handled by caller.
+        /** Mark `this` as "succeeded" or "failed" according to the
+          * given `response`, and store the `response` as a property on
+          * `this`.
+          */
         handle_response(response, frame_idx) {
             this.ensure_status("handle_response()", "awaiting-response");
+
+            this.response = response;
 
             // Properties common to both outcomes (set others below):
             this.state = {
@@ -1746,20 +1751,15 @@ var $builtinmodule = function (name) {
 
             switch (response.kind) {
             case "error":
+                // TODO: What if Pytch thread terminates before response
+                // arrives, e.g., with red-stop, or exception elsewhere, or
+                // pytch.stop_all()?
                 this.state.status = "failed";
-                this.state.errorDetail = response.errorDetail;
-                // Will this error be handled by turning into exception in
-                // user code?  If not, the caller must handle it.
-                //
-                // TODO: What if thread terminates before response arrives, e.g.,
-                // with red-stop, or exception elsewhere, or pytch.stop_all()?
-                return ( ! this.has_thread_waiting);
+                return;
             case "ok":
             case "report-input":
                 this.state.status = "succeeded";
-                // Doesn't actually matter what we return here, since this is
-                // not an error response:
-                return false;
+                return;
             default:
                 throw new Error(
                     `unexpected response-kind "${response.kind}"`
