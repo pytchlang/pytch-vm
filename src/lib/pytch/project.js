@@ -2492,6 +2492,7 @@ var $builtinmodule = function (name) {
             if ( ! exception_was_raised) {
                 this.launch_keypress_handlers();
                 this.launch_mouse_click_handlers();
+                this.launch_gpio_edge_handlers();
 
                 this.thread_groups.forEach(tg => tg.maybe_cull_threads());
                 this.thread_groups.forEach(tg => tg.maybe_wake_threads());
