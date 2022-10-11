@@ -333,9 +333,7 @@ describe("Costume handling", () => {
 
                 const message = `set-appearance-index-attribute-${spec.tag}`;
                 project.do_synthetic_broadcast(message);
-                project.one_frame();
-
-                project.rendering_instructions();
+                one_frame(project);
 
                 pytch_errors.assert_sole_error_matches_all([
                     /appearance-index must be/,
