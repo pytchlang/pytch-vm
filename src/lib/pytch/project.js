@@ -2310,6 +2310,18 @@ var $builtinmodule = function (name) {
             const pin = response.pin;
             const lvl = response.level;
             // TODO: Check lvl is 0 or 1.
+
+            const level_has_changed = (
+                this.gpio_pin_levels.has(pin)
+                && (this.gpio_pin_levels.get(pin) !== lvl)
+            );
+
+            if (level_has_changed)
+                this.gpio_level_changes.push({
+                    pin,
+                    kind: (lvl === 0) ? "high-to-low" : "low-to-high",
+                });
+
             this.gpio_pin_levels.set(pin, lvl);
         }
 
