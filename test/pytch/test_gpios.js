@@ -96,16 +96,6 @@ describe("GPIO interaction", () => {
         assert.strictEqual(project.gpio_command_queue.commands_awaiting_response.size, 0);
     });
 
-    it("raises exception on set_gpio_output if reset failed", async () => {
-        mock_gpio_api.set_reset_response({ kind: "failure", delay: 3 });
-
-        const project = await import_deindented(set_output_code);
-
-        project.do_synthetic_broadcast("set");
-        many_frames(project, 5);
-        pytch_errors.assert_sole_error_matches(/set-output.*GPIO reset failed/);
-    });
-
     [
         { tag: "self-check of test", pin: 150, expectError: false, assertFun: (n) => (n === 10) },
         { tag: "bad pin", pin: 180, expectError: true, assertFun: (n) => (n > 0 && n < 10) },
