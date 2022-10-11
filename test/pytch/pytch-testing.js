@@ -878,6 +878,20 @@ const async_many_frames = async (project, n_frames = 40) => {
     }
 }
 
+/** Call `project.one_frame()` multiple (`n`) times, checking after
+ * the last call that `project.rendering_instructions()` does not
+ * throw an error.
+ *
+ * The `options` argument can include the following properties:
+ *
+ * `expect_last_frame_to_raise_exception` — if true, assert that the
+ * last call to `project.one_frame()` raised a Pytch-level exception;
+ * if explicitly `false`, assert that the last call to
+ * `project.one_frame()` did not raise a Pytch-level exception;
+ * otherwise (for example, if `options` does not have an
+ * `expect_last_frame_to_raise_exception` property), make no
+ * assertion.
+*/
 const many_frames = (project, n, options = {}) => {
     let last_frame_raised_exception = false;
     for (let i = 0; i < n; ++i) {
