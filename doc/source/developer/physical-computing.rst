@@ -190,6 +190,49 @@ property ``gpio_reset_state``.  At start of each frame, call
 successful.  Polls for matching response 30 times before concluding
 failure.
 
+Also need to send commands to set when-gpio-sees-edge inputs as
+appropriately-pulled inputs.  Can we use the existing
+Project.gpio_command_queue for this?  Think so.  All commands in it
+will have has_thread_waiting = false for consistency.  We want to send
+the reset first, and only when done do we want to send the set-input
+commands.  So we need internally a list of lists of operations, which
+will be
+
+   [
+       // First do reset:
+       [{ kind: "reset" }],
+
+       // And then set all required pins to pulled inputs:
+       [{ kind: "set-input", pin, pullKind },
+        { kind: "set-input", pin, pullKind },
+        ...,
+        { kind: "set-input", pin, pullKind }],
+   ]
+
+Track this as "command-batch-queue" or similar.  Each time into
+gpio-init-step, do:
+
+If "not-started", construct above list and submit first batch (i.e.,
+the one consisting just of the "reset" operation), and move to
+"pending"; end.  If we can't construct the list (because of
+inconsistency in pull-kinds requested for the same pin), throw an
+error (which might mean sending one to Sk.pytch.on_exception).  Or do
+we need an "could-not-start" or "error" state, separate from "failed"?
+
+If "pending", invariant should be that gpio_command_queue is
+non-empty.  Fetch and process responses.  (What about errors here?
+Throw them?  Pass to Sk.pytch.on_exception?  Swallow but move to state
+"failed"?  Maybe handle_gpio_responses() needs an additional "onError"
+arg.)  If command-queue is now empty: If command-batch-queue is empty,
+move to "done", otherwise enqueue and send all operations within the
+next element of command-batch-queue (removing that elt), and stay in
+"pending".
+
+If "done" or "failed", do nothing.  (This matches current behaviour.)
+
+After a call to gpio-init-step, we know state cannot be "not-started".
+
+
 Integration with ``Project.one_frame()``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
