@@ -457,7 +457,15 @@ var $builtinmodule = function (name) {
                 break;
 
             case "gpio-edge":
-                // TODO
+                let gpio_edge_handlers = this.event_handlers.gpio_edge;
+                const [pin, edge_kind, pull_kind] = event_data;
+                if (! gpio_edge_handlers.has(pin))
+                    gpio_edge_handlers.set(pin, new Map());
+                let pin_edge_handlers = gpio_edge_handlers.get(pin)
+                if (! pin_edge_handlers.has(edge_kind))
+                    pin_edge_handlers.set(edge_kind, new EventHandlerGroup());
+                pin_edge_handlers.get(edge_kind).push(handler);
+                this.parent_project.register_gpio_hat_block_input(pin, pull_kind);
                 break;
 
             case "clone":
