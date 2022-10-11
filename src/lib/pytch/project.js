@@ -2416,6 +2416,8 @@ var $builtinmodule = function (name) {
         }
 
         one_frame() {
+            ++this.frame_idx;
+
             const maybe_early_return_value = this.one_gpio_reset_frame();
             if (maybe_early_return_value != null)
                 return maybe_early_return_value;
