@@ -18,6 +18,8 @@ configure_mocha();
 //
 // GPIOs
 
+const include_gpio_reset_frames_opts = { include_gpio_reset_frames: true };
+
 describe("GPIO interaction", () => {
     // No explicit test for "zero-delay success leaves all behaviour
     // alone" because all existing tests pass, which they wouldn't
@@ -44,7 +46,7 @@ describe("GPIO interaction", () => {
             `);
 
             project.do_synthetic_broadcast("talk");
-            many_frames(project, 5);
+            many_frames(project, 5, include_gpio_reset_frames_opts);
 
             const got_stdout = pytch_stdout.drain_stdout()
             const exp_stdout = "hi\n".repeat(5 - (delay + 1));
@@ -57,7 +59,7 @@ describe("GPIO interaction", () => {
 
         const project = await import_deindented("\nimport pytch\n");
 
-        many_frames(project, 50);
+        many_frames(project, 50, include_gpio_reset_frames_opts);
         pytch_errors.assert_sole_error_matches(/GPIO reset timed out/);
     });
 
@@ -66,7 +68,7 @@ describe("GPIO interaction", () => {
 
         const project = await import_deindented("\nimport pytch\n");
 
-        many_frames(project, 50);
+        many_frames(project, 50, include_gpio_reset_frames_opts);
         pytch_errors.assert_sole_error_matches(/marzlevanes misaligned/);
     });
 

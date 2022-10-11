@@ -211,7 +211,7 @@ describe("pytch.hat_blocks module", () => {
                     pass
         `);
 
-        one_frame(project);
+        one_frame(project, { include_gpio_reset_frames: true });
         pytch_errors.assert_sole_error_matches(
             /inconsistent pull-kinds for pin 4/
         );
