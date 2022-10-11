@@ -2321,23 +2321,19 @@ var $builtinmodule = function (name) {
 
         handle_gpio_responses(responses) {
             let error_outside_thread = false;
-            responses.forEach(response => {
-                const error_needs_handling = this.gpio_command_queue.handle_response(response);
 
-                switch (response.kind) {
-                case "report-input":
-                    const pin = response.pin;
-                    const lvl = response.level;
-                    // TODO: Check lvl is 0 or 1.
-                    this.gpio_pin_levels.set(pin, lvl);
-                    break;
-                case "ok":
-                    // OK, thanks!
-                    break;
-                case "error":
-                    if (error_needs_handling) {
+            const { resolved_commands, pin_level_updates }
+                  = this.gpio_command_queue.handle_responses(responses);
+
+            resolved_commands.forEach(command => {
+                if (command.state.status === "failed") {
+                    // If the command has a thread waiting on it, then
+                    // the error will be picked up and raised when that
+                    // thread wakes up.  If not, we have to raise an
+                    // error ourselves.
+                    if (! command.has_thread_waiting) {
                         const err = new Sk.builtin.RuntimeError(
-                            `GPIO error: ${response.errorDetail}`
+                            `GPIO error: ${command.response.errorDetail}`
                         );
                         // TODO: Any further context possible? Capture stack
                         // trace when original command was sent, and include
@@ -2347,12 +2343,12 @@ var $builtinmodule = function (name) {
                         Sk.pytch.on_exception(err, ctx);
                         error_outside_thread = true;
                     }
-                    break;
-                default:
-                    // Split "error" from "unknown"?
-                    throw new Error(`unk op ${JSON.stringify(response)}`);
                 }
             });
+
+            pin_level_updates.forEach(
+                update => this.record_gpio_input_level(update)
+            );
 
             return error_outside_thread;
         }
