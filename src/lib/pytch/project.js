@@ -2353,6 +2353,25 @@ var $builtinmodule = function (name) {
             return error_outside_thread;
         }
 
+        one_gpio_reset_frame() {
+            if (this.gpio_reset_process == null)
+                this.gpio_reset_process = new GpioResetProcess(this);
+
+            this.gpio_reset_process.one_frame();
+
+            // We expect no errors, but pass on any that did happen:
+            const gpio_errors = this.gpio_reset_process.acquire_errors();
+            const gpio_err_ctx = { kind: "build", phase: "gpio-setup" };
+            gpio_errors.forEach(err => Sk.pytch.on_exception(err, gpio_err_ctx));
+
+            if (this.gpio_reset_process.status !== "succeeded") {
+                const exception_was_raised = gpio_errors.length !== 0;
+                return { exception_was_raised, maybe_live_question: null };
+            }
+
+            return null;
+        }
+
         one_frame() {
             this.do_gpio_reset_step();
             if (this.gpio_reset_state.status === "pending")
