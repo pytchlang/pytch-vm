@@ -2046,6 +2046,10 @@ var $builtinmodule = function (name) {
             this.errors = [];
             return errors;
         }
+
+        has_succeeded() {
+            return this.status === "succeeded";
+        }
     }
 
 
