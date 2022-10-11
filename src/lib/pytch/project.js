@@ -1918,6 +1918,9 @@ var $builtinmodule = function (name) {
         }
     }
 
+    class GpioResetProcess {
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////
     //
