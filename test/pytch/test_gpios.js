@@ -229,6 +229,13 @@ describe("GPIO WebSocket", () => {
     let saved_gpio_api = null;
     before(() => { saved_gpio_api = Sk.pytch.gpio_api; });
     after(() => {
+        // Sometimes, the test runner would go into a loop at the end
+        // of this test.  This was fixed by explicitly closing the
+        // websocket.  Later experiments could not reproduce the
+        // looping behaviour, but closing the socket does no harm so
+        // leave this code in:
+        Sk.pytch.gpio_api._close();
+
         Sk.pytch.gpio_api = saved_gpio_api;
     });
 
