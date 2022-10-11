@@ -1908,6 +1908,33 @@ var $builtinmodule = function (name) {
      * the state becoming "succeeded", this counts as failure.
      */
     class GpioResetProcess {
+        constructor(parent_project) {
+            this.parent_project = parent_project;
+
+            const set_input_batch_result
+                  = parent_project.gpio_hat_block_set_input_operations();
+
+            if (set_input_batch_result.status === "fail") {
+                const error_msg = set_input_batch_result.message;
+                this.errors = [new Sk.builtin.RuntimeError(error_msg)];
+                this.status = "failed";
+                return;
+            }
+
+            this.command_batch_queue = [[{ kind: "reset" }]];
+
+            // Include the set-input batch, if it's non-empty:
+            const set_input_operations = set_input_batch_result.operations;
+            if (set_input_operations.length !== 0)
+                this.command_batch_queue.push(set_input_operations);
+
+            this.status = "pending";
+            this.n_polls_done = 0;
+            this.command_queue = new GpioCommandQueue();
+            this.resolved_commands = [];
+            this.pin_level_updates = [];
+            this.errors = [];
+        }
     }
 
 
