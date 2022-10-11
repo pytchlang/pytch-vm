@@ -1872,6 +1872,41 @@ var $builtinmodule = function (name) {
         }
     }
 
+    /** Manage the process of getting the GPIO system to a state ready
+     * to run the project.  This has two parts:
+     *
+     * Send and receive a successful response to a "reset" command.
+     *
+     * Optionally, send a batch of "set-input" commands corresponding to
+     * pins mentioned in a _when_gpio_sees_edge() event handler
+     * hat-block.  These are only known once the project is ready to
+     * start.  This batch of commands is sent iff there is at least one
+     * such pin.
+     *
+     * The reset process is always in one of the following states:
+     *
+     * "pending" — at least one command has not yet received a response;
+     *
+     * "failed" — at least one command resulted in an error (this state
+     * takes precedence over "pending");
+     *
+     * "succeeded" — all commands in all batches have received a
+     * response indicating successful execution.
+     *
+     * Once the GpioResetProcess is in state "failed" or "succeeded",
+     * calls to `one_frame()` do nothing.
+     *
+     * Errors are collected by the GpioResetProcess instance, and can be
+     * taken from it via the acquire_errors() method.  There will be at
+     * least one error after the call to `one_frame()` which first
+     * enters state "failed".
+     *
+     * Pin-level updates from the GPIO API are collected and then
+     * applied to the `parent_project` on transitioning to "succeeded".
+     *
+     * If `GPIO_MAX_N_RESET_POLLS` calls to `one_frame()` happen without
+     * the state becoming "succeeded", this counts as failure.
+     */
     class GpioResetProcess {
     }
 
