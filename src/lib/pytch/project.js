@@ -2013,6 +2013,8 @@ var $builtinmodule = function (name) {
             this.actors = [];
             this.thread_groups = [];
 
+            this.frame_idx = -1;
+
             // Queue of yet-to-be-answered questions; the one at the front of
             // the queue should either: be being asked by the VM's client; or have
             // received an answer from the VM's client.
