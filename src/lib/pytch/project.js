@@ -2373,10 +2373,11 @@ var $builtinmodule = function (name) {
         }
 
         one_frame() {
-            this.do_gpio_reset_step();
-            if (this.gpio_reset_state.status === "pending")
-                // TODO: Fix duplication of return value type.
-                return { exception_was_raised: false, maybe_live_question: null };
+            const maybe_early_return_value = this.one_gpio_reset_frame();
+            if (maybe_early_return_value != null)
+                return maybe_early_return_value;
+
+            // Now have gpio_reset_process.status === "succeeded".
 
             const gpio_responses = Sk.pytch.gpio_api.acquire_responses();
             const gpio_error_outside_thread = this.handle_gpio_responses(gpio_responses);
