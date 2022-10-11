@@ -2040,6 +2040,12 @@ var $builtinmodule = function (name) {
 
             ++this.n_polls_done;
         }
+
+        acquire_errors() {
+            const errors = this.errors;
+            this.errors = [];
+            return errors;
+        }
     }
 
 
