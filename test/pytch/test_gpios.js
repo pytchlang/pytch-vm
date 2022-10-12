@@ -191,6 +191,24 @@ describe("GPIO interaction", () => {
         assert.strictEqual(pytch_stdout.drain_stdout(), "HL on 120\n");
     });
 
+    it("handles bad pin in when-gpio-sees-edge", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+
+            class RespondToPinEdges(pytch.Sprite):
+                # mock-gpio cannot set pin 150 to input.
+                @pytch.when_gpio_goes_high(150)
+                def say_hello_150(self):
+                    print("LH on 150")
+        `);
+
+        many_frames(project, 10, include_gpio_reset_frames_opts);
+        pytch_errors.assert_sole_error_matches(
+            /pin 150 cannot be.*during GPIO reset/
+        );
+    });
+
     it("can read input pin", async () => {
         const project = await import_deindented(`
 
