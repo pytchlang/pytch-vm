@@ -2393,7 +2393,10 @@ var $builtinmodule = function (name) {
                         // TODO: Any further context possible? Capture stack
                         // trace when original command was sent, and include
                         // that in context?
-                        const ctx = { kind: "delayed_gpio" };
+                        const ctx = {
+                            kind: "delayed_gpio",
+                            failedOperation: command.operation,
+                        };
 
                         Sk.pytch.on_exception(err, ctx);
                         error_outside_thread = true;
