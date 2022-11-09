@@ -48,7 +48,7 @@ Overview
    each running thread executes until it either finishes or cedes
    control back to the Pytch runtime.
 
--  When a thread cede control, its continuation is captured as Skulpt
+-  When a thread cedes control, its continuation is captured as Skulpt
    suspension.
 
 -  To achieve some implicit cooperation, ‘cede control’ calls are
