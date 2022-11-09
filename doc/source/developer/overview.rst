@@ -52,7 +52,7 @@ Overview
    suspension.
 
 -  To achieve some implicit cooperation, ‘cede control’ calls are
-   inserted by the Skulpt/Pytch compiler in for and while loops. Most
+   inserted by the Skulpt/Pytch compiler in ‘for’ and ‘while’ loops. Most
    system calls also implicitly cede control.
 
 -  Cross-actor communication is done by broadcasting and receiving
