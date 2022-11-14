@@ -48,11 +48,11 @@ Overview
    each running thread executes until it either finishes or cedes
    control back to the Pytch runtime.
 
--  When a thread cede control, its continuation is captured as Skulpt
+-  When a thread cedes control, its continuation is captured as Skulpt
    suspension.
 
 -  To achieve some implicit cooperation, ‘cede control’ calls are
-   inserted by the Skulpt/Pytch compiler in for and while loops. Most
+   inserted by the Skulpt/Pytch compiler in ‘for’ and ‘while’ loops. Most
    system calls also implicitly cede control.
 
 -  Cross-actor communication is done by broadcasting and receiving
