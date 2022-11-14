@@ -2725,7 +2725,7 @@ function parsestrplus (c, n) {
     }
 }
 
-const FLOAT_RE = new RegExp(Sk._tokenize.Floatnumber);
+const FLOAT_RE = new RegExp("^" + Sk._tokenize.Floatnumber + "$");
 const underscore = /_/g;
 
 function parsenumber(c, s, lineno) {
