@@ -198,6 +198,8 @@ the reset first, and only when done do we want to send the set-input
 commands.  So we need internally a list of lists of operations, which
 will be
 
+.. code-block:: javascript
+
    [
        // First do reset:
        [{ kind: "reset" }],
