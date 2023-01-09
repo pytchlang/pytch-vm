@@ -1101,7 +1101,7 @@ Compiler.prototype.cannassign = function (s) {
             if (s.simple && (this.u.ste.blockType === Sk.SYMTAB_CONSTS.ClassBlock || this.u.ste.blockType == Sk.SYMTAB_CONSTS.ModuleBlock)) {
                 this.u.hasAnnotations = true;
                 const val = this.vexpr(s.annotation);
-                let mangled = fixReserved(mangleName(this.u.private_, target.id).v);
+                let mangled = mangleName(this.u.private_, target.id).v;
                 const key = this.makeConstant("new Sk.builtin.str('" + mangled + "')");
                 this.chandlesubscr(Sk.astnodes.Store, "$loc.__annotations__", key, val);
             }
@@ -1392,19 +1392,6 @@ Compiler.prototype.cwhile = function (s) {
         this._jump(top);
         this.setBlock(top);
 
-        next = this.newBlock("after while");
-        orelse = s.orelse.length > 0 ? this.newBlock("while orelse") : null;
-        body = this.newBlock("while body");
-
-        this.annotateSource(s);
-        this._jumpfalse(this.vexpr(s.test), orelse ? orelse : next);
-        this._jump(body);
-
-        this.pushBreakBlock(next);
-        this.pushContinueBlock(top);
-
-        this.setBlock(body);
-
         if ((Sk.debugging || Sk.killableWhile) && this.u.canSuspend) {
             var suspType = "Sk.delay";
             var debugBlock = this.newBlock("debug breakpoint for line "+s.lineno);
@@ -1418,6 +1405,19 @@ Compiler.prototype.cwhile = function (s) {
             this.setBlock(debugBlock);
             this.u.doesSuspend = true;
         }
+
+        next = this.newBlock("after while");
+        orelse = s.orelse.length > 0 ? this.newBlock("while orelse") : null;
+        body = this.newBlock("while body");
+
+        this.annotateSource(s);
+        this._jumpfalse(this.vexpr(s.test), orelse ? orelse : next);
+        this._jump(body);
+
+        this.pushBreakBlock(next);
+        this.pushContinueBlock(top);
+
+        this.setBlock(body);
 
         this.vseqstmt(s.body);
 
@@ -2073,10 +2073,12 @@ Compiler.prototype.buildcodeobj = function (n, coname, decorator_list, args, cal
         } else {
             this.u.varDeclsCode += "\nvar $args = this.$resolveArgs($posargs,$kwargs)\n";
         }
-        const sup_i = kwarg ? 1 : 0;
         for (let i = 0; i < funcArgs.length; i++) {
-            const sup = i === sup_i ? "$sup = " : "";
-            this.u.varDeclsCode += "," + sup + funcArgs[i] + "=$args[" + i + "]";
+            this.u.varDeclsCode += "," + funcArgs[i] + "=$args[" + i + "]";
+        }
+        const instanceForSuper = funcArgs[kwarg ? 1 : 0];
+        if (instanceForSuper) {
+            this.u.varDeclsCode += `,$sup=${instanceForSuper}`;
         }
         this.u.varDeclsCode += ";\n";
     }
