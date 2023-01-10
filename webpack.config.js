@@ -93,6 +93,10 @@ module.exports = (env, argv) => {
             ...extraPlugins,
         ],
         optimization: opt,
+        performance: {
+            maxAssetSize: 1400000,
+            maxEntrypointSize: 1400000,
+        },
         resolve: {
             alias: {
                 'assert': assertfile,
