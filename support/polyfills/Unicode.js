@@ -183,4 +183,4 @@ Unicode.B = "(?:[" + Unicode.w + "][" + Unicode.w + "]" + "|[^" + Unicode.w + "]
 
 Unicode.d = Unicode.N;
 
-export default Unicode;
+module.exports = { Unicode: Unicode };

@@ -1,4 +1,4 @@
-import Unicode from "../support/polyfills/Unicode";
+const { Unicode } = require("../support/polyfills/Unicode");
 
 var tokens = Sk.token.tokens;
 
