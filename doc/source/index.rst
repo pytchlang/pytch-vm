@@ -3,7 +3,7 @@
 
    At root of repo:
 
-      virtualenv -p python3 venv
+      python3 -m venv venv
       source venv/bin/activate
       pip install sphinx sphinx-rtd-theme sphinx-autobuild
 
