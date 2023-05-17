@@ -9,6 +9,7 @@ extension to Skulpt.
    :maxdepth: 1
 
    overview
+   integration-with-client
    based-on-skulpt
    project
    actor
