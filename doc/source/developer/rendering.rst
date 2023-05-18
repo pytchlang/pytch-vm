@@ -21,11 +21,28 @@ objects obscure further-away ones.  This is managed by the
 Rendering instructions
 ~~~~~~~~~~~~~~~~~~~~~~
 
-TODO: Update for speech bubbles and also variable watchers in due
-course.
+At the end of each ``one_frame()`` call, the client will typically ask
+the project how to render the now-current state of the project.  This
+is done via the ``rendering_instructions()`` method on ``Project``.
+The return value is a list of instructions, of various kinds:
 
-Currently only ‘image’. Soon have text to allow rough equivalent to
-‘say’ block.
+RenderImage
+  The given image should be painted at the given location with the
+  given scale and rotation (about the given centre).
+
+RenderSpeechBubble
+  A speech bubble should be drawn with the given content, and with its
+  tip at the given location.  A “speaker ID” is provided as an
+  efficiency optimisation, so that the client can track whether a
+  given bubble is the same as in the previous frame, should replace an
+  existing bubble, or is a new bubble.
+
+RenderAttributeWatcher
+  An “attribute watcher” (much like Scratch’s “variable watcher”)
+  should be drawn at the given location with the given label and
+  content.  Similarly to the speaker-ID of a *RenderSpeechBubble*
+  instruction, a “key” is provided to identify updates to “the same”
+  watcher.
 
 Coordinate frames
 ~~~~~~~~~~~~~~~~~
