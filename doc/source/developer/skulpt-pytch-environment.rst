@@ -67,6 +67,8 @@ Hat-block for ‘when pressed’; keypress handlers stored in ``PytchActor``
 instance (next to green-flag and message, since these are all-instance
 events); there is a predicate syscall ``pytch.is_key_pressed()``.
 
+.. _Skulpt/Pytch environment / mouse:
+
 Mouse
 ~~~~~
 
