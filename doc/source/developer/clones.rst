@@ -49,6 +49,6 @@ empty the list of thread groups, effectively killing all threads. There
 is no need for a ‘stop’ method on the ``Thread`` class, because a Thread
 will never be ``one_frame()``\ ’d again given that its thread-group is
 not part of the project’s ‘live thread groups’ list. And we stop all
-sounds (see own section).
+sounds (see :doc:`own section <sounds>`).
 
 The green-flag event does an implicit red-stop first.

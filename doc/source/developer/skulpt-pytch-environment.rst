@@ -39,7 +39,7 @@ Loading, playing, stopping, monitoring sounds
 
 -  ``sound_manager``
 
-See separate section.
+See :doc:`separate section <./sounds>`.
 
 Keyboard
 ~~~~~~~~

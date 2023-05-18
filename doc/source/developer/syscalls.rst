@@ -79,7 +79,7 @@ ask-and-wait-for-answer — ``ask_and_wait()``
 show-object-attribute — ``show_variable()``
   Add an attribute of an object to the list of “attribute watchers”;
   these report the the value of the given attribute back to the client
-  each frame, as a rendering instruction.
+  each frame, as a :doc:`rendering instruction <./rendering>`.
 
 hide-object-attribute — ``hide_variable()``
   Remove the attribute watcher corresponding to this object and
