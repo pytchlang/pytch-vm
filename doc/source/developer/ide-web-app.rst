@@ -85,6 +85,6 @@ Global state lifecycle
 
 (DOC TODO: Better name for this section.)
 
-When class registered, one ‘master’ instance created. Instance-0. Any
+When class registered, one ‘original’ instance created. Instance-0. Any
 state in those objects persists across external events such as
 green-flag, red-stop.

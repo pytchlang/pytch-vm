@@ -4,7 +4,7 @@ Actor: Sprite and Stage
 Much behaviour is shared between ``Sprite`` and ``Stage``, so there is a
 base class on the Python side. This class is the ``Actor`` class.
 
-As in Scratch, there is one ‘master’ instance of each ``Actor`` class.
+As in Scratch, there is one ‘original’ instance of each ``Actor`` class.
 There can be other instances of Sprite-derived classes. These are
 ‘clones’. The ``Stage`` cannot have clones.
 
@@ -15,7 +15,7 @@ Python program in Skulpt. The last few lines of a Pytch program have to
 be some boilerplate which creates a ``Project``, registers with it all
 user-defined ``Sprite``-derived or ``Stage``-derived classes, and then
 makes that project the ‘live’ one. As part of registering a class with a
-``Project``, the master instance of that class is created and itself
+``Project``, the original instance of that class is created and itself
 registered with the ``Project``.
 
 (In principal, an instance could exist at the Python level but be
