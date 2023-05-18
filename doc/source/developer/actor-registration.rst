@@ -15,7 +15,7 @@ referring back to the JavaScript ``PytchActor``.
 
 On construction of the ``PytchActor``, we create one Python instance,
 and a corresponding ``PytchActorInstance`` object on the JavaScript
-side. This Python object is the ‘master’ instance, also sometimes
+side. This Python object is the ‘original’ instance, also sometimes
 referred to as ‘instance-0’.
 
 Loading costumes / backdrops and sounds

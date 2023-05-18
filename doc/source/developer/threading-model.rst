@@ -137,17 +137,30 @@ result:
 Thread state
 ~~~~~~~~~~~~
 
-In various states. Running means ready to be ``resume()``\ ’d at next
-one-frame. Zombie: no further work will be done but hasn’t been cleaned
-up yet (can become zombie either because Python code has run to
-completion, i.e., not invoked syscall; or because object it is running
-on has become de-registered).
+A thread is in one of various states:
 
-Sleeping / waiting threads
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Running
+  This thread is ready to be ``resume()``\ ’d at next one-frame.
 
-Rest (DOC TODO: IS THIS TRUE) are various flavours of ‘execution paused
-until some condition is met’. The condition stored in the ``Thread``.
+Zombie
+  No further work will be done, but this thread hasn’t been cleaned up
+  yet (can become zombie either because Python code has run to
+  completion, i.e., not invoked syscall; or because object it is
+  running on has become de-registered).
+
+Sleeping
+  The thread is waiting for some condition to become true.  See
+  :ref:`Types of sleep` below.
+
+Raised-Exception
+  The user’s code (or possibly some internal code) raised a Python
+  exception or threw a JavaScript error during its most recent
+  scheduled run.  The scheduler (top-level ``one_frame()`` function)
+  halts the program if this happens.
+
+Requested-Stop
+  The thread invoked a syscall requesting the program stop.  The
+  scheduler stops the program if this happens.
 
 Waking paused threads
 ^^^^^^^^^^^^^^^^^^^^^
@@ -169,11 +182,18 @@ mean that there are no threads any more; in that case the thread-group
 does not include itself in the list of for-next-frame thread groups it
 returns.
 
+.. _Types of sleep:
+
 Types of sleep
 ^^^^^^^^^^^^^^
 
--  Passage of time
+The following kinds of sleeping can happen, caused by the given
+user-level calls.
 
--  Thread group completion
+- Passage of time: ``wait_seconds()``
 
--  Sound completion
+- Thread group completion: ``broadcast_and_wait()``
+
+- Sound completion: ``play_sound_until_done()``
+
+- Answer to question: ``ask_and_wait()``

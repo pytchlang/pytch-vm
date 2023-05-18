@@ -39,7 +39,7 @@ Loading, playing, stopping, monitoring sounds
 
 -  ``sound_manager``
 
-See separate section.
+See :doc:`separate section <./sounds>`.
 
 Keyboard
 ~~~~~~~~
@@ -67,6 +67,8 @@ Hat-block for ‘when pressed’; keypress handlers stored in ``PytchActor``
 instance (next to green-flag and message, since these are all-instance
 events); there is a predicate syscall ``pytch.is_key_pressed()``.
 
+.. _Skulpt/Pytch environment / mouse:
+
 Mouse
 ~~~~~
 
@@ -84,3 +86,14 @@ Current live project
 So the web-app knows which ``Project`` to interact with. Where to send
 green-flag events, which project to ask for list of rendering
 instructions.
+
+Currently executing thread
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- ``executing_thread``
+
+Some functions only make sense within the context of a Pytch thread.
+Other functions need to know which thread they're running in, to look
+up thread-local state such as whether loops should yield every
+iteration.  Since only one thread runs at a time, we can store the
+currently executing thread in ``Sk.pytch.executing_thread``.

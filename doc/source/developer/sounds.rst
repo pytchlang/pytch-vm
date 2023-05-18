@@ -49,7 +49,7 @@ gain.  The object provides methods:
 -  ``one_frame()`` — do whatever housekeeping is required internally for
    the sound-manager
 
-The environment (test or browser) is responsible for calling
+The client (test or browser) is responsible for calling
 ``one_frame()``; we don’t do this in the ``Project``, to separate these
 concerns, and in case we ever have multiple concurrent projects.
 
@@ -136,4 +136,4 @@ Testing / mock sound-manager
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Knows how many frames to wait before declaring a performance ‘done’. The
-one_frame() method allows the sound-manager to count elapsed frames.
+``one_frame()`` method allows the sound-manager to count elapsed frames.

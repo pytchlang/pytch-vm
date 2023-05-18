@@ -38,24 +38,52 @@ Many syscalls (DOC TODO: ‘all’?) replace the thread’s stored suspension
 with the newly-created one, so that thread’s execution resumes from the
 point it invoked the syscall.
 
-Yield-until-next-frame
-~~~~~~~~~~~~~~~~~~~~~~
+Some syscalls can result from more than one Python-level function
+call.  For example, the same syscall handles both ``broadcast()`` and
+``broadcast_and_wait()`` functions, distinguishing between them via an
+argument.
 
-Does nothing beyond storing the new suspension / continuation.
+In the below list, the syscall label (“kind”) string is given,
+followed by the user-level function/s which invoke it.
 
-Broadcast / broadcast-and-wait
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+next-frame — ``yield_until_next_frame()``
+  Pauses execution for this frame, but resumes immediately next time
+  ``one_frame()`` runs.
 
-Launches new thread group; ‘and-wait’ variant also. Thread invoking this
-knows what project it’s part of (== parent project) and that project can
-find handlers and launch their thread-groups.
+broadcast — ``broadcast()``, ``broadcast_and_wait()``
+  Launches new thread group for any methods handling the given
+  message.  The ‘and-wait’ variant also marks the calling thread as
+  awaiting-thread-group-completion.
 
-Wait-seconds
-~~~~~~~~~~~~
+play-sound — ``start_sound()``, ``play_sound_until_done()``
+  Requests that the given sound be started.  For the
+  ``play_sound_until_done()`` variant, puts the thread to sleep
+  awaiting-sound-completion.
 
-Just counts down frames.
+wait-seconds — ``wait_seconds()``
+  Pauses execution for the given amount of time, converted into frames
+  at 60fps.
 
-Assumes 60 frames per second for all conversions.
+register-instance — ``create_clone_of()``
+  Adds the given Python instance to the Project, such that methods can
+  be launched on it via Pytch events.
 
-TODO: Rest of syscalls
-~~~~~~~~~~~~~~~~~~~~~~
+unregister-running-instance — ``delete_this_clone()``
+  Removes the given Python instance from the Project.  It still exists
+  as a Python object, but will no longer respond to Pytch events.
+
+ask-and-wait-for-answer — ``ask_and_wait()``
+  Requests that the given question be asked, and puts the thread to
+  sleep awaiting-answer-to-question.
+
+show-object-attribute — ``show_variable()``
+  Add an attribute of an object to the list of “attribute watchers”;
+  these report the the value of the given attribute back to the client
+  each frame, as a :doc:`rendering instruction <./rendering>`.
+
+hide-object-attribute — ``hide_variable()``
+  Remove the attribute watcher corresponding to this object and
+  attribute.
+
+stop-all-threads — ``stop_all()``
+  Programmatically press the “red stop” button.
