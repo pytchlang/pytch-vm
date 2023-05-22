@@ -136,6 +136,35 @@ describe("Speech bubbles", () => {
             many_frames(project, 5);
             assert_speech.is("after-show", true, [exp_speech_instrn]);
         });
+
+        it("handles empty string for say_for_seconds", async () => {
+            const project = await import_project();
+            const assert_speech = make_SpeechAssertions(project);
+
+            // Launch chat and check first bubble.
+            project.do_synthetic_broadcast("silence-for-seconds");
+            one_frame(project);
+            assert_speech.is("after-silence", true, []);
+
+        });
+
+        it("handles chat with silence say_for_seconds", async () => {
+            const project = await import_project();
+            const assert_speech = make_SpeechAssertions(project);
+
+            // Launch chat and check first bubble.
+            project.do_synthetic_broadcast("chat");
+            many_frames(project, 5);
+            assert_speech.is("after-talk", true, [["Hello!", 0, 15]]);
+
+            //5+116 = one frame after say for seconds "" empty runned
+            many_frames(project, 116);
+            assert_speech.is("after-silence", true, []);
+
+            many_frames(project, 60);
+            assert_speech.is("after-bye", true, [["OK bye", 0, 15]]);
+
+        });
     });
 
     [
