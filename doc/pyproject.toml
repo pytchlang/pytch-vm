@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "pytch-vm-doc"
+version = "0.1.0"
+description = ""
+authors = ["Ben North <ben.north@tcd.ie>"]
+readme = "README-developing-docs"
+packages = []
+
+[tool.poetry.dependencies]
+python = "^3.10"
+sphinx = "^7.0.1"
+sphinx-autobuild = "^2021.3.14"
+furo = "^2023.5.20"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
