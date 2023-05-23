@@ -1,11 +1,13 @@
-To set up for writing docs:
+We use poetry to configure the Python environment for developing the
+docs.  Set up using:
 
-    python3 -m venv venv
-    source venv/bin/activate
-    pip install sphinx sphinx-rtd-theme sphinx-autobuild
+    poetry install
+
+which will cause *poetry* to create a virtual environment in a
+``.venv`` folder.
 
 Then
 
-    sphinx-autobuild --re-ignore '/\.#' source build/html
+    poetry run sphinx-autobuild --re-ignore '/\.#' source build/html
 
 will launch a live-reload server to view the results.
