@@ -10,6 +10,7 @@ packages = []
 python = "^3.10"
 sphinx = "^7.0.1"
 sphinx-autobuild = "^2021.3.14"
+furo = "^2023.5.20"
 
 
 [build-system]
