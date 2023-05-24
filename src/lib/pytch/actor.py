@@ -132,6 +132,9 @@ class Actor:
         self.ensure_have_appearance_names()
         return self._appearance_names[self._appearance_index]
 
+    def _clear_speech(self):
+        self._speech = (_new_speech_id(), "say", "")
+
 
 class Sprite(Actor):
     "The starting class for all your sprites"
