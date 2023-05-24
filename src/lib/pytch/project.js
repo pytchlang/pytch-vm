@@ -773,7 +773,8 @@ var $builtinmodule = function (name) {
         get layer_group() { return this.actor.layer_group; }
 
         clear_speech() {
-            Sk.builtin.setattr(this.py_object, s_speech, Sk.builtin.none.none$);
+            const clear_speech_method = Sk.builtin.getattr(this.py_object, s_clear_speech);
+            Sk.misceval.callsim(clear_speech_method);
         }
 
         rendering_instructions() {
