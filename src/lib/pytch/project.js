@@ -805,7 +805,7 @@ var $builtinmodule = function (name) {
             //
             let speech_instructions = [];
             const speech = this.render_speech;
-            if (speech != null) {
+            if (speech[2] != "") {
                 let kind = speech[1];
 
                 // Position the tip of the speech-bubble's arrow in the centre
