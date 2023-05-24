@@ -24,7 +24,6 @@ var $builtinmodule = function (name) {
     const s_Appearances = new Sk.builtin.str("_Appearances");
     const s_speech = new Sk.builtin.str("_speech");
     const s_clear_speech = new Sk.builtin.str("_clear_speech");
-    
 
     const s_pytch_parent_project = new Sk.builtin.str("_pytch_parent_project");
 

@@ -145,7 +145,6 @@ describe("Speech bubbles", () => {
             project.do_synthetic_broadcast("silence-for-seconds");
             one_frame(project);
             assert_speech.is("after-silence", true, []);
-
         });
 
         it("handles chat with silence say_for_seconds", async () => {
@@ -163,7 +162,6 @@ describe("Speech bubbles", () => {
 
             many_frames(project, 60);
             assert_speech.is("after-bye", true, [["OK bye", 0, 15]]);
-
         });
 
         it("handles overlapping silence", async () => {
