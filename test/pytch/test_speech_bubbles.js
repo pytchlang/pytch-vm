@@ -165,6 +165,21 @@ describe("Speech bubbles", () => {
             assert_speech.is("after-bye", true, [["OK bye", 0, 15]]);
 
         });
+
+        it("handles overlapping silence", async () => {
+            const project = await import_project();
+            const assert_speech = make_SpeechAssertions(project);
+
+            // Launch chat and check first bubble.
+            project.do_synthetic_broadcast("overlapping-silence");
+            many_frames(project, 5);
+            assert_speech.is("start", true, []);
+            many_frames(project, 60);
+            assert_speech.is("after-talk", true, [["Hi", 0, 15]]);
+            many_frames(project, 60);
+            assert_speech.is("end-talk", true, []);
+
+        });
     });
 
     [
