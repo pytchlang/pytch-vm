@@ -342,10 +342,7 @@ class Sprite(Actor):
             text = str(text)
         if not isinstance(text, str):
             raise ValueError("the TEXT argument must be a string or number")
-        self._speech = (
-            None if text == ""
-            else (_new_speech_id(), "say", text)
-        )
+        self._speech = (_new_speech_id(), "say", text)
 
     def say_for_seconds(self, text, seconds):
         "(TEXT, SECONDS) Give SELF speech bubble saying TEXT for SECONDS"
@@ -354,8 +351,8 @@ class Sprite(Actor):
         self.say(text)
         speech_id = self._speech[0]
         wait_seconds(seconds)
-        # Only erase utterance if it hasn't already been, and it's ours:
-        if (self._speech is not None) and (self._speech[0] == speech_id):
+        # Only erase utterance if it's ours:
+        if self._speech[0] == speech_id:
             self._clear_speech()
 
     def ask_and_wait(self, prompt):
