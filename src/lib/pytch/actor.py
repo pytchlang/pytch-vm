@@ -382,7 +382,6 @@ class Stage(Actor):
     _size = 1.0
     _rotation = 0.0
     _shown = True
-    _speech = None
 
     _appearance_hyponym = 'Backdrop'
 
@@ -400,6 +399,7 @@ class Stage(Actor):
             )
 
         self._appearance_index = 0
+        self._clear_speech()
 
     @classmethod
     def the_only(cls):
