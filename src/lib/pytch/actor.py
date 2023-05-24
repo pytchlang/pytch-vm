@@ -148,7 +148,7 @@ class Sprite(Actor):
         self._y = 0
         self._rotation = 0.0
         self._size = 1.0
-        self._speech = None
+        self._clear_speech()
 
         at_least_one_Costume = len(self._Appearances) != 0
         if hasattr(self, "start_shown"):
@@ -356,7 +356,7 @@ class Sprite(Actor):
         wait_seconds(seconds)
         # Only erase utterance if it hasn't already been, and it's ours:
         if (self._speech is not None) and (self._speech[0] == speech_id):
-            self.say("")
+            self._clear_speech()
 
     def ask_and_wait(self, prompt):
         "(QUESTION) Ask question; wait for and return user's answer"
@@ -367,7 +367,7 @@ class Sprite(Actor):
             answer = ask_and_wait(None)
             # Scratch clears speech even if the prompt isn't the live
             # speech bubble; do likewise.
-            self.say("")
+            self._clear_speech()
             return answer
         else:
             return ask_and_wait(prompt)
