@@ -27,3 +27,22 @@ class Banana(pytch.Sprite):
     @pytch.when_I_receive("show")
     def appear(self):
         self.show()
+
+    @pytch.when_I_receive("chat")
+    def chat(self):
+        self.say_for_seconds("Hello!", 2.0)
+        self.say_for_seconds("", 1.0)
+        self.say_for_seconds("OK bye", 1.0)
+
+    @pytch.when_I_receive("silence-for-seconds")
+    def silent_for_second(self):
+        self.say_for_seconds("", 1.0)
+
+    @pytch.when_I_receive("overlapping-silence")
+    def overlap_1(self):
+        self.say_for_seconds("", 2.0)
+
+    @pytch.when_I_receive("overlapping-silence")
+    def overlap_2(self):
+        pytch.wait_seconds(1)
+        self.say_for_seconds("Hi", 1.0)

@@ -132,6 +132,9 @@ class Actor:
         self.ensure_have_appearance_names()
         return self._appearance_names[self._appearance_index]
 
+    def _clear_speech(self):
+        self._speech = (_new_speech_id(), "say", "")
+
 
 class Sprite(Actor):
     "The starting class for all your sprites"
@@ -145,7 +148,7 @@ class Sprite(Actor):
         self._y = 0
         self._rotation = 0.0
         self._size = 1.0
-        self._speech = None
+        self._clear_speech()
 
         at_least_one_Costume = len(self._Appearances) != 0
         if hasattr(self, "start_shown"):
@@ -339,10 +342,7 @@ class Sprite(Actor):
             text = str(text)
         if not isinstance(text, str):
             raise ValueError("the TEXT argument must be a string or number")
-        self._speech = (
-            None if text == ""
-            else (_new_speech_id(), "say", text)
-        )
+        self._speech = (_new_speech_id(), "say", text)
 
     def say_for_seconds(self, text, seconds):
         "(TEXT, SECONDS) Give SELF speech bubble saying TEXT for SECONDS"
@@ -351,9 +351,9 @@ class Sprite(Actor):
         self.say(text)
         speech_id = self._speech[0]
         wait_seconds(seconds)
-        # Only erase utterance if it hasn't already been, and it's ours:
-        if (self._speech is not None) and (self._speech[0] == speech_id):
-            self.say("")
+        # Only erase utterance if it's ours:
+        if self._speech[0] == speech_id:
+            self._clear_speech()
 
     def ask_and_wait(self, prompt):
         "(QUESTION) Ask question; wait for and return user's answer"
@@ -364,7 +364,7 @@ class Sprite(Actor):
             answer = ask_and_wait(None)
             # Scratch clears speech even if the prompt isn't the live
             # speech bubble; do likewise.
-            self.say("")
+            self._clear_speech()
             return answer
         else:
             return ask_and_wait(prompt)
@@ -379,7 +379,6 @@ class Stage(Actor):
     _size = 1.0
     _rotation = 0.0
     _shown = True
-    _speech = None
 
     _appearance_hyponym = 'Backdrop'
 
@@ -397,6 +396,7 @@ class Stage(Actor):
             )
 
         self._appearance_index = 0
+        self._clear_speech()
 
     @classmethod
     def the_only(cls):

@@ -23,6 +23,7 @@ var $builtinmodule = function (name) {
     const s_appearance_index = new Sk.builtin.str("_appearance_index");
     const s_Appearances = new Sk.builtin.str("_Appearances");
     const s_speech = new Sk.builtin.str("_speech");
+    const s_clear_speech = new Sk.builtin.str("_clear_speech");
 
     const s_pytch_parent_project = new Sk.builtin.str("_pytch_parent_project");
 
@@ -771,7 +772,8 @@ var $builtinmodule = function (name) {
         get layer_group() { return this.actor.layer_group; }
 
         clear_speech() {
-            Sk.builtin.setattr(this.py_object, s_speech, Sk.builtin.none.none$);
+            const clear_speech_method = Sk.builtin.getattr(this.py_object, s_clear_speech);
+            Sk.misceval.callsim(clear_speech_method);
         }
 
         rendering_instructions() {
@@ -802,7 +804,7 @@ var $builtinmodule = function (name) {
             //
             let speech_instructions = [];
             const speech = this.render_speech;
-            if (speech != null) {
+            if (speech[2] != "") {
                 let kind = speech[1];
 
                 // Position the tip of the speech-bubble's arrow in the centre
