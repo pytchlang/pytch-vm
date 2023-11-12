@@ -97,4 +97,26 @@ describe("Syntax errors", () => {
             Sk.pytch._disable_TigerPython = false;
         });
     });
+
+    it("dead code is not syntax error", async () => {
+        const import_project = import_deindented(`
+            # line 1
+            import pytch
+
+            def hello_world():
+                print("hello")
+                return
+                print("you will not see this")
+
+            def goodbye():
+                <
+        `);
+
+        await assert.rejects(
+            import_project,
+            assertTigerPythonAnalysis([
+                { re: /extra symbol/, line: 10, offset: 4 }
+            ])
+        );
+    });
 });
