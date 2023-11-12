@@ -176,6 +176,7 @@ Sk.pytchsupport.import_with_auto_configure = (async code_text => {
         if (TigerPython_enabled && (err instanceof Sk.builtin.SyntaxError)) {
             let errs = [];
             try {
+                globalThis.TPyParser.rejectDeadCode = false;
                 errs = globalThis.TPyParser.findAllErrors(code_text);
             } catch (tpy_err) {
                 // Leave "errs" as empty list to be correctly handled by next "if".
