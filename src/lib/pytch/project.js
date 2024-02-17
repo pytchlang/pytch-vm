@@ -1894,6 +1894,7 @@ var $builtinmodule = function (name) {
         }
 
         kill_all_threads_questions_sounds() {
+            this.object_attribute_watchers = [];
             this.thread_groups = [];
             this.unanswered_questions = [];
             Sk.pytch.sound_manager.stop_all_performances();
