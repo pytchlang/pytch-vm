@@ -1866,7 +1866,7 @@ var $builtinmodule = function (name) {
                   = this.thread_groups.some(tg => tg.raised_exception());
 
             if (exception_was_raised)
-                this.kill_all_threads_questions_sounds();
+                this.kill_all_threads_and_extras();
 
             // Tests in Scratch show that as well as stopping all scripts,
             // the "Stop All" block:
@@ -1893,7 +1893,7 @@ var $builtinmodule = function (name) {
             return project_state;
         }
 
-        kill_all_threads_questions_sounds() {
+        kill_all_threads_and_extras() {
             this.object_attribute_watchers = [];
             this.thread_groups = [];
             this.unanswered_questions = [];
@@ -1901,7 +1901,7 @@ var $builtinmodule = function (name) {
         }
 
         on_red_stop_clicked() {
-            this.kill_all_threads_questions_sounds();
+            this.kill_all_threads_and_extras();
             this.actors.forEach(a => a.delete_all_clones());
 
             // Now there is only the original instance to deal with:
@@ -1950,7 +1950,7 @@ var $builtinmodule = function (name) {
                 return instructions;
 
             errors.forEach(({err, context}) => Sk.pytch.on_exception(err, context));
-            this.kill_all_threads_questions_sounds();
+            this.kill_all_threads_and_extras();
             return null;
         }
 
