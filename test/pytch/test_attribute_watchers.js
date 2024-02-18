@@ -279,6 +279,12 @@ describe("Attribute watchers", () => {
             assert.strictEqual(err.ctx.attribute_name, spec.attr_name);
             assert.strictEqual(err.ctx.owner_kind, "Sprite");
             assert.strictEqual(err.ctx.owner_name, "Banana");
+
+            // The rendering errors should be one-shot, in that the
+            // watchers should now all have been cleared.
+            project.rendering_instructions();
+            assert.strictEqual(pytch_errors.drain_errors().length, 0,
+                               "render after error generated fresh error/s");
         }));
 
     it("gives useful error for global variable", async () => {
