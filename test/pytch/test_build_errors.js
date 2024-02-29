@@ -145,4 +145,77 @@ describe("build-error handling", () => {
             )
         );
     });
+
+    [
+        {
+            label: "empty-string",
+            arg: '""',
+            error_regexp: /must not be an empty string/
+        },
+        { 
+            label: "capital-letter",
+            arg: '"W"',
+            error_regexp: /must be a valid key. Maybe you meant "w"/ 
+        },
+        {
+            label: "capital-letter",
+            arg: '" w "',
+            error_regexp: /must be a valid key. Maybe you meant "w"/
+        },
+        {
+            label: "capital-letter",
+            arg: '" w+ "',
+            error_regexp: /must be a valid key. Maybe you meant "w"/ },
+
+        {
+            label: "capital-letter",
+            arg: '" ArrowUp"',
+            error_regexp: /must be a valid key. Maybe you meant "ArrowUp"/
+        },
+        {
+            label: "capital-letter",
+            arg: '"arrowUp"',
+            error_regexp: /must be a valid key. Maybe you meant "ArrowUp"/ 
+        },
+        
+        {
+            label: "misspelled-key",
+            arg: '"arrow-up"',
+            error_regexp: /must be a valid key. Maybe you meant "ArrowUp"/ 
+        },
+        {
+            label: "misspelled-key",
+            arg: '"   "',
+            error_regexp: /must be a valid key; if you meant the spacebar, use " "/ },
+
+        {
+            label: "invalid-key",
+            arg: '"!"',
+            error_regexp: /must be a valid key. You can use keys/ 
+        },
+        {
+            label: "no-string",
+            arg: "1",
+            error_regexp: /must be a string/ 
+        },
+    ].forEach(spec => {
+        it(`rejects bad arg to when_key_pressed (${spec.label})`,
+        async () => {
+            const import_project = import_deindented(`
+                import pytch
+                @pytch.when_key_pressed(${spec.arg})
+                def invalid_hat():
+                    pass
+            `);
+
+            await assert.rejects(
+                import_project,
+                assertBuildErrorFun(
+                    "import",
+                    Sk.builtin.ValueError,
+                    spec.error_regexp
+                )
+            );
+        });
+    });
 });
