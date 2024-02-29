@@ -3,6 +3,14 @@ var $builtinmodule = function (name) {
 
     const skulpt_function = Sk.pytchsupport.skulpt_function;
 
+    const validKeys = [
+        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+        "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+        " ",
+        "ArrowLeft", "ArrowDown", "ArrowUp", "ArrowRight"
+    ];
+
     const new_pytch_suspension = (syscall_name, syscall_args) => {
         let susp = new Sk.misceval.Suspension();
 
