@@ -8,6 +8,13 @@ var $builtinmodule = function (name) {
     "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
     " ", "ArrowLeft", "ArrowDown", "ArrowUp", "ArrowRight"];
 
+    const map = {};
+
+    validKeys.forEach(validKey => {
+        if (validKey !== " ")
+            map[validKey.toLowerCase()] = validKey;
+    });
+
     const new_pytch_suspension = (syscall_name, syscall_args) => {
         let susp = new Sk.misceval.Suspension();
 
