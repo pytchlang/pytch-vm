@@ -26,6 +26,13 @@ var $builtinmodule = function (name) {
         return suggested_key || null;
     }
 
+    mod._assert_keyname_valid = skulpt_function(
+        (keyname) => {
+            assertPyKeynameValid(keyname);
+        },
+        `(KEY_NAME) throws error if keyname is not valid; continue otherwise`,
+    );
+
     function assertPyKeynameValid(py_keyname) {
         if (!Sk.builtin.checkString(py_keyname))
             throw new Sk.builtin.ValueError(
