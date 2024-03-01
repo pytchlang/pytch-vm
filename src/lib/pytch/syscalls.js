@@ -328,7 +328,8 @@ var $builtinmodule = function (name) {
 
     mod.key_pressed = skulpt_function(
         (py_keyname) => {
-            let js_keyname = Sk.ffi.remapToJs(py_keyname);
+            assertPyKeynameValid(py_keyname)
+            let js_keyname = py_keyname.v;
             return (Sk.pytch.keyboard.key_is_pressed(js_keyname)
                     ? Sk.builtin.bool.true$
                     : Sk.builtin.bool.false$);
