@@ -17,6 +17,15 @@ var $builtinmodule = function (name) {
 
     const isValidKeyname = (keyname) => validKeys.includes(keyname)
 
+    function suggestedKeyname(invalidKeyname) {
+        //Remove symbols and capital letters to suggest a keyname
+        //Eg "Arrowleft", "arrowLeft" or "Arrow-Left" -> "ArrowLeft"
+        const invalidKeynameLower = invalidKeyname.toLowerCase();
+        var invalidKeynameCleaned = invalidKeynameLower.trim().replace(/[^a-z0-9]/g, "");
+        const suggested_key = map[invalidKeynameCleaned];
+        return suggested_key || null;
+    }
+
     const new_pytch_suspension = (syscall_name, syscall_args) => {
         let susp = new Sk.misceval.Suspension();
 
