@@ -26,6 +26,39 @@ var $builtinmodule = function (name) {
         return suggested_key || null;
     }
 
+    function assertPyKeynameValid(py_keyname) {
+        if (!Sk.builtin.checkString(py_keyname))
+            throw new Sk.builtin.ValueError(
+                "keyname must be a string"
+            );
+        jsKeyname = py_keyname.v;
+        if (isValidKeyname(jsKeyname))
+            return;
+        if (!jsKeyname)
+            throw new Sk.builtin.ValueError(
+                `keyname must not be an empty string.`
+            );
+        if (!jsKeyname.trim())
+            throw new Sk.builtin.ValueError(
+                `keyname must be a valid key; `
+                + `if you meant the spacebar, use " " (that's a string `
+                + `consisting of a single space character)`
+            );
+        maybe_suggestion = suggestedKeyname(jsKeyname)
+        if (maybe_suggestion != null)
+            throw new Sk.builtin.ValueError(
+                `keyname must be a valid key. `
+                +`Maybe you meant "${maybe_suggestion}"`
+            );
+        else
+            throw new Sk.builtin.ValueError(
+                `keyname must be a valid key. ` 
+                + `You can use keys from "a" to "z", from "0" to "9", the space `
+                + `key: " ", or one of the following: "ArrowLeft", "ArrowDown", `
+                + `"ArrowUp", "ArrowRight".`
+            );
+    }
+
     const new_pytch_suspension = (syscall_name, syscall_args) => {
         let susp = new Sk.misceval.Suspension();
 
