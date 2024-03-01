@@ -11,6 +11,10 @@ var $builtinmodule = function (name) {
         "ArrowLeft", "ArrowDown", "ArrowUp", "ArrowRight"
     ];
 
+    const validKeyFromLowerCaseLut = new Map(
+        validKeys.map(key => [key.toLowerCase(), key])
+    );
+
     const new_pytch_suspension = (syscall_name, syscall_args) => {
         let susp = new Sk.misceval.Suspension();
 
