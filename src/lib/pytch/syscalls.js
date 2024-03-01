@@ -16,7 +16,7 @@ var $builtinmodule = function (name) {
     });
 
     const isValidKeyname = (keyname) => validKeys.includes(keyname)
-
+    
     function suggestedKeyname(invalidKeyname) {
         //Remove symbols and capital letters to suggest a keyname
         //Eg "Arrowleft", "arrowLeft" or "Arrow-Left" -> "ArrowLeft"
@@ -325,7 +325,8 @@ var $builtinmodule = function (name) {
 
     mod.key_pressed = skulpt_function(
         (py_keyname) => {
-            let js_keyname = Sk.ffi.remapToJs(py_keyname);
+            assertPyKeynameValid(py_keyname)
+            let js_keyname = py_keyname.v;
             return (Sk.pytch.keyboard.key_is_pressed(js_keyname)
                     ? Sk.builtin.bool.true$
                     : Sk.builtin.bool.false$);
