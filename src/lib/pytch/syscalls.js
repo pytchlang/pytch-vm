@@ -15,6 +15,8 @@ var $builtinmodule = function (name) {
             map[validKey.toLowerCase()] = validKey;
     });
 
+    const isValidKeyname = (keyname) => validKeys.includes(keyname)
+
     const new_pytch_suspension = (syscall_name, syscall_args) => {
         let susp = new Sk.misceval.Suspension();
 
