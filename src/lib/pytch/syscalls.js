@@ -64,6 +64,11 @@ var $builtinmodule = function (name) {
         );
     }
 
+    mod._assert_keyname_valid = skulpt_function(
+        assertPyKeynameValid,
+        `(KEYNAME) Throw error if keyname not valid; otherwise continue`,
+    );
+
     const new_pytch_suspension = (syscall_name, syscall_args) => {
         let susp = new Sk.misceval.Suspension();
 
