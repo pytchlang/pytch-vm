@@ -22,9 +22,7 @@ var $builtinmodule = function (name) {
     }
 
     mod._assert_keyname_valid = skulpt_function(
-        (keyname) => {
-            assertPyKeynameValid(keyname);
-        },
+        assertPyKeynameValid,
         `(KEY_NAME) throws error if keyname is not valid; continue otherwise`,
     );
 
