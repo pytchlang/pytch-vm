@@ -52,13 +52,12 @@ var $builtinmodule = function (name) {
                 `keyname must be a valid key. `
                 +`Maybe you meant "${maybe_suggestion}"`
             );
-        else
-            throw new Sk.builtin.ValueError(
-                `keyname must be a valid key. ` 
-                + `You can use keys from "a" to "z", from "0" to "9", the space `
-                + `key: " ", or one of the following: "ArrowLeft", "ArrowDown", `
-                + `"ArrowUp", "ArrowRight".`
-            );
+        throw new Sk.builtin.ValueError(
+            `keyname must be a valid key. ` 
+            + `You can use keys from "a" to "z", from "0" to "9", the space `
+            + `key: " ", or one of the following: "ArrowLeft", "ArrowDown", `
+            + `"ArrowUp", "ArrowRight".`
+        );
     }
 
     const new_pytch_suspension = (syscall_name, syscall_args) => {
