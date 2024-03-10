@@ -8,12 +8,7 @@ var $builtinmodule = function (name) {
     "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
     " ", "ArrowLeft", "ArrowDown", "ArrowUp", "ArrowRight"];
 
-    const map = {};
-
-    validKeys.forEach(validKey => {
-        if (validKey !== " ")
-            map[validKey.toLowerCase()] = validKey;
-    });
+    const validKeyFromLowerCaseLut = new Map(validKeys.map(key => [key.toLowerCase(), key]));
 
     const isValidKeyname = (keyname) => validKeys.includes(keyname)
     
@@ -22,7 +17,7 @@ var $builtinmodule = function (name) {
         //Eg "Arrowleft", "arrowLeft" or "Arrow-Left" -> "ArrowLeft"
         const invalidKeynameLower = invalidKeyname.toLowerCase();
         var invalidKeynameCleaned = invalidKeynameLower.trim().replace(/[^a-z0-9]/g, "");
-        const suggested_key = map[invalidKeynameCleaned];
+        const suggested_key = validKeyFromLowerCaseLut.get(invalidKeynameCleaned);
         return suggested_key || null;
     }
 
