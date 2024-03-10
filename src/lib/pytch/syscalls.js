@@ -16,7 +16,7 @@ var $builtinmodule = function (name) {
         //Remove symbols and capital letters to suggest a keyname
         //Eg "Arrowleft", "arrowLeft" or "Arrow-Left" -> "ArrowLeft"
         const invalidKeynameLower = invalidKeyname.toLowerCase();
-        var invalidKeynameCleaned = invalidKeynameLower.trim().replace(/[^a-z0-9]/g, "");
+        const invalidKeynameCleaned = invalidKeynameLower.replace(/[^a-z0-9]/g, "");
         const suggested_key = validKeyFromLowerCaseLut.get(invalidKeynameCleaned);
         return suggested_key || null;
     }
