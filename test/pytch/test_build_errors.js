@@ -158,22 +158,22 @@ describe("build-error handling", () => {
             error_regexp: /must be a valid key; did you mean "w"/ 
         },
         {
-            label: "capital-letter",
+            label: "misspelled-key",
             arg: '" w "',
             error_regexp: /must be a valid key; did you mean "w"/
         },
         {
-            label: "capital-letter",
+            label: "misspelled-key",
             arg: '" w+ "',
             error_regexp: /must be a valid key; did you mean "w"/ },
 
         {
-            label: "capital-letter",
+            label: "misspelled-key",
             arg: '" ArrowUp"',
             error_regexp: /must be a valid key; did you mean "ArrowUp"/
         },
         {
-            label: "capital-letter",
+            label: "misspelled-key",
             arg: '"arrowUp"',
             error_regexp: /must be a valid key; did you mean "ArrowUp"/ 
         },
@@ -199,7 +199,7 @@ describe("build-error handling", () => {
             error_regexp: /must be a string/ 
         },
     ].forEach(spec => {
-        it(`rejects bad arg to when_key_pressed (${spec.label})`,
+        it(`rejects bad arg to when_key_pressed(${spec.arg}) (${spec.label})`,
         async () => {
             const import_project = import_deindented(`
                 import pytch
