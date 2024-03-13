@@ -155,33 +155,33 @@ describe("build-error handling", () => {
         { 
             label: "capital-letter",
             arg: '"W"',
-            error_regexp: /must be a valid key. Maybe you meant "w"/ 
+            error_regexp: /must be a valid key; did you mean "w"/ 
         },
         {
             label: "capital-letter",
             arg: '" w "',
-            error_regexp: /must be a valid key. Maybe you meant "w"/
+            error_regexp: /must be a valid key; did you mean "w"/
         },
         {
             label: "capital-letter",
             arg: '" w+ "',
-            error_regexp: /must be a valid key. Maybe you meant "w"/ },
+            error_regexp: /must be a valid key; did you mean "w"/ },
 
         {
             label: "capital-letter",
             arg: '" ArrowUp"',
-            error_regexp: /must be a valid key. Maybe you meant "ArrowUp"/
+            error_regexp: /must be a valid key; did you mean "ArrowUp"/
         },
         {
             label: "capital-letter",
             arg: '"arrowUp"',
-            error_regexp: /must be a valid key. Maybe you meant "ArrowUp"/ 
+            error_regexp: /must be a valid key; did you mean "ArrowUp"/ 
         },
         
         {
             label: "misspelled-key",
             arg: '"arrow-up"',
-            error_regexp: /must be a valid key. Maybe you meant "ArrowUp"/ 
+            error_regexp: /must be a valid key; did you mean "ArrowUp"/ 
         },
         {
             label: "misspelled-key",
@@ -191,7 +191,7 @@ describe("build-error handling", () => {
         {
             label: "invalid-key",
             arg: '"!"',
-            error_regexp: /must be a valid key. You can use keys/ 
+            error_regexp: /must be a valid key; you can use keys/ 
         },
         {
             label: "no-string",

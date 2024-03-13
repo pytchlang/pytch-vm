@@ -36,7 +36,7 @@ var $builtinmodule = function (name) {
             return;
         if (!jsKeyname)
             throw new Sk.builtin.ValueError(
-                `keyname must not be an empty string.`
+                `keyname must not be an empty string`
             );
         if (!jsKeyname.trim())
             throw new Sk.builtin.ValueError(
@@ -47,14 +47,14 @@ var $builtinmodule = function (name) {
         const maybe_suggestion = suggestedKeyname(jsKeyname)
         if (maybe_suggestion != null)
             throw new Sk.builtin.ValueError(
-                `keyname must be a valid key. `
-                +`Maybe you meant "${maybe_suggestion}"`
+                `keyname must be a valid key; `
+                +`did you mean "${maybe_suggestion}"?`
             );
         throw new Sk.builtin.ValueError(
-            `keyname must be a valid key. ` 
-            + `You can use keys from "a" to "z", from "0" to "9", the space `
+            `keyname must be a valid key; ` 
+            + `you can use keys from "a" to "z", from "0" to "9", the space `
             + `key: " ", or one of the following: "ArrowLeft", "ArrowDown", `
-            + `"ArrowUp", "ArrowRight".`
+            + `"ArrowUp", "ArrowRight"`
         );
     }
 
