@@ -31,7 +31,7 @@ var $builtinmodule = function (name) {
             throw new Sk.builtin.ValueError(
                 "keyname must be a string"
             );
-        jsKeyname = py_keyname.v;
+        const jsKeyname = py_keyname.v;
         if (isValidKeyname(jsKeyname))
             return;
         if (!jsKeyname)
@@ -44,7 +44,7 @@ var $builtinmodule = function (name) {
                 + `if you meant the spacebar, use " " (that's a string `
                 + `consisting of a single space character)`
             );
-        maybe_suggestion = suggestedKeyname(jsKeyname)
+        const maybe_suggestion = suggestedKeyname(jsKeyname)
         if (maybe_suggestion != null)
             throw new Sk.builtin.ValueError(
                 `keyname must be a valid key. `
