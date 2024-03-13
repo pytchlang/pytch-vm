@@ -21,11 +21,6 @@ var $builtinmodule = function (name) {
         return suggested_key || null;
     }
 
-    mod._assert_keyname_valid = skulpt_function(
-        assertPyKeynameValid,
-        `(KEYNAME) Throw error if keyname not valid; otherwise continue`,
-    );
-
     function assertPyKeynameValid(py_keyname) {
         if (!Sk.builtin.checkString(py_keyname))
             throw new Sk.builtin.ValueError(
@@ -57,6 +52,11 @@ var $builtinmodule = function (name) {
             + `"ArrowUp", "ArrowRight"`
         );
     }
+
+    mod._assert_keyname_valid = skulpt_function(
+        assertPyKeynameValid,
+        `(KEYNAME) Throw error if keyname not valid; otherwise continue`,
+    );
 
     const new_pytch_suspension = (syscall_name, syscall_args) => {
         let susp = new Sk.misceval.Suspension();
