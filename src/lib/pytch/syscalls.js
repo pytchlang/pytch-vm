@@ -3,6 +3,72 @@ var $builtinmodule = function (name) {
 
     const skulpt_function = Sk.pytchsupport.skulpt_function;
 
+    const validKeys = [
+        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+        "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+        " ",
+        "ArrowLeft", "ArrowDown", "ArrowUp", "ArrowRight"
+    ];
+
+    const validKeyFromLowerCaseLut = new Map(
+        validKeys.map(key => [key.toLowerCase(), key])
+    );
+
+    const isValidKeyname = (keyname) => validKeys.includes(keyname)
+
+    function suggestedKeyname(invalidKeyname) {
+        // Remove symbols and capital letters to suggest a keyname.
+        // E.g., "Arrowleft", "arrowLeft" or "Arrow-Left" -> "ArrowLeft".
+        const invalidKeynameLower = invalidKeyname.toLowerCase();
+        const invalidKeynameCleaned = invalidKeynameLower.replace(/[^a-z0-9]/g, "");
+        const suggested_key = validKeyFromLowerCaseLut.get(invalidKeynameCleaned);
+        return suggested_key || null;
+    }
+
+    function assertPyKeynameValid(py_keyname) {
+        if (!Sk.builtin.checkString(py_keyname))
+            throw new Sk.builtin.ValueError(
+                "keyname must be a string"
+            );
+
+        const jsKeyname = py_keyname.v;
+
+        if (isValidKeyname(jsKeyname))
+            return;
+
+        if (!jsKeyname)
+            throw new Sk.builtin.ValueError(
+                `keyname must not be an empty string`
+            );
+
+        if (!jsKeyname.trim())
+            throw new Sk.builtin.ValueError(
+                `keyname must be a valid key; `
+                + `if you meant the spacebar, use " " (that's a string `
+                + `consisting of a single space character)`
+            );
+
+        const maybe_suggestion = suggestedKeyname(jsKeyname)
+        if (maybe_suggestion != null)
+            throw new Sk.builtin.ValueError(
+                `keyname must be a valid key; `
+                + `did you mean "${maybe_suggestion}"?`
+            );
+
+        throw new Sk.builtin.ValueError(
+            `keyname must be a valid key; `
+            + `you can use keys from "a" to "z", from "0" to "9", the space `
+            + `key: " ", or one of the following: "ArrowLeft", "ArrowDown", `
+            + `"ArrowUp", "ArrowRight"`
+        );
+    }
+
+    mod._assert_keyname_valid = skulpt_function(
+        assertPyKeynameValid,
+        `(KEYNAME) Throw error if keyname not valid; otherwise continue`,
+    );
+
     const new_pytch_suspension = (syscall_name, syscall_args) => {
         let susp = new Sk.misceval.Suspension();
 
@@ -262,7 +328,8 @@ var $builtinmodule = function (name) {
 
     mod.key_pressed = skulpt_function(
         (py_keyname) => {
-            let js_keyname = Sk.ffi.remapToJs(py_keyname);
+            assertPyKeynameValid(py_keyname)
+            let js_keyname = py_keyname.v;
             return (Sk.pytch.keyboard.key_is_pressed(js_keyname)
                     ? Sk.builtin.bool.true$
                     : Sk.builtin.bool.false$);

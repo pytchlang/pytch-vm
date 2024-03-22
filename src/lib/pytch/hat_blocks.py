@@ -1,3 +1,5 @@
+from .syscalls import _assert_keyname_valid
+
 def _append_handler(fun, handler_type, handler_data=None):
     if not hasattr(fun, '_pytch_handler_for'):
         fun._pytch_handler_for = []
@@ -27,6 +29,7 @@ class when_I_receive:
 class when_key_pressed:
     "(KEY) Run your method when the user presses KEY"
     def __init__(self, keyname):
+        _assert_keyname_valid(keyname)
         self.keyname = keyname
 
     def __call__(self, fun):

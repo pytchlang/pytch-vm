@@ -6,6 +6,9 @@ const {
     with_project,
     assert,
     py_getattr,
+    import_deindented,
+    one_frame,
+    mock_keyboard,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -83,4 +86,27 @@ describe("pytch.hat_blocks module", () => {
             assert.strictEqual(hello.n_events, 1);
             assert.ok(hello.includes("click", null));
         })});
+
+    const validKeysList = [
+        "a", "z", "0", " ",
+        "ArrowLeft", "ArrowDown", "ArrowUp", "ArrowRight"
+    ];
+    validKeysList.forEach(keyname => {
+        it(`key_pressed("${keyname}") accepted`, async () => {
+            const project = await import_deindented(`
+                import pytch
+                class A_Sprite(pytch.Sprite):
+                    key_pressed = False
+                    @pytch.when_key_pressed("${keyname}")
+                    def do_something(self):
+                        self.key_pressed = pytch.key_pressed("${keyname}")
+            `);
+
+            mock_keyboard.press_key(keyname);
+            one_frame(project);
+            mock_keyboard.release_key(keyname);
+            let sprite_instance = project.instance_0_by_class_name("A_Sprite")
+            assert.strictEqual(sprite_instance.js_attr("key_pressed"), true);
+        });
+    });
 });
