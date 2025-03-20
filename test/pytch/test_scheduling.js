@@ -188,14 +188,18 @@ describe("scheduling", () => {
             actors.assert_has_steps_and_events(2, 2);
         })});
 
-    it("can pause for a number of seconds", async () => {
+    [
+        { target: "pytch" },
+        { target: "self" },
+    ].forEach(spec => {
+    it(`can pause with ${spec.target}.wait_seconds()`, async () => {
         const project = await import_deindented(`
             import pytch
             class Alien(pytch.Sprite):
                 @pytch.when_green_flag_clicked
                 def invade(self):
                     self.n_steps = 1
-                    pytch.wait_seconds(0.25)
+                    ${spec.target}.wait_seconds(0.25)
                     self.n_steps += 1
         `);
 
@@ -221,6 +225,7 @@ describe("scheduling", () => {
         one_frame(project);
         assert_n_steps(2);
         assert.strictEqual(project.thread_groups.length, 0);
+    });
     });
 
     with_project("py/project/loop_in_module.py", (import_project) => {
