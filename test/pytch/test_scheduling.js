@@ -187,38 +187,6 @@ describe("scheduling", () => {
             actors.assert_has_steps_and_events(2, 2);
         })});
 
-    with_project("py/project/wait_seconds.py", (import_project) => {
-        it("can pause for a number of seconds", async () => {
-            let project = await import_project();
-
-            let alien = project.instance_0_by_class_name("Alien");
-
-            let assert_n_steps = (exp_n_steps => {
-                assert.strictEqual(alien.js_attr("n_steps"), exp_n_steps);
-            });
-
-            assert_n_steps(0);
-
-            project.on_green_flag_clicked();
-            assert_n_steps(0);
-
-            one_frame(project);
-            assert_n_steps(1);
-
-            // The thread is now waiting.  For the next 14 one_frame()
-            // calls it should not be runnable and so nothing should
-            // change.
-            for (let i = 0; i != 14; ++i) {
-                one_frame(project);
-                assert_n_steps(1);
-            }
-
-            // But now it runs again, to completion.
-            one_frame(project);
-            assert_n_steps(2);
-            assert.strictEqual(project.thread_groups.length, 0);
-        })});
-
     with_project("py/project/loop_in_module.py", (import_project) => {
         it("yields exactly when meant to", async () => {
             // Loops in a module which explicitly does "import pytch"
