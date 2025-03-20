@@ -192,40 +192,40 @@ describe("scheduling", () => {
         { target: "pytch" },
         { target: "self" },
     ].forEach(spec => {
-    it(`can pause with ${spec.target}.wait_seconds()`, async () => {
-        const project = await import_deindented(`
-            import pytch
-            class Alien(pytch.Sprite):
-                @pytch.when_green_flag_clicked
-                def invade(self):
-                    self.n_steps = 1
-                    ${spec.target}.wait_seconds(0.25)
-                    self.n_steps += 1
-        `);
+        it(`can pause with ${spec.target}.wait_seconds()`, async () => {
+            const project = await import_deindented(`
+                import pytch
+                class Alien(pytch.Sprite):
+                    @pytch.when_green_flag_clicked
+                    def invade(self):
+                        self.n_steps = 1
+                        ${spec.target}.wait_seconds(0.25)
+                        self.n_steps += 1
+            `);
 
-        let alien = project.instance_0_by_class_name("Alien");
+            let alien = project.instance_0_by_class_name("Alien");
 
-        let assert_n_steps = (exp_n_steps => {
-            assert.strictEqual(alien.js_attr("n_steps"), exp_n_steps);
-        });
+            let assert_n_steps = (exp_n_steps => {
+                assert.strictEqual(alien.js_attr("n_steps"), exp_n_steps);
+            });
 
-        project.on_green_flag_clicked();
-        one_frame(project);
-        assert_n_steps(1);
-
-        // The thread is now waiting.  For the next 14 one_frame()
-        // calls it should not be runnable and so nothing should
-        // change.
-        for (let i = 0; i != 14; ++i) {
+            project.on_green_flag_clicked();
             one_frame(project);
             assert_n_steps(1);
-        }
 
-        // But now it runs again, to completion.
-        one_frame(project);
-        assert_n_steps(2);
-        assert.strictEqual(project.thread_groups.length, 0);
-    });
+            // The thread is now waiting.  For the next 14 one_frame()
+            // calls it should not be runnable and so nothing should
+            // change.
+            for (let i = 0; i != 14; ++i) {
+                one_frame(project);
+                assert_n_steps(1);
+            }
+
+            // But now it runs again, to completion.
+            one_frame(project);
+            assert_n_steps(2);
+            assert.strictEqual(project.thread_groups.length, 0);
+        });
     });
 
     with_project("py/project/loop_in_module.py", (import_project) => {
