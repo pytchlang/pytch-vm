@@ -5,8 +5,17 @@ from pytch.syscalls import (
     registered_instances,
     unregister_running_instance,
     wait_seconds,
+    stop_all_sounds,
     ask_and_wait,
+    broadcast,
+    broadcast_and_wait,
+    key_pressed,
+    stop_all,
 )
+
+from pytch.clone import create_clone_of
+
+from pytch._show_hide_variables import show_variable, hide_variable
 
 from pytch.project import FRAMES_PER_SECOND
 
@@ -135,6 +144,32 @@ class Actor:
     def _clear_speech(self):
         self._speech = (_new_speech_id(), "say", "")
 
+    def stop_all_sounds(self):
+        stop_all_sounds()
+    
+    def broadcast(self,message):
+        broadcast(message)
+    
+    def broadcast_and_wait(self,message):
+        broadcast_and_wait(message)
+    
+    def wait_seconds(self,seconds):
+        wait_seconds(seconds)
+
+    def stop_all(self):
+        stop_all()
+
+    def create_clone_of(self):
+        create_clone_of(self)
+
+    def show_variable(self,var_name, *,label=None, top=None, right=None, bottom=None, left=None):
+        show_variable(self,var_name, label=label, top=top, right=right, bottom=bottom, left=left)
+
+    def hide_variable(self,var_name):
+        hide_variable(self,var_name)
+    
+    def key_pressed(self,key_name):
+        return key_pressed(key_name)
 
 class Sprite(Actor):
     "The starting class for all your sprites"
