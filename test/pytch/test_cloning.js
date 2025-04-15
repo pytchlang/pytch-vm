@@ -382,58 +382,67 @@ describe("cloning", () => {
         );
     });
 
-    it("puts clone just behind parent", async () => {
-        const project = await import_deindented(`
+    [
+        { target: "pytch",
+            args: "self"
+         },
+        { target: "self",
+            args: ""
+         },
+    ].forEach(spec => {
+        it(`puts clone just behind parent with ${spec.target}.create_clone_of(${spec.args})`, async () => {
+            const project = await import_deindented(`
 
-            import pytch
+                import pytch
 
-            class Balloon(pytch.Sprite):
-                Costumes = [('balloon', 'balloon.png', 0, 0)]
+                class Balloon(pytch.Sprite):
+                    Costumes = [('balloon', 'balloon.png', 0, 0)]
 
-                @pytch.when_I_receive("make-clone-x")
-                def make_clone_x(self):
-                    self.step_dir = "x"
-                    pytch.create_clone_of(self)
+                    @pytch.when_I_receive("make-clone-x")
+                    def make_clone_x(self):
+                        self.step_dir = "x"
+                        ${spec.target}.create_clone_of(${spec.args})
 
-                @pytch.when_I_receive("make-clone-y")
-                def make_clone_y(self):
-                    self.step_dir = "y"
-                    pytch.create_clone_of(self)
+                    @pytch.when_I_receive("make-clone-y")
+                    def make_clone_y(self):
+                        self.step_dir = "y"
+                        ${spec.target}.create_clone_of(${spec.args})
 
-                @pytch.when_I_start_as_a_clone
-                def step_x_or_y(self):
-                    if self.step_dir == "x":
-                        self.change_x(40)
-                    else:
-                        self.change_y(40)
-        `);
+                    @pytch.when_I_start_as_a_clone
+                    def step_x_or_y(self):
+                        if self.step_dir == "x":
+                            self.change_x(40)
+                        else:
+                            self.change_y(40)
+            `);
 
-        const locations
-              = () => project.rendering_instructions().map(i => [i.x, i.y]);
-        const assert_render_locations
-              = (exp_locations) => assert.deepStrictEqual(locations(),
-                                                          exp_locations);
+            const locations
+                = () => project.rendering_instructions().map(i => [i.x, i.y]);
+            const assert_render_locations
+                = (exp_locations) => assert.deepStrictEqual(locations(),
+                                                            exp_locations);
 
-        // There should only be the original, and it hasn't moved.
-        assert_render_locations([[0, 0]])
+            // There should only be the original, and it hasn't moved.
+            assert_render_locations([[0, 0]])
 
-        // Allow two frames; one for the broadcast and one for the
-        // when-I-start-as-clone thread to run.
-        project.do_synthetic_broadcast("make-clone-x");
-        many_frames(project, 2);
+            // Allow two frames; one for the broadcast and one for the
+            // when-I-start-as-clone thread to run.
+            project.do_synthetic_broadcast("make-clone-x");
+            many_frames(project, 2);
 
-        // The clone, which has stepped in the x-dirn, should appear behind the
-        // original, i.e., before it in the render list.
-        assert_render_locations([[40, 0], [0, 0]])
+            // The clone, which has stepped in the x-dirn, should appear behind the
+            // original, i.e., before it in the render list.
+            assert_render_locations([[40, 0], [0, 0]])
 
-        project.do_synthetic_broadcast("make-clone-y");
-        many_frames(project, 2);
+            project.do_synthetic_broadcast("make-clone-y");
+            many_frames(project, 2);
 
-        // The clones, which have stepped in the y-dirn, should appear just
-        // behind their respective parents, i.e., just before them in the render
-        // list.  (The original stays at the very front, i.e., the very last
-        // item in the render list.)
-        assert_render_locations([[40, 40], [40, 0], [0, 40], [0, 0]])
+            // The clones, which have stepped in the y-dirn, should appear just
+            // behind their respective parents, i.e., just before them in the render
+            // list.  (The original stays at the very front, i.e., the very last
+            // item in the render list.)
+            assert_render_locations([[40, 40], [40, 0], [0, 40], [0, 0]])
+        });
     });
 
     it("handles repeated delete of same clone", async () => {
@@ -488,101 +497,112 @@ describe("cloning", () => {
         assert.deepStrictEqual(output_lines, ["del_1", "del_2"]);
     });
 
-    it("handles clone of deleted instance", async () => {
-        const project = await import_deindented(`
+    [
+        { target: "pytch",
+            args: "self"
+         },
+        { target: "self",
+            args: ""
+         },
+    ].forEach(spec => {
+        it(`handles clone of deleted instance with ${spec.target}`, async () => {
+            const project = await import_deindented(`
 
-            import pytch
+                import pytch
 
-            class Banana(pytch.Sprite):
-                @pytch.when_I_receive("go")
-                def start(self):
-                    pytch.broadcast("make-clone")
-                    pytch.broadcast("make-clone")
-                    pytch.broadcast("make-clone")
+                class Banana(pytch.Sprite):
+                    @pytch.when_I_receive("go")
+                    def start(self):
+                        ${spec.target}.broadcast("make-clone")
+                        ${spec.target}.broadcast("make-clone")
+                        ${spec.target}.broadcast("make-clone")
 
-                @pytch.when_I_receive("make-clone")
-                def make_clone(self):
-                    pytch.create_clone_of(self)
+                    @pytch.when_I_receive("make-clone")
+                    def make_clone(self):
+                        ${spec.target}.create_clone_of(${spec.args})
 
-                @pytch.when_I_start_as_a_clone
-                def delete_self(self):
-                    self.delete_this_clone()
-        `);
+                    @pytch.when_I_start_as_a_clone
+                    def delete_self(self):
+                        self.delete_this_clone()
+            `);
 
-        project.do_synthetic_broadcast("go");
-        many_frames(project, 5);
+            project.do_synthetic_broadcast("go");
+            many_frames(project, 5);
+        });
+
+
+        it(`handles clone of deleted instance with ${spec.target} (simpler)`, async () => {
+            const project = await import_deindented(`
+
+                import pytch
+
+                class Frog(pytch.Sprite):
+                    @pytch.when_I_receive("go")
+                    def start(self):
+                        ${spec.target}.create_clone_of(${spec.args})
+                        ${spec.target}.broadcast_and_wait("1")
+                        ${spec.target}.broadcast_and_wait("2")
+
+                    @pytch.when_I_receive("1")
+                    def step_1a(self):
+                        self.delete_this_clone()
+
+                    @pytch.when_I_receive("1")
+                    def step_1b(self):
+                        ${spec.target}.create_clone_of(${spec.args})
+
+                    @pytch.when_I_receive("2")
+                    def step_2(self):
+                        ${spec.target}.create_clone_of(${spec.args})
+            `);
+
+            const frog_cls = project.actor_by_class_name("Frog");
+            const frame_and_asserts = (exp_n_frogs, exp_n_threads) => {
+                one_frame(project);
+                assert.strictEqual(frog_cls.instances.length, exp_n_frogs);
+                assert.strictEqual(project.threads_info().length, exp_n_threads);
+            };
+
+            project.do_synthetic_broadcast("go");
+
+            // start() should make a clone:
+            frame_and_asserts(2, 1);
+
+            // start() should broadcast "1", creating four threads, but
+            // neither step_1a() nor step_1b() should run yet:
+            frame_and_asserts(2, 5);
+
+            // step_1a() should cause the original and the clone to both
+            // pause inside the delete_this_clone() syscall.  For the clone,
+            // the instance will be unregistered and the thread culled.  For
+            // the original, nothing will happen.  step_1b() will create
+            // clones of both instances.  There is a net gain of one
+            // instance.
+            frame_and_asserts(3, 4);
+
+            // The step_1a() thread on the original should resume and
+            // immediately finish.  The step_1b() threads should both
+            // finish.
+            frame_and_asserts(3, 1);
+
+            // start() should wake up and broadcast "2", launching three
+            // threads (one per instance), but step_2() should not
+            // actually run yet:
+            frame_and_asserts(3, 4);
+
+            // step_2() should run for each of those three instances, and
+            // create new clones of each.  The threads have yet to resume
+            // and finish.
+            frame_and_asserts(6, 4);
+
+            // All the threads running step_2() should resume and finish,
+            // leaving just the thread running start() on the original.
+            frame_and_asserts(6, 1);
+
+            // start() on the original should resume and immediately
+            // finish.
+            frame_and_asserts(6, 0);
+        });
     });
 
-    it("handles clone of deleted instance (simpler)", async () => {
-        const project = await import_deindented(`
-
-            import pytch
-
-            class Frog(pytch.Sprite):
-                @pytch.when_I_receive("go")
-                def start(self):
-                    pytch.create_clone_of(self)
-                    pytch.broadcast_and_wait("1")
-                    pytch.broadcast_and_wait("2")
-
-                @pytch.when_I_receive("1")
-                def step_1a(self):
-                    self.delete_this_clone()
-
-                @pytch.when_I_receive("1")
-                def step_1b(self):
-                    pytch.create_clone_of(self)
-
-                @pytch.when_I_receive("2")
-                def step_2(self):
-                    pytch.create_clone_of(self)
-        `);
-
-        const frog_cls = project.actor_by_class_name("Frog");
-        const frame_and_asserts = (exp_n_frogs, exp_n_threads) => {
-            one_frame(project);
-            assert.strictEqual(frog_cls.instances.length, exp_n_frogs);
-            assert.strictEqual(project.threads_info().length, exp_n_threads);
-        };
-
-        project.do_synthetic_broadcast("go");
-
-        // start() should make a clone:
-        frame_and_asserts(2, 1);
-
-        // start() should broadcast "1", creating four threads, but
-        // neither step_1a() nor step_1b() should run yet:
-        frame_and_asserts(2, 5);
-
-        // step_1a() should cause the original and the clone to both
-        // pause inside the delete_this_clone() syscall.  For the clone,
-        // the instance will be unregistered and the thread culled.  For
-        // the original, nothing will happen.  step_1b() will create
-        // clones of both instances.  There is a net gain of one
-        // instance.
-        frame_and_asserts(3, 4);
-
-        // The step_1a() thread on the original should resume and
-        // immediately finish.  The step_1b() threads should both
-        // finish.
-        frame_and_asserts(3, 1);
-
-        // start() should wake up and broadcast "2", launching three
-        // threads (one per instance), but step_2() should not
-        // actually run yet:
-        frame_and_asserts(3, 4);
-
-        // step_2() should run for each of those three instances, and
-        // create new clones of each.  The threads have yet to resume
-        // and finish.
-        frame_and_asserts(6, 4);
-
-        // All the threads running step_2() should resume and finish,
-        // leaving just the thread running start() on the original.
-        frame_and_asserts(6, 1);
-
-        // start() on the original should resume and immediately
-        // finish.
-        frame_and_asserts(6, 0);
-    });
 });

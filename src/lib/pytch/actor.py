@@ -145,30 +145,44 @@ class Actor:
         self._speech = (_new_speech_id(), "say", "")
 
     def stop_all_sounds(self):
+        "() Stop all currently-playing sounds"
         stop_all_sounds()
     
-    def broadcast(self,message):
+    def broadcast(self, message):
+        "(MESSAGE) Broadcast MESSAGE; continue executing"
         broadcast(message)
     
-    def broadcast_and_wait(self,message):
+    def broadcast_and_wait(self, message):
+        "(MESSAGE) Broadcast MESSAGE; pause until all listeners finish"
         broadcast_and_wait(message)
     
-    def wait_seconds(self,seconds):
+    def wait_seconds(self, seconds):
+        "(SECONDS) Pause for the given number of seconds"
         wait_seconds(seconds)
 
     def stop_all(self):
+        "() Stop all currently-running scripts"
         stop_all()
 
     def create_clone_of(self):
+        """(SPRITE) Create a clone of a SPRITE class or instance
+
+        Two variants, depending on whether the original is a class or an
+        instance.  If a class, we clone its instance-0.  If an instance,
+        clone that instance.
+        """
         create_clone_of(self)
 
-    def show_variable(self,var_name, *,label=None, top=None, right=None, bottom=None, left=None):
-        show_variable(self,var_name, label=label, top=top, right=right, bottom=bottom, left=left)
+    def show_variable(self, var_name, *, label=None, top=None, right=None, bottom=None, left=None):
+        "(OBJ, VAR, [...]) Show a watcher for OBJ.VAR"
+        show_variable(self, var_name, label=label, top=top, right=right, bottom=bottom, left=left)
 
-    def hide_variable(self,var_name):
-        hide_variable(self,var_name)
+    def hide_variable(self, var_name):
+        "(OBJ, VAR) Hide the watcher for OBJ.VAR"
+        hide_variable(self, var_name)
     
-    def key_pressed(self,key_name):
+    def key_pressed(self, key_name):
+        "(KEY) Return whether KEY is currently pressed down"
         return key_pressed(key_name)
 
 class Sprite(Actor):
