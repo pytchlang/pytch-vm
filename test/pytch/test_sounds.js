@@ -206,33 +206,42 @@ describe("waiting and non-waiting sounds", () => {
         assert.strictEqual(orchestra.js_attr("played_violin"), "yes")
     });
 
-    it("can stop sounds", async () => {
-        let project = await import_project();
-        let orchestra = project.instance_0_by_class_name("Orchestra");
-        let project_one_frame = one_frame_fun(project);
+    [
+        { message: "silence",
+            target: "pytch"
+         },
+        { message: "silence-self",
+            target: "self"
+         },
+    ].forEach(spec => {
+        it(`can stop sounds using ${spec.target}.stop_all_sounds`, async () => {
+            let project = await import_project();
+            let orchestra = project.instance_0_by_class_name("Orchestra");
+            let project_one_frame = one_frame_fun(project);
 
-        project.do_synthetic_broadcast("play-violin");
-        for (let i = 0; i != 4; ++i) {
-            project_one_frame();
-            assert_running_performances(with_unity_gain(["violin"]));
-            assert.strictEqual(orchestra.js_attr("played_violin"), "no")
-        }
+            project.do_synthetic_broadcast("play-violin");
+            for (let i = 0; i != 4; ++i) {
+                project_one_frame();
+                assert_running_performances(with_unity_gain(["violin"]));
+                assert.strictEqual(orchestra.js_attr("played_violin"), "no")
+            }
 
-        // Everything should immediately go quiet, but the thread won't be woken
-        // up until the following frame.
-        project.do_synthetic_broadcast("silence");
-        project_one_frame();
-        assert_running_performances([]);
-        assert.strictEqual(orchestra.js_attr("played_violin"), "no")
-
-        // The next frame, the calling thread should resume and run to
-        // completion.  Nothing further should happen.
-        for (let i = 0; i != 10; ++i) {
+            // Everything should immediately go quiet, but the thread won't be woken
+            // up until the following frame.
+            project.do_synthetic_broadcast(spec.message);
             project_one_frame();
             assert_running_performances([]);
-            assert.strictEqual(orchestra.js_attr("played_violin"), "yes")
-            assert.strictEqual(project.thread_groups.length, 0);
-        }
+            assert.strictEqual(orchestra.js_attr("played_violin"), "no")
+
+            // The next frame, the calling thread should resume and run to
+            // completion.  Nothing further should happen.
+            for (let i = 0; i != 10; ++i) {
+                project_one_frame();
+                assert_running_performances([]);
+                assert.strictEqual(orchestra.js_attr("played_violin"), "yes")
+                assert.strictEqual(project.thread_groups.length, 0);
+            }
+        });
     });
 
     it("can play both", async () => {

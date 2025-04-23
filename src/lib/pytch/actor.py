@@ -164,21 +164,12 @@ class Actor:
         "() Stop all currently-running scripts"
         stop_all()
 
-    def create_clone_of(self):
-        """(SPRITE) Create a clone of a SPRITE class or instance
-
-        Two variants, depending on whether the original is a class or an
-        instance.  If a class, we clone its instance-0.  If an instance,
-        clone that instance.
-        """
-        create_clone_of(self)
-
     def show_variable(self, var_name, *, label=None, top=None, right=None, bottom=None, left=None):
-        "(OBJ, VAR, [...]) Show a watcher for OBJ.VAR"
+        "(VAR, [...]) Show a watcher for self.VAR"
         show_variable(self, var_name, label=label, top=top, right=right, bottom=bottom, left=left)
 
     def hide_variable(self, var_name):
-        "(OBJ, VAR) Hide the watcher for OBJ.VAR"
+        "(VAR) Hide the watcher for self.VAR"
         hide_variable(self, var_name)
     
     def key_pressed(self, key_name):
@@ -417,6 +408,12 @@ class Sprite(Actor):
             return answer
         else:
             return ask_and_wait(prompt)
+
+    def create_clone_of(self):
+        """() Create a clone of this Sprite instance
+
+        """
+        create_clone_of(self)
 
 
 class Stage(Actor):
