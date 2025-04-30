@@ -213,41 +213,51 @@ describe("Ask and wait for answer", () => {
         // Don't bother answering the second question.
     });
 
+
+
+    it(`abandons questions on red-stop`, async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            class Interviewer(pytch.Sprite):
+                @pytch.when_I_receive("ask")
+                def ask_name(self):
+                    name = self.ask_and_wait("name?")
+        `);
+
+        project.do_synthetic_broadcast("ask");
+        one_frame(project);
+        assertLiveQuestion(project, "name?");
+
+        project.on_red_stop_clicked();
+        one_frame(project);
+        assertNoLiveQuestion(project);
+    });
+
     [
-        {
-            label: "red-stop",
-            action: (project) => project.on_red_stop_clicked(),
-        },
-        {
-            label: "stop-all",
-            action: (project) => project.do_synthetic_broadcast("halt"),
-        },
-    ].forEach(spec =>{
-        [
-            { target: "pytch" },
-            { target: "self" },
-        ].forEach(comm => {
-            it(`abandons questions on ${spec.label} with ${comm.target}`, async () => {
-                const project = await import_deindented(`
+        { target: "pytch" },
+        { target: "self" },
+    ].forEach(spec => {
+        it(`abandons questions on stop-all using ${spec.target}.stop_all()`, async () => {
+            const project = await import_deindented(`
 
-                    import pytch
-                    class Interviewer(pytch.Sprite):
-                        @pytch.when_I_receive("ask")
-                        def ask_name(self):
-                            name = pytch.ask_and_wait("name?")
-                        @pytch.when_I_receive("halt")
-                        def stop_everything(self):
-                            ${comm.target}.stop_all()
-                `);
+                import pytch
+                class Interviewer(pytch.Sprite):
+                    @pytch.when_I_receive("ask")
+                    def ask_name(self):
+                        name = self.ask_and_wait("name?")
+                    @pytch.when_I_receive("halt")
+                    def stop_everything(self):
+                        ${spec.target}.stop_all()
+            `);
 
-                project.do_synthetic_broadcast("ask");
-                one_frame(project);
-                assertLiveQuestion(project, "name?");
+            project.do_synthetic_broadcast("ask");
+            one_frame(project);
+            assertLiveQuestion(project, "name?");
 
-                spec.action(project);
-                one_frame(project);
-                assertNoLiveQuestion(project);
-            });
+            project.do_synthetic_broadcast("halt");
+            one_frame(project);
+            assertNoLiveQuestion(project);
         });
     });
 

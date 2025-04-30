@@ -80,11 +80,16 @@ describe("scheduling", () => {
                 exp_count: 5,
             },
             {
-                label: "stop-all",
+                label: "pytch.stop_all()",
                 action: (project) => project.do_synthetic_broadcast("halt"),
                 // The "halt" b/cast handler runs concurrently with the
                 // start_counting() threads; they get one more frame of
                 // run-time before being deleted:
+                exp_count: 11,
+            },
+            {
+                label: "self.stop_all()",
+                action: (project) => project.do_synthetic_broadcast("halt-self"),
                 exp_count: 11,
             },
         ];
@@ -105,7 +110,10 @@ describe("scheduling", () => {
                 many_frames(project, 5);
 
                 assert_counters_both(spec.exp_count);
-            })})});
+            });
+        });
+    });
+
 
     class BroadcastActors {
         constructor(project) {
@@ -121,11 +129,38 @@ describe("scheduling", () => {
                                exp_n_events,
                                "receiver-n-events");
         }
-    }
+    }  
 
-    with_project("py/project/broadcast.py", (import_project) => {
-        it("can schedule threads on broadcast", async () => {
-            let project = await import_project();
+    
+    [
+        { target: "pytch" },
+        { target: "self" },
+    ].forEach(spec => {
+        it(`can schedule threads on broadcast using ${spec.target}.broadcast()`, async () => {
+            const project = await import_deindented(`
+                import pytch 
+                class Sender(pytch.Sprite):
+                    def __init__(self):
+                        pytch.Sprite.__init__(self)
+                        self.n_steps = 0
+
+                    @pytch.when_green_flag_clicked
+                    def send_message(self):
+                        self.n_steps += 1
+                        ${spec.target}.broadcast('something-happened')
+                        self.n_steps += 1
+
+
+                class Receiver(pytch.Sprite):
+                    def __init__(self):
+                        pytch.Sprite.__init__(self)
+                        self.n_events = 0
+
+                    @pytch.when_I_receive('something-happened')
+                    def note_event(self):
+                        self.n_events += 1
+
+            `);
             let actors = new BroadcastActors(project);
 
             // Initially only the __init__() methods have run.
@@ -150,9 +185,38 @@ describe("scheduling", () => {
             actors.assert_has_steps_and_events(2, 1);
         })});
 
-    with_project("py/project/broadcast_and_wait.py", (import_project) => {
-        it("can pause threads on broadcast/wait", async () => {
-            let project = await import_project();
+
+    [
+        { target: "pytch" },
+        { target: "self" },
+    ].forEach(spec => {
+        it(`can pause threads on broadcast/wait using ${spec.target}.broadcast_and_wait()`, async () => {
+            const project = await import_deindented(`
+                import pytch 
+                class Sender(pytch.Sprite):
+                    def __init__(self):
+                        pytch.Sprite.__init__(self)
+                        self.n_steps = 0
+
+                    @pytch.when_green_flag_clicked
+                    def send_message(self):
+                        self.n_steps += 1
+                        ${spec.target}.broadcast_and_wait('something-happened')
+                        self.n_steps += 1
+
+
+                class Receiver(pytch.Sprite):
+                    def __init__(self):
+                        pytch.Sprite.__init__(self)
+                        self.n_events = 0
+
+                    @pytch.when_I_receive('something-happened')
+                    def note_event(self):
+                        self.n_events += 1
+                        pytch.wait_seconds(0)
+                        self.n_events += 1
+
+            `);
             let actors = new BroadcastActors(project);
 
             // Initially only the __init__() methods have run.
@@ -192,13 +256,16 @@ describe("scheduling", () => {
         { target: "pytch" },
         { target: "self" },
     ].forEach(spec => {
-        it(`can pause with ${spec.target}.wait_seconds()`, async () => {
+        it(`can pause for a number of seconds using ${spec.target}.wait_seconds()`, async () => {
             const project = await import_deindented(`
                 import pytch
                 class Alien(pytch.Sprite):
+                    def __init__(self):
+                        pytch.Sprite.__init__(self)
+                        self.n_steps = 0
                     @pytch.when_green_flag_clicked
                     def invade(self):
-                        self.n_steps = 1
+                        self.n_steps += 1
                         ${spec.target}.wait_seconds(0.25)
                         self.n_steps += 1
             `);
@@ -209,7 +276,11 @@ describe("scheduling", () => {
                 assert.strictEqual(alien.js_attr("n_steps"), exp_n_steps);
             });
 
+            assert_n_steps(0);
+        
             project.on_green_flag_clicked();
+            assert_n_steps(0);
+
             one_frame(project);
             assert_n_steps(1);
 

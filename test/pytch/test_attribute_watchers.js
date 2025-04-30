@@ -24,10 +24,10 @@ describe("Attribute watchers", () => {
 
     [
         { target: "pytch",
-            args: "self, "
+            args_prefix: "self, "
          },
         { target: "self",
-            args: ""
+            args_prefix: ""
          },
     ].forEach(spec => {
         it(`can render a Sprite variable using ${spec.target}`, async () => {
@@ -40,20 +40,20 @@ describe("Attribute watchers", () => {
                     @pytch.when_I_receive("watch-score")
                     def show_score(self):
                         self.score = 42
-                        ${spec.target}.show_variable(${spec.args}"score")
+                        ${spec.target}.show_variable(${spec.args_prefix}"score")
 
                     @pytch.when_I_receive("unwatch-score")
                     def hide_score(self):
-                        ${spec.target}.hide_variable(${spec.args}"score")
+                        ${spec.target}.hide_variable(${spec.args_prefix}"score")
 
                     @pytch.when_I_receive("watch-health")
                     def show_health(self):
                         self.health = 99
-                        ${spec.target}.show_variable(${spec.args}"health", right=220)
+                        ${spec.target}.show_variable(${spec.args_prefix}"health", right=220)
 
                     @pytch.when_I_receive("unwatch-health")
                     def hide_health(self):
-                        ${spec.target}.hide_variable(${spec.args}"health")
+                        ${spec.target}.hide_variable(${spec.args_prefix}"health")
             `);
 
             // Initially there should be no watchers.

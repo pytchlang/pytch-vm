@@ -77,28 +77,38 @@ describe("moving ball example", () => {
             assert_renders_as("frame-3", project, ball_at(100, 60 + 10 + 10 - 100));
         });
 
-        it("can tell which keys are pressed", async () => {
-            let project = await import_project();
-            let ball = project.instance_0_by_class_name("Ball");
+        [
+            { message: "check-keys",
+                target: "pytch"
+             },
+            { message: "check-keys-self",
+                target: "self"
+             },
+        ].forEach(spec => {
+            it(`can tell which keys are pressed using ${spec.target}.key_pressed()`, async () => {
+                let project = await import_project();
+                let ball = project.instance_0_by_class_name("Ball");
 
-            const assert_keys = (exp_keys => {
-                project.do_synthetic_broadcast("check-keys");
-                one_frame(project);
-                assert.strictEqual(ball.js_attr("keys_pressed"), exp_keys);
+                const assert_keys = (exp_keys => {
+                    project.do_synthetic_broadcast(spec.message);
+                    one_frame(project);
+                    assert.strictEqual(ball.js_attr("keys_pressed"), exp_keys);
+                });
+
+                assert_keys("");
+                mock_keyboard.press_key("a");
+                assert_keys("a");
+                mock_keyboard.press_key("b");
+                assert_keys("ab");
+                mock_keyboard.release_key("a");
+                assert_keys("b");
+                mock_keyboard.press_key("c");
+                assert_keys("bc");
+                mock_keyboard.release_key("b");
+                assert_keys("c");
+                mock_keyboard.release_key("c");
+                assert_keys("");
             });
-
-            assert_keys("");
-            mock_keyboard.press_key("a");
-            assert_keys("a");
-            mock_keyboard.press_key("b");
-            assert_keys("ab");
-            mock_keyboard.release_key("a");
-            assert_keys("b");
-            mock_keyboard.press_key("c");
-            assert_keys("bc");
-            mock_keyboard.release_key("b");
-            assert_keys("c");
-            mock_keyboard.release_key("c");
-            assert_keys("");
-        })});
+        });
+    });
 });

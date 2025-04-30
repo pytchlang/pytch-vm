@@ -27,6 +27,10 @@ class Alien(Sprite):
 
     @when_I_receive('clone-self')
     def clone_self(self):
+        self.create_clone_of()
+
+    @when_I_receive('clone-pytch')
+    def clone_pytch(self):
         pytch.create_clone_of(self)
 
 
@@ -43,6 +47,10 @@ class Broom(Sprite):
 
     @when_I_receive('clone-self')
     def clone_self(self):
+        self.create_clone_of()
+
+    @when_I_receive('clone-pytch')
+    def clone_pytch(self):
         pytch.create_clone_of(self)
 
     @when_I_receive('destroy-broom-clones')
