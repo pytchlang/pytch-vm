@@ -500,10 +500,11 @@ describe("cloning", () => {
     });
 
     [
-        { target: "pytch", args: "self" },
-        { target: "self", args: "" },
+        { label: "pytch.create_clone_of", call_code: "pytch.create_clone_of(self)" },
+        { label: "self.create_clone_of", call_code: "self.create_clone_of(self)" },
+        { label: "self.create_clone", call_code: "self.create_clone()" },
     ].forEach(spec => {
-        it(`handles clone of deleted instance with ${spec.target}`, async () => {
+        it(`handles clone of deleted instance (${spec.label})`, async () => {
             const project = await import_deindented(`
 
                 import pytch
@@ -511,13 +512,14 @@ describe("cloning", () => {
                 class Banana(pytch.Sprite):
                     @pytch.when_I_receive("go")
                     def start(self):
-                        ${spec.target}.broadcast("make-clone")
-                        ${spec.target}.broadcast("make-clone")
-                        ${spec.target}.broadcast("make-clone")
+                        # Mixture of pytch and self:
+                        pytch.broadcast("make-clone")
+                        self.broadcast("make-clone")
+                        pytch.broadcast("make-clone")
 
                     @pytch.when_I_receive("make-clone")
                     def make_clone(self):
-                        ${spec.target}.create_clone_of(${spec.args})
+                        ${spec.call_code}
 
                     @pytch.when_I_start_as_a_clone
                     def delete_self(self):
@@ -528,7 +530,7 @@ describe("cloning", () => {
             many_frames(project, 5);
         });
 
-        it(`handles clone of deleted instance with ${spec.target} (simpler)`, async () => {
+        it(`handles clone of deleted instance (${spec.label}; simpler)`, async () => {
             const project = await import_deindented(`
 
                 import pytch
@@ -536,9 +538,10 @@ describe("cloning", () => {
                 class Frog(pytch.Sprite):
                     @pytch.when_I_receive("go")
                     def start(self):
-                        ${spec.target}.create_clone_of(${spec.args})
-                        ${spec.target}.broadcast_and_wait("1")
-                        ${spec.target}.broadcast_and_wait("2")
+                        # Mixture of pytch and self:
+                        pytch.create_clone_of(self)
+                        self.broadcast_and_wait("1")
+                        pytch.broadcast_and_wait("2")
 
                     @pytch.when_I_receive("1")
                     def step_1a(self):
@@ -546,11 +549,11 @@ describe("cloning", () => {
 
                     @pytch.when_I_receive("1")
                     def step_1b(self):
-                        ${spec.target}.create_clone_of(${spec.args})
+                        ${spec.call_code}
 
                     @pytch.when_I_receive("2")
                     def step_2(self):
-                        ${spec.target}.create_clone_of(${spec.args})
+                        ${spec.call_code}
             `);
 
             const frog_cls = project.actor_by_class_name("Frog");
