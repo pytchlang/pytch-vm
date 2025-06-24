@@ -19,11 +19,12 @@ configure_mocha();
 
 describe("cloning", () => {
     [
-        { message: "clone-pytch", target: "pytch" },
-        { message: "clone-self", target: "self" },
+        { message: "clone-pytch", label: "pytch.create_clone_of" },
+        { message: "clone-of-self", label: "self.create_clone_of" },
+        { message: "clone-self", label: "self.create_clone" },
     ].forEach(spec => {
         with_project("py/project/launch_clones.py", (import_project) => {
-            it(`can clone by instance using ${spec.target}.create_clone_of()`, async () => {
+            it(`can clone by instance using ${spec.label}`, async () => {
                 let project = await import_project();
                 let alien_actor = project.actor_by_class_name("Alien");
                 let all_aliens = () => alien_actor.instances;
