@@ -159,6 +159,8 @@ describe("scheduling", () => {
                     @pytch.when_I_receive('something-happened')
                     def note_event(self):
                         self.n_events += 1
+                        pytch.wait_seconds(0)
+                        self.n_events += 1
             `);
             let actors = new BroadcastActors(project);
 
@@ -178,10 +180,14 @@ describe("scheduling", () => {
             one_frame(project);
             actors.assert_has_steps_and_events(1, 0);
 
-            // Next pass through does give the receiver thread a go; and the
+            // Next frame does give the receiver thread a go; and the
             // sender continues to run.
             one_frame(project);
             actors.assert_has_steps_and_events(2, 1);
+
+            // Next frame resumes the receiver after its wait_seconds().
+            one_frame(project);
+            actors.assert_has_steps_and_events(2, 2);
         })});
 
     [
