@@ -147,15 +147,15 @@ class Actor:
     def stop_all_sounds(self):
         "() Stop all currently-playing sounds"
         stop_all_sounds()
-    
+
     def broadcast(self, message):
         "(MESSAGE) Broadcast MESSAGE; continue executing"
         broadcast(message)
-    
+
     def broadcast_and_wait(self, message):
         "(MESSAGE) Broadcast MESSAGE; pause until all listeners finish"
         broadcast_and_wait(message)
-    
+
     def wait_seconds(self, seconds):
         "(SECONDS) Pause for the given number of seconds"
         wait_seconds(seconds)
@@ -171,10 +171,11 @@ class Actor:
     def hide_variable(self, var_name):
         "(VAR) Hide the watcher for self.VAR"
         hide_variable(self, var_name)
-    
+
     def key_pressed(self, key_name):
         "(KEY) Return whether KEY is currently pressed down"
         return key_pressed(key_name)
+
 
 class Sprite(Actor):
     "The starting class for all your sprites"

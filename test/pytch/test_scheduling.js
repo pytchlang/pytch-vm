@@ -129,16 +129,16 @@ describe("scheduling", () => {
                                exp_n_events,
                                "receiver-n-events");
         }
-    }  
+    }
 
-    
+
     [
         { target: "pytch" },
         { target: "self" },
     ].forEach(spec => {
         it(`can schedule threads on broadcast using ${spec.target}.broadcast()`, async () => {
             const project = await import_deindented(`
-                import pytch 
+                import pytch
                 class Sender(pytch.Sprite):
                     def __init__(self):
                         pytch.Sprite.__init__(self)
@@ -159,7 +159,6 @@ describe("scheduling", () => {
                     @pytch.when_I_receive('something-happened')
                     def note_event(self):
                         self.n_events += 1
-
             `);
             let actors = new BroadcastActors(project);
 
@@ -185,14 +184,13 @@ describe("scheduling", () => {
             actors.assert_has_steps_and_events(2, 1);
         })});
 
-
     [
         { target: "pytch" },
         { target: "self" },
     ].forEach(spec => {
         it(`can pause threads on broadcast/wait using ${spec.target}.broadcast_and_wait()`, async () => {
             const project = await import_deindented(`
-                import pytch 
+                import pytch
                 class Sender(pytch.Sprite):
                     def __init__(self):
                         pytch.Sprite.__init__(self)
@@ -215,7 +213,6 @@ describe("scheduling", () => {
                         self.n_events += 1
                         pytch.wait_seconds(0)
                         self.n_events += 1
-
             `);
             let actors = new BroadcastActors(project);
 
@@ -277,7 +274,7 @@ describe("scheduling", () => {
             });
 
             assert_n_steps(0);
-        
+
             project.on_green_flag_clicked();
             assert_n_steps(0);
 

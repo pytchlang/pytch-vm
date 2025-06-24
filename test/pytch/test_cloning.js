@@ -539,7 +539,6 @@ describe("cloning", () => {
             many_frames(project, 5);
         });
 
-
         it(`handles clone of deleted instance with ${spec.target} (simpler)`, async () => {
             const project = await import_deindented(`
 
@@ -613,5 +612,4 @@ describe("cloning", () => {
             frame_and_asserts(6, 0);
         });
     });
-
 });
