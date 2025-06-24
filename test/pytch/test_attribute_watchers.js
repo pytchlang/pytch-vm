@@ -23,12 +23,8 @@ describe("Attribute watchers", () => {
     ];
 
     [
-        { target: "pytch",
-            args_prefix: "self, "
-         },
-        { target: "self",
-            args_prefix: ""
-         },
+        { target: "pytch", args_prefix: "self, " },
+        { target: "self", args_prefix: "" },
     ].forEach(spec => {
         it(`can render a Sprite variable using ${spec.target}`, async () => {
             const project = await import_deindented(`

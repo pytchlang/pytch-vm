@@ -19,12 +19,8 @@ configure_mocha();
 
 describe("cloning", () => {
     [
-        { message: "clone-pytch",
-            target: "pytch"
-         },
-        { message: "clone-self",
-            target: "self"
-         },
+        { message: "clone-pytch", target: "pytch" },
+        { message: "clone-self", target: "self" },
     ].forEach(spec => {
         with_project("py/project/launch_clones.py", (import_project) => {
             it(`can clone by instance using ${spec.target}.create_clone_of()`, async () => {
@@ -392,12 +388,8 @@ describe("cloning", () => {
     });
 
     [
-        { target: "pytch",
-            args: "self"
-         },
-        { target: "self",
-            args: ""
-         },
+        { target: "pytch", args: "self" },
+        { target: "self", args: "" },
     ].forEach(spec => {
         it(`puts clone just behind parent with ${spec.target}.create_clone_of(${spec.args})`, async () => {
             const project = await import_deindented(`
@@ -507,12 +499,8 @@ describe("cloning", () => {
     });
 
     [
-        { target: "pytch",
-            args: "self"
-         },
-        { target: "self",
-            args: ""
-         },
+        { target: "pytch", args: "self" },
+        { target: "self", args: "" },
     ].forEach(spec => {
         it(`handles clone of deleted instance with ${spec.target}`, async () => {
             const project = await import_deindented(`

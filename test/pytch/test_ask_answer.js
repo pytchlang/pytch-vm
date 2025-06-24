@@ -213,7 +213,7 @@ describe("Ask and wait for answer", () => {
         // Don't bother answering the second question.
     });
 
-    it(`abandons questions on red-stop`, async () => {
+    it("abandons questions on red-stop", async () => {
         const project = await import_deindented(`
 
             import pytch

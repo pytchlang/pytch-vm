@@ -207,12 +207,8 @@ describe("waiting and non-waiting sounds", () => {
     });
 
     [
-        { message: "silence",
-            target: "pytch"
-         },
-        { message: "silence-self",
-            target: "self"
-         },
+        { message: "silence", target: "pytch" },
+        { message: "silence-self", target: "self" },
     ].forEach(spec => {
         it(`can stop sounds using ${spec.target}.stop_all_sounds`, async () => {
             let project = await import_project();

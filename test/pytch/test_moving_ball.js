@@ -78,12 +78,8 @@ describe("moving ball example", () => {
         });
 
         [
-            { message: "check-keys",
-                target: "pytch"
-             },
-            { message: "check-keys-self",
-                target: "self"
-             },
+            { message: "check-keys", target: "pytch" },
+            { message: "check-keys-self", target: "self" },
         ].forEach(spec => {
             it(`can tell which keys are pressed using ${spec.target}.key_pressed()`, async () => {
                 let project = await import_project();
