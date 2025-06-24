@@ -419,7 +419,7 @@ class Sprite(Actor):
         else:
             return ask_and_wait(prompt)
 
-    def create_clone_of(self):
+    def create_clone(self):
         "() Create a clone of this Sprite instance"
         create_clone_of(self)
 
