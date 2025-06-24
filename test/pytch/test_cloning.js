@@ -389,8 +389,8 @@ describe("cloning", () => {
     });
 
     [
-        { target: "pytch", args: "self" },
-        { target: "self", args: "" },
+        { target: "pytch" },
+        { target: "self" },
     ].forEach(spec => {
         it(`puts clone just behind parent with ${spec.target}.create_clone_of(${spec.args})`, async () => {
             const project = await import_deindented(`
@@ -403,12 +403,12 @@ describe("cloning", () => {
                     @pytch.when_I_receive("make-clone-x")
                     def make_clone_x(self):
                         self.step_dir = "x"
-                        ${spec.target}.create_clone_of(${spec.args})
+                        ${spec.target}.create_clone_of(self)
 
                     @pytch.when_I_receive("make-clone-y")
                     def make_clone_y(self):
                         self.step_dir = "y"
-                        ${spec.target}.create_clone_of(${spec.args})
+                        ${spec.target}.create_clone_of(self)
 
                     @pytch.when_I_start_as_a_clone
                     def step_x_or_y(self):
