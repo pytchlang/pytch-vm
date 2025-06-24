@@ -131,6 +131,34 @@ describe("scheduling", () => {
         }
     }
 
+    function broadcast_code(method_expression) {
+        return `
+            import pytch
+            class Sender(pytch.Sprite):
+                def __init__(self):
+                    pytch.Sprite.__init__(self)
+                    self.n_steps = 0
+
+                @pytch.when_green_flag_clicked
+                def send_message(self):
+                    self.n_steps += 1
+                    ${method_expression}('something-happened')
+                    self.n_steps += 1
+
+
+            class Receiver(pytch.Sprite):
+                def __init__(self):
+                    pytch.Sprite.__init__(self)
+                    self.n_events = 0
+
+                @pytch.when_I_receive('something-happened')
+                def note_event(self):
+                    self.n_events += 1
+                    pytch.wait_seconds(0)
+                    self.n_events += 1
+        `;
+    }
+
 
     [
         { target: "pytch" },
