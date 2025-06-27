@@ -71,6 +71,10 @@ class Orchestra(Sprite, StringOrIndexes):
     def silence(self):
         pytch.stop_all_sounds()
 
+    @when_I_receive('silence-self')
+    def silence_self(self):
+        self.stop_all_sounds()
+
 
 # --cut-here-for-auto-config--
 

@@ -92,21 +92,26 @@ describe("pytch.hat_blocks module", () => {
         "ArrowLeft", "ArrowDown", "ArrowUp", "ArrowRight"
     ];
     validKeysList.forEach(keyname => {
-        it(`key_pressed("${keyname}") accepted`, async () => {
-            const project = await import_deindented(`
-                import pytch
-                class A_Sprite(pytch.Sprite):
-                    key_pressed = False
-                    @pytch.when_key_pressed("${keyname}")
-                    def do_something(self):
-                        self.key_pressed = pytch.key_pressed("${keyname}")
-            `);
+        [
+            { target: "pytch" },
+            { target: "self" },
+        ].forEach(spec => {
+            it(`key_pressed("${keyname}") accepted with ${spec.target}`, async () => {
+                const project = await import_deindented(`
+                    import pytch
+                    class A_Sprite(pytch.Sprite):
+                        pressed = False
+                        @pytch.when_key_pressed("${keyname}")
+                        def do_something(self):
+                            self.pressed = ${spec.target}.key_pressed("${keyname}")
+                `);
 
-            mock_keyboard.press_key(keyname);
-            one_frame(project);
-            mock_keyboard.release_key(keyname);
-            let sprite_instance = project.instance_0_by_class_name("A_Sprite")
-            assert.strictEqual(sprite_instance.js_attr("key_pressed"), true);
+                mock_keyboard.press_key(keyname);
+                one_frame(project);
+                mock_keyboard.release_key(keyname);
+                let sprite_instance = project.instance_0_by_class_name("A_Sprite")
+                assert.strictEqual(sprite_instance.js_attr("pressed"), true);
+            });
         });
     });
 });

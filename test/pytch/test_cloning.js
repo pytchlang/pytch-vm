@@ -18,128 +18,134 @@ configure_mocha();
 // Cloning
 
 describe("cloning", () => {
-    with_project("py/project/launch_clones.py", (import_project) => {
-        it("can clone by instance", async () => {
-            let project = await import_project();
-            let alien_actor = project.actor_by_class_name("Alien");
-            let all_aliens = () => alien_actor.instances;
+    [
+        { message: "clone-pytch", label: "pytch.create_clone_of" },
+        { message: "clone-of-self", label: "self.create_clone_of" },
+        { message: "clone-self", label: "self.create_clone" },
+    ].forEach(spec => {
+        with_project("py/project/launch_clones.py", (import_project) => {
+            it(`can clone by instance using ${spec.label}`, async () => {
+                let project = await import_project();
+                let alien_actor = project.actor_by_class_name("Alien");
+                let all_aliens = () => alien_actor.instances;
 
-            // Do not want to make assumptions about which order instances
-            // get cloned, so sort the returned list of values of
-            // attributes.
-            const assert_all_attrs = (attrname, exp_values) => {
-                let values = all_aliens().map(a => a.js_attr(attrname));
-                values.sort((x, y) => (x - y));
-                assert.deepStrictEqual(values, exp_values);
-            };
+                // Do not want to make assumptions about which order instances
+                // get cloned, so sort the returned list of values of
+                // attributes.
+                const assert_all_attrs = (attrname, exp_values) => {
+                    let values = all_aliens().map(a => a.js_attr(attrname));
+                    values.sort((x, y) => (x - y));
+                    assert.deepStrictEqual(values, exp_values);
+                };
 
-            // The synthetic broadcast just puts the handler threads in the
-            // queue; they don't run immediately.
-            project.do_synthetic_broadcast("clone-self");
-            assert_all_attrs("copied_id", [42]);
-            assert_all_attrs("generated_id", [100]);
+                // The synthetic broadcast just puts the handler threads in the
+                // queue; they don't run immediately.
+                project.do_synthetic_broadcast(spec.message);
+                assert_all_attrs("copied_id", [42]);
+                assert_all_attrs("generated_id", [100]);
 
-            // On the next frame the clones are created with the same state
-            // as what they were cloned from.
-            one_frame(project);
-            assert_all_attrs("copied_id", [42, 42]);
-            assert_all_attrs("generated_id", [100, 100]);
-
-            // On the next frame they do their 'when start as clone' stuff:
-            one_frame(project);
-            assert_all_attrs("copied_id", [42, 43]);
-            assert_all_attrs("generated_id", [100, 101]);
-
-            // If we trigger another clone, we should eventually get another id-43
-            // one, and also an id-44 one.
-            project.do_synthetic_broadcast("clone-self");
-            assert_all_attrs("copied_id", [42, 43]);
-            assert_all_attrs("generated_id", [100, 101]);
-
-            // On the next frame, clones are created, but their 'when start as
-            // clone' handlers do not yet run.
-            one_frame(project);
-            assert_all_attrs("copied_id", [42, 42, 43, 43]);
-            assert_all_attrs("generated_id", [100, 100, 101, 101]);
-
-            // On this frame the 'when start as clone' handlers run.
-            one_frame(project);
-            assert_all_attrs("copied_id", [42, 43, 43, 44]);
-            assert_all_attrs("generated_id", [100, 101, 102, 103]);
-        });
-
-        it("can chain-clone", async () => {
-            let project = await import_project();
-            let broom_actor = project.actor_by_class_name("Broom");
-            let all_brooms = () => broom_actor.instances;
-
-            // Do not want to make assumptions about which order instances get
-            // cloned, so sort the returned list of values of attributes.
-            const assert_all_IDs = exp_values => {
-                let values = all_brooms().map(a => a.js_attr("copied_id"));
-                values.sort((x, y) => (x - y));
-                assert.deepStrictEqual(values, exp_values);
-            };
-
-            const frame_then_assert_all_IDs = exp_values => {
+                // On the next frame the clones are created with the same state
+                // as what they were cloned from.
                 one_frame(project);
-                assert_all_IDs(exp_values);
-            };
+                assert_all_attrs("copied_id", [42, 42]);
+                assert_all_attrs("generated_id", [100, 100]);
 
-            // The synthetic broadcast just puts the handler threads in the queue;
-            // they don't run immediately.
-            project.do_synthetic_broadcast("clone-self");
-            assert_all_IDs([1])
+                // On the next frame they do their 'when start as clone' stuff:
+                one_frame(project);
+                assert_all_attrs("copied_id", [42, 43]);
+                assert_all_attrs("generated_id", [100, 101]);
 
-            // On the next frame the first clone is created, but the 'when start as
-            // clone' handlers do not yet run.
-            frame_then_assert_all_IDs([1, 1])
+                // If we trigger another clone, we should eventually get another id-43
+                // one, and also an id-44 one.
+                project.do_synthetic_broadcast(spec.message);
+                assert_all_attrs("copied_id", [42, 43]);
+                assert_all_attrs("generated_id", [100, 101]);
 
-            // On the next frame, the 'when cloned' handlers do run.  This
-            // increments the ID and creates another clone.
-            frame_then_assert_all_IDs([1, 2, 2])
+                // On the next frame, clones are created, but their 'when start as
+                // clone' handlers do not yet run.
+                one_frame(project);
+                assert_all_attrs("copied_id", [42, 42, 43, 43]);
+                assert_all_attrs("generated_id", [100, 100, 101, 101]);
 
-            // This repeats until we have five instances, with incrementing IDs.
-            frame_then_assert_all_IDs([1, 2, 3, 3])
-            frame_then_assert_all_IDs([1, 2, 3, 4, 4])
-            frame_then_assert_all_IDs([1, 2, 3, 4, 5])
+                // On this frame the 'when start as clone' handlers run.
+                one_frame(project);
+                assert_all_attrs("copied_id", [42, 43, 43, 44]);
+                assert_all_attrs("generated_id", [100, 101, 102, 103]);
+            });
 
-            // After the update of the fifth instance's ID to 5, all threads have
-            // run to completion.
-            assert.strictEqual(project.thread_groups.length, 0);
+            it(`can chain-clone using ${spec.label}`, async () => {
+                let project = await import_project();
+                let broom_actor = project.actor_by_class_name("Broom");
+                let all_brooms = () => broom_actor.instances;
 
-            // Nothing should happen now.
-            for (let i = 0; i < 10; ++i)
+                // Do not want to make assumptions about which order instances get
+                // cloned, so sort the returned list of values of attributes.
+                const assert_all_IDs = exp_values => {
+                    let values = all_brooms().map(a => a.js_attr("copied_id"));
+                    values.sort((x, y) => (x - y));
+                    assert.deepStrictEqual(values, exp_values);
+                };
+
+                const frame_then_assert_all_IDs = exp_values => {
+                    one_frame(project);
+                    assert_all_IDs(exp_values);
+                };
+
+                // The synthetic broadcast just puts the handler threads in the queue;
+                // they don't run immediately.
+                project.do_synthetic_broadcast(spec.message);
+                assert_all_IDs([1])
+
+                // On the next frame the first clone is created, but the 'when start as
+                // clone' handlers do not yet run.
+                frame_then_assert_all_IDs([1, 1])
+
+                // On the next frame, the 'when cloned' handlers do run.  This
+                // increments the ID and creates another clone.
+                frame_then_assert_all_IDs([1, 2, 2])
+
+                // This repeats until we have five instances, with incrementing IDs.
+                frame_then_assert_all_IDs([1, 2, 3, 3])
+                frame_then_assert_all_IDs([1, 2, 3, 4, 4])
                 frame_then_assert_all_IDs([1, 2, 3, 4, 5])
-        });
 
-        it("can delete clones after chain-clone", async () => {
-            let project = await import_project();
-            let broom_actor = project.actor_by_class_name("Broom");
-            let all_brooms = () => broom_actor.instances;
+                // After the update of the fifth instance's ID to 5, all threads have
+                // run to completion.
+                assert.strictEqual(project.thread_groups.length, 0);
 
-            // Do not want to make assumptions about which order instances get
-            // cloned, so sort the returned list of values of attributes.
-            const assert_all_IDs = exp_values => {
-                let values = all_brooms().map(a => a.js_attr("copied_id"));
-                values.sort((x, y) => (x - y));
-                assert.deepStrictEqual(values, exp_values);
-            };
+                // Nothing should happen now.
+                for (let i = 0; i < 10; ++i)
+                    frame_then_assert_all_IDs([1, 2, 3, 4, 5])
+            });
 
-            const frame_then_assert_all_IDs = exp_values => {
-                one_frame(project);
-                assert_all_IDs(exp_values);
-            };
+            it(`can delete clones after chain-clone using ${spec.label}`, async () => {
+                let project = await import_project();
+                let broom_actor = project.actor_by_class_name("Broom");
+                let all_brooms = () => broom_actor.instances;
 
-            // The synthetic broadcast just puts the handler threads in the queue;
-            // they don't run immediately.
-            project.do_synthetic_broadcast("clone-self");
-            many_frames(project, 10);
+                // Do not want to make assumptions about which order instances get
+                // cloned, so sort the returned list of values of attributes.
+                const assert_all_IDs = exp_values => {
+                    let values = all_brooms().map(a => a.js_attr("copied_id"));
+                    values.sort((x, y) => (x - y));
+                    assert.deepStrictEqual(values, exp_values);
+                };
 
-            assert_all_IDs([1, 2, 3, 4, 5])
+                const frame_then_assert_all_IDs = exp_values => {
+                    one_frame(project);
+                    assert_all_IDs(exp_values);
+                };
 
-            project.do_synthetic_broadcast("destroy-broom-clones");
-            frame_then_assert_all_IDs([1]);
+                // The synthetic broadcast just puts the handler threads in the queue;
+                // they don't run immediately.
+                project.do_synthetic_broadcast(spec.message);
+                many_frames(project, 10);
+
+                assert_all_IDs([1, 2, 3, 4, 5])
+
+                project.do_synthetic_broadcast("destroy-broom-clones");
+                frame_then_assert_all_IDs([1]);
+            });
         });
     });
 
@@ -382,58 +388,63 @@ describe("cloning", () => {
         );
     });
 
-    it("puts clone just behind parent", async () => {
-        const project = await import_deindented(`
+    [
+        { target: "pytch" },
+        { target: "self" },
+    ].forEach(spec => {
+        it(`puts clone just behind parent with ${spec.target}.create_clone_of()`, async () => {
+            const project = await import_deindented(`
 
-            import pytch
+                import pytch
 
-            class Balloon(pytch.Sprite):
-                Costumes = [('balloon', 'balloon.png', 0, 0)]
+                class Balloon(pytch.Sprite):
+                    Costumes = [('balloon', 'balloon.png', 0, 0)]
 
-                @pytch.when_I_receive("make-clone-x")
-                def make_clone_x(self):
-                    self.step_dir = "x"
-                    pytch.create_clone_of(self)
+                    @pytch.when_I_receive("make-clone-x")
+                    def make_clone_x(self):
+                        self.step_dir = "x"
+                        ${spec.target}.create_clone_of(self)
 
-                @pytch.when_I_receive("make-clone-y")
-                def make_clone_y(self):
-                    self.step_dir = "y"
-                    pytch.create_clone_of(self)
+                    @pytch.when_I_receive("make-clone-y")
+                    def make_clone_y(self):
+                        self.step_dir = "y"
+                        ${spec.target}.create_clone_of(self)
 
-                @pytch.when_I_start_as_a_clone
-                def step_x_or_y(self):
-                    if self.step_dir == "x":
-                        self.change_x(40)
-                    else:
-                        self.change_y(40)
-        `);
+                    @pytch.when_I_start_as_a_clone
+                    def step_x_or_y(self):
+                        if self.step_dir == "x":
+                            self.change_x(40)
+                        else:
+                            self.change_y(40)
+            `);
 
-        const locations
-              = () => project.rendering_instructions().map(i => [i.x, i.y]);
-        const assert_render_locations
-              = (exp_locations) => assert.deepStrictEqual(locations(),
-                                                          exp_locations);
+            const locations
+                = () => project.rendering_instructions().map(i => [i.x, i.y]);
+            const assert_render_locations
+                = (exp_locations) => assert.deepStrictEqual(locations(),
+                                                            exp_locations);
 
-        // There should only be the original, and it hasn't moved.
-        assert_render_locations([[0, 0]])
+            // There should only be the original, and it hasn't moved.
+            assert_render_locations([[0, 0]])
 
-        // Allow two frames; one for the broadcast and one for the
-        // when-I-start-as-clone thread to run.
-        project.do_synthetic_broadcast("make-clone-x");
-        many_frames(project, 2);
+            // Allow two frames; one for the broadcast and one for the
+            // when-I-start-as-clone thread to run.
+            project.do_synthetic_broadcast("make-clone-x");
+            many_frames(project, 2);
 
-        // The clone, which has stepped in the x-dirn, should appear behind the
-        // original, i.e., before it in the render list.
-        assert_render_locations([[40, 0], [0, 0]])
+            // The clone, which has stepped in the x-dirn, should appear behind the
+            // original, i.e., before it in the render list.
+            assert_render_locations([[40, 0], [0, 0]])
 
-        project.do_synthetic_broadcast("make-clone-y");
-        many_frames(project, 2);
+            project.do_synthetic_broadcast("make-clone-y");
+            many_frames(project, 2);
 
-        // The clones, which have stepped in the y-dirn, should appear just
-        // behind their respective parents, i.e., just before them in the render
-        // list.  (The original stays at the very front, i.e., the very last
-        // item in the render list.)
-        assert_render_locations([[40, 40], [40, 0], [0, 40], [0, 0]])
+            // The clones, which have stepped in the y-dirn, should appear just
+            // behind their respective parents, i.e., just before them in the render
+            // list.  (The original stays at the very front, i.e., the very last
+            // item in the render list.)
+            assert_render_locations([[40, 40], [40, 0], [0, 40], [0, 0]])
+        });
     });
 
     it("handles repeated delete of same clone", async () => {
@@ -488,101 +499,109 @@ describe("cloning", () => {
         assert.deepStrictEqual(output_lines, ["del_1", "del_2"]);
     });
 
-    it("handles clone of deleted instance", async () => {
-        const project = await import_deindented(`
+    [
+        { label: "pytch.create_clone_of", call_code: "pytch.create_clone_of(self)" },
+        { label: "self.create_clone_of", call_code: "self.create_clone_of(self)" },
+        { label: "self.create_clone", call_code: "self.create_clone()" },
+    ].forEach(spec => {
+        it(`handles clone of deleted instance (${spec.label})`, async () => {
+            const project = await import_deindented(`
 
-            import pytch
+                import pytch
 
-            class Banana(pytch.Sprite):
-                @pytch.when_I_receive("go")
-                def start(self):
-                    pytch.broadcast("make-clone")
-                    pytch.broadcast("make-clone")
-                    pytch.broadcast("make-clone")
+                class Banana(pytch.Sprite):
+                    @pytch.when_I_receive("go")
+                    def start(self):
+                        # Mixture of pytch and self:
+                        pytch.broadcast("make-clone")
+                        self.broadcast("make-clone")
+                        pytch.broadcast("make-clone")
 
-                @pytch.when_I_receive("make-clone")
-                def make_clone(self):
-                    pytch.create_clone_of(self)
+                    @pytch.when_I_receive("make-clone")
+                    def make_clone(self):
+                        ${spec.call_code}
 
-                @pytch.when_I_start_as_a_clone
-                def delete_self(self):
-                    self.delete_this_clone()
-        `);
+                    @pytch.when_I_start_as_a_clone
+                    def delete_self(self):
+                        self.delete_this_clone()
+            `);
 
-        project.do_synthetic_broadcast("go");
-        many_frames(project, 5);
-    });
+            project.do_synthetic_broadcast("go");
+            many_frames(project, 5);
+        });
 
-    it("handles clone of deleted instance (simpler)", async () => {
-        const project = await import_deindented(`
+        it(`handles clone of deleted instance (${spec.label}; simpler)`, async () => {
+            const project = await import_deindented(`
 
-            import pytch
+                import pytch
 
-            class Frog(pytch.Sprite):
-                @pytch.when_I_receive("go")
-                def start(self):
-                    pytch.create_clone_of(self)
-                    pytch.broadcast_and_wait("1")
-                    pytch.broadcast_and_wait("2")
+                class Frog(pytch.Sprite):
+                    @pytch.when_I_receive("go")
+                    def start(self):
+                        # Mixture of pytch and self:
+                        pytch.create_clone_of(self)
+                        self.broadcast_and_wait("1")
+                        pytch.broadcast_and_wait("2")
 
-                @pytch.when_I_receive("1")
-                def step_1a(self):
-                    self.delete_this_clone()
+                    @pytch.when_I_receive("1")
+                    def step_1a(self):
+                        self.delete_this_clone()
 
-                @pytch.when_I_receive("1")
-                def step_1b(self):
-                    pytch.create_clone_of(self)
+                    @pytch.when_I_receive("1")
+                    def step_1b(self):
+                        ${spec.call_code}
 
-                @pytch.when_I_receive("2")
-                def step_2(self):
-                    pytch.create_clone_of(self)
-        `);
+                    @pytch.when_I_receive("2")
+                    def step_2(self):
+                        ${spec.call_code}
+            `);
 
-        const frog_cls = project.actor_by_class_name("Frog");
-        const frame_and_asserts = (exp_n_frogs, exp_n_threads) => {
-            one_frame(project);
-            assert.strictEqual(frog_cls.instances.length, exp_n_frogs);
-            assert.strictEqual(project.threads_info().length, exp_n_threads);
-        };
+            const frog_cls = project.actor_by_class_name("Frog");
+            const frame_and_asserts = (exp_n_frogs, exp_n_threads) => {
+                one_frame(project);
+                assert.strictEqual(frog_cls.instances.length, exp_n_frogs);
+                assert.strictEqual(project.threads_info().length, exp_n_threads);
+            };
 
-        project.do_synthetic_broadcast("go");
+            project.do_synthetic_broadcast("go");
 
-        // start() should make a clone:
-        frame_and_asserts(2, 1);
+            // start() should make a clone:
+            frame_and_asserts(2, 1);
 
-        // start() should broadcast "1", creating four threads, but
-        // neither step_1a() nor step_1b() should run yet:
-        frame_and_asserts(2, 5);
+            // start() should broadcast "1", creating four threads, but
+            // neither step_1a() nor step_1b() should run yet:
+            frame_and_asserts(2, 5);
 
-        // step_1a() should cause the original and the clone to both
-        // pause inside the delete_this_clone() syscall.  For the clone,
-        // the instance will be unregistered and the thread culled.  For
-        // the original, nothing will happen.  step_1b() will create
-        // clones of both instances.  There is a net gain of one
-        // instance.
-        frame_and_asserts(3, 4);
+            // step_1a() should cause the original and the clone to both
+            // pause inside the delete_this_clone() syscall.  For the clone,
+            // the instance will be unregistered and the thread culled.  For
+            // the original, nothing will happen.  step_1b() will create
+            // clones of both instances.  There is a net gain of one
+            // instance.
+            frame_and_asserts(3, 4);
 
-        // The step_1a() thread on the original should resume and
-        // immediately finish.  The step_1b() threads should both
-        // finish.
-        frame_and_asserts(3, 1);
+            // The step_1a() thread on the original should resume and
+            // immediately finish.  The step_1b() threads should both
+            // finish.
+            frame_and_asserts(3, 1);
 
-        // start() should wake up and broadcast "2", launching three
-        // threads (one per instance), but step_2() should not
-        // actually run yet:
-        frame_and_asserts(3, 4);
+            // start() should wake up and broadcast "2", launching three
+            // threads (one per instance), but step_2() should not
+            // actually run yet:
+            frame_and_asserts(3, 4);
 
-        // step_2() should run for each of those three instances, and
-        // create new clones of each.  The threads have yet to resume
-        // and finish.
-        frame_and_asserts(6, 4);
+            // step_2() should run for each of those three instances, and
+            // create new clones of each.  The threads have yet to resume
+            // and finish.
+            frame_and_asserts(6, 4);
 
-        // All the threads running step_2() should resume and finish,
-        // leaving just the thread running start() on the original.
-        frame_and_asserts(6, 1);
+            // All the threads running step_2() should resume and finish,
+            // leaving just the thread running start() on the original.
+            frame_and_asserts(6, 1);
 
-        // start() on the original should resume and immediately
-        // finish.
-        frame_and_asserts(6, 0);
+            // start() on the original should resume and immediately
+            // finish.
+            frame_and_asserts(6, 0);
+        });
     });
 });

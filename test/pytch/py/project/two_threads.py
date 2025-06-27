@@ -36,6 +36,10 @@ class Controller(Sprite):
     def stop_everything(self):
         pytch.stop_all()
 
+    @when_I_receive("halt-self")
+    def stop_everything_self(self):
+        self.stop_all()
+
 
 # --cut-here-for-auto-config--
 

@@ -5,8 +5,17 @@ from pytch.syscalls import (
     registered_instances,
     unregister_running_instance,
     wait_seconds,
+    stop_all_sounds,
     ask_and_wait,
+    broadcast,
+    broadcast_and_wait,
+    key_pressed,
+    stop_all,
 )
+
+from pytch.clone import create_clone_of
+
+from pytch._show_hide_variables import show_variable, hide_variable
 
 from pytch.project import FRAMES_PER_SECOND
 
@@ -134,6 +143,47 @@ class Actor:
 
     def _clear_speech(self):
         self._speech = (_new_speech_id(), "say", "")
+
+    def stop_all_sounds(self):
+        "() Stop all currently-playing sounds"
+        stop_all_sounds()
+
+    def broadcast(self, message):
+        "(MESSAGE) Broadcast MESSAGE; continue executing"
+        broadcast(message)
+
+    def broadcast_and_wait(self, message):
+        "(MESSAGE) Broadcast MESSAGE; pause until all listeners finish"
+        broadcast_and_wait(message)
+
+    def wait_seconds(self, seconds):
+        "(SECONDS) Pause for the given number of seconds"
+        wait_seconds(seconds)
+
+    def stop_all(self):
+        "() Stop all currently-running scripts"
+        stop_all()
+
+    def show_variable(self, var_name, *, label=None, top=None, right=None, bottom=None, left=None):
+        "(VAR, [...]) Show a watcher for self.VAR"
+        show_variable(self, var_name, label=label, top=top, right=right, bottom=bottom, left=left)
+
+    def hide_variable(self, var_name):
+        "(VAR) Hide the watcher for self.VAR"
+        hide_variable(self, var_name)
+
+    def key_pressed(self, key_name):
+        "(KEY) Return whether KEY is currently pressed down"
+        return key_pressed(key_name)
+
+    def create_clone_of(self, original_cls_or_obj):
+        """(SPRITE) Create a clone of a SPRITE class or instance
+
+        Two variants, depending on whether the argument is a class or an
+        instance.  If argument is a class, clone the original instance
+        of that class.  If argument is an instance, clone that instance.
+        """
+        create_clone_of(original_cls_or_obj)
 
 
 class Sprite(Actor):
@@ -368,6 +418,10 @@ class Sprite(Actor):
             return answer
         else:
             return ask_and_wait(prompt)
+
+    def create_clone(self):
+        "() Create a clone of this Sprite instance"
+        create_clone_of(self)
 
 
 class Stage(Actor):
