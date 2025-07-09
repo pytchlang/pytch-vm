@@ -2,6 +2,7 @@ from pytch.syscalls import (
     play_sound,
     _get_actor_sound_mix_bus_gain,
     _set_actor_sound_mix_bus_gain,
+    _is_Pytch_registered_Sprite,
     registered_instances,
     unregister_running_instance,
     wait_seconds,
@@ -359,6 +360,11 @@ class Sprite(Actor):
 
     def touching(self, target_class):
         "(TARGET) Return whether SELF touches any TARGET instance"
+        if not _is_Pytch_registered_Sprite(target_class):
+            raise TypeError(
+                "in touching(target_class), target_class must be"
+                " a Pytch-registered Sprite class"
+            )
         return (self._pytch_parent_project
                 .instance_is_touching_any_of(self, target_class))
 
