@@ -289,6 +289,26 @@ var $builtinmodule = function (name) {
         `(SECONDS) Pause for the given number of seconds`,
     );
 
+    mod._is_Pytch_registered_Sprite = skulpt_function(
+	(obj) => {
+	    if (!Sk.builtin.checkClass(obj))
+		return Sk.builtin.bool.false$;
+
+            const actor = obj.$pytchActor
+            const is_Sprite = (
+                actor != null
+                && actor.class_kind_name === "Sprite"
+	    )
+
+	    return (
+		is_Sprite
+                    ? Sk.builtin.bool.true$
+                    : Sk.builtin.bool.false$
+            );
+	},
+	"Whether the given OBJ is the class object for a Sprite"
+    );
+
     mod._effective_source_object = skulpt_function(
         (py_cls_or_obj) => {
             if (Sk.builtin.checkClass(py_cls_or_obj)) {
