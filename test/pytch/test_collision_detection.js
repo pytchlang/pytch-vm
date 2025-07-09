@@ -6,6 +6,9 @@ const {
     assert,
     assert_has_bbox,
     call_method,
+    import_deindented,
+    one_frame,
+    pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -15,6 +18,33 @@ configure_mocha();
 // Bounding box computation, collision detection.
 
 describe("collision detection", () => {
+    [
+        { label: "string", expr: '"Giraffe"' },
+        { label: "number", expr: '42' },
+        { label: "Stage", expr: 'AnimalStage' },
+        { label: "non-Sprite class", expr: 'EmptyClass' },
+    ].forEach(spec =>
+        it(`rejects touching() of ${spec.label}`, async () => {
+            const project = await import_deindented(`
+                import pytch
+                class EmptyClass: pass
+                class AnimalStage(pytch.Stage):
+                    Backdrops = ["solid-white-stage.png"]
+                class Elephant(pytch.Sprite):
+                    @pytch.when_I_receive("go")
+                    def try_go(self):
+                        if self.touching(${spec.expr}):
+                            pass
+            `);
+
+            project.do_synthetic_broadcast("go")
+            one_frame(project);
+            pytch_errors.assert_sole_error_matches(
+                /target_class must be.*Sprite class/
+            );
+        })
+    );
+
     with_project("py/project/bounding_boxes.py", (import_project) => {
         it("can extract bounding boxes", async () => {
             let project = await import_project();
