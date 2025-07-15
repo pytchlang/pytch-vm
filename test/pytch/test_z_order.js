@@ -119,6 +119,8 @@ describe("clicking choose top sprite by z-order", () => {
         it("gives click to front-layer sprite when overlap", async () => {
             let project = await import_project();
 
+            let mouse = new mock_mouse();
+
             const py_monitor = project.actor_by_class_name("Monitor").py_cls;
             const assert_clicks = (exp_clicks) => {
                 const got_clicks = js_getattr(py_monitor, "clicks");
@@ -126,7 +128,7 @@ describe("clicking choose top sprite by z-order", () => {
             };
 
             const click = () => {
-                mock_mouse.click_at(0, 0);
+                mouse.click_at(0, 0);
                 one_frame(project);
             };
 

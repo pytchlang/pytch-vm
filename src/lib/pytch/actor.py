@@ -11,6 +11,9 @@ from pytch.syscalls import (
     broadcast,
     broadcast_and_wait,
     key_pressed,
+    mouse_down,
+    mouse_x,
+    mouse_y,
     stop_all,
 )
 
@@ -21,6 +24,8 @@ from pytch._show_hide_variables import show_variable, hide_variable
 from pytch.project import FRAMES_PER_SECOND
 
 import pytch._glide_easing as glide_easing
+
+from math import hypot, atan2
 
 # Close enough:
 MATH_PI = 3.141592653589793
@@ -142,6 +147,18 @@ class Actor:
         self.ensure_have_appearance_names()
         return self._appearance_names[self._appearance_index]
 
+    @property
+    def mouse_down(self):
+        return mouse_down()
+
+    @property
+    def mouse_x(self):
+        return mouse_x()
+
+    @property
+    def mouse_y(self):
+        return mouse_y()
+
     def _clear_speech(self):
         self._speech = (_new_speech_id(), "say", "")
 
@@ -238,6 +255,10 @@ class Sprite(Actor):
         self._x = x
         self._y = y
 
+    def go_to_mouse_pointer(self):
+        "() Move SELF to the coordinates of the mouse pointer"
+        self.go_to_xy(self.mouse_x, self.mouse_y)
+
     @property
     def x_position(self):
         "SELF's x-coordinate on the stage"
@@ -264,6 +285,12 @@ class Sprite(Actor):
         "(DY) Move SELF up DY on the stage (down if negative)"
         self._y += dy
 
+    @property
+    def distance_to_mouse_pointer(self):
+        "the distance between the mouse pointer and the sprite"
+        return hypot(self._x - self.mouse_x, self._y - self.mouse_y)
+
+
     def turn_degrees(self, d_angle):
         "(ANGLE) Turn ANGLE degrees anticlockwise"
         d_angle_radians = MATH_PI * d_angle / 180.0
@@ -273,6 +300,13 @@ class Sprite(Actor):
     def point_degrees(self, angle):
         "(ANGLE) Set rotation to ANGLE degrees"
         self._rotation = MATH_PI * angle / 180.0
+
+    def point_to_mouse_pointer(self):
+        "() Set rotation to point towards the mouse pointer"
+        dx = self.mouse_x - self._x
+        dy = self.mouse_y - self._y
+        
+        self._rotation = atan2(dy, dx)
 
     @property
     def direction(self):
@@ -319,6 +353,10 @@ class Sprite(Actor):
             y = t * destination_y + t_c * start_y
             self.go_to_xy(x, y)
             wait_seconds(0)  # No auto-yield (we don't do "import pytch")
+
+    def glide_to_mouse_pointer(self, seconds, easing="linear"):
+        "(SECONDS) Move SELF smoothly to the mouse pointer coordinates, taking SECONDS"
+        self.glide_to_xy(self.mouse_x, self.mouse_y, seconds, easing)
 
     def set_size(self, size):
         "(SIZE) Set SELF's size to SIZE"
@@ -367,6 +405,10 @@ class Sprite(Actor):
             )
         return (self._pytch_parent_project
                 .instance_is_touching_any_of(self, target_class))
+
+    def touching_mouse_pointer(self):
+        return (self._pytch_parent_project
+                .instance_is_touching_point(self, self.mouse_x, self.mouse_y))
 
     def delete_this_clone(self):
         "() Remove SELF from the project"

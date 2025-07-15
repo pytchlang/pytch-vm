@@ -97,37 +97,58 @@ const mock_keyboard = (() => {
     };
 })();
 
-const mock_mouse = (() => {
-    let undrained_clicks = [];
-    let pointer_stage_x = 0.0;
-    let pointer_stage_y = 0.0;
 
-    const stage_coords = () => ({ stage_x: pointer_stage_x,
-                                  stage_y: pointer_stage_y });
-
-    const move = (x, y) => {
-        pointer_stage_x = x;
-        pointer_stage_y = y;
+class mock_mouse {
+    constructor(){
+        this.undrained_clicks = [];
+        this.pointer_stage_x = 0.0;
+        this.pointer_stage_y = 0.0;
+        this.button_down = false;
     };
 
-    const click = () => { undrained_clicks.push(stage_coords()); };
-
-    const click_at = (x, y) => {
-        move(x, y);
-        click();
+    get stage_coords(){
+        return ({stage_x: this.pointer_stage_x,
+                 stage_y: this.pointer_stage_y});
     };
 
-    const drain_new_click_events = () => {
-        let evts = undrained_clicks;
-        undrained_clicks = [];
+    get_stage_x() {
+        return this.pointer_stage_x;
+    };
+
+    get_stage_y() {
+        return this.pointer_stage_y;
+    };
+
+    get_button_down() {
+        return this.button_down;
+    };
+
+    move(x, y) {
+        this.pointer_stage_x = x;
+        this.pointer_stage_y = y;
+    };
+
+    click() { 
+        this.button_down = true;
+        this.undrained_clicks.push(this.stage_coords); 
+    };
+
+    release_click() {
+        this.button_down = false;
+    };
+
+    click_at(x, y) {
+        this.move(x, y);
+        this.click();
+    };
+
+    drain_new_click_events() {
+        let evts = this.undrained_clicks;
+        this.undrained_clicks = [];
         return evts;
     };
 
-    return {
-        click_at,
-        drain_new_click_events,
-    };
-})();
+};
 
 const mock_sound_manager = (() => {
     let gain_from_mix_bus_name_ = new Map();
@@ -826,7 +847,7 @@ Sk.configure({
     pytch: {
         async_load_image: async_load_mock_image,
         keyboard: mock_keyboard,
-        mouse: mock_mouse,
+        mouse: new mock_mouse(),
         sound_manager: mock_sound_manager,
         on_exception: pytch_errors.append_error,
     },

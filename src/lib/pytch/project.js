@@ -874,6 +874,16 @@ var $builtinmodule = function (name) {
             return new BoundingBox(x_min, x_max, y_min, y_max);
         }
 
+        is_touching_point(x,y) {
+            if (! this.render_shown)
+                return false;
+            
+            let bbox = this.bounding_box();
+
+            return bbox.contains_point(x,y);
+
+        }
+
         is_touching(other) {
             const both_shown = (this.render_shown && other.render_shown);
 
@@ -1812,6 +1822,11 @@ var $builtinmodule = function (name) {
 
             // TODO: Proper pixel-wise collision detection.
             return actor_instance_0.is_touching(actor_instance_1);
+        }
+
+        instance_is_touching_point(py_sprite_instance, x, y) {
+            let instance = py_sprite_instance.$pytchActorInstance;
+            return instance.is_touching_point(x, y);
         }
 
         instance_is_touching_any_of(py_sprite_instance, py_other_sprite_class) {
