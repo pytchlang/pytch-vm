@@ -111,16 +111,12 @@ class MockMouse {
                  stage_y: this.pointer_stage_y});
     };
 
-    get_stage_x() {
+    get stage_x() {
         return this.pointer_stage_x;
     };
 
-    get_stage_y() {
+    get stage_y() {
         return this.pointer_stage_y;
-    };
-
-    get_button_down() {
-        return this.button_down;
     };
 
     move(x, y) {
