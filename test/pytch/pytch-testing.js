@@ -150,6 +150,8 @@ class MockMouse {
 
 };
 
+let mock_mouse = new MockMouse();
+
 const mock_sound_manager = (() => {
     let gain_from_mix_bus_name_ = new Map();
     let running_performances_ = [];
@@ -847,7 +849,7 @@ Sk.configure({
     pytch: {
         async_load_image: async_load_mock_image,
         keyboard: mock_keyboard,
-        mouse: new mock_mouse(),
+        mouse: mock_mouse,
         sound_manager: mock_sound_manager,
         on_exception: pytch_errors.append_error,
     },
