@@ -98,7 +98,7 @@ const mock_keyboard = (() => {
 })();
 
 
-class mock_mouse {
+class MockMouse {
     constructor(){
         this.undrained_clicks = [];
         this.pointer_stage_x = 0.0;
