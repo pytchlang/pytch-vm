@@ -377,6 +377,28 @@ var $builtinmodule = function (name) {
         `(KEY) Return whether KEY is currently pressed down`,
     );
 
+    mod.mouse_down = skulpt_function(
+        () => {
+            return (Sk.pytch.mouse.get_button_down()
+                    ? Sk.builtin.bool.true$
+                    : Sk.builtin.bool.false$);
+        },
+        `Return whether the left mouse button is currently pressed down`,
+    );
+
+    mod.mouse_x = skulpt_function(
+        () => {
+            return (Sk.pytch.mouse.get_stage_x());
+        },
+    );
+
+    mod.mouse_y = skulpt_function(
+        () => {
+            return (Sk.pytch.mouse.get_stage_y());
+        },
+    );
+    
+
     mod.ask_and_wait = skulpt_function(
         (py_prompt) => {
             throwIfNoExecutingThread("ask_and_wait");
