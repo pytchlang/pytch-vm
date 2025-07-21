@@ -6,6 +6,7 @@ const {
     assert_float_close,
     assert_renders_as,
     one_frame,
+    mock_mouse,
     pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
@@ -53,6 +54,43 @@ describe("Sprite rotation", () => {
         );
     });
 
+    it("can point to the mouse", async () => {
+        const project = await import_deindented(`
+
+            import pytch
+            class Banana(pytch.Sprite):
+                Costumes = ["yellow-banana.png"]
+                @pytch.when_I_receive("point")
+                def point(self):
+                    self.point_to_mouse_pointer()
+        `);
+
+        const banana = project.instance_0_by_class_name("Banana");
+
+        const assert_direction = (msg, exp_direction) => {
+            project.do_synthetic_broadcast(msg)
+            one_frame(project);
+            const got_direction = banana.js_attr("direction");
+            assert_float_close(got_direction, exp_direction, 0.001);
+        };
+
+        mock_mouse.move(100, 0);
+        assert_direction("point", 0);
+        mock_mouse.move(0, 100);
+        assert_direction("point", 90);
+        mock_mouse.move(100, -100);
+        assert_direction("point", -45);
+        mock_mouse.move(-100, -100);
+        assert_direction("point", -135);
+
+        // Check all new parts of the rendering instruction:
+        //     rotation, image-cx, image-cy
+        assert_renders_as(
+            "final",
+            project,
+            [["RenderImage", 0, 0, 1, "yellow-banana", -135, 40, 15]]
+        );
+    });
     [
         {
             label: "assign",

@@ -399,7 +399,7 @@ var $builtinmodule = function (name) {
 
     mod.mouse_down = skulpt_function(
         () => {
-            return (Sk.pytch.mouse.get_button_down()
+            return (Sk.pytch.mouse.button_is_down
                     ? Sk.builtin.bool.true$
                     : Sk.builtin.bool.false$);
         },
@@ -408,13 +408,13 @@ var $builtinmodule = function (name) {
 
     mod.mouse_x = skulpt_function(
         () => {
-            return (Sk.pytch.mouse.get_stage_x());
+            return new Sk.builtin.float_(Sk.pytch.mouse.stage_x);
         },
     );
 
     mod.mouse_y = skulpt_function(
         () => {
-            return (Sk.pytch.mouse.get_stage_y());
+            return new Sk.builtin.float_(Sk.pytch.mouse.stage_y);
         },
     );
     

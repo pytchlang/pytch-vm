@@ -35,6 +35,11 @@ class Balloon(Sprite):
     def move_to_other_place(self):
         self.go_to_xy(100, 100)
         self.show()
+    
+    @when_I_receive('move-mouse')
+    def move_to_mouse(self):
+        self.go_to_mouse_pointer()
+        self.show()
 
     @pytch.when_this_sprite_clicked
     def pop(self):
