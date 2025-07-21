@@ -52,7 +52,6 @@ describe("click detection", () => {
         it("can run balloon-popping game", async () => {
             let project = await import_project();
 
-            let mouse = new mock_mouse();
             let balloon_sprite = project.actor_by_class_name("Balloon");
             let the_Balloon = balloon_sprite.instances[0];
 
@@ -70,33 +69,37 @@ describe("click detection", () => {
             project.on_green_flag_clicked();
             assert_state_after_next_frame(true, 0);
 
-            mouse.click_at(-50, -90);
-            mouse.release_click();
+            mock_mouse.click_at(-50, -90);
             assert_state_after_next_frame(true, 0);
 
-            mouse.click_at(-50, -120);
-            mouse.release_click();
+            mock_mouse.click_at(-50, -120);
             assert_state_after_next_frame(false, 1);
             assert_state_after_next_frame(false, 1);
 
             project.do_synthetic_broadcast("reappear");
             assert_state_after_next_frame(true, 1);
 
-            mouse.click_at(-50, -90);
-            mouse.release_click();
+            mock_mouse.click_at(-50, -90);
             assert_state_after_next_frame(true, 1);
-            mouse.click_at(-50, -120);
-            mouse.release_click();
+            mock_mouse.click_at(-50, -120);
             assert_state_after_next_frame(false, 2);
 
             project.do_synthetic_broadcast("move");
             assert_state_after_next_frame(true, 2);
 
-            mouse.click_at(180, -20);
-            mouse.release_click();
+            mock_mouse.click_at(180, -20);
             assert_state_after_next_frame(true, 2);
-            mouse.click_at(170, 120);
-            mouse.release_click();
+            mock_mouse.click_at(170, 120);
             assert_state_after_next_frame(false, 3);
+
+            mock_mouse.move(-100, -100);
+            project.do_synthetic_broadcast("move-mouse");
+            assert_state_after_next_frame(true, 3);
+
+            mock_mouse.click_at(-20, -280);
+            assert_state_after_next_frame(true, 3);
+            mock_mouse.click_at(-25, -275);
+            assert_state_after_next_frame(false, 4);
+
         })});
 });

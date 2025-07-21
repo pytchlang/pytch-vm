@@ -149,14 +149,17 @@ class Actor:
 
     @property
     def mouse_down(self):
+        "Returns whether the left mouse button is currently pressed down"
         return mouse_down()
 
     @property
     def mouse_x(self):
+        "The x coordinates of the mouse pointer"
         return mouse_x()
 
     @property
     def mouse_y(self):
+        "The y coordinates of the mouse pointer"
         return mouse_y()
 
     def _clear_speech(self):
@@ -407,6 +410,7 @@ class Sprite(Actor):
                 .instance_is_touching_any_of(self, target_class))
 
     def touching_mouse_pointer(self):
+        "() Return whether SELF touches the mouse pointer"
         return (self._pytch_parent_project
                 .instance_is_touching_point(self, self.mouse_x, self.mouse_y))
 

@@ -98,12 +98,12 @@ const mock_keyboard = (() => {
 })();
 
 
-class mock_mouse {
+class MockMouse {
     constructor(){
         this.undrained_clicks = [];
         this.pointer_stage_x = 0.0;
         this.pointer_stage_y = 0.0;
-        this.button_down = false;
+        this.button_is_down = false;
     };
 
     get stage_coords(){
@@ -111,16 +111,12 @@ class mock_mouse {
                  stage_y: this.pointer_stage_y});
     };
 
-    get_stage_x() {
+    get stage_x() {
         return this.pointer_stage_x;
     };
 
-    get_stage_y() {
+    get stage_y() {
         return this.pointer_stage_y;
-    };
-
-    get_button_down() {
-        return this.button_down;
     };
 
     move(x, y) {
@@ -128,18 +124,24 @@ class mock_mouse {
         this.pointer_stage_y = y;
     };
 
-    click() { 
-        this.button_down = true;
+    button_down() { 
+        this.button_is_down = true;
         this.undrained_clicks.push(this.stage_coords); 
     };
 
-    release_click() {
-        this.button_down = false;
+    button_up() {
+        this.button_is_down = false;
     };
+
+    click() {
+        this.button_down();
+        this.button_up();
+    }
 
     click_at(x, y) {
         this.move(x, y);
-        this.click();
+        this.button_down();
+        this.button_up();
     };
 
     drain_new_click_events() {
@@ -149,6 +151,8 @@ class mock_mouse {
     };
 
 };
+
+let mock_mouse = new MockMouse();
 
 const mock_sound_manager = (() => {
     let gain_from_mix_bus_name_ = new Map();
@@ -847,7 +851,7 @@ Sk.configure({
     pytch: {
         async_load_image: async_load_mock_image,
         keyboard: mock_keyboard,
-        mouse: new mock_mouse(),
+        mouse: mock_mouse,
         sound_manager: mock_sound_manager,
         on_exception: pytch_errors.append_error,
     },
