@@ -204,12 +204,26 @@ creating the costume (see
 
    Move the sprite to a particular position on the stage.
 
+.. function:: self.go_to_mouse_pointer()
+
+   Move the sprite to the position of the mouse pointer.
+
 .. function:: self.glide_to_xy(x, y, seconds)
 
    Glide the sprite smoothly to a particular position on the stage, taking
    the given number of seconds to do so.  The value for ``seconds`` does
    not have to be a whole number.  *Advanced/experimental:* You can also
    give a fourth argument, to give the *easing* of the glide.  This can
+   be: the string ``"linear"``, to move at a constant speed; or the string
+   ``ease-in-out``, to start slowly, speed up, then slow back down as the
+   glide finishes.
+
+.. function:: self.glide_to_mouse_pointer(seconds)
+
+   Glide the sprite smoothly to the position of the mouse pointer, taking
+   the given number of seconds to do so.  The value for ``seconds`` does
+   not have to be a whole number.  *Advanced/experimental:* You can also
+   give a second argument, to give the *easing* of the glide.  This can
    be: the string ``"linear"``, to move at a constant speed; or the string
    ``ease-in-out``, to start slowly, speed up, then slow back down as the
    glide finishes.
@@ -277,6 +291,10 @@ A sprite can turn round and point in different directions.
    points a quarter-turn anticlockwise (counter-clockwise) from its
    original image.  To point a quarter-turn clockwise, use −90° (or
    270°, which comes to the same thing).
+
+.. function:: self.point_to_mouse_pointer()
+
+   Turn the sprite so it is pointing towards the moiuse pointer.
 
 .. attribute:: self.direction
 
@@ -407,6 +425,17 @@ Checking for sprites colliding
    Note that you check using a *class* name, so if the ``self`` sprite is
    touching any clone of the target class then ``touching`` will return
    true.
+
+.. function:: self.touching_mouse_pointer()
+
+   You can use this method to check whether this sprite is touching the
+   mouse pointer. 
+
+   At the moment Pytch does not look at the actual image in the costume,
+   just its overall size, so if the sprite costume has blank sections but
+   the costume itself is touching them mouse then this method will still
+   return true. The current costume and the size set by ``set_size`` is
+   taken into account when checking.
 
 
 Showing and hiding speech bubbles
