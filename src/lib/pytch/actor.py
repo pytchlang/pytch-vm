@@ -149,17 +149,17 @@ class Actor:
 
     @property
     def mouse_down(self):
-        "Returns whether the left mouse button is currently pressed down"
+        "Whether the left mouse button is currently pressed down"
         return mouse_down()
 
     @property
     def mouse_x(self):
-        "The x coordinates of the mouse pointer"
+        "The x coordinate of the mouse pointer"
         return mouse_x()
 
     @property
     def mouse_y(self):
-        "The y coordinates of the mouse pointer"
+        "The y coordinate of the mouse pointer"
         return mouse_y()
 
     def _clear_speech(self):
@@ -290,7 +290,7 @@ class Sprite(Actor):
 
     @property
     def distance_to_mouse_pointer(self):
-        "the distance between the mouse pointer and the sprite"
+        "The distance between the mouse pointer and SELF"
         return hypot(self._x - self.mouse_x, self._y - self.mouse_y)
 
     def turn_degrees(self, d_angle):
@@ -304,7 +304,7 @@ class Sprite(Actor):
         self._rotation = MATH_PI * angle / 180.0
 
     def point_to_mouse_pointer(self):
-        "() Set rotation to point towards the mouse pointer"
+        "() Point SELF towards the mouse pointer"
         dx = self.mouse_x - self._x
         dy = self.mouse_y - self._y
         self._rotation = atan2(dy, dx)
@@ -356,7 +356,7 @@ class Sprite(Actor):
             wait_seconds(0)  # No auto-yield (we don't do "import pytch")
 
     def glide_to_mouse_pointer(self, seconds, easing="linear"):
-        "(SECONDS) Move SELF smoothly to the mouse pointer coordinates, taking SECONDS"
+        "(SECONDS) Move SELF smoothly to the mouse pointer, taking SECONDS"
         self.glide_to_xy(self.mouse_x, self.mouse_y, seconds, easing)
 
     def set_size(self, size):
@@ -408,7 +408,7 @@ class Sprite(Actor):
                 .instance_is_touching_any_of(self, target_class))
 
     def touching_mouse_pointer(self):
-        "() Return whether SELF touches the mouse pointer"
+        "() Return whether SELF is touching the mouse pointer"
         return (self._pytch_parent_project
                 .instance_is_touching_point(self, self.mouse_x, self.mouse_y))
 
