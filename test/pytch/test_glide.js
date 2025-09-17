@@ -151,5 +151,3 @@ describe("Behaviour of glide-to method", () => {
         });
     });
 });
-
-

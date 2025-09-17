@@ -293,7 +293,6 @@ class Sprite(Actor):
         "the distance between the mouse pointer and the sprite"
         return hypot(self._x - self.mouse_x, self._y - self.mouse_y)
 
-
     def turn_degrees(self, d_angle):
         "(ANGLE) Turn ANGLE degrees anticlockwise"
         d_angle_radians = MATH_PI * d_angle / 180.0
@@ -308,7 +307,6 @@ class Sprite(Actor):
         "() Set rotation to point towards the mouse pointer"
         dx = self.mouse_x - self._x
         dy = self.mouse_y - self._y
-        
         self._rotation = atan2(dy, dx)
 
     @property

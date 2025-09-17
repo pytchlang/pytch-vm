@@ -100,6 +100,5 @@ describe("click detection", () => {
             assert_state_after_next_frame(true, 3);
             mock_mouse.click_at(-25, -275);
             assert_state_after_next_frame(false, 4);
-
         })});
 });

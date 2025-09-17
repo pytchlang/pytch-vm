@@ -99,7 +99,7 @@ const mock_keyboard = (() => {
 
 
 class MockMouse {
-    constructor(){
+    constructor() {
         this.undrained_clicks = [];
         this.pointer_stage_x = 0.0;
         this.pointer_stage_y = 0.0;
@@ -124,9 +124,9 @@ class MockMouse {
         this.pointer_stage_y = y;
     };
 
-    button_down() { 
+    button_down() {
         this.button_is_down = true;
-        this.undrained_clicks.push(this.stage_coords); 
+        this.undrained_clicks.push(this.stage_coords);
     };
 
     button_up() {
@@ -149,7 +149,6 @@ class MockMouse {
         this.undrained_clicks = [];
         return evts;
     };
-
 };
 
 let mock_mouse = new MockMouse();

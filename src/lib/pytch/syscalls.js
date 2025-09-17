@@ -417,7 +417,6 @@ var $builtinmodule = function (name) {
             return new Sk.builtin.float_(Sk.pytch.mouse.stage_y);
         },
     );
-    
 
     mod.ask_and_wait = skulpt_function(
         (py_prompt) => {
