@@ -294,7 +294,7 @@ A sprite can turn round and point in different directions.
 
 .. function:: self.point_to_mouse_pointer()
 
-   Turn the sprite so it is pointing towards the moiuse pointer.
+   Turn the sprite so it is pointing towards the mouse pointer.
 
 .. attribute:: self.direction
 
@@ -433,7 +433,7 @@ Checking for sprites colliding
 
    At the moment Pytch does not look at the actual image in the costume,
    just its overall size, so if the sprite costume has blank sections but
-   the costume itself is touching them mouse then this method will still
+   the costume itself is touching the mouse then this method will still
    return true. The current costume and the size set by ``set_size`` is
    taken into account when checking.
 

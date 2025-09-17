@@ -410,12 +410,14 @@ var $builtinmodule = function (name) {
         () => {
             return new Sk.builtin.float_(Sk.pytch.mouse.stage_x);
         },
+	"Return the stage x coordinate of the mouse pointer",
     );
 
     mod.mouse_y = skulpt_function(
         () => {
             return new Sk.builtin.float_(Sk.pytch.mouse.stage_y);
         },
+	"Return the stage y coordinate of the mouse pointer",
     );
 
     mod.ask_and_wait = skulpt_function(
