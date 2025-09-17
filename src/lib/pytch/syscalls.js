@@ -398,25 +398,19 @@ var $builtinmodule = function (name) {
     );
 
     mod.mouse_down = skulpt_function(
-        () => {
-            return (Sk.pytch.mouse.button_is_down
-                    ? Sk.builtin.bool.true$
-                    : Sk.builtin.bool.false$);
-        },
-        `Return whether the left mouse button is currently pressed down`,
+        () => (Sk.pytch.mouse.button_is_down
+               ? Sk.builtin.bool.true$
+               : Sk.builtin.bool.false$),
+        "Return whether the left mouse button is currently pressed down",
     );
 
     mod.mouse_x = skulpt_function(
-        () => {
-            return new Sk.builtin.float_(Sk.pytch.mouse.stage_x);
-        },
+        () => new Sk.builtin.float_(Sk.pytch.mouse.stage_x),
 	"Return the stage x coordinate of the mouse pointer",
     );
 
     mod.mouse_y = skulpt_function(
-        () => {
-            return new Sk.builtin.float_(Sk.pytch.mouse.stage_y);
-        },
+        () => new Sk.builtin.float_(Sk.pytch.mouse.stage_y),
 	"Return the stage y coordinate of the mouse pointer",
     );
 
