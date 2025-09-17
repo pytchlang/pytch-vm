@@ -91,6 +91,7 @@ describe("Sprite rotation", () => {
             [["RenderImage", 0, 0, 1, "yellow-banana", -135, 40, 15]]
         );
     });
+
     [
         {
             label: "assign",

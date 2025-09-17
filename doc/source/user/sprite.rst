@@ -429,7 +429,7 @@ Checking for sprites colliding
 .. function:: self.touching_mouse_pointer()
 
    You can use this method to check whether this sprite is touching the
-   mouse pointer. 
+   mouse pointer.
 
    At the moment Pytch does not look at the actual image in the costume,
    just its overall size, so if the sprite costume has blank sections but
