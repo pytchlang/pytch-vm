@@ -879,7 +879,7 @@ var $builtinmodule = function (name) {
                 return false;
 
             let bbox = this.bounding_box();
-            return bbox.contains_point(x,y);
+            return bbox.contains_point(x, y);
         }
 
         is_touching(other) {

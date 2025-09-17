@@ -107,8 +107,10 @@ class MockMouse {
     };
 
     get stage_coords(){
-        return ({stage_x: this.pointer_stage_x,
-                 stage_y: this.pointer_stage_y});
+        return ({
+	    stage_x: this.pointer_stage_x,
+            stage_y: this.pointer_stage_y,
+	});
     };
 
     get stage_x() {
