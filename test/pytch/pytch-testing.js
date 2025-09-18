@@ -101,29 +101,21 @@ const mock_keyboard = (() => {
 class MockMouse {
     constructor() {
         this.undrained_clicks = [];
-        this.pointer_stage_x = 0.0;
-        this.pointer_stage_y = 0.0;
+        this.stage_x = 0.0;
+        this.stage_y = 0.0;
         this.button_is_down = false;
     };
 
     get stage_coords(){
         return ({
-	    stage_x: this.pointer_stage_x,
-            stage_y: this.pointer_stage_y,
+	    stage_x: this.stage_x,
+            stage_y: this.stage_y,
 	});
     };
 
-    get stage_x() {
-        return this.pointer_stage_x;
-    };
-
-    get stage_y() {
-        return this.pointer_stage_y;
-    };
-
     move(x, y) {
-        this.pointer_stage_x = x;
-        this.pointer_stage_y = y;
+        this.stage_x = x;
+        this.stage_y = y;
     };
 
     button_down() {
@@ -142,8 +134,7 @@ class MockMouse {
 
     click_at(x, y) {
         this.move(x, y);
-        this.button_down();
-        this.button_up();
+        this.click();
     };
 
     drain_new_click_events() {
