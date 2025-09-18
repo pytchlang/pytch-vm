@@ -55,4 +55,46 @@ describe("mouse features", () => {
         mock_mouse.click_at(100, 150);
         assert_state(100, 150, false);
     });
+
+    it("finds distance to mouse", async () => {
+        const project = await import_deindented(`
+            import pytch
+            class Alien(pytch.Sprite):
+                @pytch.when_I_receive("move")
+                def move_elsewhere(self):
+                    self.go_to_xy(100, 80)
+                @pytch.when_I_receive("report")
+                def report_mouse_props(self):
+                    print(
+                        f"{self.distance_to_mouse_pointer:.0f}",
+                        end="",
+                    )
+        `);
+
+        function assert_state(exp_dist) {
+            project.do_synthetic_broadcast("report");
+            one_frame(project);
+            const distance_str = pytch_stdout.drain_stdout();
+            assert.equal(distance_str, Math.round(exp_dist).toString());
+        }
+
+        mock_mouse.move(0, 0);
+        assert_state(0);
+
+        mock_mouse.move(100, 0);
+        assert_state(100);
+
+        mock_mouse.move(100, 100);
+        assert_state(141);
+
+        mock_mouse.move(100, -200);
+        assert_state(224);
+
+        project.do_synthetic_broadcast("move");
+        one_frame(project);
+        assert_state(280);
+
+        mock_mouse.move(0, 0);
+        assert_state(128);
+    });
 });
