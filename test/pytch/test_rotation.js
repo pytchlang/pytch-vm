@@ -17,6 +17,15 @@ configure_mocha();
 // Sprite rotation
 
 describe("Sprite rotation", () => {
+    const assert_Banana_direction = (project, msg, exp_direction) => {
+	project.do_synthetic_broadcast(msg)
+	one_frame(project);
+
+        const banana = project.instance_0_by_class_name("Banana");
+	const got_direction = banana.js_attr("direction");
+	assert_float_close(got_direction, exp_direction, 0.0001);
+    };
+
     it("can turn and point", async () => {
         const project = await import_deindented(`
 
