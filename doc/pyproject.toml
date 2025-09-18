@@ -12,6 +12,9 @@ dependencies = [
     "sphinx-autobuild (>=2024.10.3,<2025.0.0)",
     "furo (>=2024.8.6,<2025.0.0)"
 ]
+
+
+[tool.poetry]
 package-mode = false
 
 
