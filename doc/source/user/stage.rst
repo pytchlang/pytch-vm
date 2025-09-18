@@ -107,3 +107,7 @@ also has a main button, which is either pressed down or not.  Scratch
 has reporter blocks for these three properties.  The stage works the
 same as your sprites when it comes to finding out about the mouse's
 state.  See :ref:`the help in the Sprite page<properties_for_mouse>`.
+
+(The stage does not have a ``touching_mouse_pointer()`` function or
+``distance_to_mouse_pointer`` property, though, as these would not
+make sense for the stage.)
