@@ -19,6 +19,7 @@ describe("Behaviour of glide-to method", () => {
     [
         { label: "coords/float", fragment: "glide_to_xy(0, 120, 1.0)" },
         { label: "coords/int", fragment: "glide_to_xy(0, 120, 1)" },
+        { label: "mouse/int", fragment: "glide_to_mouse_pointer(1)" },
     ].forEach(spec => {
         it(`executes glide (${spec.label})`, async () => {
             // The calculations involve (1/60) so won't come out exact.  Round
@@ -37,6 +38,9 @@ describe("Behaviour of glide-to method", () => {
             `);
 
             let banana = project.instance_0_by_class_name("Banana");
+
+	    // Only needed for mouse/int case, but does no harm in others:
+            mock_mouse.move(0, 120);
 
             project.do_synthetic_broadcast("run");
             let got_positions = [];
