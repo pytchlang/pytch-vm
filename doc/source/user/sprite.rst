@@ -533,3 +533,7 @@ Measuring how the mouse pointer relates to this sprite
      blank sections but the costume itself is touching the mouse then
      this method will still return true. The current costume and the
      size set by ``set_size`` is taken into account when checking.
+
+  .. attribute:: self.distance_to_mouse_pointer
+
+     How far it is from the Sprite to the mouse pointer.
