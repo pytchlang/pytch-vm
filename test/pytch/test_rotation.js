@@ -40,19 +40,10 @@ describe("Sprite rotation", () => {
                     self.point_degrees(102)
         `);
 
-        const banana = project.instance_0_by_class_name("Banana");
-
-        const assert_direction = (msg, exp_direction) => {
-            project.do_synthetic_broadcast(msg)
-            one_frame(project);
-            const got_direction = banana.js_attr("direction");
-            assert_float_close(got_direction, exp_direction, 0.001);
-        };
-
-        assert_direction("turn", 41);
-        assert_direction("turn", 82);
-        assert_direction("point", 102);
-        assert_direction("turn", 143);
+        assert_Banana_direction(project, "turn", 41);
+        assert_Banana_direction(project, "turn", 82);
+        assert_Banana_direction(project, "point", 102);
+        assert_Banana_direction(project, "turn", 143);
 
         // Check all new parts of the rendering instruction:
         //     rotation, image-cx, image-cy
