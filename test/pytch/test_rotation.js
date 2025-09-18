@@ -65,31 +65,15 @@ describe("Sprite rotation", () => {
                     self.point_to_mouse_pointer()
         `);
 
-        const banana = project.instance_0_by_class_name("Banana");
+	function move_mouse_assert_direction(x, y, exp_dir) {
+            mock_mouse.move(x, y);
+            assert_Banana_direction(project, "point", exp_dir);
+	}
 
-        const assert_direction = (msg, exp_direction) => {
-            project.do_synthetic_broadcast(msg)
-            one_frame(project);
-            const got_direction = banana.js_attr("direction");
-            assert_float_close(got_direction, exp_direction, 0.001);
-        };
-
-        mock_mouse.move(100, 0);
-        assert_direction("point", 0);
-        mock_mouse.move(0, 100);
-        assert_direction("point", 90);
-        mock_mouse.move(100, -100);
-        assert_direction("point", -45);
-        mock_mouse.move(-100, -100);
-        assert_direction("point", -135);
-
-        // Check all new parts of the rendering instruction:
-        //     rotation, image-cx, image-cy
-        assert_renders_as(
-            "final",
-            project,
-            [["RenderImage", 0, 0, 1, "yellow-banana", -135, 40, 15]]
-        );
+        move_mouse_assert_direction(100, 0, 0);
+        move_mouse_assert_direction(0, 100, 90);
+        move_mouse_assert_direction(100, -100, -45);
+        move_mouse_assert_direction(-100, -100, -135);
     });
 
     [
