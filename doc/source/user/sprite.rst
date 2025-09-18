@@ -426,17 +426,6 @@ Checking for sprites colliding
    touching any clone of the target class then ``touching`` will return
    true.
 
-.. function:: self.touching_mouse_pointer()
-
-   You can use this method to check whether this sprite is touching the
-   mouse pointer.
-
-   At the moment Pytch does not look at the actual image in the costume,
-   just its overall size, so if the sprite costume has blank sections but
-   the costume itself is touching the mouse then this method will still
-   return true. The current costume and the size set by ``set_size`` is
-   taken into account when checking.
-
 
 Showing and hiding speech bubbles
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -532,3 +521,15 @@ Telling whether the mouse's (left) button is pressed
 
      Either ``True`` or ``False`` according to whether the user is
      currently pressing the mouse's button down.
+
+Measuring how the mouse pointer relates to this sprite
+  .. function:: self.touching_mouse_pointer()
+
+     You can use this method to check whether this sprite is touching
+     the mouse pointer.
+
+     At the moment Pytch does not look at the actual image in the
+     costume, just its overall size, so if the sprite costume has
+     blank sections but the costume itself is touching the mouse then
+     this method will still return true. The current costume and the
+     size set by ``set_size`` is taken into account when checking.
