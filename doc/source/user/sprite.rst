@@ -500,3 +500,35 @@ the ``ask_and_wait()`` method.
           def ask_user_their_name(self):
               name = self.ask_and_wait("What's your name?")
               self.say(f"Hello, {name}!")
+
+
+.. _properties_for_mouse:
+
+Sensing the mouse's position and button
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Some devices have a "mouse", which can be used in your Pytch programs.
+A mouse can tell where it is, in terms of *x* and *y* coordinates.  It
+also has a main button, which is either pressed down or not.  Scratch
+has reporter blocks for these three properties.  Pytch has the same:
+
+Telling where the mouse is
+  .. attribute:: self.mouse_x
+
+     The current *x* coordinate (on the stage) of the mouse pointer.
+     If the mouse pointer is beyond the left of the stage, this
+     property has the value `-240`.  If the mouse pointer is beyond
+     the right of the stage, this property has the value `240`.
+
+  .. attribute:: self.mouse_y
+
+     The current *y* coordinate (on the stage) of the mouse pointer.
+     If the mouse pointer is below the stage, this property has the
+     value `-180`.  If the mouse pointer is above the stage, this
+     property has the value `180`.
+
+Telling whether the mouse's (left) button is pressed
+  .. attribute:: self.mouse_down
+
+     Either ``True`` or ``False`` according to whether the user is
+     currently pressing the mouse's button down.
