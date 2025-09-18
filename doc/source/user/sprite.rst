@@ -215,7 +215,7 @@ creating the costume (see
    not have to be a whole number.  *Advanced/experimental:* You can also
    give a fourth argument, to give the *easing* of the glide.  This can
    be: the string ``"linear"``, to move at a constant speed; or the string
-   ``ease-in-out``, to start slowly, speed up, then slow back down as the
+   ``"ease-in-out"``, to start slowly, speed up, then slow back down as the
    glide finishes.
 
 .. function:: self.glide_to_mouse_pointer(seconds)
@@ -225,7 +225,7 @@ creating the costume (see
    not have to be a whole number.  *Advanced/experimental:* You can also
    give a second argument, to give the *easing* of the glide.  This can
    be: the string ``"linear"``, to move at a constant speed; or the string
-   ``ease-in-out``, to start slowly, speed up, then slow back down as the
+   ``"ease-in-out"``, to start slowly, speed up, then slow back down as the
    glide finishes.
 
 .. function:: self.change_x(dx)
