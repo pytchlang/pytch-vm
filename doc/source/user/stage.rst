@@ -96,3 +96,14 @@ the ``ask_and_wait()`` method.
               print(f"Hello, {name}!")
 
    The greeting will appear in the "Output" tab of the Pytch IDE.
+
+
+Sensing the mouse's position and button
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Some devices have a "mouse", which can be used in your Pytch programs.
+A mouse can tell where it is, in terms of *x* and *y* coordinates.  It
+also has a main button, which is either pressed down or not.  Scratch
+has reporter blocks for these three properties.  The stage works the
+same as your sprites when it comes to finding out about the mouse's
+state.  See :ref:`the help in the Sprite page<properties_for_mouse>`.
