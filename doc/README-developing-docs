@@ -1,5 +1,5 @@
-We use poetry to configure the Python environment for developing the
-docs.  Set up using:
+We use poetry (v2) to configure the Python environment for developing
+the docs.  Set up using:
 
     poetry install
 
