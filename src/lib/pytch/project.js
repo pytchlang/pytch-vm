@@ -1822,11 +1822,6 @@ var $builtinmodule = function (name) {
             return actor_instance_0.is_touching(actor_instance_1);
         }
 
-        instance_is_touching_point(py_sprite_instance, x, y) {
-            let instance = py_sprite_instance.$pytchActorInstance;
-            return instance.is_touching_point(x, y);
-        }
-
         instance_is_touching_any_of(py_sprite_instance, py_other_sprite_class) {
             let instance = py_sprite_instance.$pytchActorInstance;
             let other_sprite = py_other_sprite_class.$pytchActor;

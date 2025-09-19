@@ -85,34 +85,6 @@ describe("collision detection", () => {
             });
         });
 
-        it("can detect a sprite touching the mouse pointer", async () => {
-            let project = await import_project();
-
-            let py_square = project.instance_0_by_class_name("Square").py_object;
-
-            mock_mouse.move(-70, -60);
-            [false, true].forEach(show_square => {
-                call_method(py_square, "set_visibility", [show_square]);
-
-                let got_touch = project.instance_is_touching_point(py_square,
-                                                                   mock_mouse.stage_x,
-                                                                   mock_mouse.stage_y);
-
-                assert.strictEqual(got_touch, show_square);
-            });
-
-            mock_mouse.move(-71, -60);
-            [false, true].forEach(show_square => {
-                call_method(py_square, "set_visibility", [show_square]);
-
-                let got_touch = project.instance_is_touching_point(py_square,
-                                                                   mock_mouse.stage_x,
-                                                                   mock_mouse.stage_y);
-
-                assert.strictEqual(got_touch, false);
-            });
-        });
-
         // Hopefully this abstraction isn't worse than the duplication.  For a
         // test we need to know what method to call, and which args to pass out
         // of the candidate list of [square-class, square-instance,
