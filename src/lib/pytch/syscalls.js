@@ -414,6 +414,17 @@ var $builtinmodule = function (name) {
 	"Return the stage y coordinate of the mouse pointer",
     );
 
+    mod._actor_contains_mouse = skulpt_function(
+        (py_obj) => {
+	    const mouse_x = Sk.pytch.mouse.stage_x;
+	    const mouse_y = Sk.pytch.mouse.stage_y;
+            const instance = py_obj.$pytchActorInstance;
+	    const contains_point = instance.is_touching_point(mouse_x, mouse_y);
+	    return contains_point ? Sk.builtin.bool.true$ : Sk.builtin.bool.false$;
+        },
+        "(ACTOR) Return whether the Actor contains the mouse pointer",
+    );
+
     mod.ask_and_wait = skulpt_function(
         (py_prompt) => {
             throwIfNoExecutingThread("ask_and_wait");
