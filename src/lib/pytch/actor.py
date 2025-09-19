@@ -3,6 +3,7 @@ from pytch.syscalls import (
     _get_actor_sound_mix_bus_gain,
     _set_actor_sound_mix_bus_gain,
     _is_Pytch_registered_Sprite,
+    _actor_contains_mouse,
     registered_instances,
     unregister_running_instance,
     wait_seconds,
@@ -409,8 +410,7 @@ class Sprite(Actor):
 
     def touching_mouse_pointer(self):
         "() Return whether SELF is touching the mouse pointer"
-        return (self._pytch_parent_project
-                .instance_is_touching_point(self, self.mouse_x, self.mouse_y))
+        return _actor_contains_mouse(self)
 
     def delete_this_clone(self):
         "() Remove SELF from the project"
