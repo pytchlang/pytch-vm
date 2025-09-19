@@ -97,4 +97,56 @@ describe("mouse features", () => {
         mock_mouse.move(0, 0);
         assert_state(128);
     });
+
+    it("detects touching mouse", async () => {
+        const project = await import_deindented(`
+            import pytch
+            class Alien(pytch.Sprite):
+                Costumes = [('square', 'square-80x80.png', 20, 30)]
+                @pytch.when_I_receive("report")
+                def report_mouse_props(self):
+                    self.go_to_xy(100, -10)
+                    print(self.touching_mouse_pointer(), end="")
+        `);
+
+        // Including effect of go_to_xy(), the bounding box of the
+        // sprite costume should be:
+        //
+        // Bottom-left: ( 80, -60)
+        // Top-right:   (160,  20)
+
+        function assert_state(x, y, exp_touching) {
+            mock_mouse.move(x, y)
+            project.do_synthetic_broadcast("report");
+            one_frame(project);
+            const got_touching_str = pytch_stdout.drain_stdout();
+            const exp_touching_str = exp_touching ? "True" : "False";
+            assert.equal(got_touching_str, exp_touching_str);
+        }
+
+	// A few points in the interior:
+        assert_state(100, 0, true);
+        assert_state(90, 10, true);
+        assert_state(150, -50, true);
+
+	// Around the bottom-left corner:
+        assert_state(80, -60, true);
+        assert_state(79, -60, false);
+        assert_state(80, -61, false);
+
+	// Around the top-left corner:
+        assert_state(80, 20, true);
+        assert_state(79, 20, false);
+        assert_state(80, 21, false);
+
+	// Around the top-right corner:
+        assert_state(160, 20, true);
+        assert_state(161, 20, false);
+        assert_state(160, 21, false);
+
+	// Around the bottom-right corner:
+        assert_state(160, -60, true);
+        assert_state(161, -60, false);
+        assert_state(160, -61, false);
+    });
 });
