@@ -204,7 +204,7 @@ creating the costume (see
 
    Move the sprite to a particular position on the stage.
 
-.. function:: self.go_to_mouse_pointer()
+.. function:: self.go_to_mouse()
 
    Move the sprite to the position of the mouse pointer.
 
@@ -218,7 +218,7 @@ creating the costume (see
    ``"ease-in-out"``, to start slowly, speed up, then slow back down as the
    glide finishes.
 
-.. function:: self.glide_to_mouse_pointer(seconds)
+.. function:: self.glide_to_mouse(seconds)
 
    Glide the sprite smoothly to the position of the mouse pointer, taking
    the given number of seconds to do so.  The value for ``seconds`` does
@@ -292,7 +292,7 @@ A sprite can turn round and point in different directions.
    original image.  To point a quarter-turn clockwise, use −90° (or
    270°, which comes to the same thing).
 
-.. function:: self.point_to_mouse_pointer()
+.. function:: self.point_towards_mouse()
 
    Turn the sprite so it is pointing towards the mouse pointer.
 
@@ -523,9 +523,11 @@ Telling whether the mouse's (left) button is pressed
      currently pressing the mouse's button down.
 
 Measuring how the mouse pointer relates to this sprite
-  .. function:: self.touching_mouse_pointer()
+  .. attribute:: self.touching_mouse
 
-     You can use this method to check whether this sprite is touching
+     You can use this property to check whether this sprite is
+     touching the mouse pointer.  It has the value ``True`` or
+     ``False`` depending on whether the ``self`` sprite is touching
      the mouse pointer.
 
      At the moment Pytch does not look at the actual image in the
@@ -534,6 +536,6 @@ Measuring how the mouse pointer relates to this sprite
      this method will still return true. The current costume and the
      size set by ``set_size`` is taken into account when checking.
 
-  .. attribute:: self.distance_to_mouse_pointer
+  .. attribute:: self.distance_to_mouse
 
      How far it is from the Sprite to the mouse pointer.
