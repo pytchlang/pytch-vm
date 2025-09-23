@@ -62,7 +62,7 @@ describe("Sprite rotation", () => {
                 Costumes = ["yellow-banana.png"]
                 @pytch.when_I_receive("point")
                 def point(self):
-                    self.point_to_mouse_pointer()
+                    self.point_towards_mouse()
         `);
 
 	function move_mouse_assert_direction(x, y, exp_dir) {

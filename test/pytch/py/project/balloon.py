@@ -38,7 +38,7 @@ class Balloon(Sprite):
 
     @when_I_receive('move-mouse')
     def move_to_mouse(self):
-        self.go_to_mouse_pointer()
+        self.go_to_mouse()
         self.show()
 
     @pytch.when_this_sprite_clicked

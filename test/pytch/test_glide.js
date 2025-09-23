@@ -19,7 +19,7 @@ describe("Behaviour of glide-to method", () => {
     [
         { label: "coords/float", fragment: "glide_to_xy(0, 120, 1.0)" },
         { label: "coords/int", fragment: "glide_to_xy(0, 120, 1)" },
-        { label: "mouse/int", fragment: "glide_to_mouse_pointer(1)" },
+        { label: "mouse/int", fragment: "glide_to_mouse(1)" },
     ].forEach(spec => {
         it(`executes glide (${spec.label})`, async () => {
             // The calculations involve (1/60) so won't come out exact.  Round

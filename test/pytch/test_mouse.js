@@ -66,7 +66,7 @@ describe("mouse features", () => {
                 @pytch.when_I_receive("report")
                 def report_mouse_props(self):
                     print(
-                        f"{self.distance_to_mouse_pointer:.0f}",
+                        f"{self.distance_to_mouse:.0f}",
                         end="",
                     )
         `);
@@ -106,7 +106,7 @@ describe("mouse features", () => {
                 @pytch.when_I_receive("report")
                 def report_mouse_props(self):
                     self.go_to_xy(100, -10)
-                    print(self.touching_mouse_pointer(), end="")
+                    print(self.touching_mouse, end="")
         `);
 
         // Including effect of go_to_xy(), the bounding box of the
