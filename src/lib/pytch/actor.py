@@ -259,7 +259,7 @@ class Sprite(Actor):
         self._x = x
         self._y = y
 
-    def go_to_mouse_pointer(self):
+    def go_to_mouse(self):
         "() Move SELF to the coordinates of the mouse pointer"
         self.go_to_xy(self.mouse_x, self.mouse_y)
 
@@ -290,7 +290,7 @@ class Sprite(Actor):
         self._y += dy
 
     @property
-    def distance_to_mouse_pointer(self):
+    def distance_to_mouse(self):
         "The distance between the mouse pointer and SELF"
         return hypot(self._x - self.mouse_x, self._y - self.mouse_y)
 
@@ -304,7 +304,7 @@ class Sprite(Actor):
         "(ANGLE) Set rotation to ANGLE degrees"
         self._rotation = MATH_PI * angle / 180.0
 
-    def point_to_mouse_pointer(self):
+    def point_towards_mouse(self):
         "() Point SELF towards the mouse pointer"
         dx = self.mouse_x - self._x
         dy = self.mouse_y - self._y
@@ -356,7 +356,7 @@ class Sprite(Actor):
             self.go_to_xy(x, y)
             wait_seconds(0)  # No auto-yield (we don't do "import pytch")
 
-    def glide_to_mouse_pointer(self, seconds, easing="linear"):
+    def glide_to_mouse(self, seconds, easing="linear"):
         "(SECONDS) Move SELF smoothly to the mouse pointer, taking SECONDS"
         self.glide_to_xy(self.mouse_x, self.mouse_y, seconds, easing)
 
@@ -408,8 +408,9 @@ class Sprite(Actor):
         return (self._pytch_parent_project
                 .instance_is_touching_any_of(self, target_class))
 
-    def touching_mouse_pointer(self):
-        "() Return whether SELF is touching the mouse pointer"
+    @property
+    def touching_mouse(self):
+        "Whether SELF is touching the mouse pointer"
         return _actor_contains_mouse(self)
 
     def delete_this_clone(self):
