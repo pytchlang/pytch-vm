@@ -97,37 +97,54 @@ const mock_keyboard = (() => {
     };
 })();
 
-const mock_mouse = (() => {
-    let undrained_clicks = [];
-    let pointer_stage_x = 0.0;
-    let pointer_stage_y = 0.0;
 
-    const stage_coords = () => ({ stage_x: pointer_stage_x,
-                                  stage_y: pointer_stage_y });
-
-    const move = (x, y) => {
-        pointer_stage_x = x;
-        pointer_stage_y = y;
+class MockMouse {
+    constructor() {
+        this.undrained_clicks = [];
+        this.stage_x = 0.0;
+        this.stage_y = 0.0;
+        this.button_is_down = false;
     };
 
-    const click = () => { undrained_clicks.push(stage_coords()); };
-
-    const click_at = (x, y) => {
-        move(x, y);
-        click();
+    get stage_coords(){
+        return ({
+	    stage_x: this.stage_x,
+            stage_y: this.stage_y,
+	});
     };
 
-    const drain_new_click_events = () => {
-        let evts = undrained_clicks;
-        undrained_clicks = [];
+    move(x, y) {
+        this.stage_x = x;
+        this.stage_y = y;
+    };
+
+    button_down() {
+        this.button_is_down = true;
+        this.undrained_clicks.push(this.stage_coords);
+    };
+
+    button_up() {
+        this.button_is_down = false;
+    };
+
+    click() {
+        this.button_down();
+        this.button_up();
+    }
+
+    click_at(x, y) {
+        this.move(x, y);
+        this.click();
+    };
+
+    drain_new_click_events() {
+        let evts = this.undrained_clicks;
+        this.undrained_clicks = [];
         return evts;
     };
+};
 
-    return {
-        click_at,
-        drain_new_click_events,
-    };
-})();
+let mock_mouse = new MockMouse();
 
 const mock_sound_manager = (() => {
     let gain_from_mix_bus_name_ = new Map();

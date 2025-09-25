@@ -5,6 +5,7 @@ const {
     import_deindented,
     one_frame,
     assert,
+    mock_mouse,
     pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
@@ -16,8 +17,9 @@ configure_mocha();
 
 describe("Behaviour of glide-to method", () => {
     [
-        { label: "float", fragment: "1.0" },
-        { label: "int", fragment: "1" },
+        { label: "coords/float", fragment: "glide_to_xy(0, 120, 1.0)" },
+        { label: "coords/int", fragment: "glide_to_xy(0, 120, 1)" },
+        { label: "mouse/int", fragment: "glide_to_mouse(1)" },
     ].forEach(spec => {
         it(`executes glide (${spec.label})`, async () => {
             // The calculations involve (1/60) so won't come out exact.  Round
@@ -32,10 +34,13 @@ describe("Behaviour of glide-to method", () => {
                     @pytch.when_I_receive("run")
                     def slide_across_screen(self):
                         self.go_to_xy(-120, -120)
-                        self.glide_to_xy(0, 120, ${spec.fragment})
+                        self.${spec.fragment}
             `);
 
             let banana = project.instance_0_by_class_name("Banana");
+
+	    // Only needed for mouse/int case, but does no harm in others:
+            mock_mouse.move(0, 120);
 
             project.do_synthetic_broadcast("run");
             let got_positions = [];
@@ -115,5 +120,3 @@ describe("Behaviour of glide-to method", () => {
         });
     });
 });
-
-

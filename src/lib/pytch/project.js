@@ -874,6 +874,14 @@ var $builtinmodule = function (name) {
             return new BoundingBox(x_min, x_max, y_min, y_max);
         }
 
+        is_touching_point(x, y) {
+            if (! this.render_shown)
+                return false;
+
+            let bbox = this.bounding_box();
+            return bbox.contains_point(x, y);
+        }
+
         is_touching(other) {
             const both_shown = (this.render_shown && other.render_shown);
 

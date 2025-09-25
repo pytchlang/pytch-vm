@@ -9,6 +9,7 @@ const {
     import_deindented,
     one_frame,
     pytch_errors,
+    mock_mouse,
 } = require("./pytch-testing.js");
 configure_mocha();
 

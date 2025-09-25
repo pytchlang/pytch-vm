@@ -397,6 +397,34 @@ var $builtinmodule = function (name) {
         `(KEY) Return whether KEY is currently pressed down`,
     );
 
+    mod.mouse_down = skulpt_function(
+        () => (Sk.pytch.mouse.button_is_down
+               ? Sk.builtin.bool.true$
+               : Sk.builtin.bool.false$),
+        "Return whether the left mouse button is currently pressed down",
+    );
+
+    mod.mouse_x = skulpt_function(
+        () => new Sk.builtin.float_(Sk.pytch.mouse.stage_x),
+	"Return the stage x coordinate of the mouse pointer",
+    );
+
+    mod.mouse_y = skulpt_function(
+        () => new Sk.builtin.float_(Sk.pytch.mouse.stage_y),
+	"Return the stage y coordinate of the mouse pointer",
+    );
+
+    mod._actor_contains_mouse = skulpt_function(
+        (py_obj) => {
+	    const mouse_x = Sk.pytch.mouse.stage_x;
+	    const mouse_y = Sk.pytch.mouse.stage_y;
+            const instance = py_obj.$pytchActorInstance;
+	    const contains_point = instance.is_touching_point(mouse_x, mouse_y);
+	    return contains_point ? Sk.builtin.bool.true$ : Sk.builtin.bool.false$;
+        },
+        "(ACTOR) Return whether the Actor contains the mouse pointer",
+    );
+
     mod.ask_and_wait = skulpt_function(
         (py_prompt) => {
             throwIfNoExecutingThread("ask_and_wait");

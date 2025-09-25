@@ -91,5 +91,14 @@ describe("click detection", () => {
             assert_state_after_next_frame(true, 2);
             mock_mouse.click_at(170, 120);
             assert_state_after_next_frame(false, 3);
+
+            mock_mouse.move(-100, -100);
+            project.do_synthetic_broadcast("move-mouse");
+            assert_state_after_next_frame(true, 3);
+
+            mock_mouse.click_at(-20, -280);
+            assert_state_after_next_frame(true, 3);
+            mock_mouse.click_at(-25, -275);
+            assert_state_after_next_frame(false, 4);
         })});
 });
