@@ -154,6 +154,13 @@ This will set up a watcher for ``self.score``, showing the value with
 the label ``SCORE:``, a little way in from the top-right corner of the
 stage.
 
+As a special case, to show a global variable, use ``None`` as the
+owner, for example:
+
+.. code-block:: python
+
+   pytch.show_variable(None, "high_score")
+
 
 Sprite variables and clones
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
