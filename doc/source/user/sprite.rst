@@ -502,6 +502,20 @@ Stage.
    speech replaces the first script's speech.
 
 
+Showing and hiding a sprite's variables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _Sprite_show_variable:
+.. function:: self.show_variable(variable_name)
+
+   .. include:: actor-show-variable.rst
+
+.. _Sprite_hide_variable:
+.. function:: self.hide_variable(variable_name)
+
+   .. include:: actor-hide-variable.rst
+
+
 .. _Sprite_method_ask_and_wait:
 
 Asking the user a question
