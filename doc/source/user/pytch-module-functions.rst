@@ -21,8 +21,9 @@ Creating a clone
 .. function:: pytch.create_clone_of(thing)
    :noindex:
 
-   Create a new clone of ``thing``.  See :ref:`the description in the
-   Sprites section<create_clone_of_for_Sprites>` for further details.
+   The underlying function which creates a new clone of ``thing``.
+   See :ref:`the documentation in the Sprites
+   section<create_clone_of_for_Sprites>` for recommended usage.
 
 
 Sounds
