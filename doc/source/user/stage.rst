@@ -26,6 +26,13 @@ provided by Pytch:
    ``sound_name_or_index`` must refer to a Sound you have defined —
    see :doc:`sound-specs`.
 
+.. _Stage_stop_all_sounds:
+.. function:: self.stop_all_sounds()
+   :noindex:
+
+   Immediately stop all sounds from playing, **including those being
+   played by any Sprites**.
+
 .. function:: self.switch_backdrop(backdrop_name)
 
    Make the Stage change its backdrop to the one with the given
@@ -66,6 +73,71 @@ provided by Pytch:
 .. attribute:: self.backdrop_name
 
    The name of the currently-shown backdrop.
+
+
+Showing and hiding the stage's variables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _Stage_show_variable:
+.. function:: self.show_variable(variable_name)
+   :noindex:
+
+   .. include:: actor-show-variable.rst
+
+.. function:: self.hide_variable(variable_name)
+   :noindex:
+
+   .. include:: actor-hide-variable.rst
+
+
+Sensing
+~~~~~~~
+
+.. function:: self.key_pressed(key_name)
+   :noindex:
+
+   .. include:: actor-key-pressed.rst
+
+
+Pausing a script
+~~~~~~~~~~~~~~~~
+
+.. function:: self.wait_seconds(n_seconds)
+   :noindex:
+
+   .. include:: actor-wait-seconds.rst
+
+
+Broadcasting messages
+~~~~~~~~~~~~~~~~~~~~~
+
+.. function:: self.broadcast(message_string)
+   :noindex:
+
+   .. include:: actor-broadcast.rst
+
+.. function:: self.broadcast_and_wait(message_string)
+   :noindex:
+
+   .. include:: actor-broadcast-and-wait.rst
+
+
+Stopping all scripts
+~~~~~~~~~~~~~~~~~~~~
+
+.. function:: self.stop_all()
+   :noindex:
+
+   .. include:: actor-stop-all.rst
+
+
+Creating clones of Sprites
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. function:: self.create_clone_of(thing)
+   :noindex:
+
+   .. include:: actor-create-clone-of.rst
 
 
 Asking the user a question

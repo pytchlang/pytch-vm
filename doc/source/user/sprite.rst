@@ -63,6 +63,42 @@ Here we see:
   Scratch block — a Pytch sprite's methods are described below.
 
 
+Controlling how scripts run
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can pause a script, send messages to launch other scripts, and
+stop all scripts in your program:
+
+Pausing a script
+^^^^^^^^^^^^^^^^
+
+.. _Sprite_wait_seconds:
+.. function:: self.wait_seconds(n_seconds)
+
+   .. include:: actor-wait-seconds.rst
+
+Broadcasting messages
+^^^^^^^^^^^^^^^^^^^^^
+
+.. _Sprite_broadcast:
+.. function:: self.broadcast(message_string)
+
+   .. include:: actor-broadcast.rst
+
+.. _Sprite_broadcast_and_wait:
+.. function:: self.broadcast_and_wait(message_string)
+
+   .. include:: actor-broadcast-and-wait.rst
+
+Stopping all scripts
+^^^^^^^^^^^^^^^^^^^^
+
+.. _Sprite_stop_all:
+.. function:: self.stop_all()
+
+   .. include:: actor-stop-all.rst
+
+
 Controlling how a sprite looks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -327,6 +363,21 @@ sprite to play it.
    return until the entire sound has played, so the script it is
    contained in won't do its next instruction until then.
 
+.. _Sprite_stop_all_sounds:
+.. function:: self.stop_all_sounds()
+
+   Immediately stop all sounds from playing, **including those being
+   played by the Stage or by other Sprites**.
+
+
+Sensing
+~~~~~~~
+
+.. _Sprite_key_pressed:
+.. function:: self.key_pressed(key_name)
+
+   .. include:: actor-key-pressed.rst
+
 
 Making and deleting copies of a Sprite
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -344,27 +395,20 @@ its behaviour. The "self" variable always refers to the *current* clone.
 Creating new clones
 ^^^^^^^^^^^^^^^^^^^
 
-Clones can be created using the ``pytch.create_clone_of(thing)``
-function:
+Clones can be created in two ways.  Quite often, you just want to
+create a clone of the sprite which is running the code.  In this case,
+you can use the simple version:
 
-.. function:: pytch.create_clone_of(thing)
+.. function:: self.create_clone()
 
-   Create a new clone of ``thing``.  You can create clones in two ways.
-   You can clone the original or a copy of one of your Sprites, for example
-   the copy which is calling the ``create_clone_of()`` function:
+   Create a new clone of ``self``.
 
-   .. code-block:: python
+There is more general version if you want to create a clone of
+something else:
 
-      pytch.create_clone_of(self)
+.. function:: self.create_clone_of(thing)
 
-   Or you can create a clone of a particular class of Sprite:
-
-   .. code-block:: python
-
-      pytch.create_clone_of(Spaceship)
-
-   In this case, Pytch makes a clone of the original instance of that
-   sprite.
+   .. include:: actor-create-clone-of.rst
 
 Deleting clones
 ^^^^^^^^^^^^^^^
@@ -456,6 +500,20 @@ Stage.
    If a second script calls ``say_for_seconds()`` while a first script is
    already in the middle of ``say_for_seconds()``, the second script's
    speech replaces the first script's speech.
+
+
+Showing and hiding a sprite's variables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _Sprite_show_variable:
+.. function:: self.show_variable(variable_name)
+
+   .. include:: actor-show-variable.rst
+
+.. _Sprite_hide_variable:
+.. function:: self.hide_variable(variable_name)
+
+   .. include:: actor-hide-variable.rst
 
 
 .. _Sprite_method_ask_and_wait:

@@ -2,7 +2,9 @@ Functions in the pytch module
 =============================
 
 Various functions, which do not need to refer to a particular Sprite,
-are available in the ``pytch`` module.
+are available in the ``pytch`` module.  For convenience, though, they
+are also available, where it makes sense, as methods on ``Sprite`` and
+``Stage``.
 
 
 Pausing a script
@@ -10,10 +12,9 @@ Pausing a script
 
 .. function:: pytch.wait_seconds(n_seconds)
 
-   Make the script calling ``wait_seconds()`` do nothing for
-   ``n_seconds`` seconds before resuming.  This is done by counting
-   frames, so complicated scripts which render at less than 60fps will
-   wait for the wrong amount of time; fixing this is on the roadmap.
+   The underlying function which pauses a script.  See :ref:`the
+   documentation in the Sprites section<Sprite_wait_seconds>` for
+   details.
 
 
 Creating a clone
@@ -22,21 +23,28 @@ Creating a clone
 .. function:: pytch.create_clone_of(thing)
    :noindex:
 
-   Create a new clone of ``thing``.  See :ref:`the description in the
-   Sprites section<create_clone_of_for_Sprites>` for further details.
+   The underlying function which creates a new clone of ``thing``.
+   See :ref:`the documentation in the Sprites
+   section<create_clone_of_for_Sprites>` for recommended usage.
 
 
 Sounds
 ------
 
 Most sound functionality is accessed through ``Sprite`` methods.  See
-:ref:`the relevant part of the Sprites
-section<methods_playing_sounds>` for details.  However, the function
-to stop all sounds from playing is in the ``pytch`` module:
+:ref:`the documentation in the Sprites
+section<methods_playing_sounds>` for details.
+
+The underlying function to stop all sounds from playing is in
+the ``pytch`` module:
 
 .. function:: pytch.stop_all_sounds()
 
    Stop all sounds from playing.
+
+However, usually you will stop all sounds by using the matching
+:ref:`Sprite method<Sprite_stop_all_sounds>` or :ref:`Stage
+method<Stage_stop_all_sounds>`.
 
 
 Asking the user a question
@@ -65,26 +73,21 @@ Sensing whether a particular key is pressed
 
 .. function:: pytch.key_pressed(key_name)
 
-   Give a ``True``/``False`` answer as to whether the key with name
-   ``key_name`` is currently pressed.
+   The underlying function which detects whether a key is pressed.
+   See details under the corresponding :ref:`Sprite
+   method<Sprite_key_pressed>`.
 
 
 Broadcasting messages
 ---------------------
 
 .. function:: pytch.broadcast(message_string)
+              pytch.broadcast_and_wait(message_string)
 
-   Broadcast the message ``message_string``, launching any scripts
-   with a matching ``@pytch.when_I_receive()`` decorator (hat-block).
-   The script calling ``broadcast()`` continues, with the responses
-   happening concurrently.
-
-.. function:: pytch.broadcast_and_wait(message_string)
-
-   Broadcast the message ``message_string``, launching any scripts
-   with a matching ``@pytch.when_I_receive()`` decorator (hat-block).
-   The script calling ``broadcast_and_wait()`` waits until all those
-   scripts have finished before continuing.
+   The underlying functions which broadcast messages.  See details
+   under the corresponding Sprite methods:
+   :ref:`broadcast()<Sprite_broadcast>` and
+   :ref:`broadcast_and_wait()<Sprite_broadcast_and_wait>`.
 
 
 Stopping all scripts
@@ -92,12 +95,11 @@ Stopping all scripts
 
 .. function:: pytch.stop_all()
 
-   Stop all currently-executing scripts.  Also stop all sounds,
-   delete all clones, abandon all "ask and wait" questions, and
-   clear all speech bubbles.
+   The underlying function which stops all scripts.  See details under
+   :ref:`the corresponding Sprite method<Sprite_stop_all>`.
 
-   ``pytch.stop_all()`` does the same job as the "red stop" button.
 
+.. _pytch_variable_watchers:
 
 Variable watchers
 -----------------
@@ -110,8 +112,14 @@ Variable watchers
 In Scratch, you can "show" a variable, either by ticking a box in the
 UI, or by using the *show variable MY-VARIABLE* block.  Pytch does not
 have a box to tick, but does have the ``pytch.show_variable()``
-function.  The simplest way to show a variable is to use
-``pytch.show_variable()`` like this:
+function.
+
+The simplest way to show a variable is to use ``self.show_variable()``
+in a Sprite or Stage script.  See the :ref:`Sprite
+documentation<Sprite_show_variable>` or :ref:`Stage
+documentation<Stage_show_variable>` for details.  If needed, though,
+the general ``pytch.show_variable()`` version is available, and can be
+used like this:
 
 .. code-block:: python
    :emphasize-lines: 4
@@ -147,6 +155,20 @@ arguments:
 This will set up a watcher for ``self.score``, showing the value with
 the label ``SCORE:``, a little way in from the top-right corner of the
 stage.
+
+As a special case, to show a global variable, use ``None`` as the
+owner, for example:
+
+.. code-block:: python
+
+   pytch.show_variable(None, "high_score")
+
+To remove a variable watcher, use ``pytch.hide_variable()``, which
+takes the same *owner* and *attribute_name* arguments.  For example:
+
+.. code-block:: python
+
+   pytch.hide_variable(self, "score")
 
 
 Sprite variables and clones
