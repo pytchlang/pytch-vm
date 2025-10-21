@@ -116,6 +116,15 @@ Stopping all scripts
    .. include:: actor-stop-all.rst
 
 
+Creating clones of Sprites
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. function:: self.create_clone_of(thing)
+   :noindex:
+
+   .. include:: actor-create-clone-of.rst
+
+
 Asking the user a question
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
