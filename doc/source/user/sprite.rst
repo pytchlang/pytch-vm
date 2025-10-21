@@ -395,27 +395,20 @@ its behaviour. The "self" variable always refers to the *current* clone.
 Creating new clones
 ^^^^^^^^^^^^^^^^^^^
 
-Clones can be created using the ``pytch.create_clone_of(thing)``
-function:
+Clones can be created in two ways.  Quite often, you just want to
+create a clone of the sprite which is running the code.  In this case,
+you can use the simple version:
 
-.. function:: pytch.create_clone_of(thing)
+.. function:: self.create_clone()
 
-   Create a new clone of ``thing``.  You can create clones in two ways.
-   You can clone the original or a copy of one of your Sprites, for example
-   the copy which is calling the ``create_clone_of()`` function:
+   Create a new clone of ``self``.
 
-   .. code-block:: python
+There is more general version if you want to create a clone of
+something else:
 
-      pytch.create_clone_of(self)
+.. function:: self.create_clone_of(thing)
 
-   Or you can create a clone of a particular class of Sprite:
-
-   .. code-block:: python
-
-      pytch.create_clone_of(Spaceship)
-
-   In this case, Pytch makes a clone of the original instance of that
-   sprite.
+   .. include:: actor-create-clone-of.rst
 
 Deleting clones
 ^^^^^^^^^^^^^^^
