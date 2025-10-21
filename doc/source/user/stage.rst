@@ -75,6 +75,21 @@ provided by Pytch:
    The name of the currently-shown backdrop.
 
 
+Showing and hiding the stage's variables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _Stage_show_variable:
+.. function:: self.show_variable(variable_name)
+   :noindex:
+
+   .. include:: actor-show-variable.rst
+
+.. function:: self.hide_variable(variable_name)
+   :noindex:
+
+   .. include:: actor-hide-variable.rst
+
+
 Sensing
 ~~~~~~~
 
