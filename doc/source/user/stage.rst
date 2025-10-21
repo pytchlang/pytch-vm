@@ -75,6 +75,15 @@ provided by Pytch:
    The name of the currently-shown backdrop.
 
 
+Pausing a script
+~~~~~~~~~~~~~~~~
+
+.. function:: self.wait_seconds(n_seconds)
+   :noindex:
+
+   .. include:: actor-wait-seconds.rst
+
+
 Broadcasting messages
 ~~~~~~~~~~~~~~~~~~~~~
 
