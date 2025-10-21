@@ -69,6 +69,19 @@ Controlling how scripts run
 You can pause a script, send messages to launch other scripts, and
 stop all scripts in your program:
 
+Broadcasting messages
+^^^^^^^^^^^^^^^^^^^^^
+
+.. _Sprite_broadcast:
+.. function:: self.broadcast(message_string)
+
+   .. include:: actor-broadcast.rst
+
+.. _Sprite_broadcast_and_wait:
+.. function:: self.broadcast_and_wait(message_string)
+
+   .. include:: actor-broadcast-and-wait.rst
+
 
 Controlling how a sprite looks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
