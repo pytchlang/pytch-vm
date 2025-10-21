@@ -161,6 +161,13 @@ owner, for example:
 
    pytch.show_variable(None, "high_score")
 
+To remove a variable watcher, use ``pytch.hide_variable()``, which
+takes the same *owner* and *attribute_name* arguments.  For example:
+
+.. code-block:: python
+
+   pytch.hide_variable(self, "score")
+
 
 Sprite variables and clones
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
