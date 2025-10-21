@@ -70,8 +70,9 @@ Sensing whether a particular key is pressed
 
 .. function:: pytch.key_pressed(key_name)
 
-   Give a ``True``/``False`` answer as to whether the key with name
-   ``key_name`` is currently pressed.
+   The underlying function which detects whether a key is pressed.
+   See details under the corresponding :ref:`Sprite
+   method<Sprite_key_pressed>`.
 
 
 Broadcasting messages
