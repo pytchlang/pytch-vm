@@ -90,6 +90,14 @@ Broadcasting messages
 
    .. include:: actor-broadcast-and-wait.rst
 
+Stopping all scripts
+^^^^^^^^^^^^^^^^^^^^
+
+.. _Sprite_stop_all:
+.. function:: self.stop_all()
+
+   .. include:: actor-stop-all.rst
+
 
 Controlling how a sprite looks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
