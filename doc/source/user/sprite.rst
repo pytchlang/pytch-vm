@@ -69,6 +69,14 @@ Controlling how scripts run
 You can pause a script, send messages to launch other scripts, and
 stop all scripts in your program:
 
+Pausing a script
+^^^^^^^^^^^^^^^^
+
+.. _Sprite_wait_seconds:
+.. function:: self.wait_seconds(n_seconds)
+
+   .. include:: actor-wait-seconds.rst
+
 Broadcasting messages
 ^^^^^^^^^^^^^^^^^^^^^
 
