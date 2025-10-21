@@ -97,6 +97,7 @@ Stopping all scripts
    :ref:`the corresponding Sprite method<Sprite_stop_all>`.
 
 
+.. _pytch_variable_watchers:
 
 Variable watchers
 -----------------
