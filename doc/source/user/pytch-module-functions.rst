@@ -110,8 +110,14 @@ Variable watchers
 In Scratch, you can "show" a variable, either by ticking a box in the
 UI, or by using the *show variable MY-VARIABLE* block.  Pytch does not
 have a box to tick, but does have the ``pytch.show_variable()``
-function.  The simplest way to show a variable is to use
-``pytch.show_variable()`` like this:
+function.
+
+The simplest way to show a variable is to use ``self.show_variable()``
+in a Sprite or Stage script.  See the :ref:`Sprite
+documentation<Sprite_show_variable>` or :ref:`Stage
+documentation<Stage_show_variable>` for details.  If needed, though,
+the general ``pytch.show_variable()`` version is available, and can be
+used like this:
 
 .. code-block:: python
    :emphasize-lines: 4
