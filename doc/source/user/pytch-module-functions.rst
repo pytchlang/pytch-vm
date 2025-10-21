@@ -79,18 +79,12 @@ Broadcasting messages
 ---------------------
 
 .. function:: pytch.broadcast(message_string)
+              pytch.broadcast_and_wait(message_string)
 
-   Broadcast the message ``message_string``, launching any scripts
-   with a matching ``@pytch.when_I_receive()`` decorator (hat-block).
-   The script calling ``broadcast()`` continues, with the responses
-   happening concurrently.
-
-.. function:: pytch.broadcast_and_wait(message_string)
-
-   Broadcast the message ``message_string``, launching any scripts
-   with a matching ``@pytch.when_I_receive()`` decorator (hat-block).
-   The script calling ``broadcast_and_wait()`` waits until all those
-   scripts have finished before continuing.
+   The underlying functions which broadcast messages.  See details
+   under the corresponding Sprite methods:
+   :ref:`broadcast()<Sprite_broadcast>` and
+   :ref:`broadcast_and_wait()<Sprite_broadcast_and_wait>`.
 
 
 Stopping all scripts
