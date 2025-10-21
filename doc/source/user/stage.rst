@@ -26,6 +26,13 @@ provided by Pytch:
    ``sound_name_or_index`` must refer to a Sound you have defined —
    see :doc:`sound-specs`.
 
+.. _Stage_stop_all_sounds:
+.. function:: self.stop_all_sounds()
+   :noindex:
+
+   Immediately stop all sounds from playing, **including those being
+   played by any Sprites**.
+
 .. function:: self.switch_backdrop(backdrop_name)
 
    Make the Stage change its backdrop to the one with the given

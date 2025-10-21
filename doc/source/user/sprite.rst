@@ -327,6 +327,13 @@ sprite to play it.
    return until the entire sound has played, so the script it is
    contained in won't do its next instruction until then.
 
+.. _Sprite_stop_all_sounds:
+.. function:: self.stop_all_sounds()
+
+   Immediately stop all sounds from playing, **including those being
+   played by the Stage or by other Sprites**.
+
+
 
 Making and deleting copies of a Sprite
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
