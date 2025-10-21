@@ -91,11 +91,9 @@ Stopping all scripts
 
 .. function:: pytch.stop_all()
 
-   Stop all currently-executing scripts.  Also stop all sounds,
-   delete all clones, abandon all "ask and wait" questions, and
-   clear all speech bubbles.
+   The underlying function which stops all scripts.  See details under
+   :ref:`the corresponding Sprite method<Sprite_stop_all>`.
 
-   ``pytch.stop_all()`` does the same job as the "red stop" button.
 
 
 Variable watchers
