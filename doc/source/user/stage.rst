@@ -75,6 +75,20 @@ provided by Pytch:
    The name of the currently-shown backdrop.
 
 
+Broadcasting messages
+~~~~~~~~~~~~~~~~~~~~~
+
+.. function:: self.broadcast(message_string)
+   :noindex:
+
+   .. include:: actor-broadcast.rst
+
+.. function:: self.broadcast_and_wait(message_string)
+   :noindex:
+
+   .. include:: actor-broadcast-and-wait.rst
+
+
 Asking the user a question
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
