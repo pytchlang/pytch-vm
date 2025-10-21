@@ -370,6 +370,14 @@ sprite to play it.
    played by the Stage or by other Sprites**.
 
 
+Sensing
+~~~~~~~
+
+.. _Sprite_key_pressed:
+.. function:: self.key_pressed(key_name)
+
+   .. include:: actor-key-pressed.rst
+
 
 Making and deleting copies of a Sprite
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
