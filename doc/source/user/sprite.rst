@@ -63,6 +63,13 @@ Here we see:
   Scratch block — a Pytch sprite's methods are described below.
 
 
+Controlling how scripts run
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can pause a script, send messages to launch other scripts, and
+stop all scripts in your program:
+
+
 Controlling how a sprite looks
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
