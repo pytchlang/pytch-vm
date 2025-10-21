@@ -10,10 +10,9 @@ Pausing a script
 
 .. function:: pytch.wait_seconds(n_seconds)
 
-   Make the script calling ``wait_seconds()`` do nothing for
-   ``n_seconds`` seconds before resuming.  This is done by counting
-   frames, so complicated scripts which render at less than 60fps will
-   wait for the wrong amount of time; fixing this is on the roadmap.
+   The underlying function which pauses a script.  See :ref:`the
+   documentation in the Sprites section<Sprite_wait_seconds>` for
+   details.
 
 
 Creating a clone
