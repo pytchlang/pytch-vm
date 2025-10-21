@@ -30,13 +30,19 @@ Sounds
 ------
 
 Most sound functionality is accessed through ``Sprite`` methods.  See
-:ref:`the relevant part of the Sprites
-section<methods_playing_sounds>` for details.  However, the function
-to stop all sounds from playing is in the ``pytch`` module:
+:ref:`the documentation in the Sprites
+section<methods_playing_sounds>` for details.
+
+The underlying function to stop all sounds from playing is in
+the ``pytch`` module:
 
 .. function:: pytch.stop_all_sounds()
 
    Stop all sounds from playing.
+
+However, usually you will stop all sounds by using the matching
+:ref:`Sprite method<Sprite_stop_all_sounds>` or :ref:`Stage
+method<Stage_stop_all_sounds>`.
 
 
 Asking the user a question
