@@ -2,7 +2,9 @@ Functions in the pytch module
 =============================
 
 Various functions, which do not need to refer to a particular Sprite,
-are available in the ``pytch`` module.
+are available in the ``pytch`` module.  For convenience, though, they
+are also available, where it makes sense, as methods on ``Sprite`` and
+``Stage``.
 
 
 Pausing a script
