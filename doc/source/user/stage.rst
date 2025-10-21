@@ -75,6 +75,15 @@ provided by Pytch:
    The name of the currently-shown backdrop.
 
 
+Sensing
+~~~~~~~
+
+.. function:: self.key_pressed(key_name)
+   :noindex:
+
+   .. include:: actor-key-pressed.rst
+
+
 Pausing a script
 ~~~~~~~~~~~~~~~~
 
