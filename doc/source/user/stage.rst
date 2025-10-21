@@ -98,6 +98,15 @@ Broadcasting messages
    .. include:: actor-broadcast-and-wait.rst
 
 
+Stopping all scripts
+~~~~~~~~~~~~~~~~~~~~
+
+.. function:: self.stop_all()
+   :noindex:
+
+   .. include:: actor-stop-all.rst
+
+
 Asking the user a question
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
