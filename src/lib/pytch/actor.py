@@ -22,7 +22,7 @@ from pytch.clone import create_clone_of
 
 from pytch._show_hide_variables import show_variable, hide_variable
 
-from pytch.project import FRAMES_PER_SECOND
+from pytch.project import FRAMES_PER_SECOND, STAGE_WIDTH, STAGE_HEIGHT
 
 import pytch._glide_easing as glide_easing
 
@@ -30,6 +30,9 @@ from math import hypot, atan2
 
 # Close enough:
 MATH_PI = 3.141592653589793
+
+STAGE_HALF_WIDTH = STAGE_WIDTH // 2
+STAGE_HALF_HEIGHT = STAGE_HEIGHT // 2
 
 
 def _is_number(x):
