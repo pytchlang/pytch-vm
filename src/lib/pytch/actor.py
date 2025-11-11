@@ -28,6 +28,8 @@ import pytch._glide_easing as glide_easing
 
 from math import hypot, atan2
 
+import random
+
 # Close enough:
 MATH_PI = 3.141592653589793
 
@@ -265,6 +267,11 @@ class Sprite(Actor):
     def go_to_mouse(self):
         "() Move SELF to the coordinates of the mouse pointer"
         self.go_to_xy(self.mouse_x, self.mouse_y)
+
+    def go_to_random_position(self):
+        "() Move SELF to a random position on the stage"
+        self._x = random.randint(-STAGE_HALF_WIDTH, STAGE_HALF_WIDTH)
+        self._y = random.randint(-STAGE_HALF_HEIGHT, STAGE_HALF_HEIGHT)
 
     @property
     def x_position(self):
