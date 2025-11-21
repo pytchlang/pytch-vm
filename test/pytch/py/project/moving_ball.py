@@ -30,6 +30,10 @@ class Ball(Sprite):
     def move_down_lots(self):
         self.change_y(-100)
 
+    @when_key_pressed('r')
+    def move_random(self):
+        self.go_to_random_position()
+
     @when_I_receive('check-keys')
     def check_keys(self):
         self.keys_pressed = ''.join(kn for kn in 'abc' if pytch.key_pressed(kn))
