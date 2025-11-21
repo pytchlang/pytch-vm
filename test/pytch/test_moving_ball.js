@@ -16,6 +16,13 @@ configure_mocha();
 describe("moving ball example", () => {
     const ball_at = (x, y) => [["RenderImage", x, y, 1, "yellow-ball"]];
 
+    const ball_coords = (project) => {
+        let render_instrns = project.rendering_instructions();
+	assert.equal(render_instrns.length, 1);
+        let ball_instrn = render_instrns[0];
+	return { x: ball_instrn.x, y: ball_instrn.y };
+    };
+
     with_project("py/project/moving_ball.py", (import_project) => {
         it("renders correctly", async () => {
             let project = await import_project();
