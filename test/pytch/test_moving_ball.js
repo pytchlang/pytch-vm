@@ -55,6 +55,25 @@ describe("moving ball example", () => {
             assert.strictEqual(project.thread_groups.length, 0);
         });
 
+        it("moves randomly", async () => {
+            let project = await import_project();
+
+	    let coords = [];
+	    for (let i = 0; i < 50; ++i) {
+		mock_keyboard.press_key("r");
+		one_frame(project);
+		coords.push(ball_coords(project));
+	    }
+
+	    // It is possible for this to fail, if we're very unlucky
+	    // with the random number generation.  Exercise for the
+	    // reader: what is the probability of a false failure?
+	    const distinct_xs = new Set(coords.map(c => c.x));
+	    const distinct_ys = new Set(coords.map(c => c.y));
+	    assert(distinct_xs.size >= 10, "expecting at least 10 distinct Xs");
+	    assert(distinct_ys.size >= 10, "expecting at least 10 distinct Ys");
+        });
+
         it("responds to key presses", async () => {
             let project = await import_project();
 
