@@ -244,6 +244,13 @@ creating the costume (see
 
    Move the sprite to the position of the mouse pointer.
 
+.. function:: self.go_to_random_position()
+
+   Move the sprite to a random position on the stage.  This moves the
+   *centre* of the sprite to any valid stage location, which means that
+   sometimes some of the sprite will be outside the stage and only some of
+   the sprite will be shown.
+
 .. function:: self.glide_to_xy(x, y, seconds)
 
    Glide the sprite smoothly to a particular position on the stage, taking

@@ -16,6 +16,13 @@ configure_mocha();
 describe("moving ball example", () => {
     const ball_at = (x, y) => [["RenderImage", x, y, 1, "yellow-ball"]];
 
+    const ball_coords = (project) => {
+        let render_instrns = project.rendering_instructions();
+	assert.equal(render_instrns.length, 1);
+        let ball_instrn = render_instrns[0];
+	return { x: ball_instrn.x, y: ball_instrn.y };
+    };
+
     with_project("py/project/moving_ball.py", (import_project) => {
         it("renders correctly", async () => {
             let project = await import_project();
@@ -46,6 +53,25 @@ describe("moving ball example", () => {
 
             // Everything should have finished.
             assert.strictEqual(project.thread_groups.length, 0);
+        });
+
+        it("moves randomly", async () => {
+            let project = await import_project();
+
+	    let coords = [];
+	    for (let i = 0; i < 50; ++i) {
+		mock_keyboard.press_key("r");
+		one_frame(project);
+		coords.push(ball_coords(project));
+	    }
+
+	    // It is possible for this to fail, if we're very unlucky
+	    // with the random number generation.  Exercise for the
+	    // reader: what is the probability of a false failure?
+	    const distinct_xs = new Set(coords.map(c => c.x));
+	    const distinct_ys = new Set(coords.map(c => c.y));
+	    assert(distinct_xs.size >= 10, "expecting at least 10 distinct Xs");
+	    assert(distinct_ys.size >= 10, "expecting at least 10 distinct Ys");
         });
 
         it("responds to key presses", async () => {
