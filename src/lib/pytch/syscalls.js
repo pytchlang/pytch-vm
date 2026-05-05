@@ -309,6 +309,22 @@ var $builtinmodule = function (name) {
 	"Whether the given OBJ is the class object for a Sprite"
     );
 
+    mod._maybe_instance_0 = skulpt_function(
+      (py_cls) => {
+        const actor = py_cls.$pytchActor
+        const hasOriginal = (
+            actor != null
+            && actor.instances != null
+            && actor.instances[0] != null
+            && actor.instances[0].py_object != null
+        );
+        return (
+          hasOriginal
+            ? actor.instances[0].py_object
+            : Sk.builtin.none.none$
+        );
+    });
+
     mod._effective_source_object = skulpt_function(
         (py_cls_or_obj) => {
             if (Sk.builtin.checkClass(py_cls_or_obj)) {
