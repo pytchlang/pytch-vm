@@ -511,18 +511,10 @@ Sk.builtin.unichr = function unichr(x) {
  * This is a helper function and we already know that x is an int or has an nb$index slot
  */
 Sk.builtin.int2str_ = function helper_(x, radix, prefix) {
-    let v = x.nb$index();
-    let isNegative = false;
-    if (typeof v === "number") {
-        isNegative = v < 0;
-        v = isNegative ? -v : v;
-    } else {
-        isNegative = JSBI.lessThan(v, JSBI.__ZERO);
-        v = isNegative ? JSBI.unaryMinus(v) : v;
-    }
+    let v = Sk.misceval.asIndexOrThrow(x);
     let str = v.toString(radix);
-    if (isNegative) {
-        str = "-" + prefix + str;
+    if (v < 0) {
+        str = "-" + prefix + str.slice(1);
     } else {
         str = prefix + str;
     }
@@ -709,17 +701,15 @@ Sk.builtin.raw_input = function (prompt) {
     var lprompt = prompt ? prompt : "";
 
     return Sk.misceval.chain(Sk.importModule("sys", false, true), function (sys) {
-        if (Sk.inputfunTakesPrompt) {
+        const isTrueStdin = sys["$d"]["stdin"]["fileno"] === 0;
+        if (Sk.inputfunTakesPrompt && isTrueStdin) {
             return Sk.builtin.file.$readline(sys["$d"]["stdin"], null, lprompt);
         } else {
             return Sk.misceval.chain(
                 undefined,
-                function () {
-                    return Sk.misceval.callsimOrSuspendArray(sys["$d"]["stdout"]["write"], [sys["$d"]["stdout"], new Sk.builtin.str(lprompt)]);
-                },
-                function () {
-                    return Sk.misceval.callsimOrSuspendArray(sys["$d"]["stdin"]["readline"], [sys["$d"]["stdin"]]);
-                }
+                () => Sk.misceval.callsimOrSuspendArray(sys["$d"]["stdout"]["write"], [sys["$d"]["stdout"], new Sk.builtin.str(lprompt)]),
+                () => Sk.misceval.callsimOrSuspendArray(sys["$d"]["stdin"]["readline"], [sys["$d"]["stdin"]]),
+                (s) => new Sk.builtin.str(s.$jsstr().replace(/[\r\n]+$/, ""))
             );
         }
     });
@@ -799,7 +789,7 @@ Sk.builtin.exec = function (code, globals, locals) {
     );
     /**@todo shouldn't have to do this - Sk.globals loses scope*/
     const tmp = Sk.globals;
-    /** 
+    /**
      * @todo this is not correct outside of __main__ i.e. exec doesn't work inside modules using the module scope
      * This is because globals don't work outside of __main__
     */

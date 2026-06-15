@@ -136,8 +136,9 @@ function fixReserved(name) {
     return name + "_$rw$";
 }
 
+const reservedSuffix = /_\$rw\$$/;
 function unfixReserved(name) {
-    return name.replace(/_\$rw\$$/, "");
+    return name.replace(reservedSuffix, "");
 }
 
 function mangleName (priv, ident) {
@@ -950,7 +951,7 @@ Compiler.prototype.vexpr = function (e, data, augvar, augsubs) {
             }
             // else fall through and make a string instead
         case Sk.astnodes.Str:
-            return this.makeConstant("new Sk.builtin.str(", getJsLiteralForString(e.s.$jsstr()), ")");
+            return this.makeConstant("new Sk.builtin.str(", getJsLiteralForString(e.s.$jsstr()), ",true)");
         case Sk.astnodes.Attribute:
             if (e.ctx !== Sk.astnodes.AugLoad && e.ctx !== Sk.astnodes.AugStore) {
                 val = this.vexpr(e.value);
@@ -1727,7 +1728,7 @@ Compiler.prototype.cwith = function (s, itemIdx) {
 
     //    VAR = value
     if (s.items[itemIdx].optional_vars) {
-        this.nameop(s.items[itemIdx].optional_vars.id, Sk.astnodes.Store, value);
+        this.vexpr(s.items[itemIdx].optional_vars, value);
     }
 
     //    (try body)
@@ -1950,9 +1951,9 @@ Compiler.prototype.buildcodeobj = function (n, coname, decorator_list, args, cal
     if (args && args.kwarg) {
         kwarg = args.kwarg;
     }
-    if (!Sk.__future__.python3 && args && args.kwonlyargs && args.kwonlyargs.length != 0) {
-        throw new Sk.builtin.SyntaxError("Keyword-only arguments are not supported in Python 2");
-    }
+    // if (!Sk.__future__.python3 && args && args.kwonlyargs && args.kwonlyargs.length != 0) {
+    //     throw new Sk.builtin.SyntaxError("Keyword-only arguments are not supported in Python 2");
+    // }
 
     //
     // enter the new scope, and create the first block
@@ -2143,7 +2144,7 @@ Compiler.prototype.buildcodeobj = function (n, coname, decorator_list, args, cal
     this.u.varDeclsCode += "}";
 
     // inject __class__ cell when running python3
-    if (Sk.__future__.python3 && class_for_super) {
+    if (Sk.__future__.super_args && class_for_super) {
         this.u.varDeclsCode += "$gbl.__class__=$gbl." + class_for_super.v + ";";
     }
 

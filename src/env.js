@@ -18,6 +18,7 @@
  * fileopen: Optional function to call any time a file is opened
  * filewrite: Optional function to call when writing to a file
  * pytchThreading: Add a call to pytch.yield_until_next_frame() into strategic points in the AST.
+ * suspensionHandlers: Optional object map of suspension types to their handlers
  *
  * Any variables that aren't set will be left alone.
  */
@@ -267,6 +268,8 @@ Sk.configure = function (options) {
     }
 
     Sk.misceval.softspace_ = false;
+
+    Sk.misceval.defaultHandlers = options.suspensionHandlers || {};
 
     Sk.switch_version(Sk.__future__.python3);
 

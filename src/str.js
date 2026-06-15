@@ -1,21 +1,40 @@
+const Unicode = require("../support/polyfills/Unicode").default;
 var keyhash_regex = /^[0-9!#_]/;
-var interned = Object.create(null); // avoid name conflicts with Object.prototype
 
-function getInterned(x) {
-    return interned[x];
-}
+// Precompiled regexes for performance (hoisted to module scope)
+// Remove space from Unicode.Zs
+const _zsNoSpace = Unicode.Zs.replace(" ", "").replace("\\u0020", "");
+// Build a regex for non-printable BMP characters
+const _NON_PRINTABLE_RE = new RegExp("[" + Unicode.C + Unicode.Zl + Unicode.Zp + _zsNoSpace + "]", "u");
+const _IS_DECIMAL_RE = new RegExp("^[" + Unicode.Nd + "]+$", "u");
 
-function setInterned(x, pyStr) {
-    interned[x] = pyStr;
+// These will be initialized after Sk.builtin.str is defined
+var EMPTY_STRING;
+var INTERNED_ASCII_CHARS = new Array(256);
+var STRING_LITERALS = new Map();
+
+function internString(str) {
+    const len = str.length;
+    if (len === 0) {
+        return EMPTY_STRING;
+    }
+    if (len !== 1) {
+        return;
+    }
+    const chrCode = str.charCodeAt(0);
+    if (chrCode < 256) {
+        return INTERNED_ASCII_CHARS[chrCode];
+    }
 }
 
 /**
  * @constructor
  * @param {*} x
+ * @param {boolean} forceIntern - used in constants.js
  * @extends Sk.builtin.object
  */
 Sk.builtin.str = Sk.abstr.buildNativeClass("str", {
-    constructor: function str(x) {
+    constructor: function str(x, stringLiteral) {
         // new Sk.builtin.str is an internal function called with a JS value x
         // occasionally called with a python object and returns tp$str() or $r();
         Sk.asserts.assert(this instanceof Sk.builtin.str, "bad call to str - use 'new'");
@@ -24,7 +43,7 @@ Sk.builtin.str = Sk.abstr.buildNativeClass("str", {
             ret = x;
         } else if (x === undefined) {
             ret = "";
-        } else if (x === null) { 
+        } else if (x === null) {
             ret = "None";
         } else if (x.tp$str !== undefined) {
             // then we're a python object - all objects inherit from object which has tp$str
@@ -35,18 +54,23 @@ Sk.builtin.str = Sk.abstr.buildNativeClass("str", {
             throw new Sk.builtin.TypeError("could not convert object of type '" + Sk.abstr.typeName(x) + "' to str");
         }
 
-        const interned = getInterned(ret);
-        // interning required for strings in py
+        let interned = internString(ret);
         if (interned !== undefined) {
             return interned;
-        } else {
-            setInterned(ret, this);
+        }
+        if (stringLiteral) {
+            interned = STRING_LITERALS.get(ret);
+            if (interned !== undefined) {
+                return interned;
+            }
+            STRING_LITERALS.set(ret, this);
         }
 
         this.$mangled = fixReserved(ret);
         // used by dict key hash function $savedKeyHash
         this.$savedKeyHash = ret.replace(keyhash_regex, "!$&");
         this.v = ret;
+        this.$hash = -1;
     },
     slots: /**@lends {Sk.builtin.str.prototype} */ {
         tp$getattr: Sk.generic.getAttr,
@@ -74,6 +98,28 @@ Sk.builtin.str = Sk.abstr.buildNativeClass("str", {
                 }
                 return Sk.builtin.bytes.$decode.call(x, encoding, errors);
             }
+        },
+        tp$hash() {
+            if (this.$hash !== -1) {
+                return this.$hash;
+            }
+            const v = this.v;
+            if (v.length === 0) {
+                return (this.$hash = 0);
+            }
+            let len = v.length;
+            let i = 0;
+            let x = 4111458305663910;
+            x ^= v.charCodeAt(i) << 7;
+            while (--len >= 0) {
+                x = (1000003 * x) ^ v.charCodeAt(++i);
+            }
+            x ^= v.length;
+            x ^= 1726017244426399;
+            if (x === -1) {
+                x = -2;
+            }
+            return (this.$hash = x);
         },
         $r() {
             // single is preferred
@@ -501,6 +547,34 @@ Sk.builtin.str = Sk.abstr.buildNativeClass("str", {
             $doc:
                 "Return a copy of the string with leading whitespace removed.\n\nIf chars is given and not None, remove characters in chars instead.",
         },
+        removeprefix: {
+            $meth: function removeprefix(prefix) {
+                prefix = this.get$tgt(prefix);
+                const s = this.v;
+                if (s.startsWith(prefix)) {
+                    return new Sk.builtin.str(s.slice(prefix.length));
+                }
+                return this;
+            },
+            $flags: { OneArg: true },
+            $textsig: "($self, prefix, /)",
+            $doc:
+                "Return a str with the given prefix string removed if present.\n\nIf the string starts with the prefix string, return string[len(prefix):].\nOtherwise, return a copy of the original string.",
+        },
+        removesuffix: {
+            $meth: function removesuffix(suffix) {
+                suffix = this.get$tgt(suffix);
+                const s = this.v;
+                if (s.endsWith(suffix)) {
+                    return new Sk.builtin.str(s.slice(0, s.length - suffix.length));
+                }
+                return this;
+            },
+            $flags: { OneArg: true },
+            $textsig: "($self, suffix, /)",
+            $doc:
+              "Return a str with the given suffix string removed if present.\n\nIf the string ends with the suffix string and that suffix is not empty,\nreturn string[:-len(suffix)]. Otherwise, return a copy of the original string.",
+        },
         rfind: {
             $meth(tgt, start, end) {
                 return new Sk.builtin.int_(this.find$right(tgt, start, end));
@@ -705,13 +779,15 @@ Sk.builtin.str = Sk.abstr.buildNativeClass("str", {
             $doc:
                 "Return True if the string is a whitespace string, False otherwise.\n\nA string is whitespace if all characters in the string are whitespace and there\nis at least one character in the string.",
         },
-        // isdecimal: {
-        //     $meth: methods.isdecimal,
-        //     $flags: { NoArgs: true },
-        //     $textsig: "($self, /)",
-        //     $doc:
-        //         "Return True if the string is a decimal string, False otherwise.\n\nA string is a decimal string if all characters in the string are decimal and\nthere is at least one character in the string.",
-        // },
+        isdecimal: {
+            $meth: function isdecimal() {
+                return new Sk.builtin.bool(_IS_DECIMAL_RE.test(this.v));
+            },
+            $flags: { NoArgs: true },
+            $textsig: "($self, /)",
+            $doc:
+                "Return True if the string is a decimal string, False otherwise.\n\nA string is a decimal string if all characters in the string are decimal digits\nand the string is not empty.",
+        },
         isdigit: {
             $meth: function isdigit() {
                 return new Sk.builtin.bool(/^\d+$/.test(this.v));
@@ -757,13 +833,15 @@ Sk.builtin.str = Sk.abstr.buildNativeClass("str", {
             $doc:
                 'Return True if the string is a valid Python identifier, False otherwise.\n\nUse keyword.iskeyword() to test for reserved identifiers such as "def" and\n"class".',
         },
-        // isprintable: {
-        //     $meth: methods.isprintable,
-        //     $flags: {},
-        //     $textsig: "($self, /)",
-        //     $doc:
-        //         "Return True if the string is printable, False otherwise.\n\nA string is printable if all of its characters are considered printable in\nrepr() or if it is empty.",
-        // },
+        isprintable: {
+            $meth: function isprintable() {
+                return new Sk.builtin.bool(!_NON_PRINTABLE_RE.test(this.v));
+            },
+            $flags: { NoArgs: true },
+            $textsig: "($self, /)",
+            $doc:
+                "Return True if the string is printable, False otherwise.\n\nA string is printable if all of its characters are considered printable in\nrepr() or if it is empty.",
+        },
         zfill: {
             $meth: function zfill(len) {
                 len = Sk.misceval.asIndexSized(len, Sk.builtin.OverflowError);
@@ -1492,3 +1570,9 @@ function fixReserved(name) {
 
 Sk.builtin.str.reservedWords_ = reservedWords_;
 Sk.builtin.str.$fixReserved = fixReserved;
+
+// Initialize string interning after Sk.builtin.str is defined
+EMPTY_STRING = new Sk.builtin.str("");
+for (let i = 0; i < 256; i++) {
+    INTERNED_ASCII_CHARS[i] = new Sk.builtin.str(String.fromCharCode(i));
+}
