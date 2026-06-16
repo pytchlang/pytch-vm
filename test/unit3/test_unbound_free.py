@@ -26,6 +26,17 @@ class UnboundFreeTests(unittest.TestCase):
             return Inner.val
         self.assertEqual(f(), 42)
 
+    def test_class_method_captures_function_local(self):
+        # A class method may read a local of an enclosing FUNCTION: x is a cell
+        # in f and a free variable in the body of Inner.g().
+        def f():
+            x = 42
+            class Inner:
+                def g(self):
+                    return x
+            return Inner()
+        self.assertEqual(f().g(), 42)
+
     def test_deep_class_captures_function_locals(self):
         # A class body may read a local of any enclosing FUNCTION.
         def f():
@@ -40,6 +51,22 @@ class UnboundFreeTests(unittest.TestCase):
                 return h()
             return g()
         self.assertEqual(f(), 42042042)
+
+    def test_deep_class_method_captures_function_locals(self):
+        # A class method may read a local of any enclosing FUNCTION.
+        def f():
+            x = 42
+            def g():
+                y = 42000
+                def h():
+                    z = 42000000
+                    class Inner:
+                        def k(self):
+                            return x + y + z
+                    return Inner()
+                return h()
+            return g()
+        self.assertEqual(f().k(), 42042042)
 
     def test_class_body_binding_not_visible_to_nested_class(self):
         # A name bound in an enclosing CLASS body is invisible to nested code:
