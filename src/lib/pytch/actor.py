@@ -115,8 +115,8 @@ class Actor:
             n_appearances = len(self._appearance_names)
             if appearance_index >= n_appearances:
                 raise ValueError(
-                    ('could not switch to {} number {} in class "{}":'
-                     ' it only has {} {0}s')
+                    ('could not switch to {0} number {1} in class "{2}":'
+                     ' it only has {3} {0}s')
                     .format(self._appearance_hyponym,
                             appearance_index,
                             self.__class__.__name__,
@@ -136,7 +136,7 @@ class Actor:
 
         if len(self._Appearances) == 0:
             raise ValueError(
-                ('could not move to next {} in class "{}":'
+                ('could not move to next {0} in class "{1}":'
                  ' it has no {0}s')
                 .format(self._appearance_hyponym, self.__class__.__name__)
             )
