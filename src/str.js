@@ -1,4 +1,4 @@
-const Unicode = require("../support/polyfills/Unicode").default;
+const { Unicode }  = require("../support/polyfills/Unicode");
 var keyhash_regex = /^[0-9!#_]/;
 
 // Precompiled regexes for performance (hoisted to module scope)
