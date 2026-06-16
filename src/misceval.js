@@ -1322,7 +1322,7 @@ function _isIE() {
  * should return a newly constructed class object.
  *
  */
-Sk.misceval.buildClass = function (globals, func, name, bases, cell, kws) {
+Sk.misceval.buildClass = function (globals, func, name, bases, cell, kws, closure2) {
     const _name = new Sk.builtin.str(name);
     const _bases = update_bases(bases); // todo this function should go through the bases and check for __mro_entries__
 
@@ -1391,6 +1391,18 @@ Sk.misceval.buildClass = function (globals, func, name, bases, cell, kws) {
     // @todo add qualname here to pass to the code object
 
     const l_cell = cell === undefined ? {} : cell;
+
+    // The class's enclosing scope's free variables (names bound further out and
+    // merely relayed through the class's enclosing scope) live in closure2
+    // rather than in cell.  The class body and its methods may close over them
+    // too, so merge them in alongside the cells, mirroring the closure handling
+    // in the function ctor.
+    if (closure2 !== undefined) {
+        for (let k in closure2) {
+            l_cell[k] = closure2[k];
+        }
+    }
+
     // pass the locals to the code object which populates the namespace of the class
     func(globals, locals, l_cell);
 

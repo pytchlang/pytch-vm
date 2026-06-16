@@ -2541,7 +2541,11 @@ Compiler.prototype.cclass = function (s) {
 
     this.exitScope();
 
-    out("$ret = Sk.misceval.buildClass($gbl,", scopename, ",", s.name["$r"]().v, ",[", bases, "], $cell, ", keywordArgs, ");");
+    // If the enclosing scope has free variables of its own, they are held in
+    // $free (not $cell) and must be threaded into the class so its body and
+    // methods can close over names bound more than one level out.
+    const enclosingFree = this.u.ste.hasFree ? ", $free" : "";
+    out("$ret = Sk.misceval.buildClass($gbl,", scopename, ",", s.name["$r"]().v, ",[", bases, "], $cell, ", keywordArgs, enclosingFree, ");");
     this._checkSuspension();
 
     // apply decorators
