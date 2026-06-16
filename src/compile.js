@@ -2832,6 +2832,22 @@ Compiler.prototype.nameop = function (name, ctx, dataToStore) {
         case OP_DEREF:
             switch (ctx) {
                 case Sk.astnodes.Load:
+                    // The cell may exist but hold no value yet (e.g. a free variable
+                    // read before the enclosing binding has executed). A bound Python
+                    // value is never JS undefined (None is Sk.builtin.none.none$), so
+                    // an undefined slot means the name is unbound. Match CPython: a free
+                    // variable raises NameError, a local cell raises UnboundLocalError.
+                    out("if (", dict, ".", mangledNoPre, "===undefined) {");
+                    if (scope === Sk.SYMTAB_CONSTS.FREE) {
+                        out("throw new Sk.builtin.NameError(\"cannot access free variable '",
+                            mangledNoPre,
+                            "' where it is not associated with a value in enclosing scope\");");
+                    } else {
+                        out("throw new Sk.builtin.UnboundLocalError(\"cannot access local variable '",
+                            mangledNoPre,
+                            "' where it is not associated with a value\");");
+                    }
+                    out("}\n");
                     return dict + "." + mangledNoPre;
                 case Sk.astnodes.Store:
                     out(dict, ".", mangledNoPre, "=", dataToStore, ";");
