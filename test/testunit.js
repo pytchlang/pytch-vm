@@ -142,6 +142,8 @@ program
     .option('--python3', 'Python 3')
     .option('-o, --opt', 'use optimized skulpt')
     .option('--module <module>', 'test specific module')
+    .option('--shard <i/n>', 'run only shard i of n (1-based)')
+    .option('--brief', 'condensed output: only show failing modules plus summary')
     .parse(process.argv);
 
-test(program.python3, program.opt, program.module);
+test(program.python3, program.opt, program.module, program.shard, program.brief);
