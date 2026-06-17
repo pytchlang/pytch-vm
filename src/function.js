@@ -32,11 +32,12 @@ Sk.builtin.func = Sk.abstr.buildNativeClass("function", {
         this.func_code = code;
         this.func_globals = globals || null;
 
-        this.$name = (code.co_name && code.co_name.v) || code.name || "<native JS>";
+        // use python str to preserve identity from compilation
+        this.$name = code.co_name || new Sk.builtin.str(code.name || "<native JS>");
         this.$d = Sk.builtin.dict ? new Sk.builtin.dict() : undefined;
         this.$doc = code.co_docstring || Sk.builtin.none.none$;
         this.$module = (Sk.globals && Sk.globals["__name__"]) || Sk.builtin.none.none$;
-        this.$qualname = (code.co_qualname && code.co_qualname.v) || this.$name;
+        this.$qualname = code.co_qualname || this.$name;
 
         if (closure2 !== undefined) {
             // todo; confirm that modification here can't cause problems
@@ -51,7 +52,7 @@ Sk.builtin.func = Sk.abstr.buildNativeClass("function", {
         if (code.co_fastcall) {
             this.tp$call = code.bind(this);
         } else {
-            this.tp$call = Sk.builtin.func.prototype.tp$call.bind(this); // keep func the same shape
+            this.tp$call = Sk.builtin.func.prototype.$funcCall.bind(this); // keep func the same shape
         }
     },
     slots: {
@@ -65,48 +66,21 @@ Sk.builtin.func = Sk.abstr.buildNativeClass("function", {
         $r() {
             return new Sk.builtin.str("<function " + this.$qualname + ">");
         },
-        tp$call(posargs, kw) {
-            // Property reads from func_code are slooow, but
-            // the existing external API allows setup first, so as a
-            // hack we delay this initialisation.
-            // TODO change the external API to require all the co_vars
-            // to be supplied at construction time!
-            if (!this.memoised) {
-                this.$memoiseFlags();
-                this.memoised = true;
-            }
-            
-            // Fast path for JS-native functions (which should be implemented
-            // in a separate tp$call, really)
-            if (this.co_argcount === undefined && this.co_varnames === undefined  && !this.co_kwargs && !this.func_closure) {
-                // It's a JS function with no type info, don't hang around
-                // resolving anything.
-                if (kw && kw.length !== 0) {
-                    throw new Sk.builtin.TypeError(this.$name + "() takes no keyword arguments");
-                }
-                return this.func_code.apply(this.func_globals, posargs);
-            }
-            // end js fast path
-        
-            let args = this.$resolveArgs(posargs, kw);
-            if (this.func_closure) {
-                args.push(this.func_closure);
-            }
-            // note: functions expect 'this' to be globals to avoid having to
-            // slice/unshift onto the main args
-            return this.func_code.apply(this.func_globals, args);
+        tp$call(args, kws) {
+            // we'll only be here from calling __call__ since we assigned tp$call in the constructor
+            return this.tp$call(args, kws);
         },
     },
     getsets: {
         __name__: {
             $get() {
-                return new Sk.builtin.str(this.$name);
+                return this.$name;
             },
             $set(value) {
                 if (!Sk.builtin.checkString(value)) {
                     throw new Sk.builtin.TypeError("__name__ must be set to a string object");
                 }
-                this.$name = value.$jsstr();
+                this.$name = value;
             },
         },
         __qualname__: {
@@ -117,7 +91,7 @@ Sk.builtin.func = Sk.abstr.buildNativeClass("function", {
                 if (!Sk.builtin.checkString(value)) {
                     throw new Sk.builtin.TypeError("__qualname__ must be set to a string object");
                 }
-                this.$qualname = value.$jsstr();
+                this.$qualname = value;
             },
         },
         __dict__: Sk.generic.getSetDict,
@@ -188,10 +162,44 @@ Sk.builtin.func = Sk.abstr.buildNativeClass("function", {
             this.$kwdefs = this.func_code.$kwdefs || [];
         },
         $resolveArgs,
+        $funcCall(posargs, kw) {
+            // Property reads from func_code are slooow, but
+            // the existing external API allows setup first, so as a
+            // hack we delay this initialisation.
+            // TODO change the external API to require all the co_vars
+            // to be supplied at construction time!
+            if (!this.memoised) {
+                this.$memoiseFlags();
+                this.memoised = true;
+            }
 
-    }
+            // Fast path for JS-native functions (which should be implemented
+            // in a separate tp$call, really)
+            if (
+                this.co_argcount === undefined &&
+                this.co_varnames === undefined &&
+                !this.co_kwargs &&
+                !this.func_closure
+            ) {
+                // It's a JS function with no type info, don't hang around
+                // resolving anything.
+                if (kw && kw.length !== 0) {
+                    throw new Sk.builtin.TypeError(this.$name + "() takes no keyword arguments");
+                }
+                return this.func_code.apply(this.func_globals, posargs);
+            }
+            // end js fast path
+
+            let args = this.$resolveArgs(posargs, kw);
+            if (this.func_closure) {
+                args.push(this.func_closure);
+            }
+            // note: functions expect 'this' to be globals to avoid having to
+            // slice/unshift onto the main args
+            return this.func_code.apply(this.func_globals, args);
+        },
+    },
 });
-
 
 function $resolveArgs(posargs, kw) {
     // The rest of this function is a logical Javascript port of
@@ -241,7 +249,7 @@ function $resolveArgs(posargs, kw) {
     } else if (nposargs > co_argcount) {
         const plural_expected = co_argcount == 1 ? "argument" : "arguments";
         const plural_given = nposargs == 1 ? "was" : "were";
-        throw new Sk.builtin.TypeError(`${this.$name}"() takes ${co_argcount} positional ${plural_expected} but ${nposargs} ${plural_given} given`);
+        throw new Sk.builtin.TypeError(`${this.$name}() takes ${co_argcount} positional ${plural_expected} but ${nposargs} ${plural_given} given`);
     }
 
     /* Handle keyword arguments */

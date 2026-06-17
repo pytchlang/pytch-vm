@@ -759,7 +759,7 @@ function aliasForImportName (c, n) {
                 if (NCH(n) === 3) {
                     str = CHILD(n, 2).value;
                 }
-                return new Sk.astnodes.alias(name, str == null ? null : strobj(str));
+                return new Sk.astnodes.alias(name, str == null ? null : strobj(str), n.lineno, n.col_offset);
             case SYM.dotted_as_name:
                 if (NCH(n) === 1) {
                     n = CHILD(n, 0);
@@ -774,7 +774,7 @@ function aliasForImportName (c, n) {
                 break;
             case SYM.dotted_name:
                 if (NCH(n) === 1) {
-                    return new Sk.astnodes.alias(strobj(CHILD(n, 0).value), null);
+                    return new Sk.astnodes.alias(strobj(CHILD(n, 0).value), null, n.lineno, n.col_offset);
                 }
                 else {
                     // create a string of the form a.b.c
@@ -782,11 +782,11 @@ function aliasForImportName (c, n) {
                     for (i = 0; i < NCH(n); i += 2) {
                         str += CHILD(n, i).value + ".";
                     }
-                    return new Sk.astnodes.alias(strobj(str.substr(0, str.length - 1)), null);
+                    return new Sk.astnodes.alias(strobj(str.substr(0, str.length - 1)), null, n.lineno, n.col_offset);
                 }
                 break;
             case TOK.T_STAR:
-                return new Sk.astnodes.alias(strobj("*"), null);
+                return new Sk.astnodes.alias(strobj("*"), null, n.lineno, n.col_offset);
             default:
                 throw new Sk.builtin.SyntaxError("unexpected import name", c.c_filename, n.lineno);
         }
@@ -1112,7 +1112,7 @@ function ast_for_call(c, n, func, allowgen)
                 key = e.id;
                 for (k = 0; k < nkeywords; k++) {
                     tmp = keywords[k].arg;
-                    if (tmp && tmp === key) {
+                    if (tmp && tmp.v === key.v) {
                         ast_error(c, chch,
                                 "keyword argument repeated");
                         return NULL;

@@ -12,6 +12,7 @@ Sk.builtin.property = Sk.abstr.buildNativeClass("property", {
         this.prop$get = fget || Sk.builtin.none.none$;
         this.prop$set = fset || Sk.builtin.none.none$;
         this.prop$del = fdel || Sk.builtin.none.none$;
+        this.getter$doc = fget && !doc;
         this.prop$doc = doc || (fget && fget.$doc) || Sk.builtin.none.none$;
     },
     slots: {
@@ -30,15 +31,18 @@ Sk.builtin.property = Sk.abstr.buildNativeClass("property", {
             this.prop$set = args[1];
             this.prop$del = args[2];
             if (Sk.builtin.checkNone(args[3])) {
+                this.getter$doc = true;
                 if (!Sk.builtin.checkNone(args[0])) {
                     this.prop$doc = args[0].$doc || args[3];
                 }
             } else {
                 this.prop$doc = args[3];
             }
+            if (this.ob$type !== Sk.builtin.property) {
+                this.tp$setattr(Sk.builtin.str.$doc, this.prop$doc);
+            }
         },
-        tp$doc:
-            "Property attribute.\n\n  fget\n    function to be used for getting an attribute value\n  fset\n    function to be used for setting an attribute value\n  fdel\n    function to be used for del'ing an attribute\n  doc\n    docstring\n\nTypical use is to define a managed attribute x:\n\nclass C(object):\n    def getx(self): return self._x\n    def setx(self, value): self._x = value\n    def delx(self): del self._x\n    x = property(getx, setx, delx, 'I'm the 'x' property.')\n\nDecorators make defining new properties or modifying existing ones easy:\n\nclass C(object):\n    @property\n    def x(self):\n        'I am the 'x' property.'\n        return self._x\n    @x.setter\n    def x(self, value):\n        self._x = value\n    @x.deleter\n    def x(self):\n        del self._x",
+        tp$doc: "Property attribute.\n\n  fget\n    function to be used for getting an attribute value\n  fset\n    function to be used for setting an attribute value\n  fdel\n    function to be used for del'ing an attribute\n  doc\n    docstring\n\nTypical use is to define a managed attribute x:\n\nclass C(object):\n    def getx(self): return self._x\n    def setx(self, value): self._x = value\n    def delx(self): del self._x\n    x = property(getx, setx, delx, 'I'm the 'x' property.')\n\nDecorators make defining new properties or modifying existing ones easy:\n\nclass C(object):\n    @property\n    def x(self):\n        'I am the 'x' property.'\n        return self._x\n    @x.setter\n    def x(self, value):\n        self._x = value\n    @x.deleter\n    def x(self):\n        del self._x",
         tp$descr_get(obj, type, canSuspend) {
             if (obj === null) {
                 return this;
@@ -76,19 +80,19 @@ Sk.builtin.property = Sk.abstr.buildNativeClass("property", {
     methods: {
         getter: {
             $meth(fget) {
-                return new Sk.builtin.property(fget, this.prop$set, this.prop$del, this.prop$doc);
+                return this.$copy([fget, this.prop$set, this.prop$del]);
             },
             $flags: { OneArg: true },
         },
         setter: {
             $meth(fset) {
-                return new Sk.builtin.property(this.prop$get, fset, this.prop$del, this.prop$doc);
+                return this.$copy([this.prop$get, fset, this.prop$del]);
             },
             $flags: { OneArg: true },
         },
         deleter: {
             $meth(fdel) {
-                return new Sk.builtin.property(this.prop$get, this.prop$set, fdel, this.prop$doc);
+                return this.$copy([this.prop$get, this.prop$set, fdel]);
             },
             $flags: { OneArg: true },
         },
@@ -116,16 +120,45 @@ Sk.builtin.property = Sk.abstr.buildNativeClass("property", {
             $set(value) {
                 value = value || Sk.builtin.none.none$;
                 this.prop$doc = value;
+            },
+        },
+    },
+    proto: {
+        $copy(args) {
+            const type = this.ob$type;
+            if (!this.getter$doc) {
+                args.push(this.prop$doc);
+            }
+            if (type === Sk.builtin.property) {
+                return new type(...args);
+            } else {
+                return type.tp$call(args);
             }
         },
     },
 });
 
+function copyAttr(wrapper, wrapped, name) {
+    try {
+        const v = wrapped.tp$getattr(name);
+        wrapper.tp$setattr(name, v);
+    } catch {
+        // pass
+    }
+}
+
+function functoolsWraps(wrapper, wrapped) {
+    copyAttr(wrapper, wrapped, Sk.builtin.str.$module);
+    copyAttr(wrapper, wrapped, Sk.builtin.str.$name);
+    copyAttr(wrapper, wrapped, Sk.builtin.str.$qualname);
+    copyAttr(wrapper, wrapped, Sk.builtin.str.$doc);
+    copyAttr(wrapper, wrapped, Sk.builtin.str.$ann);
+}
+
 /**
  * @constructor
  * @param {Sk.builtin.func} callable
  */
-
 Sk.builtin.classmethod = Sk.abstr.buildNativeClass("classmethod", {
     constructor: function classmethod(callable) {
         // this can be used as an internal function
@@ -140,26 +173,34 @@ Sk.builtin.classmethod = Sk.abstr.buildNativeClass("classmethod", {
             Sk.abstr.checkNoKwargs("classmethod", kwargs);
             Sk.abstr.checkArgsLen("classmethod", args, 1, 1);
             this.cm$callable = args[0];
+            functoolsWraps(this, args[0]);
         },
-        tp$doc:
-            "classmethod(function) -> method\n\nConvert a function to be a class method.\n\nA class method receives the class as implicit first argument,\njust like an instance method receives the instance.\nTo declare a class method, use this idiom:\n\n  class C:\n      @classmethod\n      def f(cls, arg1, arg2, ...):\n          ...\n\nIt can be called either on the class (e.g. C.f()) or on an instance\n(e.g. C().f()).  The instance is ignored except for its class.\nIf a class method is called for a derived class, the derived class\nobject is passed as the implied first argument.\n\nClass methods are different than C++ or Java static methods.\nIf you want those, see the staticmethod builtin.",
+        $r() {
+            return new Sk.builtin.str(`<classmethod(${Sk.misceval.objectRepr(this.cm$callable)})>`);
+        },
+        tp$doc: "classmethod(function) -> method\n\nConvert a function to be a class method.\n\nA class method receives the class as implicit first argument,\njust like an instance method receives the instance.\nTo declare a class method, use this idiom:\n\n  class C:\n      @classmethod\n      def f(cls, arg1, arg2, ...):\n          ...\n\nIt can be called either on the class (e.g. C.f()) or on an instance\n(e.g. C().f()).  The instance is ignored except for its class.\nIf a class method is called for a derived class, the derived class\nobject is passed as the implied first argument.\n\nClass methods are different than C++ or Java static methods.\nIf you want those, see the staticmethod builtin.",
         tp$descr_get(obj, type, canSuspend) {
             const callable = this.cm$callable;
             if (callable === undefined) {
                 throw new Sk.builtin.RuntimeError("uninitialized classmethod object");
             }
-            if (type === undefined) {
+            if (type == null) {
                 type = obj.ob$type;
             }
             const f = callable.tp$descr_get;
             if (f) {
-                return f.call(callable, type, canSuspend);
+                return f.call(callable, type, null, canSuspend);
             }
             return new Sk.builtin.method(callable, type);
         },
     },
     getsets: {
         __func__: {
+            $get() {
+                return this.cm$callable;
+            },
+        },
+        __wrapped__: {
             $get() {
                 return this.cm$callable;
             },
@@ -187,9 +228,15 @@ Sk.builtin.staticmethod = Sk.abstr.buildNativeClass("staticmethod", {
             Sk.abstr.checkNoKwargs("staticmethod", kwargs);
             Sk.abstr.checkArgsLen("staticmethod", args, 1, 1);
             this.sm$callable = args[0];
+            functoolsWraps(this, args[0]);
         },
-        tp$doc:
-            "staticmethod(function) -> method\n\nConvert a function to be a static method.\n\nA static method does not receive an implicit first argument.\nTo declare a static method, use this idiom:\n\n     class C:\n         @staticmethod\n         def f(arg1, arg2, ...):\n             ...\n\nIt can be called either on the class (e.g. C.f()) or on an instance\n(e.g. C().f()).  The instance is ignored except for its class.\n\nStatic methods in Python are similar to those found in Java or C++.\nFor a more advanced concept, see the classmethod builtin.",
+        $r() {
+            return new Sk.builtin.str(`<staticmethod(${Sk.misceval.objectRepr(this.sm$callable)})>`);
+        },
+        tp$call(args, kws) {
+            return Sk.misceval.callsimOrSuspendArray(this.sm$callable, args, kws);
+        },
+        tp$doc: "staticmethod(function) -> method\n\nConvert a function to be a static method.\n\nA static method does not receive an implicit first argument.\nTo declare a static method, use this idiom:\n\n     class C:\n         @staticmethod\n         def f(arg1, arg2, ...):\n             ...\n\nIt can be called either on the class (e.g. C.f()) or on an instance\n(e.g. C().f()).  The instance is ignored except for its class.\n\nStatic methods in Python are similar to those found in Java or C++.\nFor a more advanced concept, see the classmethod builtin.",
         tp$descr_get(obj, type) {
             if (this.sm$callable === undefined) {
                 throw new Sk.builtin.RuntimeError("uninitialized staticmethod object");
@@ -199,6 +246,11 @@ Sk.builtin.staticmethod = Sk.abstr.buildNativeClass("staticmethod", {
     },
     getsets: {
         __func__: {
+            $get() {
+                return this.sm$callable;
+            },
+        },
+        __wrapped__: {
             $get() {
                 return this.sm$callable;
             },
