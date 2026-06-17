@@ -3,7 +3,7 @@ const path = require('path');
 const program = require('commander');
 const reqskulpt = require('../support/run/require-skulpt').requireSkulpt;
 
-function test (python3, opt, module = undefined) {
+function test (python3, opt, module = undefined, shard = undefined, brief = false) {
     var startime, endtime, elapsed;
 
     // Import Skulpt
@@ -61,6 +61,15 @@ function test (python3, opt, module = undefined) {
         }
     }
 
+    // Restrict to one shard ("i/n", 1-based) for parallel runs. Round-robin
+    // distribution spreads the scattered slow modules evenly across workers.
+    if (shard) {
+        const [iStr, nStr] = shard.split("/");
+        const i = parseInt(iStr) - 1;
+        const n = parseInt(nStr);
+        modules = modules.filter((_, idx) => idx % n === i);
+    }
+
     starttime = Date.now();
 
     function runtest (tests, passed, failed) {
@@ -81,31 +90,44 @@ function test (python3, opt, module = undefined) {
         // Clear output buffer
         Sk.buf = "";
 
-        // Print test name
-        console.log(test[0] + "\n");
+        // Print test name (unless brief)
+        if (!brief) {
+            console.log(test[0] + "\n");
+        }
 
         // Run test
         Sk.misceval.asyncToPromise(function() {
             return Sk.importMain(test[1], false, true);
         }).then(function () {
             var found;
-
-            // Print results
-            console.log(Sk.buf);
+            var moduleFailed = 0;
 
             // Check for internal errors
             if (Sk.buf.indexOf("Uncaught Error in") != -1) {
-                console.log("Internal uncaught errors, failed: 1\n");
-                failed += 1;
+                moduleFailed += 1;
             }
 
             // Update results
             while ((found = regexp.exec(Sk.buf)) !== null) {
                 passed += parseInt(found[1]);
-                failed += parseInt(found[2]);
+                moduleFailed += parseInt(found[2]);
+            }
+            failed += moduleFailed;
+
+            // In brief mode only surface output for modules that failed;
+            // otherwise always print the per-test detail.
+            if (!brief) {
+                console.log(Sk.buf);
+            } else if (moduleFailed > 0) {
+                console.log(test[0] + "\n");
+                console.log(Sk.buf);
+            }
+            if (moduleFailed > 0 && Sk.buf.indexOf("Uncaught Error in") != -1) {
+                console.log("Internal uncaught errors, failed: 1\n");
             }
         }).catch(function (err) {
             failed += 1;
+            console.log(test[0] + "\n");
             console.log("UNCAUGHT EXCEPTION: " + err);
             console.log(err.stack);
         }).then(function () {
@@ -120,6 +142,8 @@ program
     .option('--python3', 'Python 3')
     .option('-o, --opt', 'use optimized skulpt')
     .option('--module <module>', 'test specific module')
+    .option('--shard <i/n>', 'run only shard i of n (1-based)')
+    .option('--brief', 'condensed output: only show failing modules plus summary')
     .parse(process.argv);
 
-test(program.python3, program.opt, program.module);
+test(program.python3, program.opt, program.module, program.shard, program.brief);
