@@ -390,6 +390,7 @@ class Sprite(Actor, metaclass=SpriteMeta):
     def point_degrees(self, angle):
         "(ANGLE) Set rotation to ANGLE degrees"
         self._rotation = MATH_PI * angle / 180.0
+        self._rotation %= (2.0 * MATH_PI)
 
     direction = DelegatingProp(_get_direction, point_degrees)
 
