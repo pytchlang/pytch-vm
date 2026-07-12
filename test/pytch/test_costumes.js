@@ -14,6 +14,7 @@ const {
     appearance_by_name,
     pytch_errors,
     pytch_stdout,
+    property_set_mechanism_specs,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -62,54 +63,59 @@ describe("Costume handling", () => {
             assert.equal(stdout, exp_stdout);
         };
 
-        it("can read current costume info", async () => {
+        property_set_mechanism_specs.forEach(spec =>
+        it(`can read current costume info (${spec.label})`, async () => {
             let project = await import_project();
             const assert_info = assert_info_fun(project, "print-current-costume");
 
             // Initial state is the first costume.
             assert_info("0 marching\n");
 
-            project.do_synthetic_broadcast("switch-to-firing")
+            project.do_synthetic_broadcast(`switch-to-firing${spec.message_suffix}`)
             assert_info("1 firing\n");
 
-            project.do_synthetic_broadcast("switch-to-marching")
+            project.do_synthetic_broadcast(`switch-to-marching${spec.message_suffix}`)
             assert_info("0 marching\n");
-        });
+        }));
 
-        it("can read current backdrop info", async () => {
+        property_set_mechanism_specs.forEach(spec =>
+        it(`can read current backdrop info (${spec.label})`, async () => {
             let project = await import_project();
             const assert_info = assert_info_fun(project, "print-current-backdrop");
 
             // Initial state is the first backdrop.
             assert_info("0 wooden-stage\n");
 
-            project.do_synthetic_broadcast("switch-to-sky")
+            project.do_synthetic_broadcast(`switch-to-sky${spec.message_suffix}`)
             assert_info("1 sunny-sky\n");
 
-            project.do_synthetic_broadcast("switch-to-white")
+            project.do_synthetic_broadcast(`switch-to-white${spec.message_suffix}`)
             assert_info("2 solid-white-stage\n");
 
+            project.do_synthetic_broadcast(`switch-to-wooden${spec.message_suffix}`)
             project.do_synthetic_broadcast("switch-to-wooden")
             assert_info("0 wooden-stage\n");
-        });
+        }));
 
-        it("can switch costume by number", async () => {
+        property_set_mechanism_specs.forEach(spec =>
+        it(`can switch costume by number (${spec.label})`, async () => {
             let project = await import_project();
-            const assert_info = assert_info_fun(project, "switch-costume-by-number");
+            const assert_info = assert_info_fun(project, `switch-costume-by-number${spec.message_suffix}`);
             assert_info("1 firing\n"
                         + "0 marching\n"
                         + "1 firing\n");
-        });
+        }));
 
-        it("can switch backdrop by number", async () => {
+        property_set_mechanism_specs.forEach(spec =>
+        it(`can switch backdrop by number (${spec.label})`, async () => {
             let project = await import_project();
-            const assert_info = assert_info_fun(project, "switch-backdrop-by-number");
+            const assert_info = assert_info_fun(project, `switch-backdrop-by-number${spec.message_suffix}`);
             assert_info("1 sunny-sky\n"
                         + "0 wooden-stage\n"
                         + "1 sunny-sky\n"
                         + "2 solid-white-stage\n"
                         + "1 sunny-sky\n");
-        });
+        }));
     });
 
     [
