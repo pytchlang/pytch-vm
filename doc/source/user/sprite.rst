@@ -592,6 +592,46 @@ Finding existing clones
    example ``Kitten.all_instances()``), not the ``self`` object.
 
 
+Reading another sprite's properties
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As a convenience, the following Sprite properties have special
+behaviour, different to how properties normally work in Python:
+
+* ``sound_volume``
+* ``x_position``
+* ``y_position``
+* ``direction``
+* ``size``
+* ``costume_number``
+* ``costume_name``
+* ``distance_to_mouse``
+* ``touching_mouse``
+
+Code which reads these properties on a Sprite *class* gives the value
+of that property for that Sprite's *original instance*.
+
+This can be useful where, for example, one sprite needs to know where
+another sprite is.  Instead of the fiddly
+
+.. code-block:: python
+
+   print(SpaceShip.the_original().x_position)
+
+you can instead just write
+
+.. code-block:: python
+
+   print(SpaceShip.x_position)
+
+If your code is reading a Sprite's *own* properties, you should use
+the simpler and standard
+
+.. code-block:: python
+
+   print(self.x_position)
+
+
 .. _collision_detection:
 
 Checking for sprites colliding
