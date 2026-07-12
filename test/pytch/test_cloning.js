@@ -390,32 +390,33 @@ describe("cloning", () => {
 
     const cloning_code = (spec) => `
 
-                import pytch
+        import pytch
 
-                class Balloon(pytch.Sprite):
-                    Costumes = [('balloon', 'balloon.png', 0, 0)]
+        class Balloon(pytch.Sprite):
+            Costumes = [('balloon', 'balloon.png', 0, 0)]
 
-                    @pytch.when_I_receive("init-coords")
-                    def go_to_start(self):
-                        self.go_to_xy(30, 40)
+            @pytch.when_I_receive("init-coords")
+            def go_to_start(self):
+                self.go_to_xy(30, 40)
 
-                    @pytch.when_I_receive("make-clone-x")
-                    def make_clone_x(self):
-                        self.step_dir = "x"
-                        ${spec.target}.create_clone_of(self)
+            @pytch.when_I_receive("make-clone-x")
+            def make_clone_x(self):
+                self.step_dir = "x"
+                ${spec.target}.create_clone_of(self)
 
-                    @pytch.when_I_receive("make-clone-y")
-                    def make_clone_y(self):
-                        self.step_dir = "y"
-                        ${spec.target}.create_clone_of(self)
+            @pytch.when_I_receive("make-clone-y")
+            def make_clone_y(self):
+                self.step_dir = "y"
+                ${spec.target}.create_clone_of(self)
 
-                    @pytch.when_I_start_as_a_clone
-                    def step_x_or_y(self):
-                        if self.step_dir == "x":
-                            self.change_x(40)
-                        else:
-                            self.change_y(40)
-            `;
+            @pytch.when_I_start_as_a_clone
+            def step_x_or_y(self):
+                if self.step_dir == "x":
+                    self.change_x(40)
+                else:
+                    self.change_y(40)
+
+    `;
 
     [
         { target: "pytch" },
