@@ -569,11 +569,11 @@ Finding existing clones
 
 .. function:: Class.the_original()
 
-   This returns a reference to the *original* object that this clone is a
-   copy of. This can be used to look up variables or send messages to the
-   original object. If it is run by the original Sprite then it returns a
-   reference to itself. Notice that this method is run using the class name
-   (for example ``Kitten.the_original()``), not the ``self`` object.
+   This returns a reference to the *original* instance of the
+   mentioned sprite class.  This can be used to look up variables or
+   send messages to the original object.  Notice that this method is
+   run using the class name (for example ``Kitten.the_original()``),
+   not the ``self`` object.
 
 .. function:: Class.all_clones()
 
