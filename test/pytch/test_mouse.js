@@ -7,6 +7,7 @@ const {
     assert,
     mock_mouse,
     pytch_stdout,
+    pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -155,5 +156,25 @@ describe("mouse features", () => {
             assert_state(160, -60, true);
             assert_state(161, -60, false);
             assert_state(160, -61, false);
+        }));
+
+    ["distance_to_mouse", "touching_mouse"].forEach(attr =>
+        it(`mouse attribute '${attr}' is read-only`, async () => {
+            const project = await import_deindented(`
+                import pytch
+                class Alien(pytch.Sprite):
+                    Costumes = [('square', 'square-80x80.png', 20, 30)]
+                    @pytch.when_I_receive("fail")
+                    def write_mouse_prop(self):
+                        # Check reading OK to catch typos in test
+                        ignored = self.${attr}
+                        # Value doesn't matter:
+                        self.${attr} = 42
+            `);
+            project.do_synthetic_broadcast("fail");
+            one_frame(project);
+
+            const err_match = new RegExp(`property '${attr}'.*cannot be set`);
+            pytch_errors.assert_sole_error_matches(err_match);
         }));
 });
