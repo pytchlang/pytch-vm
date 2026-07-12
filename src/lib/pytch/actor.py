@@ -148,10 +148,11 @@ class Actor(metaclass=ActorMeta):
         new_gain = self.sound_volume + d_gain
         _set_actor_sound_mix_bus_gain(self, new_gain)
 
-    @property
-    def sound_volume(self):
+    def _get_sound_volume(self):
         "Volume of sounds played by SELF"
         return _get_actor_sound_mix_bus_gain(self)
+
+    sound_volume = DelegatingProp(_get_sound_volume, set_sound_volume)
 
     @classmethod
     def ensure_have_appearance_names(cls):
@@ -348,8 +349,7 @@ class Sprite(Actor, metaclass=SpriteMeta):
         self._x = random.randint(-STAGE_HALF_WIDTH, STAGE_HALF_WIDTH)
         self._y = random.randint(-STAGE_HALF_HEIGHT, STAGE_HALF_HEIGHT)
 
-    @property
-    def x_position(self):
+    def _get_x_position(self):
         "SELF's x-coordinate on the stage"
         return self._x
 
@@ -357,12 +357,13 @@ class Sprite(Actor, metaclass=SpriteMeta):
         "(X) Move SELF horizontally to x-coord X"
         self._x = x
 
+    x_position = DelegatingProp(_get_x_position, set_x)
+
     def change_x(self, dx):
         "(DX) Move SELF right DX on the stage (left if negative)"
         self._x += dx
 
-    @property
-    def y_position(self):
+    def _get_y_position(self):
         "SELF's y-coordinate on the stage"
         return self._y
 
@@ -370,14 +371,17 @@ class Sprite(Actor, metaclass=SpriteMeta):
         "(Y) Move SELF vertically to y-coord Y"
         self._y = y
 
+    y_position = DelegatingProp(_get_y_position, set_y)
+
     def change_y(self, dy):
         "(DY) Move SELF up DY on the stage (down if negative)"
         self._y += dy
 
-    @property
-    def distance_to_mouse(self):
+    def _get_distance_to_mouse(self):
         "The distance between the mouse pointer and SELF"
         return hypot(self._x - self.mouse_x, self._y - self.mouse_y)
+
+    distance_to_mouse = DelegatingProp(_get_distance_to_mouse)
 
     def turn_degrees(self, d_angle):
         "(ANGLE) Turn ANGLE degrees anticlockwise"
@@ -395,10 +399,11 @@ class Sprite(Actor, metaclass=SpriteMeta):
         dy = self.mouse_y - self._y
         self._rotation = atan2(dy, dx)
 
-    @property
-    def direction(self):
+    def _get_direction(self):
         "The direction SELF is pointing (in degrees)"
         return 180.0 * self._rotation / MATH_PI
+
+    direction = DelegatingProp(_get_direction, point_degrees)
 
     def glide_to_xy(self, destination_x, destination_y, seconds, easing="linear"):
         "(X, Y, SECONDS) Move SELF smoothly to (X, Y), taking SECONDS"
@@ -442,10 +447,11 @@ class Sprite(Actor, metaclass=SpriteMeta):
         "(SIZE) Set SELF's size to SIZE"
         self._size = size
 
-    @property
-    def size(self):
+    def _get_size(self):
         "SELF's current size"
         return self._size
+
+    size = DelegatingProp(_get_size, set_size)
 
     def show(self):
         "() Make SELF visible"
@@ -466,15 +472,17 @@ class Sprite(Actor, metaclass=SpriteMeta):
         "(N=1) Switch SELF to Nth next costume, looping if past last"
         self.next_appearance(n_steps)
 
-    @property
-    def costume_number(self):
+    def _get_costume_number(self):
         "The number of the costume SELF is currently wearing"
         return self.appearance_number
 
-    @property
-    def costume_name(self):
+    costume_number = DelegatingProp(_get_costume_number, switch_costume)
+
+    def _get_costume_name(self):
         "The name of the costume SELF is currently wearing"
         return self.appearance_name
+
+    costume_name = DelegatingProp(_get_costume_name, switch_costume)
 
     def touching(self, target_class):
         "(TARGET) Return whether SELF touches any TARGET instance"
@@ -486,10 +494,11 @@ class Sprite(Actor, metaclass=SpriteMeta):
         return (self._pytch_parent_project
                 .instance_is_touching_any_of(self, target_class))
 
-    @property
-    def touching_mouse(self):
+    def _get_touching_mouse(self):
         "Whether SELF is touching the mouse pointer"
         return _actor_contains_mouse(self)
+
+    touching_mouse = DelegatingProp(_get_touching_mouse)
 
     def delete_this_clone(self):
         "() Remove SELF from the project"
@@ -598,15 +607,17 @@ class Stage(Actor, metaclass=StageMeta):
         "(N=1) Switch SELF to Nth next backdrop, looping if past last"
         self.next_appearance(n_steps)
 
-    @property
-    def backdrop_number(self):
+    def _get_backdrop_number(self):
         "The number of the backdrop SELF is currently showing"
         return self.appearance_number
 
-    @property
-    def backdrop_name(self):
+    backdrop_number = DelegatingProp(_get_backdrop_number, switch_backdrop)
+
+    def _get_backdrop_name(self):
         "The name of the backdrop SELF is currently showing"
         return self.appearance_name
+
+    backdrop_name = DelegatingProp(_get_backdrop_name, switch_backdrop)
 
     def ask_and_wait(self, prompt):
         "(QUESTION) Ask question; wait for and return user's answer"
