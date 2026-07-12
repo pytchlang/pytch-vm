@@ -56,10 +56,12 @@ describe("mouse features", () => {
         assert_state(100, 150, false);
     });
 
-    [
+    const attr_read_mechanism_specs = [
 	{ label: "instance", attr_owner: "self" },
 	{ label: "class", attr_owner: "Alien" },
-    ].forEach(spec =>
+    ];
+
+    attr_read_mechanism_specs.forEach(spec =>
         it(`finds distance to mouse (${spec.label})`, async () => {
             const project = await import_deindented(`
                 import pytch
