@@ -277,21 +277,53 @@ creating the costume (see
    example, ``self.change_x(10)`` will move the sprite 10 pixels to
    the right on the stage). The number of pixels can be negative.
 
+   If you prefer, you can "augmented assign" to ``self.x_position``.
+   These two lines do the same thing:
+
+   .. code-block:: python
+
+      self.change_x(-10)
+      self.x_position -= 10
+
 .. function:: self.change_y(dy)
 
    Change the y-position of the sprite by a certain amount (for example,
    ``self.change_y(10)`` will move the sprite 10 pixels up on the
    stage). The number can be negative.
 
+   If you prefer, you can "augmented assign" to ``self.y_position``.
+   These two lines do the same thing:
+
+   .. code-block:: python
+
+      self.change_y(50)
+      self.y_position += 50
+
 .. function:: self.set_x(x)
 
    Move the sprite to a certain x-position on the stage while keeping
    its y-position the same.
 
+   If you prefer, you can assign to ``self.x_position``.  These two
+   lines do the same thing:
+
+   .. code-block:: python
+
+      self.set_x(-30)
+      self.x_position = -30
+
 .. function:: self.set_y(y)
 
    Move the sprite to a certain y-position on the stage while keeping its
    x-position the same.
+
+   If you prefer, you can assign to ``self.y_position``.  These two
+   lines do the same thing:
+
+   .. code-block:: python
+
+      self.set_y(42)
+      self.y_position = 42
 
 
 Finding a Sprite's position
@@ -302,6 +334,9 @@ Finding a Sprite's position
 
    The current *x* or *y* position of the sprite.  These are
    *properties*, so you do not use ``()`` after them.
+
+   You can assign (or "augmented assign") to these properties to set
+   the Sprite's *x* or *y* position.
 
 
 Turning a Sprite
