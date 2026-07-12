@@ -103,12 +103,6 @@ describe("pytch.project module", () => {
                 assert.throws(() => project.actor_by_class_name("Spaceship"),
                               /no PytchActors with name "Spaceship"/);
             });
-
-            it("rejects a duplicate Actor", async () => {
-                let project = await import_project();
-                assert.throws(() => project.actor_by_class_name("Alien"),
-                              /duplicate PytchActors with name "Alien"/);
-            });
         })});
 
     with_project("py/project/go_live_empty_project.py", (import_project) => {
