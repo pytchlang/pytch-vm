@@ -575,6 +575,9 @@ Finding existing clones
    run using the class name (for example ``Kitten.the_original()``),
    not the ``self`` object.
 
+   You might not need to use this method; see
+   :ref:`other_sprites_properties`.
+
 .. function:: Class.all_clones()
 
    Returns a list of all the existing clones of the Sprite that is
@@ -591,6 +594,8 @@ Finding existing clones
    originals). Notice that this method is run using the class name (for
    example ``Kitten.all_instances()``), not the ``self`` object.
 
+
+.. _other_sprites_properties:
 
 Reading another sprite's properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
