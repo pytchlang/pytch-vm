@@ -325,6 +325,14 @@ A sprite can turn round and point in different directions.
    convention to Scratch, but "positive is anticlockwise" is the
    common mathematical convention, so Pytch uses it.
 
+   If you prefer, you can "augmented assign" to ``self.direction``.
+   The following two lines of code do the same thing:
+
+   .. code-block:: python
+
+      self.turn_degrees(30)
+      self.direction += 30
+
 .. function:: self.point_degrees(angle)
 
    Turn the sprite so it is pointing in the direction of the given
@@ -336,6 +344,17 @@ A sprite can turn round and point in different directions.
    clockwise from the default, use −90° (or 270°, which comes to the
    same thing).
 
+   If you prefer, you can assign to ``self.direction``.  The following
+   two lines of code do the same thing:
+
+   .. code-block:: python
+
+      self.point_degrees(390)
+      self.direction = 390
+
+   Because of the wrapping to ensure ``direction`` is always between
+   0° and 360°, ``direction`` will be 30° after either of these lines.
+
 .. function:: self.point_towards_mouse()
 
    Turn the sprite so it is pointing towards the mouse pointer.
@@ -344,6 +363,10 @@ A sprite can turn round and point in different directions.
 
    The direction the sprite is currently pointing, measured in
    degrees.
+
+   You can assign (or "augmented assign") to ``self.direction`` to
+   turn the sprite; Pytch will "wrap" the value to lie between 0° and
+   360°.
 
 
 .. _methods_playing_sounds:
