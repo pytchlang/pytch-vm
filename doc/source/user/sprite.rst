@@ -565,7 +565,9 @@ Sensing the mouse's position and button
 Some devices have a "mouse", which can be used in your Pytch programs.
 A mouse can tell where it is, in terms of *x* and *y* coordinates.  It
 also has a main button, which is either pressed down or not.  Scratch
-has reporter blocks for these three properties.  Pytch has the same:
+has reporter blocks for these three properties.  Pytch has the same
+idea, through properties of any Sprite or the Stage.  Note that you
+can not assign to these properties, only read their value.
 
 Telling where the mouse is
   .. attribute:: self.mouse_x
