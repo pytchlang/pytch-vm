@@ -332,8 +332,9 @@ A sprite can turn round and point in different directions.
    sprite is drawn the same way up as the original image for the
    costume it's currently wearing.  An angle of 90° means the sprite
    points a quarter-turn anticlockwise (counter-clockwise) from its
-   original image.  To point a quarter-turn clockwise, use −90° (or
-   270°, which comes to the same thing).
+   original image.  To point in the direction which is a quarter-turn
+   clockwise from the default, use −90° (or 270°, which comes to the
+   same thing).
 
 .. function:: self.point_towards_mouse()
 
