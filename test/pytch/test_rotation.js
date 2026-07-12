@@ -7,6 +7,7 @@ const {
     assert_renders_as,
     one_frame,
     mock_mouse,
+    property_set_mechanism_specs,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -25,7 +26,8 @@ describe("Sprite rotation", () => {
 	assert_float_close(got_direction, exp_direction, 0.0001);
     };
 
-    it("can turn and point", async () => {
+    property_set_mechanism_specs.forEach(spec =>
+    it(`can turn and point (${spec.label})`, async () => {
         const project = await import_deindented(`
 
             import pytch
@@ -34,15 +36,24 @@ describe("Sprite rotation", () => {
                 @pytch.when_I_receive("turn")
                 def turn(self):
                     self.turn_degrees(41)
+                @pytch.when_I_receive("turn-prop")
+                def turn_prop(self):
+                    self.direction += 41
                 @pytch.when_I_receive("point")
                 def point(self):
                     self.point_degrees(102)
+                @pytch.when_I_receive("point-prop")
+                def point_prop(self):
+                    self.direction = 102
         `);
 
-        assert_Banana_direction(project, "turn", 41);
-        assert_Banana_direction(project, "turn", 82);
-        assert_Banana_direction(project, "point", 102);
-        assert_Banana_direction(project, "turn", 143);
+        const turn_msg = `turn${spec.message_suffix}`;
+        const point_msg = `point${spec.message_suffix}`;
+
+        assert_Banana_direction(project, turn_msg, 41);
+        assert_Banana_direction(project, turn_msg, 82);
+        assert_Banana_direction(project, point_msg, 102);
+        assert_Banana_direction(project, turn_msg, 143);
 
         // Check all new parts of the rendering instruction:
         //     rotation, image-cx, image-cy
@@ -51,7 +62,7 @@ describe("Sprite rotation", () => {
             project,
             [["RenderImage", 0, 0, 1, "yellow-banana", 143, 40, 15]]
         );
-    });
+    }));
 
     it("can point to the mouse", async () => {
         const project = await import_deindented(`
