@@ -204,6 +204,21 @@ state.  See :ref:`the help in the Sprite page<properties_for_mouse>`.
 properties, though, as these would not make sense for the stage.)
 
 
+Getting the stage instance
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(Advanced.)  If you need to get the (unique) *instance* of your Stage
+class, you can use the following method.
+
+.. function:: StageClass.the_only()
+
+   Return a reference to the unique instance of the stage class.  This
+   can be used to look up variables or send messages to the stage.
+
+   You might not need to use this method; see
+   :ref:`reading_stage_properties_through_class`.
+
+
 .. _reading_stage_properties_through_class:
 
 Reading stage properties from a sprite
