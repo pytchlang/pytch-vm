@@ -56,7 +56,11 @@ describe("mouse features", () => {
         assert_state(100, 150, false);
     });
 
-    it("finds distance to mouse", async () => {
+    [
+	{ label: "instance", attr_owner: "self" },
+	{ label: "class", attr_owner: "Alien" },
+    ].forEach(spec =>
+    it(`finds distance to mouse (${spec.label})`, async () => {
         const project = await import_deindented(`
             import pytch
             class Alien(pytch.Sprite):
@@ -66,7 +70,7 @@ describe("mouse features", () => {
                 @pytch.when_I_receive("report")
                 def report_mouse_props(self):
                     print(
-                        f"{self.distance_to_mouse:.0f}",
+                        f"{${spec.attr_owner}.distance_to_mouse:.0f}",
                         end="",
                     )
         `);
@@ -96,7 +100,7 @@ describe("mouse features", () => {
 
         mock_mouse.move(0, 0);
         assert_state(128);
-    });
+    }));
 
     it("detects touching mouse", async () => {
         const project = await import_deindented(`
