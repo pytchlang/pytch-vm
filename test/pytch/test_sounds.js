@@ -57,43 +57,43 @@ describe("waiting and non-waiting sounds", () => {
     });
 
     property_set_mechanism_specs.forEach(spec =>
-    it(`rejects invalid args to sound volume methods (${spec.label})`, async () => {
-        const project = await import_deindented(`
-            import pytch
-            class Banana(pytch.Sprite):
-                @pytch.when_I_receive("bad-set-volume")
-                def bad_set_volume(self):
-                    self.set_sound_volume(1.0 + 2.0j)
-                @pytch.when_I_receive("bad-change-volume-complex")
-                def bad_change_volume_complex(self):
-                    self.change_sound_volume(1.0 + 2.0j)
-                @pytch.when_I_receive("bad-change-volume-string")
-                def bad_change_volume_string(self):
-                    self.change_sound_volume("hello")
+        it(`rejects invalid args to sound volume methods (${spec.label})`, async () => {
+            const project = await import_deindented(`
+                import pytch
+                class Banana(pytch.Sprite):
+                    @pytch.when_I_receive("bad-set-volume")
+                    def bad_set_volume(self):
+                        self.set_sound_volume(1.0 + 2.0j)
+                    @pytch.when_I_receive("bad-change-volume-complex")
+                    def bad_change_volume_complex(self):
+                        self.change_sound_volume(1.0 + 2.0j)
+                    @pytch.when_I_receive("bad-change-volume-string")
+                    def bad_change_volume_string(self):
+                        self.change_sound_volume("hello")
 
-                @pytch.when_I_receive("bad-set-volume-prop")
-                def bad_set_volume_prop(self):
-                    self.sound_volume = 1.0 + 2.0j
-                @pytch.when_I_receive("bad-change-volume-complex-prop")
-                def bad_change_volume_complex_prop(self):
-                    self.sound_volume += 1.0 + 2.0j
-                @pytch.when_I_receive("bad-change-volume-string-prop")
-                def bad_change_volume_string_prop(self):
-                    self.sound_volume += "hello"
-        `);
+                    @pytch.when_I_receive("bad-set-volume-prop")
+                    def bad_set_volume_prop(self):
+                        self.sound_volume = 1.0 + 2.0j
+                    @pytch.when_I_receive("bad-change-volume-complex-prop")
+                    def bad_change_volume_complex_prop(self):
+                        self.sound_volume += 1.0 + 2.0j
+                    @pytch.when_I_receive("bad-change-volume-string-prop")
+                    def bad_change_volume_string_prop(self):
+                        self.sound_volume += "hello"
+            `);
 
-        project.do_synthetic_broadcast(`bad-set-volume${spec.message_suffix}`);
-        one_frame(project);
-        pytch_errors.assert_sole_error_matches(/must be given a number/);
+            project.do_synthetic_broadcast(`bad-set-volume${spec.message_suffix}`);
+            one_frame(project);
+            pytch_errors.assert_sole_error_matches(/must be given a number/);
 
-        project.do_synthetic_broadcast(`bad-change-volume-complex${spec.message_suffix}`);
-        one_frame(project);
-        pytch_errors.assert_sole_error_matches(/must be given a number/);
+            project.do_synthetic_broadcast(`bad-change-volume-complex${spec.message_suffix}`);
+            one_frame(project);
+            pytch_errors.assert_sole_error_matches(/must be given a number/);
 
-        project.do_synthetic_broadcast(`bad-change-volume-string${spec.message_suffix}`);
-        one_frame(project);
-        pytch_errors.assert_sole_error_matches(/unsupported operand type/);
-    }));
+            project.do_synthetic_broadcast(`bad-change-volume-string${spec.message_suffix}`);
+            one_frame(project);
+            pytch_errors.assert_sole_error_matches(/unsupported operand type/);
+        }));
 
     [{ useIndex: false }, { useIndex: true }].forEach(spec => {
     const specLabel = spec.useIndex ? "index" : "name";
@@ -135,60 +135,60 @@ describe("waiting and non-waiting sounds", () => {
     });
 
     property_set_mechanism_specs.forEach(spec =>
-    it(`can adjust volumes (${spec.label})`, async () => {
-        let project = await import_project();
-        let band_actor = project.actor_by_class_name("Band");
-        let project_one_frame = one_frame_fun(project);
+        it(`can adjust volumes (${spec.label})`, async () => {
+            let project = await import_project();
+            let band_actor = project.actor_by_class_name("Band");
+            let project_one_frame = one_frame_fun(project);
 
-        project.do_synthetic_broadcast(`band-setup${spec.message_suffix}`);
-        assert.strictEqual(project.thread_groups.length, 1);
+            project.do_synthetic_broadcast(`band-setup${spec.message_suffix}`);
+            assert.strictEqual(project.thread_groups.length, 1);
 
-        project_one_frame();
-
-        // init() should be suspended in create_clone_of() syscall and
-        // clone_init() should be ready to run
-        assert.strictEqual(project.thread_groups.length, 2);
-
-        project_one_frame();
-
-        // Both threads should have run to completion:
-        assert.strictEqual(project.thread_groups.length, 0);
-
-        const volumes = () => band_actor.instances.map(
-            obj => obj.js_attr("sound_volume")
-        );
-
-        // Original is first and it is quieter.
-        assert.deepStrictEqual(volumes(), [0.25, 1.0]);
-
-        project.do_synthetic_broadcast("band-play");
-
-        for (let i = 0; i != 10; ++i) {
             project_one_frame();
-            assert_running_performances([
-                { tag: "violin", gain: 0.25 },
-                { tag: "trumpet", gain: 1.0 },
-            ]);
-        }
 
-        for (let i = 0; i != 5; ++i) {
+            // init() should be suspended in create_clone_of() syscall and
+            // clone_init() should be ready to run
+            assert.strictEqual(project.thread_groups.length, 2);
+
             project_one_frame();
-            assert_running_performances([{ tag: "trumpet", gain: 1.0 }]);
-        }
 
-        project.do_synthetic_broadcast(`band-quiet${spec.message_suffix}`);
+            // Both threads should have run to completion:
+            assert.strictEqual(project.thread_groups.length, 0);
 
-        for (let i = 0; i != 5; ++i) {
-            project_one_frame();
-            assert.deepStrictEqual(volumes(), [0.5, 0.5]);
-            assert_running_performances([{ tag: "trumpet", gain: 0.5 }]);
-        }
+            const volumes = () => band_actor.instances.map(
+                obj => obj.js_attr("sound_volume")
+            );
 
-        for (let i = 0; i != 5; ++i) {
-            project_one_frame();
-            assert_running_performances([]);
-        }
-    }));
+            // Original is first and it is quieter.
+            assert.deepStrictEqual(volumes(), [0.25, 1.0]);
+
+            project.do_synthetic_broadcast("band-play");
+
+            for (let i = 0; i != 10; ++i) {
+                project_one_frame();
+                assert_running_performances([
+                    { tag: "violin", gain: 0.25 },
+                    { tag: "trumpet", gain: 1.0 },
+                ]);
+            }
+
+            for (let i = 0; i != 5; ++i) {
+                project_one_frame();
+                assert_running_performances([{ tag: "trumpet", gain: 1.0 }]);
+            }
+
+            project.do_synthetic_broadcast(`band-quiet${spec.message_suffix}`);
+
+            for (let i = 0; i != 5; ++i) {
+                project_one_frame();
+                assert.deepStrictEqual(volumes(), [0.5, 0.5]);
+                assert_running_performances([{ tag: "trumpet", gain: 0.5 }]);
+            }
+
+            for (let i = 0; i != 5; ++i) {
+                project_one_frame();
+                assert_running_performances([]);
+            }
+        }));
 
     it("can play violin", async () => {
         let project = await import_project();
