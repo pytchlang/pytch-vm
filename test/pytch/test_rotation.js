@@ -7,7 +7,7 @@ const {
     assert_renders_as,
     one_frame,
     mock_mouse,
-    pytch_errors,
+    property_set_mechanism_specs,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -26,33 +26,43 @@ describe("Sprite rotation", () => {
 	assert_float_close(got_direction, exp_direction, 0.0001);
     };
 
-    it("can turn and point", async () => {
-        const project = await import_deindented(`
+    property_set_mechanism_specs.forEach(spec =>
+        it(`can turn and point (${spec.label})`, async () => {
+            const project = await import_deindented(`
 
-            import pytch
-            class Banana(pytch.Sprite):
-                Costumes = ["yellow-banana.png"]
-                @pytch.when_I_receive("turn")
-                def turn(self):
-                    self.turn_degrees(41)
-                @pytch.when_I_receive("point")
-                def point(self):
-                    self.point_degrees(102)
-        `);
+                import pytch
+                class Banana(pytch.Sprite):
+                    Costumes = ["yellow-banana.png"]
+                    @pytch.when_I_receive("turn")
+                    def turn(self):
+                        self.turn_degrees(41)
+                    @pytch.when_I_receive("turn-prop")
+                    def turn_prop(self):
+                        self.direction += 41
+                    @pytch.when_I_receive("point")
+                    def point(self):
+                        self.point_degrees(102)
+                    @pytch.when_I_receive("point-prop")
+                    def point_prop(self):
+                        self.direction = 102
+            `);
 
-        assert_Banana_direction(project, "turn", 41);
-        assert_Banana_direction(project, "turn", 82);
-        assert_Banana_direction(project, "point", 102);
-        assert_Banana_direction(project, "turn", 143);
+            const turn_msg = `turn${spec.message_suffix}`;
+            const point_msg = `point${spec.message_suffix}`;
 
-        // Check all new parts of the rendering instruction:
-        //     rotation, image-cx, image-cy
-        assert_renders_as(
-            "final",
-            project,
-            [["RenderImage", 0, 0, 1, "yellow-banana", 143, 40, 15]]
-        );
-    });
+            assert_Banana_direction(project, turn_msg, 41);
+            assert_Banana_direction(project, turn_msg, 82);
+            assert_Banana_direction(project, point_msg, 102);
+            assert_Banana_direction(project, turn_msg, 143);
+
+            // Check all new parts of the rendering instruction:
+            //     rotation, image-cx, image-cy
+            assert_renders_as(
+                "final",
+                project,
+                [["RenderImage", 0, 0, 1, "yellow-banana", 143, 40, 15]]
+            );
+        }));
 
     it("can point to the mouse", async () => {
         const project = await import_deindented(`
@@ -75,35 +85,4 @@ describe("Sprite rotation", () => {
         move_mouse_assert_direction(100, -100, -45);
         move_mouse_assert_direction(-100, -100, -135);
     });
-
-    [
-        {
-            label: "assign",
-            message: "try-point",
-        },
-        {
-            label: "aug-assign",
-            message: "try-turn",
-        },
-    ].forEach(spec =>
-        it(`gives advice if try ${spec.label} direction`, async () => {
-            const project = await import_deindented(`
-
-                import pytch
-                class Banana(pytch.Sprite):
-                    Costumes = ["yellow-banana.png"]
-                    @pytch.when_I_receive("try-point")
-                    def point(self):
-                        self.direction = 270
-                    @pytch.when_I_receive("try-turn")
-                    def turn(self):
-                        self.direction += 30
-            `);
-
-            project.do_synthetic_broadcast(spec.message);
-            one_frame(project);
-
-            const exp_error_re = /use point_degrees.*or turn_degrees/;
-            pytch_errors.assert_sole_error_matches(exp_error_re);
-        }));
 });

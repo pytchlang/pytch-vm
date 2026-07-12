@@ -832,6 +832,20 @@ const import_deindented = (raw_code_text) => {
 
 ////////////////////////////////////////////////////////////////////////////////
 //
+// To ease testing setting an actor's properties either with the specialised
+// setter method, e.g., set_size(0.5), or direct attribute assignment, e.g.,
+// self.size = 0.5.  Convention is that the when-I-receive messages are the
+// same for Python code using those two approaches except for a suffix of
+// "-prop" for the version that uses attribute assignment.
+
+const property_set_mechanism_specs = [
+    { label: "setter", message_suffix: "" },
+    { label: "prop-assign", message_suffix: "-prop" },
+];
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
 // Load and configure Skulpt.
 
 require("../../support/run/require-skulpt").requireSkulpt(false, false);
@@ -881,5 +895,6 @@ module.exports = {
     many_frames,
     one_frame,
     appearance_by_name,
+    property_set_mechanism_specs,
     configure_mocha,
 }

@@ -388,35 +388,45 @@ describe("cloning", () => {
         );
     });
 
+    const cloning_code = (spec) => `
+
+        import pytch
+
+        class Balloon(pytch.Sprite):
+            Costumes = [('balloon', 'balloon.png', 0, 0)]
+
+            @pytch.when_I_receive("init-coords")
+            def go_to_start(self):
+                self.go_to_xy(30, 40)
+
+            @pytch.when_I_receive("make-clone-x")
+            def make_clone_x(self):
+                self.step_dir = "x"
+                ${spec.target}.create_clone_of(self)
+
+            @pytch.when_I_receive("make-clone-y")
+            def make_clone_y(self):
+                self.step_dir = "y"
+                ${spec.target}.create_clone_of(self)
+
+            @pytch.when_I_start_as_a_clone
+            def step_x_or_y(self):
+                if self.step_dir == "x":
+                    self.change_x(40)
+                else:
+                    self.change_y(40)
+
+            @pytch.when_I_receive("report-original-coords")
+            def report_original_coords(self):
+                print(Balloon.x_position, Balloon.y_position)
+    `;
+
     [
         { target: "pytch" },
         { target: "self" },
     ].forEach(spec => {
         it(`puts clone just behind parent with ${spec.target}.create_clone_of()`, async () => {
-            const project = await import_deindented(`
-
-                import pytch
-
-                class Balloon(pytch.Sprite):
-                    Costumes = [('balloon', 'balloon.png', 0, 0)]
-
-                    @pytch.when_I_receive("make-clone-x")
-                    def make_clone_x(self):
-                        self.step_dir = "x"
-                        ${spec.target}.create_clone_of(self)
-
-                    @pytch.when_I_receive("make-clone-y")
-                    def make_clone_y(self):
-                        self.step_dir = "y"
-                        ${spec.target}.create_clone_of(self)
-
-                    @pytch.when_I_start_as_a_clone
-                    def step_x_or_y(self):
-                        if self.step_dir == "x":
-                            self.change_x(40)
-                        else:
-                            self.change_y(40)
-            `);
+            const project = await import_deindented(cloning_code(spec));
 
             const locations
                 = () => project.rendering_instructions().map(i => [i.x, i.y]);
@@ -424,8 +434,11 @@ describe("cloning", () => {
                 = (exp_locations) => assert.deepStrictEqual(locations(),
                                                             exp_locations);
 
+            project.do_synthetic_broadcast("init-coords");
+            one_frame(project);
+
             // There should only be the original, and it hasn't moved.
-            assert_render_locations([[0, 0]])
+            assert_render_locations([[30, 40]])
 
             // Allow two frames; one for the broadcast and one for the
             // when-I-start-as-clone thread to run.
@@ -434,7 +447,7 @@ describe("cloning", () => {
 
             // The clone, which has stepped in the x-dirn, should appear behind the
             // original, i.e., before it in the render list.
-            assert_render_locations([[40, 0], [0, 0]])
+            assert_render_locations([[70, 40], [30, 40]])
 
             project.do_synthetic_broadcast("make-clone-y");
             many_frames(project, 2);
@@ -443,8 +456,23 @@ describe("cloning", () => {
             // behind their respective parents, i.e., just before them in the render
             // list.  (The original stays at the very front, i.e., the very last
             // item in the render list.)
-            assert_render_locations([[40, 40], [40, 0], [0, 40], [0, 0]])
+            assert_render_locations([[70, 80], [70, 40], [30, 80], [30, 40]])
         });
+    });
+
+    it("class props give coords of original instance", async () => {
+        const project = await import_deindented(cloning_code({ target: "pytch" }));
+        project.do_synthetic_broadcast("init-coords");
+        one_frame(project);
+        project.do_synthetic_broadcast("make-clone-x");
+        many_frames(project, 2);
+        project.do_synthetic_broadcast("make-clone-y");
+        many_frames(project, 2);
+        project.do_synthetic_broadcast("report-original-coords");
+        one_frame(project);
+
+        // Should see the original's coords emitted by every instance:
+        assert.equal(pytch_stdout.drain_stdout(), "30 40\n30 40\n30 40\n30 40\n");
     });
 
     it("handles repeated delete of same clone", async () => {

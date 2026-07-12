@@ -14,6 +14,7 @@ const {
     appearance_by_name,
     pytch_errors,
     pytch_stdout,
+    property_set_mechanism_specs,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -62,55 +63,111 @@ describe("Costume handling", () => {
             assert.equal(stdout, exp_stdout);
         };
 
-        it("can read current costume info", async () => {
+        property_set_mechanism_specs.forEach(spec =>
+        it(`can read current costume info (${spec.label})`, async () => {
             let project = await import_project();
             const assert_info = assert_info_fun(project, "print-current-costume");
 
             // Initial state is the first costume.
             assert_info("0 marching\n");
 
-            project.do_synthetic_broadcast("switch-to-firing")
+            project.do_synthetic_broadcast(`switch-to-firing${spec.message_suffix}`)
             assert_info("1 firing\n");
 
-            project.do_synthetic_broadcast("switch-to-marching")
-            assert_info("0 marching\n");
-        });
+            const exp_render = [
+                ["RenderImage", 0, 0, 1, "wooden-stage"],
+                ["RenderImage", 0, 0, 1, "firing"],
+            ];
+            assert_renders_as("costume-1", project, exp_render);
 
-        it("can read current backdrop info", async () => {
+            project.do_synthetic_broadcast(`switch-to-marching${spec.message_suffix}`)
+            assert_info("0 marching\n");
+        }));
+
+        property_set_mechanism_specs.forEach(spec =>
+        it(`can read current backdrop info (${spec.label})`, async () => {
             let project = await import_project();
             const assert_info = assert_info_fun(project, "print-current-backdrop");
 
             // Initial state is the first backdrop.
             assert_info("0 wooden-stage\n");
 
-            project.do_synthetic_broadcast("switch-to-sky")
+            project.do_synthetic_broadcast(`switch-to-sky${spec.message_suffix}`)
             assert_info("1 sunny-sky\n");
 
-            project.do_synthetic_broadcast("switch-to-white")
+            const exp_render = [
+                ["RenderImage", 0, 0, 1, "sunny-sky"],
+                ["RenderImage", 0, 0, 1, "marching"],
+            ];
+            assert_renders_as("backdrop-1", project, exp_render);
+
+            project.do_synthetic_broadcast(`switch-to-white${spec.message_suffix}`)
             assert_info("2 solid-white-stage\n");
 
+            project.do_synthetic_broadcast(`switch-to-wooden${spec.message_suffix}`)
             project.do_synthetic_broadcast("switch-to-wooden")
             assert_info("0 wooden-stage\n");
-        });
+        }));
 
-        it("can switch costume by number", async () => {
+        property_set_mechanism_specs.forEach(spec =>
+        it(`can switch costume by number (${spec.label})`, async () => {
             let project = await import_project();
-            const assert_info = assert_info_fun(project, "switch-costume-by-number");
+            const assert_info = assert_info_fun(project, `switch-costume-by-number${spec.message_suffix}`);
             assert_info("1 firing\n"
                         + "0 marching\n"
                         + "1 firing\n");
-        });
 
-        it("can switch backdrop by number", async () => {
+            const exp_render = [
+                ["RenderImage", 0, 0, 1, "wooden-stage"],
+                ["RenderImage", 0, 0, 1, "firing"],
+            ];
+            assert_renders_as("end", project, exp_render);
+        }));
+
+        property_set_mechanism_specs.forEach(spec =>
+        it(`can switch backdrop by number (${spec.label})`, async () => {
             let project = await import_project();
-            const assert_info = assert_info_fun(project, "switch-backdrop-by-number");
+            const assert_info = assert_info_fun(project, `switch-backdrop-by-number${spec.message_suffix}`);
             assert_info("1 sunny-sky\n"
                         + "0 wooden-stage\n"
                         + "1 sunny-sky\n"
                         + "2 solid-white-stage\n"
                         + "1 sunny-sky\n");
-        });
+
+            const exp_render = [
+                ["RenderImage", 0, 0, 1, "sunny-sky"],
+                ["RenderImage", 0, 0, 1, "marching"],
+            ];
+            assert_renders_as("end", project, exp_render);
+        }));
     });
+
+    [
+        { label: "assign", stmt: "self.costume_number = 8" },
+        { label: "aug-assign", stmt: "self.costume_number += 8" },
+    ].forEach(spec =>
+        it(`rejects bad costume_number (${spec.label})`, async () => {
+            const project = await import_deindented(`
+
+                import pytch
+
+                class Banana(pytch.Sprite):
+                    Costumes = [
+                        "wooden-stage.png",
+                        "sunny-sky.png",
+                        "solid-white-stage.png",
+                    ]
+
+                    @pytch.when_I_receive("cause-trouble")
+                    def cause_trouble(self):
+                        ${spec.stmt}
+            `);
+
+            project.do_synthetic_broadcast("cause-trouble");
+            one_frame(project);
+
+            pytch_errors.assert_sole_error_matches(/it only has 3/);
+        }));
 
     [
         { base: "Sprite", attrname: "Costumes", methodname: "switch_costume" },
@@ -445,5 +502,4 @@ describe("Costume handling", () => {
         assert_renders_as("after-green-flag", project,
                           [["RenderImage", 0, 0, 1, "firing-alien"]]);
     });
-
 });
