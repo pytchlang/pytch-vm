@@ -104,7 +104,8 @@ describe("mouse features", () => {
             assert_state(128);
         }));
 
-    it("detects touching mouse", async () => {
+    attr_read_mechanism_specs.forEach(spec =>
+    it(`detects touching mouse (${spec.label})`, async () => {
         const project = await import_deindented(`
             import pytch
             class Alien(pytch.Sprite):
@@ -112,7 +113,7 @@ describe("mouse features", () => {
                 @pytch.when_I_receive("report")
                 def report_mouse_props(self):
                     self.go_to_xy(100, -10)
-                    print(self.touching_mouse, end="")
+                    print(${spec.attr_owner}.touching_mouse, end="")
         `);
 
         // Including effect of go_to_xy(), the bounding box of the
@@ -154,5 +155,5 @@ describe("mouse features", () => {
         assert_state(160, -60, true);
         assert_state(161, -60, false);
         assert_state(160, -61, false);
-    });
+    }));
 });
