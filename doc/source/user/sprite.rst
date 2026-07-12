@@ -140,10 +140,10 @@ method.
 Setting the sprite size
   .. function:: self.set_size(size)
 
-     Set how large the sprite appears, as a proportion of the size of the
-     current costume image, where ``1`` is the normal size of the image.
-     For example, ``self.set_size(0.5)`` will set the sprite to be
-     half-sized.
+     Set how large the sprite appears, as a proportion of the size of
+     the current costume image, where ``1`` is the normal size of the
+     image.  For example, ``self.set_size(0.5)`` will set the sprite
+     to be half-sized.
 
 Finding out the sprite's size
   .. attribute:: self.size
@@ -175,8 +175,8 @@ Changing the sprite appearance
      Select one of the costumes listed in this Sprite's *Costumes*
      variable, by number.  Python starts counting entries in lists *at
      zero*, so to switch to the first costume, you would use
-     ``self.switch_costume(0)``; to switch to the second costume, you would
-     use ``self.switch_costume(1)``, and so on.
+     ``self.switch_costume(0)``; to switch to the second costume, you
+     would use ``self.switch_costume(1)``, and so on.
 
   .. function:: self.next_costume()
 
@@ -273,9 +273,9 @@ creating the costume (see
 
 .. function:: self.change_x(dx)
 
-   Change the x-position of the sprite by a certain amount (for example,
-   ``self.change_x(10)`` will move the sprite 10 pixels to the right on the
-   stage). The number of pixels can be negative.
+   Change the x-position of the sprite by a certain amount (for
+   example, ``self.change_x(10)`` will move the sprite 10 pixels to
+   the right on the stage). The number of pixels can be negative.
 
 .. function:: self.change_y(dy)
 
@@ -285,8 +285,8 @@ creating the costume (see
 
 .. function:: self.set_x(x)
 
-   Move the sprite to a certain x-position on the stage while keeping its
-   y-position the same.
+   Move the sprite to a certain x-position on the stage while keeping
+   its y-position the same.
 
 .. function:: self.set_y(y)
 
