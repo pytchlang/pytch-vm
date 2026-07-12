@@ -204,6 +204,8 @@ state.  See :ref:`the help in the Sprite page<properties_for_mouse>`.
 properties, though, as these would not make sense for the stage.)
 
 
+.. _reading_stage_properties_through_class:
+
 Reading stage properties from a sprite
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
