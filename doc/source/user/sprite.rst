@@ -169,6 +169,14 @@ Changing the sprite appearance
      example, you might use ``self.switch_costume("smiling-kitten")`` to
      choose a new costume.
 
+     If you prefer, you can assign to ``self.costume_name``.  These
+     two lines do the same thing:
+
+     .. code-block:: python
+
+        self.switch_costume("smiling")
+        self.costume_name = "smiling"
+
   .. function:: self.switch_costume(costume_number)
      :noindex:
 
@@ -177,6 +185,14 @@ Changing the sprite appearance
      zero*, so to switch to the first costume, you would use
      ``self.switch_costume(0)``; to switch to the second costume, you
      would use ``self.switch_costume(1)``, and so on.
+
+     If you prefer, you can assign to ``self.costume_number``.  These
+     two lines do the same thing:
+
+     .. code-block:: python
+
+        self.switch_costume(3)
+        self.costume_number = 3
 
   .. function:: self.next_costume()
 
@@ -202,9 +218,13 @@ Finding out what costume the Sprite is currently wearing
      ``Costumes`` list is number 0; the second costume is number 1; and so
      on.  This is the way that Python refers to list elements.
 
+     You can assign to ``self.costume_number`` to switch costume.
+
   .. attribute:: self.costume_name
 
      The name of the costume currently being worn by the Sprite.
+
+     You can assign to ``self.costume_name`` to switch costume.
 
 Controlling the order Sprites are drawn
   When one sprite overlaps another it is the order that they are drawn
