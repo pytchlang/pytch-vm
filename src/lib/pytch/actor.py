@@ -400,13 +400,6 @@ class Sprite(Actor, metaclass=SpriteMeta):
         "The direction SELF is pointing (in degrees)"
         return 180.0 * self._rotation / MATH_PI
 
-    @direction.setter
-    def direction(self, _value):
-        raise RuntimeError(
-            "use point_degrees() or turn_degrees() to set"
-            " or change the direction SELF is pointing"
-        )
-
     def glide_to_xy(self, destination_x, destination_y, seconds, easing="linear"):
         "(X, Y, SECONDS) Move SELF smoothly to (X, Y), taking SECONDS"
         destination_is_number = (
