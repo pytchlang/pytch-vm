@@ -471,6 +471,48 @@ sprite to play it.
    Immediately stop all sounds from playing, **including those being
    played by the Stage or by other Sprites**.
 
+Setting the volume of sounds
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. function:: self.set_sound_volume(volume)
+
+   Set the volume of sounds played by this Sprite or the Stage.  (If
+   there are clones, each clone has its own volume control.)  The
+   ``volume`` should be between 0 (silence) and 1 (full volume).  If
+   you give a value smaller than 0 or bigger than 1, it is "clamped"
+   to be between 0 and 1.
+
+   If you prefer, you can assign to ``self.sound_volume``.  These two
+   lines do the same thing:
+
+   .. code-block:: python
+
+      self.set_sound_volume(0.25)
+      self.sound_volume = 0.25
+
+.. function:: self.change_sound_volume(d_volume)
+
+   Increase the volume of sounds played by this (clone of this) Sprite
+   or the Stage.  To decrease the volume, use a negative value for
+   ``d_volume``.  The resulting value is "clamped" to lie between 0
+   and 1.
+
+   If you prefer, you can "augmented assign" to ``self.sound_volume``.
+   These two lines do the same thing:
+
+   .. code-block:: python
+
+      self.change_sound_volume(-0.25)
+      self.sound_volume -= 0.25
+
+.. attribute:: self.sound_volume
+
+   The current volume for sounds played by this (clone of this) Sprite
+   or the Stage.
+
+   You can assign (or "augmented assign") to ``self.sound_volume`` to
+   set the volume.  If you assign a value smaller than 0 or bigger
+   than 1, it is "clamped" to be between 0 and 1.
 
 Sensing
 ~~~~~~~
