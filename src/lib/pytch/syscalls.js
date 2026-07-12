@@ -290,24 +290,40 @@ var $builtinmodule = function (name) {
     );
 
     mod._is_Pytch_registered_Sprite = skulpt_function(
-	(obj) => {
-	    if (!Sk.builtin.checkClass(obj))
-		return Sk.builtin.bool.false$;
+        (obj) => {
+            if (!Sk.builtin.checkClass(obj))
+                return Sk.builtin.bool.false$;
 
             const actor = obj.$pytchActor
             const is_Sprite = (
                 actor != null
                 && actor.class_kind_name === "Sprite"
-	    )
+            )
 
-	    return (
-		is_Sprite
+            return (
+                is_Sprite
                     ? Sk.builtin.bool.true$
                     : Sk.builtin.bool.false$
             );
-	},
-	"Whether the given OBJ is the class object for a Sprite"
+        },
+        "Whether the given OBJ is the class object for a Sprite"
     );
+
+    mod._maybe_instance_0 = skulpt_function(
+      (py_cls) => {
+        const actor = py_cls.$pytchActor
+        const hasOriginal = (
+            actor != null
+            && actor.instances != null
+            && actor.instances[0] != null
+            && actor.instances[0].py_object != null
+        );
+        return (
+          hasOriginal
+            ? actor.instances[0].py_object
+            : Sk.builtin.none.none$
+        );
+    });
 
     mod._effective_source_object = skulpt_function(
         (py_cls_or_obj) => {
@@ -406,21 +422,21 @@ var $builtinmodule = function (name) {
 
     mod.mouse_x = skulpt_function(
         () => new Sk.builtin.float_(Sk.pytch.mouse.stage_x),
-	"Return the stage x coordinate of the mouse pointer",
+        "Return the stage x coordinate of the mouse pointer",
     );
 
     mod.mouse_y = skulpt_function(
         () => new Sk.builtin.float_(Sk.pytch.mouse.stage_y),
-	"Return the stage y coordinate of the mouse pointer",
+        "Return the stage y coordinate of the mouse pointer",
     );
 
     mod._actor_contains_mouse = skulpt_function(
         (py_obj) => {
-	    const mouse_x = Sk.pytch.mouse.stage_x;
-	    const mouse_y = Sk.pytch.mouse.stage_y;
+            const mouse_x = Sk.pytch.mouse.stage_x;
+            const mouse_y = Sk.pytch.mouse.stage_y;
             const instance = py_obj.$pytchActorInstance;
-	    const contains_point = instance.is_touching_point(mouse_x, mouse_y);
-	    return contains_point ? Sk.builtin.bool.true$ : Sk.builtin.bool.false$;
+            const contains_point = instance.is_touching_point(mouse_x, mouse_y);
+            return contains_point ? Sk.builtin.bool.true$ : Sk.builtin.bool.false$;
         },
         "(ACTOR) Return whether the Actor contains the mouse pointer",
     );

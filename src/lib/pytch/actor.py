@@ -16,6 +16,7 @@ from pytch.syscalls import (
     mouse_x,
     mouse_y,
     stop_all,
+    _maybe_instance_0,
 )
 
 from pytch.clone import create_clone_of
@@ -56,7 +57,77 @@ class _IdGenerator:
 _new_speech_id = _IdGenerator()
 
 
-class Actor:
+class DelegatingPropNoInstanceZero(RuntimeError):
+    def __init__(self, cls):
+        self.cls_name = cls.__name__
+
+    def __str__(self):
+        return (
+            f"DelegatingPropNoInstanceZero: class '{self.cls_name}'"
+            f" has no original instance registered"
+        )
+
+
+class DelegatingMetaclassProp:
+    # Data-descriptor assigned to an attribute of the metaclass of the
+    # class owning a `DelegatingProp`, to get the desired behaviour of
+    # attribute access on the class itself (as opposed to instances).
+    def __init__(self, prop, name):
+        self.prop = prop
+        self.name = name
+        self.__doc__ = prop.__doc__
+
+    def __get__(self, cls, metacls=None):
+        instance_0 = _maybe_instance_0(cls)
+        if instance_0 is None:
+            raise DelegatingPropNoInstanceZero(cls)
+        return self.prop.fget(instance_0)
+
+    def __set__(self, cls, value):
+        raise AttributeError(
+            f"property '{self.name}' of '{cls.__name__}'"
+            " can only be set on instances,"
+            " not on the class itself"
+        )
+
+
+class DelegatingProp:
+    def __init__(self, fget, fset=None):
+        self.fget = fget
+        self.fset = self.raise_read_only if fset is None else fset
+        self.__doc__ = fget.__doc__
+
+    def __get__(self, obj, _objtype=None):
+        # We should never see "obj is None" under normal usage,
+        # because of the descriptor we assign to the metaclass in
+        # __set_name__() below.  But behave sensibly if someone tries
+        # to be clever.
+        return self if obj is None else self.fget(obj)
+
+    def __set__(self, obj, value):
+        self.fset(obj, value)
+
+    def __set_name__(self, owner, name):
+        self.name = name
+
+        # Here, `owner` is the class which has the `DelegatingProp`
+        # instance as an attribute.  Assign a data-descriptopr to the
+        # metaclass of `owner` to get the "delegate to instance-0"
+        # behaviour when the attribute is accessed on the class.
+        setattr(type(owner), name, DelegatingMetaclassProp(self, name))
+
+    def raise_read_only(self, obj, _value):
+        raise AttributeError(
+            f"property '{self.name}'"
+            f" of '{obj.__class__.__name__}' cannot be set"
+        )
+
+
+class ActorMeta(type):
+    pass
+
+
+class Actor(metaclass=ActorMeta):
     Sounds = []
     _appearance_names = None
 
@@ -68,19 +139,20 @@ class Actor:
         "(SOUND) Play SOUND; pause until it finishes playing"
         play_sound(self, sound_locator, True)
 
+    def _get_sound_volume(self):
+        "Volume of sounds played by SELF"
+        return _get_actor_sound_mix_bus_gain(self)
+
     def set_sound_volume(self, gain):
         "(VOLUME) Set volume for sounds played by SELF to VOLUME"
         _set_actor_sound_mix_bus_gain(self, gain)
+
+    sound_volume = DelegatingProp(_get_sound_volume, set_sound_volume)
 
     def change_sound_volume(self, d_gain):
         "(D_VOLUME) Make sounds played by SELF be D_VOLUME louder"
         new_gain = self.sound_volume + d_gain
         _set_actor_sound_mix_bus_gain(self, new_gain)
-
-    @property
-    def sound_volume(self):
-        "Volume of sounds played by SELF"
-        return _get_actor_sound_mix_bus_gain(self)
 
     @classmethod
     def ensure_have_appearance_names(cls):
@@ -213,7 +285,11 @@ class Actor:
         create_clone_of(original_cls_or_obj)
 
 
-class Sprite(Actor):
+class SpriteMeta(ActorMeta):
+    pass
+
+
+class Sprite(Actor, metaclass=SpriteMeta):
     "The starting class for all your sprites"
 
     Costumes = []
@@ -273,8 +349,7 @@ class Sprite(Actor):
         self._x = random.randint(-STAGE_HALF_WIDTH, STAGE_HALF_WIDTH)
         self._y = random.randint(-STAGE_HALF_HEIGHT, STAGE_HALF_HEIGHT)
 
-    @property
-    def x_position(self):
+    def _get_x_position(self):
         "SELF's x-coordinate on the stage"
         return self._x
 
@@ -282,12 +357,13 @@ class Sprite(Actor):
         "(X) Move SELF horizontally to x-coord X"
         self._x = x
 
+    x_position = DelegatingProp(_get_x_position, set_x)
+
     def change_x(self, dx):
         "(DX) Move SELF right DX on the stage (left if negative)"
         self._x += dx
 
-    @property
-    def y_position(self):
+    def _get_y_position(self):
         "SELF's y-coordinate on the stage"
         return self._y
 
@@ -295,14 +371,27 @@ class Sprite(Actor):
         "(Y) Move SELF vertically to y-coord Y"
         self._y = y
 
+    y_position = DelegatingProp(_get_y_position, set_y)
+
     def change_y(self, dy):
         "(DY) Move SELF up DY on the stage (down if negative)"
         self._y += dy
 
-    @property
-    def distance_to_mouse(self):
+    def _get_distance_to_mouse(self):
         "The distance between the mouse pointer and SELF"
         return hypot(self._x - self.mouse_x, self._y - self.mouse_y)
+
+    distance_to_mouse = DelegatingProp(_get_distance_to_mouse)
+
+    def _get_direction(self):
+        "The direction SELF is pointing (in degrees)"
+        return 180.0 * self._rotation / MATH_PI
+
+    def point_degrees(self, angle):
+        "(ANGLE) Set rotation to ANGLE degrees"
+        self._rotation = MATH_PI * angle / 180.0
+
+    direction = DelegatingProp(_get_direction, point_degrees)
 
     def turn_degrees(self, d_angle):
         "(ANGLE) Turn ANGLE degrees anticlockwise"
@@ -310,27 +399,11 @@ class Sprite(Actor):
         self._rotation += d_angle_radians
         self._rotation %= (2.0 * MATH_PI)
 
-    def point_degrees(self, angle):
-        "(ANGLE) Set rotation to ANGLE degrees"
-        self._rotation = MATH_PI * angle / 180.0
-
     def point_towards_mouse(self):
         "() Point SELF towards the mouse pointer"
         dx = self.mouse_x - self._x
         dy = self.mouse_y - self._y
         self._rotation = atan2(dy, dx)
-
-    @property
-    def direction(self):
-        "The direction SELF is pointing (in degrees)"
-        return 180.0 * self._rotation / MATH_PI
-
-    @direction.setter
-    def direction(self, _value):
-        raise RuntimeError(
-            "use point_degrees() or turn_degrees() to set"
-            " or change the direction SELF is pointing"
-        )
 
     def glide_to_xy(self, destination_x, destination_y, seconds, easing="linear"):
         "(X, Y, SECONDS) Move SELF smoothly to (X, Y), taking SECONDS"
@@ -370,14 +443,15 @@ class Sprite(Actor):
         "(SECONDS) Move SELF smoothly to the mouse pointer, taking SECONDS"
         self.glide_to_xy(self.mouse_x, self.mouse_y, seconds, easing)
 
+    def _get_size(self):
+        "SELF's current size"
+        return self._size
+
     def set_size(self, size):
         "(SIZE) Set SELF's size to SIZE"
         self._size = size
 
-    @property
-    def size(self):
-        "SELF's current size"
-        return self._size
+    size = DelegatingProp(_get_size, set_size)
 
     def show(self):
         "() Make SELF visible"
@@ -390,23 +464,25 @@ class Sprite(Actor):
         "() Make SELF invisible"
         self._shown = False
 
+    def _get_costume_number(self):
+        "The number of the costume SELF is currently wearing"
+        return self.appearance_number
+
     def switch_costume(self, costume_name):
         "(COSTUME) Switch SELF to wearing COSTUME (name/number)"
         self.switch_appearance(costume_name)
+
+    costume_number = DelegatingProp(_get_costume_number, switch_costume)
 
     def next_costume(self, n_steps=1):
         "(N=1) Switch SELF to Nth next costume, looping if past last"
         self.next_appearance(n_steps)
 
-    @property
-    def costume_number(self):
-        "The number of the costume SELF is currently wearing"
-        return self.appearance_number
-
-    @property
-    def costume_name(self):
+    def _get_costume_name(self):
         "The name of the costume SELF is currently wearing"
         return self.appearance_name
+
+    costume_name = DelegatingProp(_get_costume_name, switch_costume)
 
     def touching(self, target_class):
         "(TARGET) Return whether SELF touches any TARGET instance"
@@ -418,10 +494,11 @@ class Sprite(Actor):
         return (self._pytch_parent_project
                 .instance_is_touching_any_of(self, target_class))
 
-    @property
-    def touching_mouse(self):
+    def _get_touching_mouse(self):
         "Whether SELF is touching the mouse pointer"
         return _actor_contains_mouse(self)
+
+    touching_mouse = DelegatingProp(_get_touching_mouse)
 
     def delete_this_clone(self):
         "() Remove SELF from the project"
@@ -485,7 +562,11 @@ class Sprite(Actor):
         create_clone_of(self)
 
 
-class Stage(Actor):
+class StageMeta(ActorMeta):
+    pass
+
+
+class Stage(Actor, metaclass=StageMeta):
     "The starting class for your stage"
 
     Backdrops = []
@@ -518,23 +599,25 @@ class Stage(Actor):
         "() Return the only Stage instance"
         return registered_instances(cls)[0]
 
+    def _get_backdrop_number(self):
+        "The number of the backdrop SELF is currently showing"
+        return self.appearance_number
+
     def switch_backdrop(self, backdrop_name):
         "(BACKDROP) Switch to the BACKDROP (name/number)"
         self.switch_appearance(backdrop_name)
+
+    backdrop_number = DelegatingProp(_get_backdrop_number, switch_backdrop)
 
     def next_backdrop(self, n_steps=1):
         "(N=1) Switch SELF to Nth next backdrop, looping if past last"
         self.next_appearance(n_steps)
 
-    @property
-    def backdrop_number(self):
-        "The number of the backdrop SELF is currently showing"
-        return self.appearance_number
-
-    @property
-    def backdrop_name(self):
+    def _get_backdrop_name(self):
         "The name of the backdrop SELF is currently showing"
         return self.appearance_name
+
+    backdrop_name = DelegatingProp(_get_backdrop_name, switch_backdrop)
 
     def ask_and_wait(self, prompt):
         "(QUESTION) Ask question; wait for and return user's answer"

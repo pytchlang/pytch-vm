@@ -59,7 +59,19 @@ def _user_facing_completions():
             if attrname.startswith("_") or attrname in exclusions:
                 continue
 
-            attr = getattr(obj, attrname)
+            try:
+                attr = getattr(obj, attrname)
+            except pytch.actor.DelegatingPropNoInstanceZero:
+                # If the attribute in question is one of the
+                # properties which delegate to "the original", then we
+                # need to sidestep the usual attribute fetch
+                # mechanism.  This includes a fudge which hard-codes
+                # the inheritance structure of Actor/Sprite and
+                # Actor/Stage.
+                attr = obj.__dict__.get(attrname)
+                if attr is None:
+                    attr = pytch.actor.Actor.__dict__.get(attrname)
+
             raw_doc = attr.__doc__
 
             if raw_doc is not None:
