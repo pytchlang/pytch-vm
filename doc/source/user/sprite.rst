@@ -140,16 +140,32 @@ method.
 Setting the sprite size
   .. function:: self.set_size(size)
 
-     Set how large the sprite appears, as a proportion of the size of the
-     current costume image, where ``1`` is the normal size of the image.
-     For example, ``self.set_size(0.5)`` will set the sprite to be
-     half-sized.
+     Set how large the sprite appears, as a proportion of the size of
+     the current costume image, where ``1`` is the normal size of the
+     image.  For example, ``self.set_size(0.5)`` will set the sprite
+     to be half-sized.
+
+     If you prefer, you can assign to ``self.size``.  These two lines
+     do the same thing:
+
+     .. code-block:: python
+
+        self.set_size(0.25)
+        self.size = 0.25
 
 Finding out the sprite's size
   .. attribute:: self.size
 
      The current size of the Sprite, where ``1`` is normal size,
      ``0.5`` is half-size, ``2`` is double-size, and so on.
+
+     You can assign (or "augmented assign") to ``self.size`` to set
+     the Sprite's size.  For example, to make the Sprite 20% bigger
+     than it is currently, you can do
+
+     .. code-block:: python
+
+        self.size *= 1.2
 
 Showing and hiding the sprite
   .. function:: self.show()
@@ -169,14 +185,30 @@ Changing the sprite appearance
      example, you might use ``self.switch_costume("smiling-kitten")`` to
      choose a new costume.
 
+     If you prefer, you can assign to ``self.costume_name``.  These
+     two lines do the same thing:
+
+     .. code-block:: python
+
+        self.switch_costume("smiling")
+        self.costume_name = "smiling"
+
   .. function:: self.switch_costume(costume_number)
      :noindex:
 
      Select one of the costumes listed in this Sprite's *Costumes*
      variable, by number.  Python starts counting entries in lists *at
      zero*, so to switch to the first costume, you would use
-     ``self.switch_costume(0)``; to switch to the second costume, you would
-     use ``self.switch_costume(1)``, and so on.
+     ``self.switch_costume(0)``; to switch to the second costume, you
+     would use ``self.switch_costume(1)``, and so on.
+
+     If you prefer, you can assign to ``self.costume_number``.  These
+     two lines do the same thing:
+
+     .. code-block:: python
+
+        self.switch_costume(3)
+        self.costume_number = 3
 
   .. function:: self.next_costume()
 
@@ -202,9 +234,13 @@ Finding out what costume the Sprite is currently wearing
      ``Costumes`` list is number 0; the second costume is number 1; and so
      on.  This is the way that Python refers to list elements.
 
+     You can assign to ``self.costume_number`` to switch costume.
+
   .. attribute:: self.costume_name
 
      The name of the costume currently being worn by the Sprite.
+
+     You can assign to ``self.costume_name`` to switch costume.
 
 Controlling the order Sprites are drawn
   When one sprite overlaps another it is the order that they are drawn
@@ -273,9 +309,17 @@ creating the costume (see
 
 .. function:: self.change_x(dx)
 
-   Change the x-position of the sprite by a certain amount (for example,
-   ``self.change_x(10)`` will move the sprite 10 pixels to the right on the
-   stage). The number of pixels can be negative.
+   Change the x-position of the sprite by a certain amount (for
+   example, ``self.change_x(10)`` will move the sprite 10 pixels to
+   the right on the stage). The number of pixels can be negative.
+
+   If you prefer, you can "augmented assign" to ``self.x_position``.
+   These two lines do the same thing:
+
+   .. code-block:: python
+
+      self.change_x(-10)
+      self.x_position -= 10
 
 .. function:: self.change_y(dy)
 
@@ -283,15 +327,39 @@ creating the costume (see
    ``self.change_y(10)`` will move the sprite 10 pixels up on the
    stage). The number can be negative.
 
+   If you prefer, you can "augmented assign" to ``self.y_position``.
+   These two lines do the same thing:
+
+   .. code-block:: python
+
+      self.change_y(50)
+      self.y_position += 50
+
 .. function:: self.set_x(x)
 
-   Move the sprite to a certain x-position on the stage while keeping its
-   y-position the same.
+   Move the sprite to a certain x-position on the stage while keeping
+   its y-position the same.
+
+   If you prefer, you can assign to ``self.x_position``.  These two
+   lines do the same thing:
+
+   .. code-block:: python
+
+      self.set_x(-30)
+      self.x_position = -30
 
 .. function:: self.set_y(y)
 
    Move the sprite to a certain y-position on the stage while keeping its
    x-position the same.
+
+   If you prefer, you can assign to ``self.y_position``.  These two
+   lines do the same thing:
+
+   .. code-block:: python
+
+      self.set_y(42)
+      self.y_position = 42
 
 
 Finding a Sprite's position
@@ -302,6 +370,9 @@ Finding a Sprite's position
 
    The current *x* or *y* position of the sprite.  These are
    *properties*, so you do not use ``()`` after them.
+
+   You can assign (or "augmented assign") to these properties to set
+   the Sprite's *x* or *y* position.
 
 
 Turning a Sprite
@@ -325,6 +396,14 @@ A sprite can turn round and point in different directions.
    convention to Scratch, but "positive is anticlockwise" is the
    common mathematical convention, so Pytch uses it.
 
+   If you prefer, you can "augmented assign" to ``self.direction``.
+   The following two lines of code do the same thing:
+
+   .. code-block:: python
+
+      self.turn_degrees(30)
+      self.direction += 30
+
 .. function:: self.point_degrees(angle)
 
    Turn the sprite so it is pointing in the direction of the given
@@ -332,8 +411,20 @@ A sprite can turn round and point in different directions.
    sprite is drawn the same way up as the original image for the
    costume it's currently wearing.  An angle of 90° means the sprite
    points a quarter-turn anticlockwise (counter-clockwise) from its
-   original image.  To point a quarter-turn clockwise, use −90° (or
-   270°, which comes to the same thing).
+   original image.  To point in the direction which is a quarter-turn
+   clockwise from the default, use −90° (or 270°, which comes to the
+   same thing).
+
+   If you prefer, you can assign to ``self.direction``.  The following
+   two lines of code do the same thing:
+
+   .. code-block:: python
+
+      self.point_degrees(390)
+      self.direction = 390
+
+   Because of the wrapping to ensure ``direction`` is always between
+   0° and 360°, ``direction`` will be 30° after either of these lines.
 
 .. function:: self.point_towards_mouse()
 
@@ -343,6 +434,10 @@ A sprite can turn round and point in different directions.
 
    The direction the sprite is currently pointing, measured in
    degrees.
+
+   You can assign (or "augmented assign") to ``self.direction`` to
+   turn the sprite; Pytch will "wrap" the value to lie between 0° and
+   360°.
 
 
 .. _methods_playing_sounds:
@@ -376,6 +471,48 @@ sprite to play it.
    Immediately stop all sounds from playing, **including those being
    played by the Stage or by other Sprites**.
 
+Setting the volume of sounds
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. function:: self.set_sound_volume(volume)
+
+   Set the volume of sounds played by this Sprite or the Stage.  (If
+   there are clones, each clone has its own volume control.)  The
+   ``volume`` should be between 0 (silence) and 1 (full volume).  If
+   you give a value smaller than 0 or bigger than 1, it is "clamped"
+   to be between 0 and 1.
+
+   If you prefer, you can assign to ``self.sound_volume``.  These two
+   lines do the same thing:
+
+   .. code-block:: python
+
+      self.set_sound_volume(0.25)
+      self.sound_volume = 0.25
+
+.. function:: self.change_sound_volume(d_volume)
+
+   Increase the volume of sounds played by this (clone of this) Sprite
+   or the Stage.  To decrease the volume, use a negative value for
+   ``d_volume``.  The resulting value is "clamped" to lie between 0
+   and 1.
+
+   If you prefer, you can "augmented assign" to ``self.sound_volume``.
+   These two lines do the same thing:
+
+   .. code-block:: python
+
+      self.change_sound_volume(-0.25)
+      self.sound_volume -= 0.25
+
+.. attribute:: self.sound_volume
+
+   The current volume for sounds played by this (clone of this) Sprite
+   or the Stage.
+
+   You can assign (or "augmented assign") to ``self.sound_volume`` to
+   set the volume.  If you assign a value smaller than 0 or bigger
+   than 1, it is "clamped" to be between 0 and 1.
 
 Sensing
 ~~~~~~~
@@ -432,11 +569,14 @@ Finding existing clones
 
 .. function:: Class.the_original()
 
-   This returns a reference to the *original* object that this clone is a
-   copy of. This can be used to look up variables or send messages to the
-   original object. If it is run by the original Sprite then it returns a
-   reference to itself. Notice that this method is run using the class name
-   (for example ``Kitten.the_original()``), not the ``self`` object.
+   This returns a reference to the *original* instance of the
+   mentioned sprite class.  This can be used to look up variables or
+   send messages to the original object.  Notice that this method is
+   run using the class name (for example ``Kitten.the_original()``),
+   not the ``self`` object.
+
+   You might not need to use this method; see
+   :ref:`other_sprites_properties`.
 
 .. function:: Class.all_clones()
 
@@ -453,6 +593,55 @@ Finding existing clones
    useful if you want access to everything (both clones and
    originals). Notice that this method is run using the class name (for
    example ``Kitten.all_instances()``), not the ``self`` object.
+
+
+.. _other_sprites_properties:
+
+Reading another sprite's properties
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As a convenience, the following Sprite properties have special
+behaviour, different to how properties normally work in Python:
+
+* ``sound_volume``
+* ``x_position``
+* ``y_position``
+* ``direction``
+* ``size``
+* ``costume_number``
+* ``costume_name``
+* ``distance_to_mouse``
+* ``touching_mouse``
+
+Code which reads these properties on a Sprite *class* gives the value
+of that property for that Sprite's *original instance*.
+
+This can be useful where, for example, one sprite needs to know where
+another sprite is.  Instead of the fiddly
+
+.. code-block:: python
+
+   print(SpaceShip.the_original().x_position)
+
+you can instead just write
+
+.. code-block:: python
+
+   print(SpaceShip.x_position)
+
+If your code is reading a Sprite's *own* properties, you should use
+the simpler and standard
+
+.. code-block:: python
+
+   print(self.x_position)
+
+You can *not* use this shortcut to *write* ("assign") to any of
+another Sprite's properties.  E.g., this code will not work:
+
+.. code-block:: python
+
+   SpaceShip.x_position += 10  # Will give error!
 
 
 .. _collision_detection:
@@ -564,7 +753,9 @@ Sensing the mouse's position and button
 Some devices have a "mouse", which can be used in your Pytch programs.
 A mouse can tell where it is, in terms of *x* and *y* coordinates.  It
 also has a main button, which is either pressed down or not.  Scratch
-has reporter blocks for these three properties.  Pytch has the same:
+has reporter blocks for these three properties.  Pytch has the same
+idea, through properties of any Sprite or the Stage.  Note that you
+can not assign to these properties, only read their value.
 
 Telling where the mouse is
   .. attribute:: self.mouse_x

@@ -39,6 +39,14 @@ provided by Pytch:
    ``backdrop_name``.  This must be the *label* of a Backdrop defined by
    the class's ``Backdrops`` variable — see :doc:`backdrop-specs`.
 
+   If you prefer, you can assign to ``self.backdrop_name``.  These two
+   lines do the same thing:
+
+   .. code-block:: python
+
+      self.switch_backdrop("sunshine")
+      self.backdrop_name = "sunshine"
+
 .. function:: self.switch_backdrop(backdrop_number)
    :noindex:
 
@@ -47,6 +55,14 @@ provided by Pytch:
    that to switch to the first backdrop, use ``self.switch_backdrop(0)``;
    to switch to the second backdrop, use ``self.switch_backdrop(1)``; and
    so on.
+
+   If you prefer, you can assign to ``self.backdrop_number``.  These
+   two lines do the same thing:
+
+   .. code-block:: python
+
+      self.switch_backdrop(3)
+      self.backdrop_number = 3
 
 .. function:: self.next_backdrop()
 
@@ -70,9 +86,13 @@ provided by Pytch:
    will be 0; if it's currently showing its second backdrop,
    ``backdrop_number`` will be 1; and so on.
 
+   You can assign to ``self.backdrop_number`` to switch backdrop.
+
 .. attribute:: self.backdrop_name
 
    The name of the currently-shown backdrop.
+
+   You can assign to ``self.backdrop_name`` to switch backdrop.
 
 
 Showing and hiding the stage's variables
@@ -182,3 +202,62 @@ state.  See :ref:`the help in the Sprite page<properties_for_mouse>`.
 
 (The stage does not have ``touching_mouse`` or ``distance_to_mouse``
 properties, though, as these would not make sense for the stage.)
+
+
+Getting the stage instance
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(Advanced.)  If you need to get the (unique) *instance* of your Stage
+class, you can use the following method.
+
+.. function:: StageClass.the_only()
+
+   Return a reference to the unique instance of the stage class.  This
+   can be used to look up variables or send messages to the stage.
+
+   You might not need to use this method; see
+   :ref:`reading_stage_properties_through_class`.
+
+
+.. _reading_stage_properties_through_class:
+
+Reading stage properties from a sprite
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As a convenience, the following Stage properties have special
+behaviour, different to how properties normally work in Python:
+
+* ``sound_volume``
+* ``backdrop_number``
+* ``backdrop_name``
+
+Code which reads these properties on the Stage *class* gives the value
+of that property for the (unique) Stage instance.
+
+This can be useful where, for example, a sprite needs to know what
+backdrop the stage is using.  Instead of the fiddly
+
+.. code-block:: python
+
+   print(Stage.the_only().backdrop_name)  # (script-by-script)
+   print(MyStageClass.the_only().backdrop_name)  # (flat)
+
+you can instead just write
+
+.. code-block:: python
+
+   print(Stage.backdrop_name)  # (script-by-script)
+   print(MyStageClass.backdrop_name)  # (flat)
+
+If your code is in your Stage, you should use the simpler and standard
+
+.. code-block:: python
+
+   print(self.backdrop_name)
+
+You can *not* use this shortcut to *write* ("assign") to any of the
+Stage's properties.  E.g., this code will not work:
+
+.. code-block:: python
+
+   Stage.sound_volume = 0.8  # Will give error!
