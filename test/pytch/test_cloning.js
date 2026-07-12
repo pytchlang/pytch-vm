@@ -460,6 +460,21 @@ describe("cloning", () => {
         });
     });
 
+    it("class props give coords of original instance", async () => {
+        const project = await import_deindented(cloning_code({ target: "pytch" }));
+        project.do_synthetic_broadcast("init-coords");
+        one_frame(project);
+        project.do_synthetic_broadcast("make-clone-x");
+        many_frames(project, 2);
+        project.do_synthetic_broadcast("make-clone-y");
+        many_frames(project, 2);
+        project.do_synthetic_broadcast("report-original-coords");
+        one_frame(project);
+
+        // Should see the original's coords emitted by every instance:
+        assert.equal(pytch_stdout.drain_stdout(), "30 40\n30 40\n30 40\n30 40\n");
+    });
+
     it("handles repeated delete of same clone", async () => {
         const project = await import_deindented(`
 
