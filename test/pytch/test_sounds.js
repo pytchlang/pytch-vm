@@ -56,7 +56,8 @@ describe("waiting and non-waiting sounds", () => {
         });
     });
 
-    it("rejects invalid args to sound volume methods", async () => {
+    property_set_mechanism_specs.forEach(spec =>
+    it(`rejects invalid args to sound volume methods (${spec.label})`, async () => {
         const project = await import_deindented(`
             import pytch
             class Banana(pytch.Sprite):
@@ -69,20 +70,30 @@ describe("waiting and non-waiting sounds", () => {
                 @pytch.when_I_receive("bad-change-volume-string")
                 def bad_change_volume_string(self):
                     self.change_sound_volume("hello")
+
+                @pytch.when_I_receive("bad-set-volume-prop")
+                def bad_set_volume_prop(self):
+                    self.sound_volume = 1.0 + 2.0j
+                @pytch.when_I_receive("bad-change-volume-complex-prop")
+                def bad_change_volume_complex_prop(self):
+                    self.sound_volume += 1.0 + 2.0j
+                @pytch.when_I_receive("bad-change-volume-string-prop")
+                def bad_change_volume_string_prop(self):
+                    self.sound_volume += "hello"
         `);
 
-        project.do_synthetic_broadcast("bad-set-volume");
+        project.do_synthetic_broadcast(`bad-set-volume${spec.message_suffix}`);
         one_frame(project);
         pytch_errors.assert_sole_error_matches(/must be given a number/);
 
-        project.do_synthetic_broadcast("bad-change-volume-complex");
+        project.do_synthetic_broadcast(`bad-change-volume-complex${spec.message_suffix}`);
         one_frame(project);
         pytch_errors.assert_sole_error_matches(/must be given a number/);
 
-        project.do_synthetic_broadcast("bad-change-volume-string");
+        project.do_synthetic_broadcast(`bad-change-volume-string${spec.message_suffix}`);
         one_frame(project);
         pytch_errors.assert_sole_error_matches(/unsupported operand type/);
-    });
+    }));
 
     [{ useIndex: false }, { useIndex: true }].forEach(spec => {
     const specLabel = spec.useIndex ? "index" : "name";
