@@ -202,3 +202,38 @@ state.  See :ref:`the help in the Sprite page<properties_for_mouse>`.
 
 (The stage does not have ``touching_mouse`` or ``distance_to_mouse``
 properties, though, as these would not make sense for the stage.)
+
+
+Reading stage properties from a sprite
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As a convenience, the following Stage properties have special
+behaviour, different to how properties normally work in Python:
+
+* ``sound_volume``
+* ``backdrop_number``
+* ``backdrop_name``
+
+Code which reads these properties on the Stage *class* gives the value
+of that property for the (unique) Stage instance.
+
+This can be useful where, for example, a sprite needs to know what
+backdrop the stage is using.  Instead of the fiddly
+
+.. code-block:: python
+
+   print(Stage.the_only().backdrop_name)  # (script-by-script)
+   print(MyStageClass.the_only().backdrop_name)  # (flat)
+
+you can instead just write
+
+.. code-block:: python
+
+   print(Stage.backdrop_name)  # (script-by-script)
+   print(MyStageClass.backdrop_name)  # (flat)
+
+If your code is in your Stage, you should use the simpler and standard
+
+.. code-block:: python
+
+   print(self.backdrop_name)
