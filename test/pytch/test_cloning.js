@@ -416,6 +416,9 @@ describe("cloning", () => {
                 else:
                     self.change_y(40)
 
+            @pytch.when_I_receive("report-original-coords")
+            def report_original_coords(self):
+                print(Balloon.x_position, Balloon.y_position)
     `;
 
     [
