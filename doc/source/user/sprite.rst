@@ -145,11 +145,27 @@ Setting the sprite size
      image.  For example, ``self.set_size(0.5)`` will set the sprite
      to be half-sized.
 
+     If you prefer, you can assign to ``self.size``.  These two lines
+     do the same thing:
+
+     .. code-block:: python
+
+        self.set_size(0.25)
+        self.size = 0.25
+
 Finding out the sprite's size
   .. attribute:: self.size
 
      The current size of the Sprite, where ``1`` is normal size,
      ``0.5`` is half-size, ``2`` is double-size, and so on.
+
+     You can assign (or "augmented assign") to ``self.size`` to set
+     the Sprite's size.  For example, to make the Sprite 20% bigger
+     than it is currently, you can do
+
+     .. code-block:: python
+
+        self.size *= 1.2
 
 Showing and hiding the sprite
   .. function:: self.show()
