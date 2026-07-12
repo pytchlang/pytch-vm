@@ -33,6 +33,19 @@ describe("Position properties", () => {
                     print(f"{self.x_position} {self.y_position}")
                     self.change_y(-30)
                     print(f"{self.x_position} {self.y_position}")
+
+                @pytch.when_I_receive("move-prop")
+                def move_around_prop(self):
+                    self.go_to_xy(10, 20)
+                    print(f"{self.x_position} {self.y_position}")
+                    self.x_position = 100
+                    print(f"{self.x_position} {self.y_position}")
+                    self.y_position = -40
+                    print(f"{self.x_position} {self.y_position}")
+                    self.x_position += 10
+                    print(f"{self.x_position} {self.y_position}")
+                    self.y_position -= 30
+                    print(f"{self.x_position} {self.y_position}")
         `);
 
         project.do_synthetic_broadcast("move");
