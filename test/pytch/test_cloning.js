@@ -388,12 +388,7 @@ describe("cloning", () => {
         );
     });
 
-    [
-        { target: "pytch" },
-        { target: "self" },
-    ].forEach(spec => {
-        it(`puts clone just behind parent with ${spec.target}.create_clone_of()`, async () => {
-            const project = await import_deindented(`
+    const cloning_code = (spec) => `
 
                 import pytch
 
@@ -420,7 +415,14 @@ describe("cloning", () => {
                             self.change_x(40)
                         else:
                             self.change_y(40)
-            `);
+            `;
+
+    [
+        { target: "pytch" },
+        { target: "self" },
+    ].forEach(spec => {
+        it(`puts clone just behind parent with ${spec.target}.create_clone_of()`, async () => {
+            const project = await import_deindented(cloning_code(spec));
 
             const locations
                 = () => project.rendering_instructions().map(i => [i.x, i.y]);
