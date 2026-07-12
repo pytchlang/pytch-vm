@@ -14,7 +14,7 @@ configure_mocha();
 ////////////////////////////////////////////////////////////////////////////////
 
 describe("moving ball example", () => {
-    const ball_at = (x, y) => [["RenderImage", x, y, 1, "yellow-ball"]];
+    const ball_at = (x, y, s) => [["RenderImage", x, y, s ?? 1, "yellow-ball"]];
 
     const ball_coords = (project) => {
         let render_instrns = project.rendering_instructions();
