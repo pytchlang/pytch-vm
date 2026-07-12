@@ -6,6 +6,7 @@ const {
     import_deindented,
     one_frame,
     pytch_stdout,
+    property_set_mechanism_specs,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -15,7 +16,8 @@ configure_mocha();
 // Position querying via properties
 
 describe("Position properties", () => {
-    it("can retrieve coords", async () => {
+    property_set_mechanism_specs.forEach(spec =>
+    it(`can retrieve coords (${spec.label})`, async () => {
         const project = await import_deindented(`
 
             import pytch
@@ -48,7 +50,7 @@ describe("Position properties", () => {
                     print(f"{self.x_position} {self.y_position}")
         `);
 
-        project.do_synthetic_broadcast("move");
+        project.do_synthetic_broadcast(`move${spec.message_suffix}`);
         one_frame(project);
 
         const exp_output = [
@@ -60,7 +62,7 @@ describe("Position properties", () => {
         ].join("")
 
         assert.equal(pytch_stdout.drain_stdout(), exp_output);
-    });
+    }));
 
     it("can retrieve size", async () => {
         const project = await import_deindented(`
