@@ -39,6 +39,14 @@ provided by Pytch:
    ``backdrop_name``.  This must be the *label* of a Backdrop defined by
    the class's ``Backdrops`` variable — see :doc:`backdrop-specs`.
 
+   If you prefer, you can assign to ``self.backdrop_name``.  These two
+   lines do the same thing:
+
+   .. code-block:: python
+
+      self.switch_backdrop("sunshine")
+      self.backdrop_name = "sunshine"
+
 .. function:: self.switch_backdrop(backdrop_number)
    :noindex:
 
@@ -47,6 +55,14 @@ provided by Pytch:
    that to switch to the first backdrop, use ``self.switch_backdrop(0)``;
    to switch to the second backdrop, use ``self.switch_backdrop(1)``; and
    so on.
+
+   If you prefer, you can assign to ``self.backdrop_number``.  These
+   two lines do the same thing:
+
+   .. code-block:: python
+
+      self.switch_backdrop(3)
+      self.backdrop_number = 3
 
 .. function:: self.next_backdrop()
 
@@ -70,9 +86,13 @@ provided by Pytch:
    will be 0; if it's currently showing its second backdrop,
    ``backdrop_number`` will be 1; and so on.
 
+   You can assign to ``self.backdrop_number`` to switch backdrop.
+
 .. attribute:: self.backdrop_name
 
    The name of the currently-shown backdrop.
+
+   You can assign to ``self.backdrop_name`` to switch backdrop.
 
 
 Showing and hiding the stage's variables
