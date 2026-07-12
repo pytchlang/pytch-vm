@@ -12,6 +12,7 @@ const {
     pytch_stdout,
     pytch_errors,
     assertBuildErrorFun,
+    property_set_mechanism_specs,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -122,12 +123,13 @@ describe("waiting and non-waiting sounds", () => {
         assert_running_performances([]);
     });
 
-    it("can adjust volumes", async () => {
+    property_set_mechanism_specs.forEach(spec =>
+    it(`can adjust volumes (${spec.label})`, async () => {
         let project = await import_project();
         let band_actor = project.actor_by_class_name("Band");
         let project_one_frame = one_frame_fun(project);
 
-        project.do_synthetic_broadcast("band-setup");
+        project.do_synthetic_broadcast(`band-setup${spec.message_suffix}`);
         assert.strictEqual(project.thread_groups.length, 1);
 
         project_one_frame();
@@ -163,7 +165,7 @@ describe("waiting and non-waiting sounds", () => {
             assert_running_performances([{ tag: "trumpet", gain: 1.0 }]);
         }
 
-        project.do_synthetic_broadcast("band-quiet");
+        project.do_synthetic_broadcast(`band-quiet${spec.message_suffix}`);
 
         for (let i = 0; i != 5; ++i) {
             project_one_frame();
@@ -175,7 +177,7 @@ describe("waiting and non-waiting sounds", () => {
             project_one_frame();
             assert_running_performances([]);
         }
-    });
+    }));
 
     it("can play violin", async () => {
         let project = await import_project();
