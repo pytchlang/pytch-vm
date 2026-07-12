@@ -500,7 +500,22 @@ var $builtinmodule = function (name) {
                 //
                 // TODO: Check we haven't got a classmethod or staticmethod.
                 //
-                let attr_val = Sk.builtin.getattr(this.py_cls, py_attr_name);
+                let attr_val;
+                try {
+                    attr_val = Sk.builtin.getattr(this.py_cls, py_attr_name);
+                } catch (err) {
+                    // Reading an attribute of the class object can
+                    // trigger a DelegatingProp descriptor, which
+                    // attempts to delegate to instance-zero.  At this
+                    // stage, though, there is no instance-0, so we
+                    // get an exception.  Skip such attributes.
+                    const pyErrClassName = Sk.builtin.getattr(
+                        err.ob$type,
+                        Sk.builtin.str.$name
+                    );
+                    if (pyErrClassName.v == "DelegatingPropNoInstanceZero")
+                        continue;
+                }
 
                 if (attr_val.tp$call)
                     this.register_handlers_of_method(attr_val);
