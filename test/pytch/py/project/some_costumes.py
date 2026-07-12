@@ -13,7 +13,20 @@ class Alien(Sprite):
 
     @pytch.when_I_receive("print-current-costume")
     def print_current_costume(self):
-        print("%d %s" % (self.costume_number, self.costume_name))
+        if Alien.costume_number != self.costume_number:
+            print(
+                "mismatch in costume_number;",
+                Alien.costume_number, "on Alien but",
+                self.costume_number, "on self"
+            )
+        elif Alien.costume_name != self.costume_name:
+            print(
+                "mismatch in costume_name;",
+                Alien.costume_name, "on Alien but",
+                self.costume_name, "on self"
+            )
+        else:
+            print("%d %s" % (self.costume_number, self.costume_name))
 
     @pytch.when_I_receive("switch-costume-by-number")
     def switch_costume_by_number(self):
@@ -58,7 +71,20 @@ class Background(pytch.Stage):
 
     @pytch.when_I_receive("print-current-backdrop")
     def print_current_backdrop(self):
-        print("%d %s" % (self.backdrop_number, self.backdrop_name))
+        if Background.backdrop_number != self.backdrop_number:
+            print(
+                "mismatch in backdrop_number;",
+                Background.backdrop_number, "on Background but",
+                self.backdrop_number, "on self"
+            )
+        elif Background.backdrop_name != self.backdrop_name:
+            print(
+                "mismatch in backdrop_name;",
+                Background.backdrop_name, "on Background but",
+                self.backdrop_name, "on self"
+            )
+        else:
+            print("%d %s" % (self.backdrop_number, self.backdrop_name))
 
     @pytch.when_I_receive("switch-backdrop-by-number")
     def switch_backdrop_by_number(self):
