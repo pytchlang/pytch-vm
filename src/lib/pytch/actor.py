@@ -56,6 +56,17 @@ class _IdGenerator:
 _new_speech_id = _IdGenerator()
 
 
+class DelegatingPropNoInstanceZero(RuntimeError):
+    def __init__(self, cls):
+        self.cls_name = cls.__name__
+
+    def __str__(self):
+        return (
+            f"DelegatingPropNoInstanceZero: class '{self.cls_name}'"
+            f" has no original instance registered"
+        )
+
+
 class Actor:
     Sounds = []
     _appearance_names = None
