@@ -7,6 +7,7 @@ const {
     assert,
     assert_renders_as,
     mock_keyboard,
+    property_set_mechanism_specs,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -73,6 +74,16 @@ describe("moving ball example", () => {
 	    assert(distinct_xs.size >= 10, "expecting at least 10 distinct Xs");
 	    assert(distinct_ys.size >= 10, "expecting at least 10 distinct Ys");
         });
+
+	property_set_mechanism_specs.forEach(spec =>
+	    it(`changes size (${spec.label})`, async () => {
+		const project = await import_project();
+
+		project.do_synthetic_broadcast(`bigger${spec.message_suffix}`);
+		one_frame(project);
+
+		assert_renders_as("end", project, ball_at(100, 50, 3.0));
+	    }));
 
         it("responds to key presses", async () => {
             let project = await import_project();
