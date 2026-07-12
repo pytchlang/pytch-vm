@@ -28,6 +28,8 @@ describe("Sprite rotation", () => {
 
     property_set_mechanism_specs.forEach(spec =>
         it(`can turn and point (${spec.label})`, async () => {
+	    // Use values in the code which exercise the behaviour of
+	    // clamping to [0, 2π).
             const project = await import_deindented(`
 
                 import pytch
@@ -35,16 +37,16 @@ describe("Sprite rotation", () => {
                     Costumes = ["yellow-banana.png"]
                     @pytch.when_I_receive("turn")
                     def turn(self):
-                        self.turn_degrees(41)
+                        self.turn_degrees(401)
                     @pytch.when_I_receive("turn-prop")
                     def turn_prop(self):
-                        self.direction += 41
+                        self.direction += 401
                     @pytch.when_I_receive("point")
                     def point(self):
-                        self.point_degrees(102)
+                        self.point_degrees(-258)
                     @pytch.when_I_receive("point-prop")
                     def point_prop(self):
-                        self.direction = 102
+                        self.direction = -258
             `);
 
             const turn_msg = `turn${spec.message_suffix}`;
