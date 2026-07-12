@@ -1738,13 +1738,25 @@ var $builtinmodule = function (name) {
             return this.actor_by_class_name(cls_name).instances[0];
         }
 
+        ensure_no_existing_registration(kind, py_cls) {
+            const already_registered = this.actors.some(a => a.py_cls === py_cls);
+            if (already_registered) {
+                const className = name_of_py_class(py_cls);
+                throw new Sk.builtin.RuntimeError(
+                    `${kind} class '${className}' already registered with project`
+                );
+            }
+        }
+
         async register_sprite_class(py_sprite_cls) {
+            this.ensure_no_existing_registration("Sprite", py_sprite_cls);
             Sk.builtin.setattr(py_sprite_cls, s_pytch_parent_project, this.py_project);
             let sprite = await PytchSprite.async_create(py_sprite_cls, this);
             this.actors.push(sprite);
         }
 
         async register_stage_class(py_stage_cls) {
+            this.ensure_no_existing_registration("Stage", py_stage_cls);
             Sk.builtin.setattr(py_stage_cls, s_pytch_parent_project, this.py_project);
             let stage = await PytchStage.async_create(py_stage_cls, this);
             // Ensure Stage is first in 'actors' array, so that it renders

@@ -4,10 +4,12 @@ const {
     configure_mocha,
     with_module,
     with_project,
+    import_deindented,
     assert,
     py_getattr,
     js_getattr,
     appearance_by_name,
+    assertBuildErrorFun,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -90,7 +92,7 @@ describe("pytch.project module", () => {
             assert.strictEqual(appearance_by_name(table, "wooden").centre_x, 240);
         })});
 
-    with_project("py/project/bad_registrations.py", (import_project) => {
+    with_project("py/project/two_sprites.py", (import_project) => {
         describe("can look up Actors by name", async () => {
             it("can find unique Actor", async () => {
                 let project = await import_project();
@@ -103,13 +105,31 @@ describe("pytch.project module", () => {
                 assert.throws(() => project.actor_by_class_name("Spaceship"),
                               /no PytchActors with name "Spaceship"/);
             });
-
-            it("rejects a duplicate Actor", async () => {
-                let project = await import_project();
-                assert.throws(() => project.actor_by_class_name("Alien"),
-                              /duplicate PytchActors with name "Alien"/);
-            });
         })});
+
+    describe("rejects duplicate registrations", () => {
+        [
+            { label: "sprite", regfun: "register_sprite_class", subcls: "Sprite" },
+            { label: "stage", regfun: "register_stage_class", subcls: "Stage" },
+        ].forEach(spec =>
+            it(`for ${spec.label}`, async () => {
+                const do_import = import_deindented(`
+                    import pytch
+                    class Thing(pytch.${spec.subcls}):
+                        Costumes = ["balloon.png"]
+                        Backdrops = ["wooden-stage.png"]
+                    project = pytch.Project()
+                    project.${spec.regfun}(Thing)
+                    project.${spec.regfun}(Thing)
+                `);
+                const assertDetails = assertBuildErrorFun(
+                    "import",
+                    Sk.builtin.RuntimeError,
+                    new RegExp(`${spec.subcls} class 'Thing' already registered`)
+                );
+                await assert.rejects(do_import, assertDetails);
+            }));
+    });
 
     with_project("py/project/go_live_empty_project.py", (import_project) => {
         it("can go-live an empty Project", async () => {

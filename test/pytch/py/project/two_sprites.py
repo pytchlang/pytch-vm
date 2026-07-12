@@ -12,5 +12,4 @@ class Banana(Sprite):
 
 project = Project()
 project.register_sprite_class(Alien)
-project.register_sprite_class(Alien)  # Leads to bad behaviour!
 project.register_sprite_class(Banana)
