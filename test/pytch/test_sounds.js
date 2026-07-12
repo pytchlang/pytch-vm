@@ -188,6 +188,14 @@ describe("waiting and non-waiting sounds", () => {
                 project_one_frame();
                 assert_running_performances([]);
             }
+
+            const sorted_reports = (
+                pytch_stdout.drain_stdout()
+                    .split("\n")
+                    .sort()
+                    .join(" | ")
+            );
+            assert.equal(sorted_reports, " | A 0.25 | B 1.0");
         }));
 
     it("can play violin", async () => {

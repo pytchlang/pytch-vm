@@ -26,12 +26,14 @@ class Band(Sprite, StringOrIndexes):
         self.set_sound_volume(0.25)
         self.is_clone = False
         pytch.create_clone_of(self)
+        print("A", self.sound_volume)
 
     @when_I_receive("band-setup-prop")
     def init_prop(self):
         self.sound_volume = 0.25
         self.is_clone = False
         pytch.create_clone_of(self)
+        print("A", self.sound_volume)
 
     @when_I_receive("band-play")
     def play_instruments(self):
@@ -51,6 +53,7 @@ class Band(Sprite, StringOrIndexes):
     def clone_init(self):
         self.is_clone = True
         self.set_sound_volume(1.0)
+        print("B", self.sound_volume)
 
 
 class Orchestra(Sprite, StringOrIndexes):
