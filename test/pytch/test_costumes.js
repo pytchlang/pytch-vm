@@ -74,6 +74,12 @@ describe("Costume handling", () => {
             project.do_synthetic_broadcast(`switch-to-firing${spec.message_suffix}`)
             assert_info("1 firing\n");
 
+            const exp_render = [
+                ["RenderImage", 0, 0, 1, "wooden-stage"],
+                ["RenderImage", 0, 0, 1, "firing"],
+            ];
+            assert_renders_as("costume-1", project, exp_render);
+
             project.do_synthetic_broadcast(`switch-to-marching${spec.message_suffix}`)
             assert_info("0 marching\n");
         }));
@@ -88,6 +94,12 @@ describe("Costume handling", () => {
 
             project.do_synthetic_broadcast(`switch-to-sky${spec.message_suffix}`)
             assert_info("1 sunny-sky\n");
+
+            const exp_render = [
+                ["RenderImage", 0, 0, 1, "sunny-sky"],
+                ["RenderImage", 0, 0, 1, "marching"],
+            ];
+            assert_renders_as("backdrop-1", project, exp_render);
 
             project.do_synthetic_broadcast(`switch-to-white${spec.message_suffix}`)
             assert_info("2 solid-white-stage\n");
@@ -104,6 +116,12 @@ describe("Costume handling", () => {
             assert_info("1 firing\n"
                         + "0 marching\n"
                         + "1 firing\n");
+
+            const exp_render = [
+                ["RenderImage", 0, 0, 1, "wooden-stage"],
+                ["RenderImage", 0, 0, 1, "firing"],
+            ];
+            assert_renders_as("end", project, exp_render);
         }));
 
         property_set_mechanism_specs.forEach(spec =>
@@ -115,6 +133,12 @@ describe("Costume handling", () => {
                         + "1 sunny-sky\n"
                         + "2 solid-white-stage\n"
                         + "1 sunny-sky\n");
+
+            const exp_render = [
+                ["RenderImage", 0, 0, 1, "sunny-sky"],
+                ["RenderImage", 0, 0, 1, "marching"],
+            ];
+            assert_renders_as("end", project, exp_render);
         }));
     });
 
