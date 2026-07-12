@@ -123,7 +123,11 @@ class DelegatingProp:
         )
 
 
-class Actor:
+class ActorMeta(type):
+    pass
+
+
+class Actor(metaclass=ActorMeta):
     Sounds = []
     _appearance_names = None
 
@@ -280,7 +284,11 @@ class Actor:
         create_clone_of(original_cls_or_obj)
 
 
-class Sprite(Actor):
+class SpriteMeta(ActorMeta):
+    pass
+
+
+class Sprite(Actor, metaclass=SpriteMeta):
     "The starting class for all your sprites"
 
     Costumes = []
@@ -552,7 +560,11 @@ class Sprite(Actor):
         create_clone_of(self)
 
 
-class Stage(Actor):
+class StageMeta(ActorMeta):
+    pass
+
+
+class Stage(Actor, metaclass=StageMeta):
     "The starting class for your stage"
 
     Backdrops = []
