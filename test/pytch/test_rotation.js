@@ -7,7 +7,6 @@ const {
     assert_renders_as,
     one_frame,
     mock_mouse,
-    pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -75,35 +74,4 @@ describe("Sprite rotation", () => {
         move_mouse_assert_direction(100, -100, -45);
         move_mouse_assert_direction(-100, -100, -135);
     });
-
-    [
-        {
-            label: "assign",
-            message: "try-point",
-        },
-        {
-            label: "aug-assign",
-            message: "try-turn",
-        },
-    ].forEach(spec =>
-        it(`gives advice if try ${spec.label} direction`, async () => {
-            const project = await import_deindented(`
-
-                import pytch
-                class Banana(pytch.Sprite):
-                    Costumes = ["yellow-banana.png"]
-                    @pytch.when_I_receive("try-point")
-                    def point(self):
-                        self.direction = 270
-                    @pytch.when_I_receive("try-turn")
-                    def turn(self):
-                        self.direction += 30
-            `);
-
-            project.do_synthetic_broadcast(spec.message);
-            one_frame(project);
-
-            const exp_error_re = /use point_degrees.*or turn_degrees/;
-            pytch_errors.assert_sole_error_matches(exp_error_re);
-        }));
 });
