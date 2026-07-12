@@ -37,10 +37,12 @@ class Ball(Sprite):
     @when_I_receive('bigger')
     def bigger(self):
         self.set_size(self.size * 3)
+        print(self.size)
 
     @when_I_receive('bigger-prop')
     def bigger_prop(self):
         self.size *= 3
+        print(self.size)
 
     @when_I_receive('check-keys')
     def check_keys(self):

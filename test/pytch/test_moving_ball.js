@@ -8,6 +8,7 @@ const {
     assert_renders_as,
     mock_keyboard,
     property_set_mechanism_specs,
+    pytch_stdout,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -83,6 +84,7 @@ describe("moving ball example", () => {
 		one_frame(project);
 
 		assert_renders_as("end", project, ball_at(100, 50, 3.0));
+		assert.equal(pytch_stdout.drain_stdout(), "3.0\n");
 	    }));
 
         it("responds to key presses", async () => {
