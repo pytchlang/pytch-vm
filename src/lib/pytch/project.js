@@ -1756,6 +1756,7 @@ var $builtinmodule = function (name) {
         }
 
         async register_stage_class(py_stage_cls) {
+            this.ensure_no_existing_registration("Stage", py_stage_cls);
             Sk.builtin.setattr(py_stage_cls, s_pytch_parent_project, this.py_project);
             let stage = await PytchStage.async_create(py_stage_cls, this);
             // Ensure Stage is first in 'actors' array, so that it renders
