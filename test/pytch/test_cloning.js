@@ -400,6 +400,10 @@ describe("cloning", () => {
                 class Balloon(pytch.Sprite):
                     Costumes = [('balloon', 'balloon.png', 0, 0)]
 
+                    @pytch.when_I_receive("init-coords")
+                    def go_to_start(self):
+                        self.go_to_xy(30, 40)
+
                     @pytch.when_I_receive("make-clone-x")
                     def make_clone_x(self):
                         self.step_dir = "x"
@@ -424,8 +428,11 @@ describe("cloning", () => {
                 = (exp_locations) => assert.deepStrictEqual(locations(),
                                                             exp_locations);
 
+            project.do_synthetic_broadcast("init-coords");
+            one_frame(project);
+
             // There should only be the original, and it hasn't moved.
-            assert_render_locations([[0, 0]])
+            assert_render_locations([[30, 40]])
 
             // Allow two frames; one for the broadcast and one for the
             // when-I-start-as-clone thread to run.
@@ -434,7 +441,7 @@ describe("cloning", () => {
 
             // The clone, which has stepped in the x-dirn, should appear behind the
             // original, i.e., before it in the render list.
-            assert_render_locations([[40, 0], [0, 0]])
+            assert_render_locations([[70, 40], [30, 40]])
 
             project.do_synthetic_broadcast("make-clone-y");
             many_frames(project, 2);
@@ -443,7 +450,7 @@ describe("cloning", () => {
             // behind their respective parents, i.e., just before them in the render
             // list.  (The original stays at the very front, i.e., the very last
             // item in the render list.)
-            assert_render_locations([[40, 40], [40, 0], [0, 40], [0, 0]])
+            assert_render_locations([[70, 80], [70, 40], [30, 80], [30, 40]])
         });
     });
 
