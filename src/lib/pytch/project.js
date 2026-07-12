@@ -1749,6 +1749,7 @@ var $builtinmodule = function (name) {
         }
 
         async register_sprite_class(py_sprite_cls) {
+            this.ensure_no_existing_registration("Sprite", py_sprite_cls);
             Sk.builtin.setattr(py_sprite_cls, s_pytch_parent_project, this.py_project);
             let sprite = await PytchSprite.async_create(py_sprite_cls, this);
             this.actors.push(sprite);
