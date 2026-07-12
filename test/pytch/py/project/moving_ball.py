@@ -34,6 +34,14 @@ class Ball(Sprite):
     def move_random(self):
         self.go_to_random_position()
 
+    @when_I_receive('bigger')
+    def bigger(self):
+        self.set_size(self.size * 3)
+
+    @when_I_receive('bigger-prop')
+    def bigger_prop(self):
+        self.size *= 3
+
     @when_I_receive('check-keys')
     def check_keys(self):
         self.keys_pressed = ''.join(kn for kn in 'abc' if pytch.key_pressed(kn))
