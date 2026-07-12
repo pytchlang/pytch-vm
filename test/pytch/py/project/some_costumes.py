@@ -45,6 +45,23 @@ class Alien(Sprite):
     def switch_to_firing(self):
         self.switch_costume("firing")
 
+    @pytch.when_I_receive("switch-costume-by-number-prop")
+    def switch_costume_by_number_prop(self):
+        self.costume_number = 1
+        self.print_current_costume()
+        self.costume_number = 0
+        self.print_current_costume()
+        self.costume_number += 1
+        self.print_current_costume()
+
+    @pytch.when_I_receive("switch-to-marching-prop")
+    def switch_to_marching_prop(self):
+        self.costume_name = "marching"
+
+    @pytch.when_I_receive("switch-to-firing-prop")
+    def switch_to_firing_prop(self):
+        self.costume_name = "firing"
+
     @pytch.when_I_receive("set-appearance-index-attribute-None")
     def corrupt_appearance_index_None(self):
         self._appearance_index = None
@@ -110,6 +127,31 @@ class Background(pytch.Stage):
     @pytch.when_I_receive("switch-to-white")
     def switch_to_white(self):
         self.switch_backdrop("solid-white-stage")
+
+    @pytch.when_I_receive("switch-backdrop-by-number-prop")
+    def switch_backdrop_by_number_prop(self):
+        self.backdrop_number = 1
+        self.print_current_backdrop()
+        self.backdrop_number = 0
+        self.print_current_backdrop()
+        self.backdrop_number = 1
+        self.print_current_backdrop()
+        self.backdrop_number += 1
+        self.print_current_backdrop()
+        self.backdrop_number -= 1
+        self.print_current_backdrop()
+
+    @pytch.when_I_receive("switch-to-wooden-prop")
+    def switch_to_wooden_prop(self):
+        self.backdrop_name = "wooden-stage"
+
+    @pytch.when_I_receive("switch-to-sky-prop")
+    def switch_to_sky_prop(self):
+        self.backdrop_name = "sunny-sky"
+
+    @pytch.when_I_receive("switch-to-white-prop")
+    def switch_to_white_prop(self):
+        self.backdrop_name = "solid-white-stage"
 
 
 # --cut-here-for-auto-config--
