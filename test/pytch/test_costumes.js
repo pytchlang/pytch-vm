@@ -475,5 +475,4 @@ describe("Costume handling", () => {
         assert_renders_as("after-green-flag", project,
                           [["RenderImage", 0, 0, 1, "firing-alien"]]);
     });
-
 });
