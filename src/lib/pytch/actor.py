@@ -139,20 +139,20 @@ class Actor(metaclass=ActorMeta):
         "(SOUND) Play SOUND; pause until it finishes playing"
         play_sound(self, sound_locator, True)
 
+    def _get_sound_volume(self):
+        "Volume of sounds played by SELF"
+        return _get_actor_sound_mix_bus_gain(self)
+
     def set_sound_volume(self, gain):
         "(VOLUME) Set volume for sounds played by SELF to VOLUME"
         _set_actor_sound_mix_bus_gain(self, gain)
+
+    sound_volume = DelegatingProp(_get_sound_volume, set_sound_volume)
 
     def change_sound_volume(self, d_gain):
         "(D_VOLUME) Make sounds played by SELF be D_VOLUME louder"
         new_gain = self.sound_volume + d_gain
         _set_actor_sound_mix_bus_gain(self, new_gain)
-
-    def _get_sound_volume(self):
-        "Volume of sounds played by SELF"
-        return _get_actor_sound_mix_bus_gain(self)
-
-    sound_volume = DelegatingProp(_get_sound_volume, set_sound_volume)
 
     @classmethod
     def ensure_have_appearance_names(cls):
@@ -383,27 +383,27 @@ class Sprite(Actor, metaclass=SpriteMeta):
 
     distance_to_mouse = DelegatingProp(_get_distance_to_mouse)
 
+    def _get_direction(self):
+        "The direction SELF is pointing (in degrees)"
+        return 180.0 * self._rotation / MATH_PI
+
+    def point_degrees(self, angle):
+        "(ANGLE) Set rotation to ANGLE degrees"
+        self._rotation = MATH_PI * angle / 180.0
+
+    direction = DelegatingProp(_get_direction, point_degrees)
+
     def turn_degrees(self, d_angle):
         "(ANGLE) Turn ANGLE degrees anticlockwise"
         d_angle_radians = MATH_PI * d_angle / 180.0
         self._rotation += d_angle_radians
         self._rotation %= (2.0 * MATH_PI)
 
-    def point_degrees(self, angle):
-        "(ANGLE) Set rotation to ANGLE degrees"
-        self._rotation = MATH_PI * angle / 180.0
-
     def point_towards_mouse(self):
         "() Point SELF towards the mouse pointer"
         dx = self.mouse_x - self._x
         dy = self.mouse_y - self._y
         self._rotation = atan2(dy, dx)
-
-    def _get_direction(self):
-        "The direction SELF is pointing (in degrees)"
-        return 180.0 * self._rotation / MATH_PI
-
-    direction = DelegatingProp(_get_direction, point_degrees)
 
     def glide_to_xy(self, destination_x, destination_y, seconds, easing="linear"):
         "(X, Y, SECONDS) Move SELF smoothly to (X, Y), taking SECONDS"
@@ -443,13 +443,13 @@ class Sprite(Actor, metaclass=SpriteMeta):
         "(SECONDS) Move SELF smoothly to the mouse pointer, taking SECONDS"
         self.glide_to_xy(self.mouse_x, self.mouse_y, seconds, easing)
 
-    def set_size(self, size):
-        "(SIZE) Set SELF's size to SIZE"
-        self._size = size
-
     def _get_size(self):
         "SELF's current size"
         return self._size
+
+    def set_size(self, size):
+        "(SIZE) Set SELF's size to SIZE"
+        self._size = size
 
     size = DelegatingProp(_get_size, set_size)
 
@@ -464,19 +464,19 @@ class Sprite(Actor, metaclass=SpriteMeta):
         "() Make SELF invisible"
         self._shown = False
 
-    def switch_costume(self, costume_name):
-        "(COSTUME) Switch SELF to wearing COSTUME (name/number)"
-        self.switch_appearance(costume_name)
-
-    def next_costume(self, n_steps=1):
-        "(N=1) Switch SELF to Nth next costume, looping if past last"
-        self.next_appearance(n_steps)
-
     def _get_costume_number(self):
         "The number of the costume SELF is currently wearing"
         return self.appearance_number
 
+    def switch_costume(self, costume_name):
+        "(COSTUME) Switch SELF to wearing COSTUME (name/number)"
+        self.switch_appearance(costume_name)
+
     costume_number = DelegatingProp(_get_costume_number, switch_costume)
+
+    def next_costume(self, n_steps=1):
+        "(N=1) Switch SELF to Nth next costume, looping if past last"
+        self.next_appearance(n_steps)
 
     def _get_costume_name(self):
         "The name of the costume SELF is currently wearing"
@@ -599,19 +599,19 @@ class Stage(Actor, metaclass=StageMeta):
         "() Return the only Stage instance"
         return registered_instances(cls)[0]
 
-    def switch_backdrop(self, backdrop_name):
-        "(BACKDROP) Switch to the BACKDROP (name/number)"
-        self.switch_appearance(backdrop_name)
-
-    def next_backdrop(self, n_steps=1):
-        "(N=1) Switch SELF to Nth next backdrop, looping if past last"
-        self.next_appearance(n_steps)
-
     def _get_backdrop_number(self):
         "The number of the backdrop SELF is currently showing"
         return self.appearance_number
 
+    def switch_backdrop(self, backdrop_name):
+        "(BACKDROP) Switch to the BACKDROP (name/number)"
+        self.switch_appearance(backdrop_name)
+
     backdrop_number = DelegatingProp(_get_backdrop_number, switch_backdrop)
+
+    def next_backdrop(self, n_steps=1):
+        "(N=1) Switch SELF to Nth next backdrop, looping if past last"
+        self.next_appearance(n_steps)
 
     def _get_backdrop_name(self):
         "The name of the backdrop SELF is currently showing"
