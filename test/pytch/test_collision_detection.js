@@ -8,6 +8,7 @@ const {
     call_method,
     import_deindented,
     one_frame,
+    broadcast_and_step,
     pytch_errors,
     mock_mouse,
 } = require("./pytch-testing.js");
@@ -38,8 +39,7 @@ describe("collision detection", () => {
                             pass
             `);
 
-            project.do_synthetic_broadcast("go")
-            one_frame(project);
+            broadcast_and_step(project, "go");
             pytch_errors.assert_sole_error_matches(
                 /target_class must be.*Sprite class/
             );

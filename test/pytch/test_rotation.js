@@ -6,6 +6,7 @@ const {
     assert_float_close,
     assert_renders_as,
     one_frame,
+    broadcast_and_step,
     mock_mouse,
     property_set_mechanism_specs,
 } = require("./pytch-testing.js");
@@ -18,8 +19,7 @@ configure_mocha();
 
 describe("Sprite rotation", () => {
     const assert_Banana_direction = (project, msg, exp_direction) => {
-	project.do_synthetic_broadcast(msg)
-	one_frame(project);
+	broadcast_and_step(project, msg);
 
         const banana = project.instance_0_by_class_name("Banana");
 	const got_direction = banana.js_attr("direction");

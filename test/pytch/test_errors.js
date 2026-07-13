@@ -9,6 +9,7 @@ const {
     js_getattr,
     many_frames,
     one_frame,
+    broadcast_and_step,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -45,8 +46,7 @@ describe("error handling", () => {
             const assert_n_ticks
                   = (exp_n_ticks) => assert.equal(n_ticks(), exp_n_ticks);
 
-            project.do_synthetic_broadcast("go");
-            one_frame(project, { expect_last_frame_to_raise_exception: false });
+            broadcast_and_step(project, "go", { expect_last_frame_to_raise_exception: false });
 
             // We should have done the first iteration of the 'while'.
             assert_n_ticks(1);
@@ -93,8 +93,7 @@ describe("error handling", () => {
                     pytch.wait_seconds("42")
         `);
 
-        project.do_synthetic_broadcast("bad-wait");
-        one_frame(project);
+        broadcast_and_step(project, "bad-wait");
         pytch_errors.assert_sole_error_matches(/must be given a number/);
     });
 
@@ -113,9 +112,7 @@ describe("error handling", () => {
                     # should not get here
         `);
 
-        project.do_synthetic_broadcast("run");
-        one_frame(project, { expect_last_frame_to_raise_exception: true });
-
+        broadcast_and_step(project, "run", { expect_last_frame_to_raise_exception: true });
         pytch_errors.assert_sole_error_matches(/non-Pytch suspension/);
     });
 });

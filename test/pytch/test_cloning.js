@@ -6,6 +6,7 @@ const {
     assert,
     many_frames,
     one_frame,
+    broadcast_and_step,
     import_deindented,
     pytch_errors,
     pytch_stdout,
@@ -319,8 +320,7 @@ describe("cloning", () => {
             return raw_xs;
         };
 
-        project.do_synthetic_broadcast("run");
-        one_frame(project);
+        broadcast_and_step(project, "run");
         assert.deepStrictEqual(banana_xs(), [42]);
 
         // After the broadcast, we need one frame for the handler to
@@ -347,8 +347,7 @@ describe("cloning", () => {
             ${codeForPear}
         `);
 
-        project.do_synthetic_broadcast("clone");
-        one_frame(project);
+        broadcast_and_step(project, "clone");
 
         pytch_errors.assert_sole_error_matches(
             /cls must be a Pytch-registered Sprite class/
@@ -434,8 +433,7 @@ describe("cloning", () => {
                 = (exp_locations) => assert.deepStrictEqual(locations(),
                                                             exp_locations);
 
-            project.do_synthetic_broadcast("init-coords");
-            one_frame(project);
+            broadcast_and_step(project, "init-coords");
 
             // There should only be the original, and it hasn't moved.
             assert_render_locations([[30, 40]])
@@ -462,14 +460,12 @@ describe("cloning", () => {
 
     it("class props give coords of original instance", async () => {
         const project = await import_deindented(cloning_code({ target: "pytch" }));
-        project.do_synthetic_broadcast("init-coords");
-        one_frame(project);
+        broadcast_and_step(project, "init-coords");
         project.do_synthetic_broadcast("make-clone-x");
         many_frames(project, 2);
         project.do_synthetic_broadcast("make-clone-y");
         many_frames(project, 2);
-        project.do_synthetic_broadcast("report-original-coords");
-        one_frame(project);
+        broadcast_and_step(project, "report-original-coords");
 
         // Should see the original's coords emitted by every instance:
         assert.equal(pytch_stdout.drain_stdout(), "30 40\n30 40\n30 40\n30 40\n");

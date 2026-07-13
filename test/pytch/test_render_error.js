@@ -8,6 +8,7 @@ const {
     js_getattr,
     many_frames,
     one_frame,
+    broadcast_and_step,
 } = require("./pytch-testing.js");
 configure_mocha();
 
@@ -51,8 +52,7 @@ describe("rendering error-handler", () => {
             many_frames(project, 10, { call_rendering_instructions: false });
             assert.equal(counter_value(), 10);
 
-            project.do_synthetic_broadcast("trouble");
-            one_frame(project, { call_rendering_instructions: false });
+            broadcast_and_step(project, "trouble", { call_rendering_instructions: false });
             assert.strictEqual(project.rendering_instructions(), null);
             const thrown_errors = pytch_errors.drain_errors();
             assert.equal(thrown_errors.length, 1);

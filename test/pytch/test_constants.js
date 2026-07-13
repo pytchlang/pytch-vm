@@ -4,6 +4,7 @@ const {
     configure_mocha,
     import_deindented,
     one_frame,
+    broadcast_and_step,
     pytch_stdout,
     assert,
 } = require("./pytch-testing.js");
@@ -26,8 +27,7 @@ describe("Module-level constants", () => {
                           f" stage {pytch.STAGE_WIDTH}x{pytch.STAGE_HEIGHT}")
         `);
 
-        project.do_synthetic_broadcast("run")
-        one_frame(project);
+        broadcast_and_step(project, "run");
         const stdout = pytch_stdout.drain_stdout();
         assert.equal(stdout, "60 fps; stage 480x360\n");
     });

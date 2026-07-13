@@ -3,6 +3,7 @@
 const {
     configure_mocha,
     one_frame,
+    broadcast_and_step,
     import_deindented,
     pytch_errors,
 } = require("./pytch-testing.js");
@@ -52,8 +53,7 @@ describe("assignment to class attribute", () => {
                 `);
 
             const assert_error_on_assign = (msg_suffix, cls_name) => {
-                project.do_synthetic_broadcast(`bad-set-${msg_suffix}`);
-                one_frame(project);
+                broadcast_and_step(project, `bad-set-${msg_suffix}`);
                 pytch_errors.assert_sole_error_matches(
                     new RegExp(
                         `property '${attr}' of '${cls_name}'.*not on the class`

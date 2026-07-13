@@ -6,6 +6,7 @@ const {
     assert,
     many_frames,
     one_frame,
+    broadcast_and_step,
     js_getattr,
     mock_mouse,
 } = require("./pytch-testing.js");
@@ -23,8 +24,7 @@ describe("z-order operations", () => {
 
             let assert_order_after_messages = (messages, exp_class_names) => {
                 for (const message of messages) {
-                    project.do_synthetic_broadcast(message);
-                    one_frame(project);
+                    broadcast_and_step(project, message);
                 }
 
                 // TODO: Can we get at DrawLayerGroup.SPRITES here, and
@@ -72,8 +72,7 @@ describe("z-order of clones with deletion", () => {
         it("does not draw a deleted clone", async () => {
             let project = await import_project();
 
-            project.do_synthetic_broadcast("init");
-            one_frame(project);
+            broadcast_and_step(project, "init");
 
             // Create 7 clones; each broadcast clones all existing instances.
             for (let i = 0; i != 3; ++i) {
@@ -101,8 +100,7 @@ describe("z-order of clones with deletion", () => {
 
             // We request deletion of Banana 1003; it should then be gone from
             // the draw-list.
-            project.do_synthetic_broadcast("delete-1003");
-            one_frame(project);
+            broadcast_and_step(project, "delete-1003");
             assert_unordered_banana_ids(
                 [1000, 1001, 1002, /* no 1003 */ 1004, 1005, 1006, 1007]);
 
@@ -131,14 +129,12 @@ describe("clicking choose top sprite by z-order", () => {
             };
 
             const summon_to_front_and_click = (sprite_tag) => {
-                project.do_synthetic_broadcast(`${sprite_tag}-front`);
-                one_frame(project);
+                broadcast_and_step(project, `${sprite_tag}-front`);
                 click();
             };
 
             const hide_and_click = (sprite_tag) => {
-                project.do_synthetic_broadcast(`${sprite_tag}-hide`);
-                one_frame(project);
+                broadcast_and_step(project, `${sprite_tag}-hide`);
                 click();
             };
 

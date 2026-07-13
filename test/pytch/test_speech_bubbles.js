@@ -8,6 +8,7 @@ const {
     SpeechAssertions,
     many_frames,
     one_frame,
+    broadcast_and_step,
     assert_n_speaker_ids,
     pytch_errors,
     pytch_stdout,
@@ -72,13 +73,11 @@ describe("Speech bubbles", () => {
             assert_speech.is("startup", true, []);
 
             // Launch a half-second speech.
-            project.do_synthetic_broadcast("talk-briefly");
-            one_frame(project);
+            broadcast_and_step(project, "talk-briefly");
             assert_speech.is("after-talk-briefly", true, [["Mumble", 0, 15]]);
 
             // Launch the longer speech; it should replace the "Mumble".
-            project.do_synthetic_broadcast("say-goodbye");
-            one_frame(project);
+            broadcast_and_step(project, "say-goodbye");
             assert_speech.is("immed-after-say-goodbye", true, [["Bye!", 0, 15]]);
 
             // The "Bye!" should persist for a whole second.  (We've already
@@ -102,13 +101,11 @@ describe("Speech bubbles", () => {
             const assert_speech = make_SpeechAssertions(project);
 
             // Launch a half-second speech.
-            project.do_synthetic_broadcast("talk-briefly");
-            one_frame(project);
+            broadcast_and_step(project, "talk-briefly");
             assert_speech.is("after-talk-briefly", true, [["Mumble", 0, 15]]);
 
             // Quickly silence the banana.
-            project.do_synthetic_broadcast("silence");
-            one_frame(project);
+            broadcast_and_step(project, "silence");
             assert_speech.is("after-silence", true, []);
 
             // Nothing bad should happen if we run for another second;
@@ -142,8 +139,7 @@ describe("Speech bubbles", () => {
             const assert_speech = make_SpeechAssertions(project);
 
             // Launch chat and check first bubble.
-            project.do_synthetic_broadcast("silence-for-seconds");
-            one_frame(project);
+            broadcast_and_step(project, "silence-for-seconds");
             assert_speech.is("after-silence", true, []);
         });
 
@@ -215,8 +211,7 @@ describe("Speech bubbles", () => {
                 assert.deepStrictEqual(got_bubbles, exp_bubbles);
             };
 
-            project.do_synthetic_broadcast("talk");
-            one_frame(project);
+            broadcast_and_step(project, "talk");
             assert_bubble_contents(["Hello world"]);
 
             spec.action(project);
@@ -237,8 +232,7 @@ describe("Speech bubbles", () => {
                     self.say(42.25)
         `);
 
-        project.do_synthetic_broadcast("move-and-talk");
-        one_frame(project);
+        broadcast_and_step(project, "move-and-talk");
         const assert_speech = new SpeechAssertions(
             project,
             ["RenderImage", 40, 20, 1, "yellow-banana"]
@@ -258,8 +252,7 @@ describe("Speech bubbles", () => {
                     self.say(lambda x: x)
         `);
 
-        project.do_synthetic_broadcast("try-talk");
-        one_frame(project);
+        broadcast_and_step(project, "try-talk");
         pytch_errors.assert_sole_error_matches(/must be a string or number/);
     });
 
@@ -304,8 +297,7 @@ describe("Speech bubbles", () => {
                 self.say_for_seconds("hello", "three")
         `);
 
-        project.do_synthetic_broadcast("try-say");
-        one_frame(project);
+        broadcast_and_step(project, "try-say");
         pytch_errors.assert_sole_error_matches(/must be a number/);
     });
 });

@@ -5,6 +5,7 @@ const {
     assert,
     import_deindented,
     one_frame,
+    broadcast_and_step,
     many_frames,
     pytch_stdout,
     assertLiveQuestion,
@@ -39,8 +40,7 @@ describe("Ask and wait for answer", () => {
 
         // Question should immediately be asked; execution should be blocked in
         // the first ask/answer, meaning nothing has been printed yet.
-        project.do_synthetic_broadcast("ask");
-        one_frame(project);
+        broadcast_and_step(project, "ask");
         assertLiveQuestion(project, "name?");
         assert.equal(pytch_stdout.drain_stdout(), "");
 
@@ -102,8 +102,7 @@ describe("Ask and wait for answer", () => {
         assertNoLiveQuestion(project);
 
         // Launch the banana question; should be asked immediately.
-        project.do_synthetic_broadcast("banana-ask")
-        one_frame(project);
+        broadcast_and_step(project, "banana-ask");
         assertLiveQuestion(project, "name?");
 
         // Launch the pear question; should be queued behind still-active banana
@@ -158,8 +157,7 @@ describe("Ask and wait for answer", () => {
                         self.ask_and_wait(lambda x: 42)
             `);
 
-            project.do_synthetic_broadcast(spec.message);
-            one_frame(project);
+            broadcast_and_step(project, spec.message);
 
             pytch_errors.assert_sole_error_matches(/question must be a string/);
         })
@@ -193,8 +191,7 @@ describe("Ask and wait for answer", () => {
 
         // Asking a question when hidden should put the prompt into the question
         // itself, so no speech bubble should happen.
-        project.do_synthetic_broadcast("ask-hidden");
-        one_frame(project);
+        broadcast_and_step(project, "ask-hidden");
         assert_speech.is("asking-hidden", false, []);
         assertLiveQuestion(project, "name?");
 
@@ -205,8 +202,7 @@ describe("Ask and wait for answer", () => {
         // Asking a question when shown should put the prompt into a speech
         // bubble on the Sprite asking the question, with the question itself
         // having no prompt.
-        project.do_synthetic_broadcast("ask-shown");
-        one_frame(project);
+        broadcast_and_step(project, "ask-shown");
         assert_speech.is("asking-hidden", true, [["age?", 0, 15]]);
         assertLiveQuestion(project, null);
 
@@ -223,8 +219,7 @@ describe("Ask and wait for answer", () => {
                     name = self.ask_and_wait("name?")
         `);
 
-        project.do_synthetic_broadcast("ask");
-        one_frame(project);
+        broadcast_and_step(project, "ask");
         assertLiveQuestion(project, "name?");
 
         project.on_red_stop_clicked();
@@ -249,12 +244,10 @@ describe("Ask and wait for answer", () => {
                         ${spec.target}.stop_all()
             `);
 
-            project.do_synthetic_broadcast("ask");
-            one_frame(project);
+            broadcast_and_step(project, "ask");
             assertLiveQuestion(project, "name?");
 
-            project.do_synthetic_broadcast("halt");
-            one_frame(project);
+            broadcast_and_step(project, "halt");
             assertNoLiveQuestion(project);
         });
     });

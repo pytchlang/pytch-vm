@@ -4,6 +4,7 @@ const {
     configure_mocha,
     with_project,
     one_frame,
+    broadcast_and_step,
     assert,
     mock_mouse,
 } = require("./pytch-testing.js");
@@ -33,18 +34,15 @@ describe("click detection", () => {
 
             assert_all_ids([42, 100]);
 
-            project.do_synthetic_broadcast("clone-self");
-            one_frame(project);
-            project.do_synthetic_broadcast("clone-self");
-            one_frame(project);
+            broadcast_and_step(project, "clone-self");
+            broadcast_and_step(project, "clone-self");
 
             // Extra frame to let all when-I'm-cloned handlers run:
             one_frame(project);
 
             assert_all_ids([42, 100, 101, 102, 103]);
 
-            project.do_synthetic_broadcast("hide-if-lt-102");
-            one_frame(project);
+            broadcast_and_step(project, "hide-if-lt-102");
             assert_all_ids([42, 102, 103]);
         })});
 

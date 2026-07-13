@@ -5,6 +5,7 @@ const {
     assert,
     import_deindented,
     one_frame,
+    broadcast_and_step,
     pytch_stdout,
     property_set_mechanism_specs,
 } = require("./pytch-testing.js");
@@ -51,8 +52,7 @@ describe("Position properties", () => {
                         print(f"{self.x_position} {self.y_position}")
             `);
 
-            project.do_synthetic_broadcast(`move${spec.message_suffix}`);
-            one_frame(project);
+            broadcast_and_step(project, `move${spec.message_suffix}`);
 
             const exp_output = [
                 "10 20\n",
@@ -81,8 +81,7 @@ describe("Position properties", () => {
                     print(f"{self.size}")
         `);
 
-        project.do_synthetic_broadcast("grow-and-shrink");
-        one_frame(project);
+        broadcast_and_step(project, "grow-and-shrink");
 
         const exp_output = "0.5\n2.5\n0.875\n"
         assert.equal(pytch_stdout.drain_stdout(), exp_output);

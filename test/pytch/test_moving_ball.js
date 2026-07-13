@@ -4,6 +4,7 @@ const {
     configure_mocha,
     with_project,
     one_frame,
+    broadcast_and_step,
     assert,
     assert_renders_as,
     mock_keyboard,
@@ -80,9 +81,7 @@ describe("moving ball example", () => {
 	    it(`changes size (${spec.label})`, async () => {
 		const project = await import_project();
 
-		project.do_synthetic_broadcast(`bigger${spec.message_suffix}`);
-		one_frame(project);
-
+		broadcast_and_step(project, `bigger${spec.message_suffix}`);
 		assert_renders_as("end", project, ball_at(100, 50, 3.0));
 		assert.equal(pytch_stdout.drain_stdout(), "3.0\n");
 	    }));
@@ -125,8 +124,7 @@ describe("moving ball example", () => {
                 let ball = project.instance_0_by_class_name("Ball");
 
                 const assert_keys = (exp_keys => {
-                    project.do_synthetic_broadcast(spec.message);
-                    one_frame(project);
+                    broadcast_and_step(project, spec.message);
                     assert.strictEqual(ball.js_attr("keys_pressed"), exp_keys);
                 });
 

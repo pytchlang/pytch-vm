@@ -4,6 +4,7 @@ const {
     configure_mocha,
     import_deindented,
     one_frame,
+    broadcast_and_step,
     assert,
     mock_mouse,
     pytch_stdout,
@@ -31,8 +32,7 @@ describe("mouse features", () => {
         `);
 
         function assert_state(exp_x, exp_y, exp_down) {
-            project.do_synthetic_broadcast("report");
-            one_frame(project);
+            broadcast_and_step(project, "report");
             const output = pytch_stdout.drain_stdout();
             const [x_str, y_str, down_str] = output.split(" ");
             assert.deepStrictEqual(
@@ -79,8 +79,7 @@ describe("mouse features", () => {
             `);
 
             function assert_state(exp_dist) {
-                project.do_synthetic_broadcast("report");
-                one_frame(project);
+                broadcast_and_step(project, "report");
                 const distance_str = pytch_stdout.drain_stdout();
                 assert.equal(distance_str, Math.round(exp_dist).toString());
             }
@@ -97,8 +96,7 @@ describe("mouse features", () => {
             mock_mouse.move(100, -200);
             assert_state(224);
 
-            project.do_synthetic_broadcast("move");
-            one_frame(project);
+            broadcast_and_step(project, "move");
             assert_state(280);
 
             mock_mouse.move(0, 0);
@@ -125,8 +123,7 @@ describe("mouse features", () => {
 
             function assert_state(x, y, exp_touching) {
                 mock_mouse.move(x, y)
-                project.do_synthetic_broadcast("report");
-                one_frame(project);
+                broadcast_and_step(project, "report");
                 const got_touching_str = pytch_stdout.drain_stdout();
                 const exp_touching_str = exp_touching ? "True" : "False";
                 assert.equal(got_touching_str, exp_touching_str);
@@ -171,9 +168,8 @@ describe("mouse features", () => {
                         # Value doesn't matter:
                         self.${attr} = 42
             `);
-            project.do_synthetic_broadcast("fail");
-            one_frame(project);
 
+            broadcast_and_step(project, "fail");
             const err_match = new RegExp(`property '${attr}'.*cannot be set`);
             pytch_errors.assert_sole_error_matches(err_match);
         }));

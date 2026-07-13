@@ -5,6 +5,7 @@ const {
     import_deindented,
     js_getattr,
     one_frame,
+    broadcast_and_step,
     assert,
     pytch_errors,
     assertBuildErrorFun,
@@ -87,9 +88,7 @@ describe("Multiple loop iterations per frame", () => {
                     pop_loop_iterations_per_frame()
         `);
 
-        project.do_synthetic_broadcast("trouble");
-        one_frame(project);
-
+        broadcast_and_step(project, "trouble");
         pytch_errors.assert_sole_error_matches(/cannot pop the base/);
     });
 
@@ -113,9 +112,7 @@ describe("Multiple loop iterations per frame", () => {
                            push_loop_iterations_per_frame(${spec.code_fragment})
                `);
 
-               project.do_synthetic_broadcast("trouble");
-               one_frame(project);
-
+               broadcast_and_step(project, "trouble");
                pytch_errors.assert_sole_error_matches(/positive integer required/);
            })
     );
