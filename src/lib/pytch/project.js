@@ -36,9 +36,8 @@ var $builtinmodule = function (name) {
     const js_getattr = (py_obj, py_attr_name) => (
         Sk.ffi.remapToJs(Sk.builtin.getattr(py_obj, py_attr_name)));
 
-    const name_of_py_class
-          = (py_cls =>
-             Sk.ffi.remapToJs(Sk.builtin.getattr(py_cls, Sk.builtin.str.$name)));
+    const name_of_py_class = (py_cls) =>
+        js_getattr(py_cls, Sk.builtin.str.$name);
 
     const js_hasattr = (py_obj, py_attr_name) => (
         (Sk.builtin.hasattr(py_obj, py_attr_name) === Sk.builtin.bool.true$));
