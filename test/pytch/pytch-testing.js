@@ -758,6 +758,14 @@ const many_frames = (project, n, options = {}) => {
 
 const one_frame = (project, options = {}) => many_frames(project, 1, options);
 
+// Broadcast MESSAGE and then run one frame of PROJECT, giving the
+// handlers launched by the broadcast a chance to run.  Additional
+// OPTIONS are passed to `one_frame()`.
+const broadcast_and_step = (project, message, options = {}) => {
+    project.do_synthetic_broadcast(message);
+    one_frame(project, options);
+};
+
 const appearance_by_name = (actor, appearance_name) => {
     const matches = actor._appearances.filter(a => a.label === appearance_name);
 
@@ -894,6 +902,7 @@ module.exports = {
     call_method,
     many_frames,
     one_frame,
+    broadcast_and_step,
     appearance_by_name,
     property_set_mechanism_specs,
     configure_mocha,

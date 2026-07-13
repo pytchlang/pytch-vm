@@ -11,6 +11,7 @@ const {
     assertBuildErrorFun,
     many_frames,
     one_frame,
+    broadcast_and_step,
     appearance_by_name,
     pytch_errors,
     pytch_stdout,
@@ -77,9 +78,7 @@ describe("Appearance prop types", () => {
             it(`${spec.label} (${base_cls})`, async () => {
                 const project = await import_project(base_cls, spec.bad_stmt);
 
-                project.do_synthetic_broadcast("break");
-                one_frame(project);
-
+                broadcast_and_step(project, "break");
                 pytch_errors.assert_sole_error_matches(spec.error_re);
             });
         }
@@ -125,8 +124,7 @@ describe("Costume handling", () => {
         });
 
         const assert_info_fun = (project, message) => (exp_stdout) => {
-            project.do_synthetic_broadcast(message);
-            one_frame(project);
+            broadcast_and_step(project, message);
             const stdout = pytch_stdout.drain_stdout();
             assert.equal(stdout, exp_stdout);
         };
@@ -231,9 +229,7 @@ describe("Costume handling", () => {
                         ${spec.stmt}
             `);
 
-            project.do_synthetic_broadcast("cause-trouble");
-            one_frame(project);
-
+            broadcast_and_step(project, "cause-trouble");
             pytch_errors.assert_sole_error_matches(/it only has 3/);
         }));
 
@@ -265,9 +261,7 @@ describe("Costume handling", () => {
                                self.${kind.methodname}(${spec.arg})
                    `);
 
-                   project.do_synthetic_broadcast("cause-trouble");
-                   one_frame(project);
-
+                   broadcast_and_step(project, "cause-trouble");
                    pytch_errors.assert_sole_error_matches(spec.error_regexp);
                });
         });
@@ -322,8 +316,7 @@ describe("Costume handling", () => {
                                print(self.appearance_number)
                    `);
 
-                   project.do_synthetic_broadcast("next");
-                   one_frame(project);
+                   broadcast_and_step(project, "next");
 
                    if (spec.exp_number !== undefined) {
                        const stdout = pytch_stdout.drain_stdout();
@@ -346,8 +339,7 @@ describe("Costume handling", () => {
                     self.next_costume()
         `);
 
-        project.do_synthetic_broadcast("try-next");
-        one_frame(project);
+        broadcast_and_step(project, "try-next");
         pytch_errors.assert_sole_error_matches(/has no Costumes/);
     });
 
@@ -484,9 +476,7 @@ describe("Costume handling", () => {
             it(`throws Python error on switching to unknown ${spec.tag}`, async () => {
                 let project = await import_project();
 
-                project.do_synthetic_broadcast(spec.message);
-                one_frame(project);
-
+                broadcast_and_step(project, spec.message);
                 pytch_errors.assert_sole_error_matches(spec.error_regexp);
             })})});
 
@@ -513,9 +503,7 @@ describe("Costume handling", () => {
 
             // But asking the costume-less sprite to show itself should produce an
             // error.
-            project.do_synthetic_broadcast("show-yourself");
-            one_frame(project);
-
+            broadcast_and_step(project, "show-yourself");
             pytch_errors.assert_sole_error_matches(/cannot show .* no Costumes/);
         })});
 

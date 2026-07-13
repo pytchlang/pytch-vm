@@ -5,6 +5,7 @@ const {
     with_project,
     with_module,
     one_frame,
+    broadcast_and_step,
     many_frames,
     assert,
     mock_sound_manager,
@@ -50,8 +51,7 @@ describe("waiting and non-waiting sounds", () => {
                         print("%.3f" % self.sound_volume)
             `);
 
-            project.do_synthetic_broadcast("set-volume");
-            one_frame(project);
+            broadcast_and_step(project, "set-volume");
             assert.equal(pytch_stdout.drain_stdout(), spec.exp_val + "\n");
         });
     });
@@ -82,16 +82,13 @@ describe("waiting and non-waiting sounds", () => {
                         self.sound_volume += "hello"
             `);
 
-            project.do_synthetic_broadcast(`bad-set-volume${spec.message_suffix}`);
-            one_frame(project);
+            broadcast_and_step(project, `bad-set-volume${spec.message_suffix}`);
             pytch_errors.assert_sole_error_matches(/must be given a number/);
 
-            project.do_synthetic_broadcast(`bad-change-volume-complex${spec.message_suffix}`);
-            one_frame(project);
+            broadcast_and_step(project, `bad-change-volume-complex${spec.message_suffix}`);
             pytch_errors.assert_sole_error_matches(/must be given a number/);
 
-            project.do_synthetic_broadcast(`bad-change-volume-string${spec.message_suffix}`);
-            one_frame(project);
+            broadcast_and_step(project, `bad-change-volume-string${spec.message_suffix}`);
             pytch_errors.assert_sole_error_matches(/unsupported operand type/);
         }));
 

@@ -3,7 +3,7 @@
 const {
     configure_mocha,
     import_deindented,
-    one_frame,
+    broadcast_and_step,
     pytch_stdout,
     assert,
 } = require("./pytch-testing.js");
@@ -40,8 +40,7 @@ describe("Docstrings", () => {
                         print(${spec.clsName}.__dict__['${spec.attrName}'].__doc__)
             `);
 
-            project.do_synthetic_broadcast("run");
-            one_frame(project);
+            broadcast_and_step(project, "run");
 
             const stdout = pytch_stdout.drain_stdout();
             assert.match(stdout, spec.expRegex);

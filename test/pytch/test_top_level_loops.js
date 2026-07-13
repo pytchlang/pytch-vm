@@ -4,7 +4,7 @@ const {
     configure_mocha,
     import_deindented,
     js_getattr,
-    one_frame,
+    broadcast_and_step,
     assert,
     assertBuildErrorFun,
 } = require("./pytch-testing.js");
@@ -51,8 +51,7 @@ describe("Use of for/while loops at module top-level", () => {
             const banana_0 = project.instance_0_by_class_name("Banana");
             const current_x = () => js_getattr(banana_0.py_object, "x");
 
-            project.do_synthetic_broadcast("read-x");
-            one_frame(project);
+            broadcast_and_step(project, "read-x");
             assert.strictEqual(current_x(), 0 + 1 + 2 + 3 + 4);
         })
     );

@@ -6,7 +6,7 @@ const {
     pytch_stdout,
     assert,
     assert_float_close,
-    one_frame,
+    broadcast_and_step,
     pytch_errors,
 } = require("./pytch-testing.js");
 configure_mocha();
@@ -61,8 +61,7 @@ describe("Glide easing", () => {
                 def bad_glide(self):
                     self.glide_to_xy(0, 120, 0.5, "no-such-easing")
         `);
-        project.do_synthetic_broadcast("run");
-        one_frame(project);
+        broadcast_and_step(project, "run");
         pytch_errors.assert_sole_error_matches(/not a known kind/);
     });
 

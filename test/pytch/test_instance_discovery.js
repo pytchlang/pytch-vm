@@ -6,6 +6,7 @@ const {
     assert,
     many_frames,
     one_frame,
+    broadcast_and_step,
     import_deindented,
     pytch_errors,
 } = require("./pytch-testing.js");
@@ -28,8 +29,7 @@ describe("instance discovery", () => {
         };
 
         const assert_result = ((project, message, exp_ids) => {
-            project.do_synthetic_broadcast(message);
-            one_frame(project);
+            broadcast_and_step(project, message);
 
             let scanner = project.instance_0_by_class_name("Scanner");
             let got_ids = scanner.js_attr("got_ids");
@@ -89,12 +89,10 @@ describe("misuse of instance-discovery API", () => {
                     pytch.Sprite.all_instances()
         `);
 
-        project.do_synthetic_broadcast("non-class");
-        one_frame(project);
+        broadcast_and_step(project, "non-class");
         pytch_errors.assert_sole_error_matches(/must be called with class/);
 
-        project.do_synthetic_broadcast("non-Pytch-class");
-        one_frame(project);
+        broadcast_and_step(project, "non-Pytch-class");
         pytch_errors.assert_sole_error_matches(/class not registered/);
     });
 });

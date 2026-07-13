@@ -4,6 +4,7 @@ const {
     configure_mocha,
     import_deindented,
     one_frame,
+    broadcast_and_step,
     many_frames,
     assert_renders_as,
     pytch_errors,
@@ -56,22 +57,19 @@ describe("Attribute watchers", () => {
             many_frames(project, 5);
             assert_renders_as("start", project, []);
 
-            project.do_synthetic_broadcast("watch-score");
-            one_frame(project);
+            broadcast_and_step(project, "watch-score");
 
             assert_renders_as("post-watch", project, [score_render_instrn]);
 
             // Re-watching should make no difference.
 
-            project.do_synthetic_broadcast("watch-score");
-            one_frame(project);
+            broadcast_and_step(project, "watch-score");
 
             assert_renders_as("post-second-watch", project, [score_render_instrn]);
 
             // Watch a second (instance) variable.
 
-            project.do_synthetic_broadcast("watch-health");
-            one_frame(project);
+            broadcast_and_step(project, "watch-health");
 
             const health_render_instrn = [
                 "RenderAttributeWatcher", "health", "99", 176, 220, null, null
@@ -82,23 +80,20 @@ describe("Attribute watchers", () => {
 
             // Re-watch a second (instance) variable; should make no difference.
 
-            project.do_synthetic_broadcast("watch-health");
-            one_frame(project);
+            broadcast_and_step(project, "watch-health");
 
             assert_renders_as("post-second-watch-health", project,
                             [score_render_instrn, health_render_instrn]);
 
             // Hide first instance-variable watcher.
 
-            project.do_synthetic_broadcast("unwatch-score");
-            one_frame(project);
+            broadcast_and_step(project, "unwatch-score");
 
             assert_renders_as("post-unwatch-score", project, [health_render_instrn]);
 
             // Hide second instance-variable watcher.
 
-            project.do_synthetic_broadcast("unwatch-health");
-            one_frame(project);
+            broadcast_and_step(project, "unwatch-health");
 
             assert_renders_as("post-unwatch-health", project, []);
         });
@@ -136,18 +131,15 @@ describe("Attribute watchers", () => {
                         pytch.hide_variable(${spec.owner_code}, "score")
             `);
 
-            project.do_synthetic_broadcast("watch-score");
-            one_frame(project);
+            broadcast_and_step(project, "watch-score");
             assert_renders_as("post-watch", project, [score_render_instrn]);
 
             // Re-watching should make no difference.
-            project.do_synthetic_broadcast("watch-score");
-            one_frame(project);
+            broadcast_and_step(project, "watch-score");
             assert_renders_as("post-second-watch", project, [score_render_instrn]);
 
             // Hide watcher.
-            project.do_synthetic_broadcast("unwatch-score");
-            one_frame(project);
+            broadcast_and_step(project, "unwatch-score");
             assert_renders_as("post-unwatch-health", project, []);
         }));
 
@@ -200,8 +192,7 @@ describe("Attribute watchers", () => {
                         _show_object_attribute(self, ${spec.args_tail})
             `);
 
-            project.do_synthetic_broadcast("show-attr");
-            one_frame(project);
+            broadcast_and_step(project, "show-attr");
 
             pytch_errors.assert_sole_error_matches(spec.error_regexp);
         }));
@@ -218,8 +209,7 @@ describe("Attribute watchers", () => {
                     _hide_object_attribute(self, 42.0)
         `);
 
-        project.do_synthetic_broadcast("hide-attr");
-        one_frame(project);
+        broadcast_and_step(project, "hide-attr");
 
         pytch_errors.assert_sole_error_matches(/attribute name must be string/);
     });
@@ -301,8 +291,7 @@ describe("Attribute watchers", () => {
                     pytch.show_variable(None, "score")
         `);
 
-        project.do_synthetic_broadcast("watch-score");
-        one_frame(project);
+        broadcast_and_step(project, "watch-score");
 
         const err = pytch_errors.sole_error();
         assert.match(err.err.toString(), /has no attribute/);
@@ -322,8 +311,7 @@ describe("Attribute watchers", () => {
                     pytch.show_variable("some-string", "height")
         `);
 
-        project.do_synthetic_broadcast("watch");
-        one_frame(project);
+        broadcast_and_step(project, "watch");
 
         const err = pytch_errors.sole_error();
         assert.strictEqual(err.ctx.kind, "attribute-watcher");
@@ -365,8 +353,7 @@ describe("Attribute watchers", () => {
 
         // Deleting the clone should remove the watcher which was watching
         // its "score" attribute.
-        project.do_synthetic_broadcast("delete-clone");
-        one_frame(project);
+        broadcast_and_step(project, "delete-clone");
 
         assert_renders_as("post-delete-clone", project, []);
     });

@@ -4,6 +4,7 @@ const {
     configure_mocha,
     import_deindented,
     one_frame,
+    broadcast_and_step,
     assert,
     mock_mouse,
     pytch_errors,
@@ -73,8 +74,7 @@ describe("Behaviour of glide-to method", () => {
 
         let banana = project.instance_0_by_class_name("Banana");
 
-        project.do_synthetic_broadcast("run");
-        one_frame(project);
+        broadcast_and_step(project, "run");
         assert.equal(banana.js_attr("_x"), 42);
         assert.equal(banana.js_attr("_y"), 123);
     });
@@ -113,9 +113,7 @@ describe("Behaviour of glide-to method", () => {
                         self.glide_to_xy(${spec.fragment})
             `);
 
-            project.do_synthetic_broadcast("run");
-            one_frame(project);
-
+            broadcast_and_step(project, "run");
             pytch_errors.assert_sole_error_matches(spec.error_regexp);
         });
     });
