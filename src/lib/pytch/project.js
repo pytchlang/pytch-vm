@@ -33,9 +33,11 @@ var $builtinmodule = function (name) {
     const s_Size = new Sk.builtin.str("size");
     const s_Centre = new Sk.builtin.str("centre");
 
-    const name_of_py_class
-          = (py_cls =>
-             Sk.ffi.remapToJs(Sk.builtin.getattr(py_cls, Sk.builtin.str.$name)));
+    const js_getattr = (py_obj, py_attr_name) => (
+        Sk.ffi.remapToJs(Sk.builtin.getattr(py_obj, py_attr_name)));
+
+    const name_of_py_class = (py_cls) =>
+        js_getattr(py_cls, Sk.builtin.str.$name);
 
     const js_hasattr = (py_obj, py_attr_name) => (
         (Sk.builtin.hasattr(py_obj, py_attr_name) === Sk.builtin.bool.true$));
@@ -44,9 +46,6 @@ var $builtinmodule = function (name) {
         (js_hasattr(py_obj, py_attr_name)
          ? [true, Sk.builtin.getattr(py_obj, py_attr_name)]
          : [false, null]));
-
-    const js_getattr = (py_obj, py_attr_name) => (
-        Sk.ffi.remapToJs(Sk.builtin.getattr(py_obj, py_attr_name)));
 
     /** Get attribute value as JavaScript object, requiring that it be
       * an Array.  This means the underlying Python attribute value
