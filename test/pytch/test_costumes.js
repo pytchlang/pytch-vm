@@ -21,6 +21,74 @@ configure_mocha();
 
 ////////////////////////////////////////////////////////////////////////////////
 //
+// Appearance property type-checking
+
+describe("Appearance prop types", () => {
+    const import_project = (base_cls, bad_stmt) =>
+        import_deindented(`
+            import pytch
+
+            class Banana(pytch.${base_cls}):
+                # Supply both; the unneeded one is ignore.
+                Costumes = ["balloon.png"]
+                Backdrops = ["wooden-stage.png"]
+
+                @pytch.when_I_receive("break")
+                def bad_set_appearance(self):
+                    ${bad_stmt}
+        `);
+
+    [
+        {
+            label: "switch_appearance() rejects bad reqd_type arg",
+            bad_stmt: "self.switch_appearance(0, float)",
+            error_re: /reqd_type must be one of/,
+        },
+        {
+            label: "assigning int to costume_name rejected",
+            base_cls: "Sprite",
+            bad_stmt: "self.costume_name = 0",
+            error_re: /could not switch Costume.*must be string/,
+        },
+        {
+            label: "assigning str to costume_number rejected",
+            base_cls: "Sprite",
+            bad_stmt: "self.costume_number = 'balloon'",
+            error_re: /could not switch Costume.*must be integer/,
+        },
+        {
+            label: "assigning int to backdrop_name rejected",
+            base_cls: "Stage",
+            bad_stmt: "self.backdrop_name = 0",
+            error_re: /could not switch Backdrop.*must be string/,
+        },
+        {
+            label: "assigning str to backdrop_number rejected",
+            base_cls: "Stage",
+            bad_stmt: "self.backdrop_number = 'wooden-stage'",
+            error_re: /could not switch Backdrop.*must be integer/,
+        },
+    ].forEach(spec => {
+        const base_classes = (
+            spec.base_cls ? [spec.base_cls] : ["Sprite", "Stage"]
+        );
+
+        for (const base_cls of base_classes) {
+            it(`${spec.label} (${base_cls})`, async () => {
+                const project = await import_project(base_cls, spec.bad_stmt);
+
+                project.do_synthetic_broadcast("break");
+                one_frame(project);
+
+                pytch_errors.assert_sole_error_matches(spec.error_re);
+            });
+        }
+    });
+});
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
 // Costume handling
 
 describe("Costume handling", () => {

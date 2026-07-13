@@ -161,10 +161,16 @@ class Actor(metaclass=ActorMeta):
                 appearance.label for appearance in cls._Appearances
             ]
 
-    def switch_appearance(self, appearance_name_or_index):
+    def switch_appearance(self, appearance_name_or_index, reqd_type=None):
+        str_ok = reqd_type is None or reqd_type is str
+        int_ok = reqd_type is None or reqd_type is int
+
+        if not (str_ok or int_ok):
+            raise ValueError("reqd_type must be one of [None, str, int]")
+
         self.ensure_have_appearance_names()
 
-        if isinstance(appearance_name_or_index, str):
+        if str_ok and isinstance(appearance_name_or_index, str):
             appearance_name = appearance_name_or_index
             if appearance_name not in self._appearance_names:
                 raise KeyError('could not find {} "{}" in class "{}"'
@@ -173,7 +179,7 @@ class Actor(metaclass=ActorMeta):
                                        self.__class__.__name__))
 
             self._appearance_index = self._appearance_names.index(appearance_name)
-        elif isinstance(appearance_name_or_index, int):
+        elif int_ok and isinstance(appearance_name_or_index, int):
             appearance_index = appearance_name_or_index
 
             if appearance_index < 0:
@@ -196,11 +202,23 @@ class Actor(metaclass=ActorMeta):
 
             self._appearance_index = appearance_index
         else:
+            reqd_type_description = (
+                "string or integer" if reqd_type is None
+                else "string" if reqd_type is str
+                else "integer"
+            )
             raise ValueError(
                 ('could not switch {} in class "{}":'
-                 ' argument must be string or integer')
+                 ' value must be {}')
                 .format(self._appearance_hyponym,
-                        self.__class__.__name__))
+                        self.__class__.__name__,
+                        reqd_type_description))
+
+    def switch_appearance_int(self, appearance_index):
+        self.switch_appearance(appearance_index, int)
+
+    def switch_appearance_str(self, appearance_index):
+        self.switch_appearance(appearance_index, str)
 
     def next_appearance(self, n_steps):
         if not isinstance(n_steps, int):
@@ -473,7 +491,7 @@ class Sprite(Actor, metaclass=SpriteMeta):
         "(COSTUME) Switch SELF to wearing COSTUME (name/number)"
         self.switch_appearance(costume_name)
 
-    costume_number = DelegatingProp(_get_costume_number, switch_costume)
+    costume_number = DelegatingProp(_get_costume_number, Actor.switch_appearance_int)
 
     def next_costume(self, n_steps=1):
         "(N=1) Switch SELF to Nth next costume, looping if past last"
@@ -483,7 +501,7 @@ class Sprite(Actor, metaclass=SpriteMeta):
         "The name of the costume SELF is currently wearing"
         return self.appearance_name
 
-    costume_name = DelegatingProp(_get_costume_name, switch_costume)
+    costume_name = DelegatingProp(_get_costume_name, Actor.switch_appearance_str)
 
     def touching(self, target_class):
         "(TARGET) Return whether SELF touches any TARGET instance"
@@ -608,7 +626,7 @@ class Stage(Actor, metaclass=StageMeta):
         "(BACKDROP) Switch to the BACKDROP (name/number)"
         self.switch_appearance(backdrop_name)
 
-    backdrop_number = DelegatingProp(_get_backdrop_number, switch_backdrop)
+    backdrop_number = DelegatingProp(_get_backdrop_number, Actor.switch_appearance_int)
 
     def next_backdrop(self, n_steps=1):
         "(N=1) Switch SELF to Nth next backdrop, looping if past last"
@@ -618,7 +636,7 @@ class Stage(Actor, metaclass=StageMeta):
         "The name of the backdrop SELF is currently showing"
         return self.appearance_name
 
-    backdrop_name = DelegatingProp(_get_backdrop_name, switch_backdrop)
+    backdrop_name = DelegatingProp(_get_backdrop_name, Actor.switch_appearance_str)
 
     def ask_and_wait(self, prompt):
         "(QUESTION) Ask question; wait for and return user's answer"
