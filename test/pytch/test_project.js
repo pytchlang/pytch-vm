@@ -90,7 +90,7 @@ describe("pytch.project module", () => {
             assert.strictEqual(appearance_by_name(table, "wooden").centre_x, 240);
         })});
 
-    with_project("py/project/bad_registrations.py", (import_project) => {
+    with_project("py/project/two_sprites.py", (import_project) => {
         describe("can look up Actors by name", async () => {
             it("can find unique Actor", async () => {
                 let project = await import_project();
