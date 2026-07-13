@@ -24,6 +24,8 @@ def _user_facing_completions():
         "appearance_number",
         "next_appearance",
         "switch_appearance",
+        "switch_appearance_str",
+        "switch_appearance_int",
     ]
 
     exclusions_by_parent = {
