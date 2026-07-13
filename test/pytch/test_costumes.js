@@ -143,6 +143,33 @@ describe("Costume handling", () => {
     });
 
     [
+        { label: "assign", stmt: "self.costume_number = 8" },
+        { label: "aug-assign", stmt: "self.costume_number += 8" },
+    ].forEach(spec =>
+        it(`rejects bad costume_number (${spec.label})`, async () => {
+            const project = await import_deindented(`
+
+                import pytch
+
+                class Banana(pytch.Sprite):
+                    Costumes = [
+                        "wooden-stage.png",
+                        "sunny-sky.png",
+                        "solid-white-stage.png",
+                    ]
+
+                    @pytch.when_I_receive("cause-trouble")
+                    def cause_trouble(self):
+                        ${spec.stmt}
+            `);
+
+            project.do_synthetic_broadcast("cause-trouble");
+            one_frame(project);
+
+            pytch_errors.assert_sole_error_matches(/it only has 3/);
+        }));
+
+    [
         { base: "Sprite", attrname: "Costumes", methodname: "switch_costume" },
         { base: "Stage", attrname: "Backdrops", methodname: "switch_backdrop" },
     ].forEach(kind => {
