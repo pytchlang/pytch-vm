@@ -217,6 +217,9 @@ class Actor(metaclass=ActorMeta):
     def switch_appearance_int(self, appearance_index):
         self.switch_appearance(appearance_index, int)
 
+    def switch_appearance_str(self, appearance_index):
+        self.switch_appearance(appearance_index, str)
+
     def next_appearance(self, n_steps):
         if not isinstance(n_steps, int):
             raise ValueError("n_steps must be integer")
