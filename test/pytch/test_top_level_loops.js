@@ -4,7 +4,6 @@ const {
     configure_mocha,
     import_deindented,
     js_getattr,
-    one_frame,
     broadcast_and_step,
     assert,
     assertBuildErrorFun,

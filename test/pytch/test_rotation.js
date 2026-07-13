@@ -5,7 +5,6 @@ const {
     import_deindented,
     assert_float_close,
     assert_renders_as,
-    one_frame,
     broadcast_and_step,
     mock_mouse,
     property_set_mechanism_specs,

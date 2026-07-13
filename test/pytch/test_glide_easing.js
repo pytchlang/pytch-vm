@@ -6,7 +6,6 @@ const {
     pytch_stdout,
     assert,
     assert_float_close,
-    one_frame,
     broadcast_and_step,
     pytch_errors,
 } = require("./pytch-testing.js");

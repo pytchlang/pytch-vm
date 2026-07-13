@@ -7,7 +7,6 @@ const {
     assert_has_bbox,
     call_method,
     import_deindented,
-    one_frame,
     broadcast_and_step,
     pytch_errors,
     mock_mouse,

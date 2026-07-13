@@ -4,7 +4,6 @@ const {
     configure_mocha,
     assert,
     import_deindented,
-    one_frame,
     broadcast_and_step,
     pytch_stdout,
     property_set_mechanism_specs,

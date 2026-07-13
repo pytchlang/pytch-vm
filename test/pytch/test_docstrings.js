@@ -3,7 +3,6 @@
 const {
     configure_mocha,
     import_deindented,
-    one_frame,
     broadcast_and_step,
     pytch_stdout,
     assert,

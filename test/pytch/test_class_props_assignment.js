@@ -2,7 +2,6 @@
 
 const {
     configure_mocha,
-    one_frame,
     broadcast_and_step,
     import_deindented,
     pytch_errors,
