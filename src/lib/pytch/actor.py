@@ -161,10 +161,16 @@ class Actor(metaclass=ActorMeta):
                 appearance.label for appearance in cls._Appearances
             ]
 
-    def switch_appearance(self, appearance_name_or_index):
+    def switch_appearance(self, appearance_name_or_index, reqd_type=None):
+        str_ok = reqd_type is None or reqd_type is str
+        int_ok = reqd_type is None or reqd_type is int
+
+        if not (str_ok or int_ok):
+            raise ValueError("reqd_type must be one of [None, str, int]")
+
         self.ensure_have_appearance_names()
 
-        if isinstance(appearance_name_or_index, str):
+        if str_ok and isinstance(appearance_name_or_index, str):
             appearance_name = appearance_name_or_index
             if appearance_name not in self._appearance_names:
                 raise KeyError('could not find {} "{}" in class "{}"'
@@ -173,7 +179,7 @@ class Actor(metaclass=ActorMeta):
                                        self.__class__.__name__))
 
             self._appearance_index = self._appearance_names.index(appearance_name)
-        elif isinstance(appearance_name_or_index, int):
+        elif int_ok and isinstance(appearance_name_or_index, int):
             appearance_index = appearance_name_or_index
 
             if appearance_index < 0:
@@ -196,11 +202,17 @@ class Actor(metaclass=ActorMeta):
 
             self._appearance_index = appearance_index
         else:
+            reqd_type_description = (
+                "string or integer" if reqd_type is None
+                else "string" if reqd_type is str
+                else "integer"
+            )
             raise ValueError(
                 ('could not switch {} in class "{}":'
-                 ' argument must be string or integer')
+                 ' value must be {}')
                 .format(self._appearance_hyponym,
-                        self.__class__.__name__))
+                        self.__class__.__name__,
+                        reqd_type_description))
 
     def next_appearance(self, n_steps):
         if not isinstance(n_steps, int):
