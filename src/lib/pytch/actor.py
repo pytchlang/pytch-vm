@@ -91,6 +91,38 @@ class DelegatingMetaclassProp:
         )
 
 
+class DelegatingProp:
+    def __init__(self, fget, fset=None):
+        self.fget = fget
+        self.fset = self.raise_read_only if fset is None else fset
+        self.__doc__ = fget.__doc__
+
+    def __get__(self, obj, _objtype=None):
+        # We should never see "obj is None" under normal usage,
+        # because of the descriptor we assign to the metaclass in
+        # __set_name__() below.  But behave sensibly if someone tries
+        # to be clever.
+        return self if obj is None else self.fget(obj)
+
+    def __set__(self, obj, value):
+        self.fset(obj, value)
+
+    def __set_name__(self, owner, name):
+        self.name = name
+
+        # Here, `owner` is the class which has the `DelegatingProp`
+        # instance as an attribute.  Assign a data-descriptopr to the
+        # metaclass of `owner` to get the "delegate to instance-0"
+        # behaviour when the attribute is accessed on the class.
+        setattr(type(owner), name, DelegatingMetaclassProp(self, name))
+
+    def raise_read_only(self, obj, _value):
+        raise AttributeError(
+            f"property '{self.name}'"
+            f" of '{obj.__class__.__name__}' cannot be set"
+        )
+
+
 class Actor:
     Sounds = []
     _appearance_names = None
