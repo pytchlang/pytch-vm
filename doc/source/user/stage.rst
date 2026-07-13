@@ -254,3 +254,10 @@ If your code is in your Stage, you should use the simpler and standard
 .. code-block:: python
 
    print(self.backdrop_name)
+
+You can *not* use this shortcut to *write* ("assign") to any of the
+Stage's properties.  E.g., this code will not work:
+
+.. code-block:: python
+
+   Stage.sound_volume = 0.8  # Will give error!

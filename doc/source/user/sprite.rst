@@ -636,6 +636,13 @@ the simpler and standard
 
    print(self.x_position)
 
+You can *not* use this shortcut to *write* ("assign") to any of
+another Sprite's properties.  E.g., this code will not work:
+
+.. code-block:: python
+
+   SpaceShip.x_position += 10  # Will give error!
+
 
 .. _collision_detection:
 
