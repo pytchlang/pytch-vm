@@ -491,7 +491,7 @@ class Sprite(Actor, metaclass=SpriteMeta):
         "(COSTUME) Switch SELF to wearing COSTUME (name/number)"
         self.switch_appearance(costume_name)
 
-    costume_number = DelegatingProp(_get_costume_number, switch_costume)
+    costume_number = DelegatingProp(_get_costume_number, Actor.switch_appearance_int)
 
     def next_costume(self, n_steps=1):
         "(N=1) Switch SELF to Nth next costume, looping if past last"
@@ -501,7 +501,7 @@ class Sprite(Actor, metaclass=SpriteMeta):
         "The name of the costume SELF is currently wearing"
         return self.appearance_name
 
-    costume_name = DelegatingProp(_get_costume_name, switch_costume)
+    costume_name = DelegatingProp(_get_costume_name, Actor.switch_appearance_str)
 
     def touching(self, target_class):
         "(TARGET) Return whether SELF touches any TARGET instance"
@@ -626,7 +626,7 @@ class Stage(Actor, metaclass=StageMeta):
         "(BACKDROP) Switch to the BACKDROP (name/number)"
         self.switch_appearance(backdrop_name)
 
-    backdrop_number = DelegatingProp(_get_backdrop_number, switch_backdrop)
+    backdrop_number = DelegatingProp(_get_backdrop_number, Actor.switch_appearance_int)
 
     def next_backdrop(self, n_steps=1):
         "(N=1) Switch SELF to Nth next backdrop, looping if past last"
@@ -636,7 +636,7 @@ class Stage(Actor, metaclass=StageMeta):
         "The name of the backdrop SELF is currently showing"
         return self.appearance_name
 
-    backdrop_name = DelegatingProp(_get_backdrop_name, switch_backdrop)
+    backdrop_name = DelegatingProp(_get_backdrop_name, Actor.switch_appearance_str)
 
     def ask_and_wait(self, prompt):
         "(QUESTION) Ask question; wait for and return user's answer"
