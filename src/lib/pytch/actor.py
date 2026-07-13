@@ -16,6 +16,7 @@ from pytch.syscalls import (
     mouse_x,
     mouse_y,
     stop_all,
+    _maybe_instance_0,
 )
 
 from pytch.clone import create_clone_of
@@ -64,6 +65,29 @@ class DelegatingPropNoInstanceZero(RuntimeError):
         return (
             f"DelegatingPropNoInstanceZero: class '{self.cls_name}'"
             f" has no original instance registered"
+        )
+
+
+class DelegatingMetaclassProp:
+    # Data-descriptor assigned to an attribute of the metaclass of the
+    # class owning a `DelegatingProp`, to get the desired behaviour of
+    # attribute access on the class itself (as opposed to instances).
+    def __init__(self, prop, name):
+        self.prop = prop
+        self.name = name
+        self.__doc__ = prop.__doc__
+
+    def __get__(self, cls, metacls=None):
+        instance_0 = _maybe_instance_0(cls)
+        if instance_0 is None:
+            raise DelegatingPropNoInstanceZero(cls)
+        return self.prop.fget(instance_0)
+
+    def __set__(self, cls, value):
+        raise AttributeError(
+            f"property '{self.name}' of '{cls.__name__}'"
+            " can only be set on instances,"
+            " not on the class itself"
         )
 
 
