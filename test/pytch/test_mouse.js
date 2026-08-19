@@ -57,8 +57,8 @@ describe("mouse features", () => {
     });
 
     const attr_read_mechanism_specs = [
-	{ label: "instance", attr_owner: "self" },
-	{ label: "class", attr_owner: "Alien" },
+        { label: "instance", attr_owner: "self" },
+        { label: "class", attr_owner: "Alien" },
     ];
 
     attr_read_mechanism_specs.forEach(spec =>

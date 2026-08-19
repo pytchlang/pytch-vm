@@ -22,12 +22,12 @@ describe("Docstrings", () => {
         { clsName: "pytch.Sprite", attrName: "all_clones", expRegex: /all clones of/ },
     ].forEach(spec =>
         it(`provides docstring for ${spec.objName}`, async () => {
-	    // The Python code uses __dict__ rather than the usual
-	    // attribute access to handle the attributes which have
-	    // "delegate to the original" behaviour.  For these
-	    // particular properties, we don't have to also check the
-	    // base class.  We would have to do more work to test
-	    // "sound_volume".
+            // The Python code uses __dict__ rather than the usual
+            // attribute access to handle the attributes which have
+            // "delegate to the original" behaviour.  For these
+            // particular properties, we don't have to also check the
+            // base class.  We would have to do more work to test
+            // "sound_volume".
             const project = await import_deindented(`
 
                 import pytch

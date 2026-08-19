@@ -18,17 +18,17 @@ configure_mocha();
 
 describe("Sprite rotation", () => {
     const assert_Banana_direction = (project, msg, exp_direction) => {
-	broadcast_and_step(project, msg);
+        broadcast_and_step(project, msg);
 
         const banana = project.instance_0_by_class_name("Banana");
-	const got_direction = banana.js_attr("direction");
-	assert_float_close(got_direction, exp_direction, 0.0001);
+        const got_direction = banana.js_attr("direction");
+        assert_float_close(got_direction, exp_direction, 0.0001);
     };
 
     property_set_mechanism_specs.forEach(spec =>
         it(`can turn and point (${spec.label})`, async () => {
-	    // Use values in the code which exercise the behaviour of
-	    // clamping to [0, 2π).
+            // Use values in the code which exercise the behaviour of
+            // clamping to [0, 2π).
             const project = await import_deindented(`
 
                 import pytch
@@ -76,10 +76,10 @@ describe("Sprite rotation", () => {
                     self.point_towards_mouse()
         `);
 
-	function move_mouse_assert_direction(x, y, exp_dir) {
+        function move_mouse_assert_direction(x, y, exp_dir) {
             mock_mouse.move(x, y);
             assert_Banana_direction(project, "point", exp_dir);
-	}
+        }
 
         move_mouse_assert_direction(100, 0, 0);
         move_mouse_assert_direction(0, 100, 90);

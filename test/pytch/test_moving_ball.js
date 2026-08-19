@@ -21,9 +21,9 @@ describe("moving ball example", () => {
 
     const ball_coords = (project) => {
         let render_instrns = project.rendering_instructions();
-	assert.equal(render_instrns.length, 1);
+        assert.equal(render_instrns.length, 1);
         let ball_instrn = render_instrns[0];
-	return { x: ball_instrn.x, y: ball_instrn.y };
+        return { x: ball_instrn.x, y: ball_instrn.y };
     };
 
     with_project("py/project/moving_ball.py", (import_project) => {
@@ -61,30 +61,30 @@ describe("moving ball example", () => {
         it("moves randomly", async () => {
             let project = await import_project();
 
-	    let coords = [];
-	    for (let i = 0; i < 50; ++i) {
-		mock_keyboard.press_key("r");
-		one_frame(project);
-		coords.push(ball_coords(project));
-	    }
+            let coords = [];
+            for (let i = 0; i < 50; ++i) {
+                mock_keyboard.press_key("r");
+                one_frame(project);
+                coords.push(ball_coords(project));
+            }
 
-	    // It is possible for this to fail, if we're very unlucky
-	    // with the random number generation.  Exercise for the
-	    // reader: what is the probability of a false failure?
-	    const distinct_xs = new Set(coords.map(c => c.x));
-	    const distinct_ys = new Set(coords.map(c => c.y));
-	    assert(distinct_xs.size >= 10, "expecting at least 10 distinct Xs");
-	    assert(distinct_ys.size >= 10, "expecting at least 10 distinct Ys");
+            // It is possible for this to fail, if we're very unlucky
+            // with the random number generation.  Exercise for the
+            // reader: what is the probability of a false failure?
+            const distinct_xs = new Set(coords.map(c => c.x));
+            const distinct_ys = new Set(coords.map(c => c.y));
+            assert(distinct_xs.size >= 10, "expecting at least 10 distinct Xs");
+            assert(distinct_ys.size >= 10, "expecting at least 10 distinct Ys");
         });
 
-	property_set_mechanism_specs.forEach(spec =>
-	    it(`changes size (${spec.label})`, async () => {
-		const project = await import_project();
+        property_set_mechanism_specs.forEach(spec =>
+            it(`changes size (${spec.label})`, async () => {
+                const project = await import_project();
 
-		broadcast_and_step(project, `bigger${spec.message_suffix}`);
-		assert_renders_as("end", project, ball_at(100, 50, 3.0));
-		assert.equal(pytch_stdout.drain_stdout(), "3.0\n");
-	    }));
+                broadcast_and_step(project, `bigger${spec.message_suffix}`);
+                assert_renders_as("end", project, ball_at(100, 50, 3.0));
+                assert.equal(pytch_stdout.drain_stdout(), "3.0\n");
+            }));
 
         it("responds to key presses", async () => {
             let project = await import_project();
